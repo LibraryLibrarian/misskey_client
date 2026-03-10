@@ -1,4 +1,5 @@
 import '../api/account/account_api.dart';
+import '../api/notes/notes_api.dart';
 import '../logging/logger.dart';
 import 'misskey_client_config.dart';
 import 'misskey_http.dart';
@@ -18,9 +19,11 @@ class MisskeyClient {
           logger: logger,
         ) {
     account = AccountApi(http: http);
+    notes = NotesApi(http: http);
   }
 
   final MisskeyHttp http;
 
   late final AccountApi account;
+  late final NotesApi notes;
 }
