@@ -260,6 +260,169 @@ class NotesApi {
         .toList();
   }
 
+  /// ノートを作成する（`/api/notes/create`）
+  ///
+  /// テキスト投稿・返信・リノート・引用リノートを兼用する。
+  /// [channelId] を指定した場合、[visibility]・[localOnly]・
+  /// [visibleUserIds] はサーバーで無視される為、
+  /// リクエストボディから省略される。
+  ///
+  /// [pollChoices]（最小2件・最大10件）を渡すと投票を添付できる。
+  /// [pollMultiple] を`true`にすると複数選択が可能になる。
+  /// 投票期限は [pollExpiresAt]（絶対エポックms）か
+  /// [pollExpiredAfter]（現在時刻からの相対ms、最小1）の
+  /// どちらか一方のみ指定する。
+  ///
+  /// レスポンスオブジェクトは作成されたノートを
+  /// `createdNote`キーに格納して返す。
+  Future<NoteJson> create({
+    String? text,
+    String? cw,
+    String? visibility,
+    List<String>? visibleUserIds,
+    bool? localOnly,
+    String? reactionAcceptance,
+    bool? noExtractMentions,
+    bool? noExtractHashtags,
+    bool? noExtractEmojis,
+    String? replyId,
+    String? renoteId,
+    String? channelId,
+    List<String>? fileIds,
+    List<String>? mediaIds,
+    // Poll parameters
+    List<String>? pollChoices,
+    bool? pollMultiple,
+    int? pollExpiresAt,
+    int? pollExpiredAfter,
+  }) async {
+    final body = <String, dynamic>{
+      if (text != null) 'text': text,
+      if (cw != null) 'cw': cw,
+      if (replyId != null) 'replyId': replyId,
+      if (renoteId != null) 'renoteId': renoteId,
+      if (channelId != null) 'channelId': channelId,
+      if (reactionAcceptance != null) 'reactionAcceptance': reactionAcceptance,
+      if (noExtractMentions != null) 'noExtractMentions': noExtractMentions,
+      if (noExtractHashtags != null) 'noExtractHashtags': noExtractHashtags,
+      if (noExtractEmojis != null) 'noExtractEmojis': noExtractEmojis,
+    };
+
+    if (channelId == null) {
+      if (visibility != null) body['visibility'] = visibility;
+      if (localOnly != null) body['localOnly'] = localOnly;
+      if (visibleUserIds != null && visibleUserIds.isNotEmpty) {
+        body['visibleUserIds'] = visibleUserIds;
+      }
+    }
+
+    if (fileIds != null && fileIds.isNotEmpty) {
+      body['fileIds'] = fileIds;
+    }
+    if (mediaIds != null && mediaIds.isNotEmpty) {
+      body['mediaIds'] = mediaIds;
+    }
+
+    if (pollChoices != null && pollChoices.isNotEmpty) {
+      final poll = <String, dynamic>{'choices': pollChoices};
+      if (pollMultiple != null) poll['multiple'] = pollMultiple;
+      if (pollExpiresAt != null) poll['expiresAt'] = pollExpiresAt;
+      if (pollExpiredAfter != null) poll['expiredAfter'] = pollExpiredAfter;
+      body['poll'] = poll;
+    }
+
+    final res = await http.send<Map<dynamic, dynamic>>(
+      '/notes/create',
+      body: body,
+    );
+    final raw = (res['createdNote'] is Map)
+        ? res['createdNote'] as Map<dynamic, dynamic>
+        : res;
+    return raw.cast<String, dynamic>();
+  }
+
+  /// ノートに添付された投票に回答する（`/api/notes/polls/vote`）
+  ///
+  /// [noteId] は投票を含むノートのIDを指定する。
+  /// [choice] は0始まりの選択肢インデックスを指定する。
+  Future<void> pollsVote({
+    required String noteId,
+    required int choice,
+  }) =>
+      http.send<Object?>(
+        '/notes/polls/vote',
+        body: <String, dynamic>{'noteId': noteId, 'choice': choice},
+      );
+
+  /// ノートにリアクションを追加する（`/api/notes/reactions/create`）
+  ///
+  /// [reaction] にはUnicode絵文字（例: `'👍'`）または
+  /// ショートコード（例: `':like:'`）を指定する。
+  Future<void> reactionsCreate({
+    required String noteId,
+    required String reaction,
+  }) =>
+      http.send<Object?>(
+        '/notes/reactions/create',
+        body: <String, dynamic>{
+          'noteId': noteId,
+          'reaction': reaction,
+        },
+      );
+
+  /// 認証ユーザーのリアクションをノートから削除する（`/api/notes/reactions/delete`）
+  Future<void> reactionsDelete({required String noteId}) => http.send<Object?>(
+        '/notes/reactions/delete',
+        body: <String, dynamic>{'noteId': noteId},
+      );
+
+  /// ユーザー名トークンのリストをユーザーIDに解決する
+  ///
+  /// 各トークンは`'librarian'`・`'librarian@misskey.io'`・
+  /// `'@librarian@misskey.io'`のいずれの形式でも受け付ける。
+  /// 解決できないトークンは黙って読み飛ばされ、解決失敗時は
+  /// [MisskeyHttp.logger] を通じてデバッグレベルのログが記録される。
+  Future<List<String>> resolveUsernamesToIds(List<String> tokens) async {
+    final results = <String>[];
+    for (final raw in tokens) {
+      final trimmed = raw.trim();
+      if (trimmed.isEmpty) continue;
+
+      var username = trimmed.startsWith('@') ? trimmed.substring(1) : trimmed;
+      String? host;
+      if (username.contains('@')) {
+        final parts = username.split('@');
+        username = parts.first;
+        host = parts.sublist(1).join('@');
+      }
+
+      try {
+        final res = await http.send<List<dynamic>>(
+          '/users/search-by-username-and-host',
+          body: <String, dynamic>{
+            'username': username,
+            if (host != null && host.isNotEmpty) 'host': host,
+            'limit': 1,
+          },
+        );
+        if (res.isNotEmpty && res.first is Map) {
+          final user =
+              (res.first as Map<dynamic, dynamic>).cast<String, dynamic>();
+          final id = (user['id'] ?? '').toString();
+          if (id.isNotEmpty) results.add(id);
+        }
+      } on Exception catch (e) {
+        if (http.config.enableLog) {
+          http.logger.debug(
+            'resolveUsernamesToIds: failed to resolve'
+            ' token="$trimmed": $e',
+          );
+        }
+      }
+    }
+    return results;
+  }
+
   Future<List<NoteJson>> _fetchTimeline({
     required String path,
     required int limit,
