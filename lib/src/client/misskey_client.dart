@@ -1,3 +1,4 @@
+import '../api/account/account_api.dart';
 import '../logging/logger.dart';
 import 'misskey_client_config.dart';
 import 'misskey_http.dart';
@@ -15,10 +16,11 @@ class MisskeyClient {
           config: config,
           tokenProvider: tokenProvider,
           logger: logger,
-        );
+        ) {
+    account = AccountApi(http: http);
+  }
 
-  /// 内部HTTPクライアント（APIクラスから参照）
   final MisskeyHttp http;
 
-  // 各APIドメインは後続のコミットで追加
+  late final AccountApi account;
 }

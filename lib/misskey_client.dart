@@ -1,6 +1,7 @@
 /// Misskey API client library
 library;
 
+export 'src/api/account/account_api.dart';
 export 'src/client/misskey_client.dart';
 export 'src/client/misskey_client_config.dart';
 export 'src/client/token_provider.dart';
