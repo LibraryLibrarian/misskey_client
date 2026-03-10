@@ -47,7 +47,7 @@ class ChannelsApi {
   /// [allowPartial] を`true`にすると部分的な結果を許容する。
   Future<List<ChannelJson>> timeline({
     required String channelId,
-    int limit = 10,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -56,7 +56,7 @@ class ChannelsApi {
   }) async {
     final body = <String, dynamic>{
       'channelId': channelId,
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,
@@ -94,16 +94,15 @@ class ChannelsApi {
   ///
   /// [sinceId] / [untilId] はIDによるページング、
   /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
-  /// [limit] のデフォルトは5（スキーマ準拠）。
   Future<List<ChannelJson>> followed({
-    int limit = 5,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,
@@ -124,16 +123,15 @@ class ChannelsApi {
   ///
   /// [sinceId] / [untilId] はIDによるページング、
   /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
-  /// [limit] のデフォルトは5（スキーマ準拠）。
   Future<List<ChannelJson>> owned({
-    int limit = 5,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,
@@ -159,7 +157,7 @@ class ChannelsApi {
   /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
   Future<List<ChannelJson>> search({
     required String query,
-    int limit = 5,
+    int? limit,
     String? type,
     String? sinceId,
     String? untilId,
@@ -168,7 +166,7 @@ class ChannelsApi {
   }) async {
     final body = <String, dynamic>{
       'query': query,
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (type != null) 'type': type,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,

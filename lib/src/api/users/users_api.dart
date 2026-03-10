@@ -57,21 +57,21 @@ class UsersApi {
   /// フォロワー一覧を取得
   ///
   /// [userId] または [username]（必要に応じて [host]）でユーザーを指定する。
-  /// [limit] は1〜100、デフォルト10（スキーマ準拠）。
+  /// [limit] は1〜100。
   /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
   /// 認証は任意（未認証でも利用可能）。
   Future<List<UserJson>> followers({
     String? userId,
     String? username,
     String? host,
-    int limit = 10,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (userId != null) 'userId': userId,
       if (username != null) 'username': username,
       if (host != null && host.isNotEmpty) 'host': host,
@@ -94,21 +94,21 @@ class UsersApi {
   /// フォロー一覧を取得
   ///
   /// [userId] または [username]（必要に応じて [host]）でユーザーを指定する。
-  /// [limit] は1〜100、デフォルト10（スキーマ準拠）。
+  /// [limit] は1〜100。
   /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
   /// 認証は任意（未認証でも利用可能）。
   Future<List<UserJson>> following({
     String? userId,
     String? username,
     String? host,
-    int limit = 10,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (userId != null) 'userId': userId,
       if (username != null) 'username': username,
       if (host != null && host.isNotEmpty) 'host': host,
@@ -131,13 +131,13 @@ class UsersApi {
   /// 指定ユーザーのノート一覧を取得する
   ///
   /// [userId] は必須。
-  /// [limit] は1〜100、デフォルト10（スキーマ準拠）。
+  /// [limit] は1〜100。
   /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
   /// [withReplies] と [withFiles] は同時に `true` にできない（サーバー側制約）。
   /// [allowPartial] を `true` にするとキャッシュが不十分でも部分的な結果を返す。
   Future<List<UserJson>> notes({
     required String userId,
-    int limit = 10,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -150,7 +150,7 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,

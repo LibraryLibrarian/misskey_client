@@ -20,7 +20,7 @@ class NotesApi {
   /// - [includeRenotedMyNotes]: 自分のノートのリノートを含めるか（デフォルト: true）
   /// - [includeLocalRenotes]: ローカルユーザーのリノートを含めるか（デフォルト: true）
   Future<List<NoteJson>> timelineHome({
-    int limit = 30,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -53,7 +53,7 @@ class NotesApi {
   /// サーバー全体の公開ノートを返す。
   /// 認証不要（ロールポリシーで制限される場合あり）。
   Future<List<NoteJson>> timelineGlobal({
-    int limit = 30,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -79,7 +79,7 @@ class NotesApi {
   ///
   /// - [withReplies]と[withFiles]は同時に`true`にできない
   Future<List<NoteJson>> timelineHybrid({
-    int limit = 30,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -116,7 +116,7 @@ class NotesApi {
   ///
   /// - [withReplies]と[withFiles]は同時に`true`にできない
   Future<List<NoteJson>> timelineLocal({
-    int limit = 30,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -158,12 +158,12 @@ class NotesApi {
   ///
   /// 指定した[noteId]に対する返信ノートを返す。認証不要。
   ///
-  /// - [limit]: 取得件数 1〜100、デフォルト10
+  /// - [limit]: 取得件数 1〜100
   /// - [sinceId] / [untilId]: IDによるページング
   /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
   Future<List<NoteJson>> replies({
     required String noteId,
-    int limit = 10,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -171,7 +171,7 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'noteId': noteId,
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,
@@ -192,12 +192,12 @@ class NotesApi {
   ///
   /// 指定した [noteId] をリノートしたノートの一覧を返す。認証不要。
   ///
-  /// - [limit]: 取得件数 1〜100、デフォルト10
+  /// - [limit]: 取得件数 1〜100
   /// - [sinceId] / [untilId]: IDによるページング
   /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
   Future<List<NoteJson>> renotes({
     required String noteId,
-    int limit = 10,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -205,7 +205,7 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'noteId': noteId,
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,
@@ -228,13 +228,13 @@ class NotesApi {
   /// レスポンスはサーバー側で60秒キャッシュされる。
   ///
   /// - [type]: リアクション種別でフィルタリング（例: `'👍'`, `':like:'`）
-  /// - [limit]: 取得件数 1〜100、デフォルト10
+  /// - [limit]: 取得件数 1〜100
   /// - [sinceId] / [untilId]: IDによるページング
   /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
   Future<List<Map<String, dynamic>>> reactions({
     required String noteId,
     String? type,
-    int limit = 10,
+    int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -242,7 +242,7 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'noteId': noteId,
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (type != null) 'type': type,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
@@ -425,7 +425,7 @@ class NotesApi {
 
   Future<List<NoteJson>> _fetchTimeline({
     required String path,
-    required int limit,
+    int? limit,
     required bool authRequired,
     String? sinceId,
     String? untilId,
@@ -440,7 +440,7 @@ class NotesApi {
     bool? includeLocalRenotes,
   }) async {
     final body = <String, dynamic>{
-      'limit': limit,
+      if (limit != null) 'limit': limit,
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,
