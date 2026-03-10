@@ -1,4 +1,5 @@
 import '../api/account/account_api.dart';
+import '../api/channels/channels_api.dart';
 import '../api/notes/notes_api.dart';
 import '../api/users/users_api.dart';
 import '../logging/logger.dart';
@@ -20,6 +21,7 @@ class MisskeyClient {
           logger: logger,
         ) {
     account = AccountApi(http: http);
+    channels = ChannelsApi(http: http);
     notes = NotesApi(http: http);
     users = UsersApi(http: http);
   }
@@ -27,6 +29,7 @@ class MisskeyClient {
   final MisskeyHttp http;
 
   late final AccountApi account;
+  late final ChannelsApi channels;
   late final NotesApi notes;
   late final UsersApi users;
 }
