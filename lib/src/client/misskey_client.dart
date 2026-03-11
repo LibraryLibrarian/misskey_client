@@ -1,6 +1,7 @@
 import '../api/account_api.dart';
 import '../api/channels_api.dart';
 import '../api/drive/drive_api.dart';
+import '../api/meta_api.dart';
 import '../api/notes_api.dart';
 import '../api/notifications_api.dart';
 import '../api/users_api.dart';
@@ -25,6 +26,7 @@ class MisskeyClient {
     account = AccountApi(http: http);
     channels = ChannelsApi(http: http);
     drive = DriveApi(http: http);
+    meta = MetaApi(http: http);
     notes = NotesApi(http: http);
     notifications = NotificationsApi(http: http);
     users = UsersApi(http: http);
@@ -35,6 +37,7 @@ class MisskeyClient {
   late final AccountApi account;
   late final ChannelsApi channels;
   late final DriveApi drive;
+  late final MetaApi meta;
   late final NotesApi notes;
   late final NotificationsApi notifications;
   late final UsersApi users;
