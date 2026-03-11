@@ -1,0 +1,256 @@
+import 'package:dio/dio.dart' show FormData, MultipartFile;
+
+import '../../client/misskey_http.dart';
+import '../../client/request_options.dart';
+
+/// DriveファイルのJSON表現
+typedef DriveFileJson = Map<String, dynamic>;
+
+/// Driveファイル関連API（`/api/drive/files/*`）
+///
+/// `/api/drive/files` 系エンドポイントを [MisskeyHttp] に委譲して呼び出す。
+/// 認証はすべて [MisskeyHttp] のインターセプタに委ねる。
+class DriveFilesApi {
+  /// コンストラクタ
+  const DriveFilesApi({required this.http});
+
+  /// HTTPクライアント
+  final MisskeyHttp http;
+
+  /// ドライブファイルの一覧を取得する（`/api/drive/files`）
+  ///
+  /// - [limit]: 取得件数（1〜100）
+  /// - [sinceId] / [untilId]: IDによるページング
+  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// - [folderId]: フォルダーIDで絞り込む（`null`でルート）
+  /// - [type]: MIMEタイプパターンで絞り込む（例: `"image/*"`）
+  /// - [sort]: ソート順（`+createdAt` / `-createdAt` / `+name` / `-name` /
+  ///   `+size` / `-size`）
+  Future<List<DriveFileJson>> list({
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+    String? folderId,
+    String? type,
+    String? sort,
+  }) async {
+    final body = <String, dynamic>{
+      if (limit != null) 'limit': limit,
+      if (sinceId != null) 'sinceId': sinceId,
+      if (untilId != null) 'untilId': untilId,
+      if (sinceDate != null) 'sinceDate': sinceDate,
+      if (untilDate != null) 'untilDate': untilDate,
+      if (folderId != null) 'folderId': folderId,
+      if (type != null) 'type': type,
+      if (sort != null) 'sort': sort,
+    };
+    final res = await http.send<List<dynamic>>(
+      '/drive/files',
+      body: body,
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<dynamic, dynamic>>()
+        .map((e) => e.cast<String, dynamic>())
+        .toList();
+  }
+
+  /// ドライブファイルの詳細を取得する（`/api/drive/files/show`）
+  ///
+  /// [fileId] または [url] のいずれか一方を指定する。
+  /// どちらも省略した場合はサーバーがエラーを返す。
+  ///
+  /// - [fileId]: ファイルID
+  /// - [url]: ファイルのURL
+  Future<DriveFileJson> show({String? fileId, String? url}) async {
+    final body = <String, dynamic>{
+      if (fileId != null) 'fileId': fileId,
+      if (url != null) 'url': url,
+    };
+    final res = await http.send<Map<dynamic, dynamic>>(
+      '/drive/files/show',
+      body: body,
+      options: const RequestOptions(idempotent: true),
+    );
+    return res.cast<String, dynamic>();
+  }
+
+  /// ファイルをアップロードする（`/api/drive/files/create`）
+  ///
+  /// ファイル本体は [bytes] と [filename] で指定する。
+  /// 認証トークンは [MisskeyHttp] のインターセプタが `FormData` に注入する。
+  ///
+  /// - [bytes]: アップロードするバイト列
+  /// - [filename]: ファイル名
+  /// - [folderId]: 保存先フォルダーID
+  /// - [comment]: コメント（`DB_MAX_IMAGE_COMMENT_LENGTH` 以内）
+  /// - [isSensitive]: センシティブコンテンツとしてマークするか
+  /// - [force]: 同名ファイルが存在しても強制アップロードするか
+  /// - [onSendProgress]: アップロード進捗コールバック
+  Future<DriveFileJson> create({
+    required List<int> bytes,
+    required String filename,
+    String? folderId,
+    String? comment,
+    bool? isSensitive,
+    bool? force,
+    void Function(int sent, int total)? onSendProgress,
+  }) async {
+    final form = FormData();
+    form.files.add(
+      MapEntry('file', MultipartFile.fromBytes(bytes, filename: filename)),
+    );
+    if (folderId != null) form.fields.add(MapEntry('folderId', folderId));
+    if (comment != null) form.fields.add(MapEntry('comment', comment));
+    if (isSensitive != null) {
+      form.fields.add(MapEntry('isSensitive', isSensitive.toString()));
+    }
+    if (force != null) {
+      form.fields.add(MapEntry('force', force.toString()));
+    }
+
+    final res = await http.send<Map<dynamic, dynamic>>(
+      '/drive/files/create',
+      body: form,
+      onSendProgress: onSendProgress,
+    );
+    return res.cast<String, dynamic>();
+  }
+
+  /// ドライブファイルのメタ情報を更新する（`/api/drive/files/update`）
+  ///
+  /// - [fileId]: 更新対象のファイルID（必須）
+  /// - [name]: 新しいファイル名
+  /// - [folderId]: 移動先フォルダーID（`null`でルートへ移動）
+  /// - [comment]: コメント（最大512文字）
+  /// - [isSensitive]: センシティブコンテンツとしてマークするか
+  Future<DriveFileJson> update({
+    required String fileId,
+    String? name,
+    String? folderId,
+    String? comment,
+    bool? isSensitive,
+  }) async {
+    final body = <String, dynamic>{
+      'fileId': fileId,
+      if (name != null) 'name': name,
+      if (folderId != null) 'folderId': folderId,
+      if (comment != null) 'comment': comment,
+      if (isSensitive != null) 'isSensitive': isSensitive,
+    };
+    final res = await http.send<Map<dynamic, dynamic>>(
+      '/drive/files/update',
+      body: body,
+    );
+    return res.cast<String, dynamic>();
+  }
+
+  /// ドライブファイルを削除する（`/api/drive/files/delete`）
+  ///
+  /// - [fileId]: 削除対象のファイルID（必須）
+  Future<void> delete({required String fileId}) => http.send<Object?>(
+        '/drive/files/delete',
+        body: <String, dynamic>{'fileId': fileId},
+      );
+
+  /// ファイル名でドライブ内を検索する（`/api/drive/files/find`）
+  ///
+  /// - [name]: 検索するファイル名（必須）
+  /// - [folderId]: 検索対象フォルダーID（`null`でルート）
+  Future<List<DriveFileJson>> find({
+    required String name,
+    String? folderId,
+  }) async {
+    final body = <String, dynamic>{
+      'name': name,
+      if (folderId != null) 'folderId': folderId,
+    };
+    final res = await http.send<List<dynamic>>(
+      '/drive/files/find',
+      body: body,
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<dynamic, dynamic>>()
+        .map((e) => e.cast<String, dynamic>())
+        .toList();
+  }
+
+  /// 指定したMD5ハッシュを持つファイルがドライブに存在するか確認する
+  /// （`/api/drive/files/check-existence`）
+  ///
+  /// - [md5]: 確認対象ファイルのMD5ハッシュ（必須）
+  Future<bool> checkExistence({required String md5}) => http.send<bool>(
+        '/drive/files/check-existence',
+        body: <String, dynamic>{'md5': md5},
+        options: const RequestOptions(idempotent: true),
+      );
+
+  /// URLを指定してドライブにファイルをアップロードする
+  /// （`/api/drive/files/upload-from-url`）
+  ///
+  /// このエンドポイントはリクエスト完了後、非同期でアップロードを実行し
+  /// ストリームイベント（`urlUploadFinished`）で結果を通知する。
+  ///
+  /// - [url]: ダウンロード元URL（必須）
+  /// - [folderId]: 保存先フォルダーID
+  /// - [isSensitive]: センシティブコンテンツとしてマークするか
+  /// - [comment]: コメント（最大512文字）
+  /// - [marker]: 追跡用マーカー文字列（ストリームイベントに付与される）
+  /// - [force]: 同名ファイルが存在しても強制アップロードするか
+  Future<void> uploadFromUrl({
+    required String url,
+    String? folderId,
+    bool? isSensitive,
+    String? comment,
+    String? marker,
+    bool? force,
+  }) =>
+      http.send<Object?>(
+        '/drive/files/upload-from-url',
+        body: <String, dynamic>{
+          'url': url,
+          if (folderId != null) 'folderId': folderId,
+          if (isSensitive != null) 'isSensitive': isSensitive,
+          if (comment != null) 'comment': comment,
+          if (marker != null) 'marker': marker,
+          if (force != null) 'force': force,
+        },
+      );
+
+  /// 指定ファイルが添付されているノート一覧を取得する
+  /// （`/api/drive/files/attached-notes`）
+  ///
+  /// - [fileId]: 対象ファイルID（必須）
+  /// - [limit]: 取得件数（1〜100）
+  /// - [sinceId] / [untilId]: IDによるページング
+  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  Future<List<Map<String, dynamic>>> attachedNotes({
+    required String fileId,
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) async {
+    final body = <String, dynamic>{
+      'fileId': fileId,
+      if (limit != null) 'limit': limit,
+      if (sinceId != null) 'sinceId': sinceId,
+      if (untilId != null) 'untilId': untilId,
+      if (sinceDate != null) 'sinceDate': sinceDate,
+      if (untilDate != null) 'untilDate': untilDate,
+    };
+    final res = await http.send<List<dynamic>>(
+      '/drive/files/attached-notes',
+      body: body,
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<dynamic, dynamic>>()
+        .map((e) => e.cast<String, dynamic>())
+        .toList();
+  }
+}
