@@ -3,8 +3,10 @@ library;
 
 export 'src/api/account_api.dart';
 export 'src/api/channels_api.dart';
-export 'src/api/drive_files_api.dart';
-export 'src/api/drive_folders_api.dart';
+export 'src/api/drive/drive_api.dart';
+export 'src/api/drive/drive_files_api.dart';
+export 'src/api/drive/drive_folders_api.dart';
+export 'src/api/drive/drive_stats_api.dart';
 export 'src/api/notes_api.dart';
 export 'src/api/notifications_api.dart';
 export 'src/api/users_api.dart';

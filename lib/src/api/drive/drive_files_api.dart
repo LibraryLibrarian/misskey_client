@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart' show FormData, MultipartFile;
 
-import '../client/misskey_http.dart';
-import '../client/request_options.dart';
+import '../../client/misskey_http.dart';
+import '../../client/request_options.dart';
 
 /// DriveファイルのJSON表現
 typedef DriveFileJson = Map<String, dynamic>;

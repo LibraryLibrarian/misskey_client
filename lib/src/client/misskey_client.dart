@@ -1,7 +1,6 @@
 import '../api/account_api.dart';
 import '../api/channels_api.dart';
-import '../api/drive_files_api.dart';
-import '../api/drive_folders_api.dart';
+import '../api/drive/drive_api.dart';
 import '../api/notes_api.dart';
 import '../api/notifications_api.dart';
 import '../api/users_api.dart';
@@ -10,7 +9,7 @@ import 'misskey_client_config.dart';
 import 'misskey_http.dart';
 import 'token_provider.dart';
 
-/// Misskey API クライアント
+/// Misskey API クライアント。
 ///
 /// 全APIドメインへのアクセスを提供するメインエントリーポイント
 class MisskeyClient {
@@ -25,8 +24,7 @@ class MisskeyClient {
         ) {
     account = AccountApi(http: http);
     channels = ChannelsApi(http: http);
-    driveFiles = DriveFilesApi(http: http);
-    driveFolders = DriveFoldersApi(http: http);
+    drive = DriveApi(http: http);
     notes = NotesApi(http: http);
     notifications = NotificationsApi(http: http);
     users = UsersApi(http: http);
@@ -36,8 +34,7 @@ class MisskeyClient {
 
   late final AccountApi account;
   late final ChannelsApi channels;
-  late final DriveFilesApi driveFiles;
-  late final DriveFoldersApi driveFolders;
+  late final DriveApi drive;
   late final NotesApi notes;
   late final NotificationsApi notifications;
   late final UsersApi users;

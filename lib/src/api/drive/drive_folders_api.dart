@@ -1,5 +1,5 @@
-import '../client/misskey_http.dart';
-import '../client/request_options.dart';
+import '../../client/misskey_http.dart';
+import '../../client/request_options.dart';
 
 /// DriveFolderのJSON表現
 typedef DriveFolderJson = Map<String, dynamic>;
@@ -106,8 +106,7 @@ class DriveFoldersApi {
   /// フォルダに子ファイルまたはサブフォルダが存在する場合はエラーになる。
   ///
   /// - [folderId]: 削除対象のフォルダID（必須）
-  Future<void> delete({required String folderId}) =>
-      http.send<Object?>(
+  Future<void> delete({required String folderId}) => http.send<Object?>(
         '/drive/folders/delete',
         body: <String, dynamic>{'folderId': folderId},
       );
