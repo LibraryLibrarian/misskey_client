@@ -1,5 +1,5 @@
-import '../../client/misskey_http.dart';
-import '../../client/request_options.dart';
+import '../client/misskey_http.dart';
+import '../client/request_options.dart';
 
 /// 通知のJSON表現
 typedef NotificationJson = Map<String, dynamic>;

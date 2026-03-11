@@ -1,9 +1,9 @@
-import '../api/account/account_api.dart';
-import '../api/channels/channels_api.dart';
-import '../api/drive/drive_files_api.dart';
-import '../api/notes/notes_api.dart';
-import '../api/notifications/notifications_api.dart';
-import '../api/users/users_api.dart';
+import '../api/account_api.dart';
+import '../api/channels_api.dart';
+import '../api/drive_files_api.dart';
+import '../api/notes_api.dart';
+import '../api/notifications_api.dart';
+import '../api/users_api.dart';
 import '../logging/logger.dart';
 import 'misskey_client_config.dart';
 import 'misskey_http.dart';

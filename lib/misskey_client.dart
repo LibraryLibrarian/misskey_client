@@ -1,12 +1,12 @@
 /// Misskey API client library
 library;
 
-export 'src/api/account/account_api.dart';
-export 'src/api/channels/channels_api.dart';
-export 'src/api/drive/drive_files_api.dart';
-export 'src/api/notes/notes_api.dart';
-export 'src/api/notifications/notifications_api.dart';
-export 'src/api/users/users_api.dart';
+export 'src/api/account_api.dart';
+export 'src/api/channels_api.dart';
+export 'src/api/drive_files_api.dart';
+export 'src/api/notes_api.dart';
+export 'src/api/notifications_api.dart';
+export 'src/api/users_api.dart';
 export 'src/client/misskey_client.dart';
 export 'src/client/misskey_client_config.dart';
 export 'src/client/token_provider.dart';

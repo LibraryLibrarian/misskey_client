@@ -1,5 +1,5 @@
-import '../../client/misskey_http.dart';
-import '../../client/request_options.dart';
+import '../client/misskey_http.dart';
+import '../client/request_options.dart';
 
 /// チャンネルのJSON表現
 typedef ChannelJson = Map<String, dynamic>;

@@ -1,5 +1,5 @@
-import '../../client/misskey_http.dart';
-import '../../exception/misskey_client_exception.dart';
+import '../client/misskey_http.dart';
+import '../exception/misskey_client_exception.dart';
 
 /// 現在ログイン中ユーザー（自分）のAPI
 class AccountApi {
