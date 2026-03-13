@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:retry/retry.dart';
 
 import '../exception/misskey_client_exception.dart';
+import '../internal/dio_error_handler.dart';
 import '../logging/logger.dart';
 import '../logging/package_logger.dart';
 import 'constants.dart';
@@ -103,12 +104,12 @@ class MisskeyHttp {
       );
       return result.data as T;
     } on DioException catch (e) {
-      throw _mapDioError(e, path);
+      throw convertDioException(e, path);
     } on Exception catch (e) {
-      throw MisskeyClientException(
+      throw MisskeyNetworkException(
         message: 'Unexpected error',
         endpoint: path,
-        raw: e,
+        cause: e,
       );
     }
   }
@@ -139,46 +140,6 @@ class MisskeyHttp {
     return false;
   }
 
-  static MisskeyClientException _mapDioError(DioException e, String path) {
-    final status = e.response?.statusCode;
-    var message = e.message ?? 'HTTP error';
-    String? code;
-    Duration? retryAfter;
-    final data = e.response?.data;
-    String? errorId;
-    if (data is Map) {
-      final dynamic errorObj = data['error'];
-      if (errorObj is Map) {
-        final dynamic c = errorObj['code'];
-        final dynamic m = errorObj['message'];
-        final dynamic id = errorObj['id'];
-        if (c != null) code = c.toString();
-        if (m != null) message = m.toString();
-        if (id != null) errorId = id.toString();
-      } else {
-        final dynamic c = data['code'];
-        final dynamic m = data['message'];
-        if (c != null) code = c.toString();
-        if (m != null) message = m.toString();
-      }
-    }
-    final ra = e.response?.headers.value('retry-after');
-    if (ra != null) {
-      final seconds = int.tryParse(ra.trim());
-      if (seconds != null) {
-        retryAfter = Duration(seconds: seconds);
-      }
-    }
-    return MisskeyClientException(
-      statusCode: status,
-      code: code,
-      errorId: errorId,
-      message: message,
-      endpoint: path,
-      retryAfter: retryAfter,
-      raw: e,
-    );
-  }
 }
 
 class _MisskeyInterceptor extends Interceptor {
