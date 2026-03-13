@@ -17,12 +17,12 @@ class DriveStatsApi {
   ///
   /// 現在認証中のユーザーのドライブ容量（上限と使用量）を返す。
   Future<DriveCapacityInfo> getCapacity() async {
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/drive',
       body: <String, dynamic>{},
       options: const RequestOptions(idempotent: true),
     );
-    return DriveCapacityInfo.fromJson(res.cast<String, dynamic>());
+    return DriveCapacityInfo.fromJson(res);
   }
 
   /// インスタンス全体のドライブ統計情報を取得する
@@ -43,7 +43,7 @@ class DriveStatsApi {
       if (limit != null) 'limit': limit,
       if (offset != null) 'offset': offset,
     };
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/charts/drive',
       body: body,
       options: const RequestOptions(
@@ -51,7 +51,7 @@ class DriveStatsApi {
         idempotent: true,
       ),
     );
-    return res.cast<String, dynamic>();
+    return res;
   }
 
   /// 指定ユーザーのドライブ統計情報を取得する
@@ -75,7 +75,7 @@ class DriveStatsApi {
       if (limit != null) 'limit': limit,
       if (offset != null) 'offset': offset,
     };
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/charts/user/drive',
       body: body,
       options: const RequestOptions(
@@ -83,6 +83,6 @@ class DriveStatsApi {
         idempotent: true,
       ),
     );
-    return res.cast<String, dynamic>();
+    return res;
   }
 }

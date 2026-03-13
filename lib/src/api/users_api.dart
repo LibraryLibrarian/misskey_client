@@ -1,8 +1,8 @@
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
-
-/// ユーザーのJSON表現
-typedef UserJson = Map<String, dynamic>;
+import '../models/misskey_following.dart';
+import '../models/misskey_note.dart';
+import '../models/misskey_user.dart';
 
 /// ユーザー関連API
 ///
@@ -19,7 +19,7 @@ class UsersApi {
   /// 複数ユーザーをまとめて取得する場合は `showMany` を使うこと。
   /// [host] を省略するとローカルユーザーとして検索する。
   /// 認証は任意（未認証でも利用可能）。
-  Future<UserJson> showOne({
+  Future<MisskeyUser> showOne({
     String? userId,
     String? username,
     String? host,
@@ -29,19 +29,19 @@ class UsersApi {
       if (username != null) 'username': username,
       if (host != null && host.isNotEmpty) 'host': host,
     };
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/users/show',
       body: body,
       options: const RequestOptions(idempotent: true),
     );
-    return res.cast<String, dynamic>();
+    return MisskeyUser.fromJson(res);
   }
 
   /// 複数ユーザーの情報をまとめて取得
   ///
   /// [userIds] に1件以上のユーザーIDを指定する。
   /// 認証は任意（未認証でも利用可能）。
-  Future<List<UserJson>> showMany({required List<String> userIds}) async {
+  Future<List<MisskeyUser>> showMany({required List<String> userIds}) async {
     final body = <String, dynamic>{'userIds': userIds};
     final res = await http.send<List<dynamic>>(
       '/users/show',
@@ -49,8 +49,8 @@ class UsersApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyUser.fromJson)
         .toList();
   }
 
@@ -60,7 +60,7 @@ class UsersApi {
   /// [limit] は1〜100。
   /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
   /// 認証は任意（未認証でも利用可能）。
-  Future<List<UserJson>> followers({
+  Future<List<MisskeyFollowing>> followers({
     String? userId,
     String? username,
     String? host,
@@ -86,8 +86,8 @@ class UsersApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyFollowing.fromJson)
         .toList();
   }
 
@@ -97,7 +97,7 @@ class UsersApi {
   /// [limit] は1〜100。
   /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
   /// 認証は任意（未認証でも利用可能）。
-  Future<List<UserJson>> following({
+  Future<List<MisskeyFollowing>> following({
     String? userId,
     String? username,
     String? host,
@@ -123,8 +123,8 @@ class UsersApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyFollowing.fromJson)
         .toList();
   }
 
@@ -135,7 +135,7 @@ class UsersApi {
   /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
   /// [withReplies] と [withFiles] は同時に `true` にできない（サーバー側制約）。
   /// [allowPartial] を `true` にするとキャッシュが不十分でも部分的な結果を返す。
-  Future<List<UserJson>> notes({
+  Future<List<MisskeyNote>> notes({
     required String userId,
     int? limit,
     String? sinceId,
@@ -167,8 +167,8 @@ class UsersApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyNote.fromJson)
         .toList();
   }
 }

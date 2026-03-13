@@ -1,8 +1,7 @@
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
-
-/// チャンネルのJSON表現
-typedef ChannelJson = Map<String, dynamic>;
+import '../models/misskey_channel.dart';
+import '../models/misskey_note.dart';
 
 /// チャンネル関連API
 class ChannelsApi {
@@ -14,15 +13,15 @@ class ChannelsApi {
   ///
   /// 認証ユーザーがお気に入り登録したチャンネルをすべて返す。
   /// スキーマに入力パラメータはない。
-  Future<List<ChannelJson>> myFavorites() async {
+  Future<List<MisskeyChannel>> myFavorites() async {
     final res = await http.send<List<dynamic>>(
       '/channels/my-favorites',
       body: const <String, dynamic>{},
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyChannel.fromJson)
         .toList();
   }
 
@@ -30,13 +29,13 @@ class ChannelsApi {
   ///
   /// [channelId] で対象チャンネルを指定する。
   /// チャンネルが存在しない場合はエラーになる。
-  Future<ChannelJson> show({required String channelId}) async {
-    final res = await http.send<Map<dynamic, dynamic>>(
+  Future<MisskeyChannel> show({required String channelId}) async {
+    final res = await http.send<Map<String, dynamic>>(
       '/channels/show',
       body: <String, dynamic>{'channelId': channelId},
       options: const RequestOptions(authRequired: false, idempotent: true),
     );
-    return res.cast<String, dynamic>();
+    return MisskeyChannel.fromJson(res);
   }
 
   /// 指定チャンネルのタイムラインを取得
@@ -45,7 +44,7 @@ class ChannelsApi {
   /// [sinceId] / [untilId] はIDによるページング、
   /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
   /// [allowPartial] を`true`にすると部分的な結果を許容する。
-  Future<List<ChannelJson>> timeline({
+  Future<List<MisskeyNote>> timeline({
     required String channelId,
     int? limit,
     String? sinceId,
@@ -69,8 +68,8 @@ class ChannelsApi {
       options: const RequestOptions(authRequired: false, idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyNote.fromJson)
         .toList();
   }
 
@@ -78,15 +77,15 @@ class ChannelsApi {
   ///
   /// スキーマに入力パラメータはない。
   /// 最近投稿があったチャンネルを最大10件返す。
-  Future<List<ChannelJson>> featured() async {
+  Future<List<MisskeyChannel>> featured() async {
     final res = await http.send<List<dynamic>>(
       '/channels/featured',
       body: const <String, dynamic>{},
       options: const RequestOptions(authRequired: false, idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyChannel.fromJson)
         .toList();
   }
 
@@ -94,7 +93,7 @@ class ChannelsApi {
   ///
   /// [sinceId] / [untilId] はIDによるページング、
   /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
-  Future<List<ChannelJson>> followed({
+  Future<List<MisskeyChannel>> followed({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -114,8 +113,8 @@ class ChannelsApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyChannel.fromJson)
         .toList();
   }
 
@@ -123,7 +122,7 @@ class ChannelsApi {
   ///
   /// [sinceId] / [untilId] はIDによるページング、
   /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
-  Future<List<ChannelJson>> owned({
+  Future<List<MisskeyChannel>> owned({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -143,8 +142,8 @@ class ChannelsApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyChannel.fromJson)
         .toList();
   }
 
@@ -155,7 +154,7 @@ class ChannelsApi {
   /// `'nameOnly'`のいずれかに指定できる。
   /// [sinceId] / [untilId] はIDによるページング、
   /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
-  Future<List<ChannelJson>> search({
+  Future<List<MisskeyChannel>> search({
     required String query,
     int? limit,
     String? type,
@@ -179,8 +178,8 @@ class ChannelsApi {
       options: const RequestOptions(authRequired: false, idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyChannel.fromJson)
         .toList();
   }
 

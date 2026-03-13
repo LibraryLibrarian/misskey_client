@@ -1,8 +1,7 @@
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
-
-/// NoteのJSON表現
-typedef NoteJson = Map<String, dynamic>;
+import '../models/misskey_note.dart';
+import '../models/misskey_note_reaction.dart';
 
 /// ノート関連API
 class NotesApi {
@@ -19,7 +18,7 @@ class NotesApi {
   /// - [includeMyRenotes]: 自分のリノートを含めるか（デフォルト: true）
   /// - [includeRenotedMyNotes]: 自分のノートのリノートを含めるか（デフォルト: true）
   /// - [includeLocalRenotes]: ローカルユーザーのリノートを含めるか（デフォルト: true）
-  Future<List<NoteJson>> timelineHome({
+  Future<List<MisskeyNote>> timelineHome({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -52,7 +51,7 @@ class NotesApi {
   ///
   /// サーバー全体の公開ノートを返す。
   /// 認証不要（ロールポリシーで制限される場合あり）。
-  Future<List<NoteJson>> timelineGlobal({
+  Future<List<MisskeyNote>> timelineGlobal({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -78,7 +77,7 @@ class NotesApi {
   /// フォロー中ユーザーのノートとローカルの公開ノートを混合して返す。認証必須。
   ///
   /// - [withReplies]と[withFiles]は同時に`true`にできない
-  Future<List<NoteJson>> timelineHybrid({
+  Future<List<MisskeyNote>> timelineHybrid({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -115,7 +114,7 @@ class NotesApi {
   /// 認証不要（ロールポリシーで制限される場合あり）。
   ///
   /// - [withReplies]と[withFiles]は同時に`true`にできない
-  Future<List<NoteJson>> timelineLocal({
+  Future<List<MisskeyNote>> timelineLocal({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -145,13 +144,13 @@ class NotesApi {
   /// 指定した [noteId] のノート詳細を返す。認証不要。
   ///
   /// - 可視性制限は認証状態とサーバー設定によって適用される
-  Future<NoteJson> show({required String noteId}) async {
-    final res = await http.send<Map<dynamic, dynamic>>(
+  Future<MisskeyNote> show({required String noteId}) async {
+    final res = await http.send<Map<String, dynamic>>(
       '/notes/show',
       body: <String, dynamic>{'noteId': noteId},
       options: const RequestOptions(idempotent: true),
     );
-    return res.cast<String, dynamic>();
+    return MisskeyNote.fromJson(res);
   }
 
   /// ノートへの返信一覧を取得（`/api/notes/replies`）
@@ -161,7 +160,7 @@ class NotesApi {
   /// - [limit]: 取得件数 1〜100
   /// - [sinceId] / [untilId]: IDによるページング
   /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  Future<List<NoteJson>> replies({
+  Future<List<MisskeyNote>> replies({
     required String noteId,
     int? limit,
     String? sinceId,
@@ -183,8 +182,8 @@ class NotesApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyNote.fromJson)
         .toList();
   }
 
@@ -195,7 +194,7 @@ class NotesApi {
   /// - [limit]: 取得件数 1〜100
   /// - [sinceId] / [untilId]: IDによるページング
   /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  Future<List<NoteJson>> renotes({
+  Future<List<MisskeyNote>> renotes({
     required String noteId,
     int? limit,
     String? sinceId,
@@ -217,8 +216,8 @@ class NotesApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyNote.fromJson)
         .toList();
   }
 
@@ -231,7 +230,7 @@ class NotesApi {
   /// - [limit]: 取得件数 1〜100
   /// - [sinceId] / [untilId]: IDによるページング
   /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  Future<List<Map<String, dynamic>>> reactions({
+  Future<List<MisskeyNoteReaction>> reactions({
     required String noteId,
     String? type,
     int? limit,
@@ -255,8 +254,8 @@ class NotesApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyNoteReaction.fromJson)
         .toList();
   }
 
@@ -275,7 +274,7 @@ class NotesApi {
   ///
   /// レスポンスオブジェクトは作成されたノートを
   /// `createdNote`キーに格納して返す。
-  Future<NoteJson> create({
+  Future<MisskeyNote> create({
     String? text,
     String? cw,
     String? visibility,
@@ -331,14 +330,14 @@ class NotesApi {
       body['poll'] = poll;
     }
 
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/notes/create',
       body: body,
     );
-    final raw = (res['createdNote'] is Map)
-        ? res['createdNote'] as Map<dynamic, dynamic>
+    final raw = (res['createdNote'] is Map<String, dynamic>)
+        ? res['createdNote'] as Map<String, dynamic>
         : res;
-    return raw.cast<String, dynamic>();
+    return MisskeyNote.fromJson(raw);
   }
 
   /// ノートに添付された投票に回答する（`/api/notes/polls/vote`）
@@ -423,7 +422,7 @@ class NotesApi {
     return results;
   }
 
-  Future<List<NoteJson>> _fetchTimeline({
+  Future<List<MisskeyNote>> _fetchTimeline({
     required String path,
     int? limit,
     required bool authRequired,
@@ -463,8 +462,8 @@ class NotesApi {
     );
 
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyNote.fromJson)
         .toList();
   }
 }

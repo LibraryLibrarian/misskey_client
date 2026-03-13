@@ -2,9 +2,8 @@ import 'package:dio/dio.dart' show FormData, MultipartFile;
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
-
-/// DriveファイルのJSON表現
-typedef DriveFileJson = Map<String, dynamic>;
+import '../../models/misskey_drive_file.dart';
+import '../../models/misskey_note.dart';
 
 /// Driveファイル関連API（`/api/drive/files/*`）
 ///
@@ -26,7 +25,7 @@ class DriveFilesApi {
   /// - [type]: MIMEタイプパターンで絞り込む（例: `"image/*"`）
   /// - [sort]: ソート順（`+createdAt` / `-createdAt` / `+name` / `-name` /
   ///   `+size` / `-size`）
-  Future<List<DriveFileJson>> list({
+  Future<List<MisskeyDriveFile>> list({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -52,8 +51,8 @@ class DriveFilesApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyDriveFile.fromJson)
         .toList();
   }
 
@@ -64,17 +63,17 @@ class DriveFilesApi {
   ///
   /// - [fileId]: ファイルID
   /// - [url]: ファイルのURL
-  Future<DriveFileJson> show({String? fileId, String? url}) async {
+  Future<MisskeyDriveFile> show({String? fileId, String? url}) async {
     final body = <String, dynamic>{
       if (fileId != null) 'fileId': fileId,
       if (url != null) 'url': url,
     };
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/drive/files/show',
       body: body,
       options: const RequestOptions(idempotent: true),
     );
-    return res.cast<String, dynamic>();
+    return MisskeyDriveFile.fromJson(res);
   }
 
   /// ファイルをアップロードする（`/api/drive/files/create`）
@@ -89,7 +88,7 @@ class DriveFilesApi {
   /// - [isSensitive]: センシティブコンテンツとしてマークするか
   /// - [force]: 同名ファイルが存在しても強制アップロードするか
   /// - [onSendProgress]: アップロード進捗コールバック
-  Future<DriveFileJson> create({
+  Future<MisskeyDriveFile> create({
     required List<int> bytes,
     required String filename,
     String? folderId,
@@ -111,12 +110,12 @@ class DriveFilesApi {
       form.fields.add(MapEntry('force', force.toString()));
     }
 
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/drive/files/create',
       body: form,
       onSendProgress: onSendProgress,
     );
-    return res.cast<String, dynamic>();
+    return MisskeyDriveFile.fromJson(res);
   }
 
   /// ドライブファイルのメタ情報を更新する（`/api/drive/files/update`）
@@ -126,7 +125,7 @@ class DriveFilesApi {
   /// - [folderId]: 移動先フォルダーID（`null`でルートへ移動）
   /// - [comment]: コメント（最大512文字）
   /// - [isSensitive]: センシティブコンテンツとしてマークするか
-  Future<DriveFileJson> update({
+  Future<MisskeyDriveFile> update({
     required String fileId,
     String? name,
     String? folderId,
@@ -140,11 +139,11 @@ class DriveFilesApi {
       if (comment != null) 'comment': comment,
       if (isSensitive != null) 'isSensitive': isSensitive,
     };
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/drive/files/update',
       body: body,
     );
-    return res.cast<String, dynamic>();
+    return MisskeyDriveFile.fromJson(res);
   }
 
   /// ドライブファイルを削除する（`/api/drive/files/delete`）
@@ -159,7 +158,7 @@ class DriveFilesApi {
   ///
   /// - [name]: 検索するファイル名（必須）
   /// - [folderId]: 検索対象フォルダーID（`null`でルート）
-  Future<List<DriveFileJson>> find({
+  Future<List<MisskeyDriveFile>> find({
     required String name,
     String? folderId,
   }) async {
@@ -173,8 +172,8 @@ class DriveFilesApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyDriveFile.fromJson)
         .toList();
   }
 
@@ -227,7 +226,7 @@ class DriveFilesApi {
   /// - [limit]: 取得件数（1〜100）
   /// - [sinceId] / [untilId]: IDによるページング
   /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  Future<List<Map<String, dynamic>>> attachedNotes({
+  Future<List<MisskeyNote>> attachedNotes({
     required String fileId,
     int? limit,
     String? sinceId,
@@ -249,8 +248,8 @@ class DriveFilesApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyNote.fromJson)
         .toList();
   }
 }

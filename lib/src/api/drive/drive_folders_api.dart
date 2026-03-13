@@ -1,8 +1,6 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
-
-/// DriveFolderのJSON表現
-typedef DriveFolderJson = Map<String, dynamic>;
+import '../../models/misskey_drive_folder.dart';
 
 /// Driveフォルダ関連API（`/api/drive/folders/*`）
 ///
@@ -21,7 +19,7 @@ class DriveFoldersApi {
   /// - [sinceId] / [untilId]: IDによるページング
   /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
   /// - [folderId]: 親フォルダIDで絞り込む（`null`でルート）
-  Future<List<DriveFolderJson>> list({
+  Future<List<MisskeyDriveFolder>> list({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -43,8 +41,8 @@ class DriveFoldersApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyDriveFolder.fromJson)
         .toList();
   }
 
@@ -52,7 +50,7 @@ class DriveFoldersApi {
   ///
   /// - [name]: フォルダ名（最大200文字、デフォルト`'Untitled'`）
   /// - [parentId]: 親フォルダID（`null`でルートに作成）
-  Future<DriveFolderJson> create({
+  Future<MisskeyDriveFolder> create({
     String? name,
     String? parentId,
   }) async {
@@ -60,23 +58,23 @@ class DriveFoldersApi {
       if (name != null) 'name': name,
       if (parentId != null) 'parentId': parentId,
     };
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/drive/folders/create',
       body: body,
     );
-    return res.cast<String, dynamic>();
+    return MisskeyDriveFolder.fromJson(res);
   }
 
   /// Driveフォルダの詳細を取得する（`/api/drive/folders/show`）
   ///
   /// - [folderId]: 取得対象のフォルダID（必須）
-  Future<DriveFolderJson> show({required String folderId}) async {
-    final res = await http.send<Map<dynamic, dynamic>>(
+  Future<MisskeyDriveFolder> show({required String folderId}) async {
+    final res = await http.send<Map<String, dynamic>>(
       '/drive/folders/show',
       body: <String, dynamic>{'folderId': folderId},
       options: const RequestOptions(idempotent: true),
     );
-    return res.cast<String, dynamic>();
+    return MisskeyDriveFolder.fromJson(res);
   }
 
   /// Driveフォルダのメタ情報を更新する（`/api/drive/folders/update`）
@@ -84,7 +82,7 @@ class DriveFoldersApi {
   /// - [folderId]: 更新対象のフォルダID（必須）
   /// - [name]: 新しいフォルダ名（最大200文字）
   /// - [parentId]: 移動先の親フォルダID（`null`でルートへ移動）
-  Future<DriveFolderJson> update({
+  Future<MisskeyDriveFolder> update({
     required String folderId,
     String? name,
     String? parentId,
@@ -94,11 +92,11 @@ class DriveFoldersApi {
       if (name != null) 'name': name,
       if (parentId != null) 'parentId': parentId,
     };
-    final res = await http.send<Map<dynamic, dynamic>>(
+    final res = await http.send<Map<String, dynamic>>(
       '/drive/folders/update',
       body: body,
     );
-    return res.cast<String, dynamic>();
+    return MisskeyDriveFolder.fromJson(res);
   }
 
   /// Driveフォルダを削除する（`/api/drive/folders/delete`）
@@ -115,7 +113,7 @@ class DriveFoldersApi {
   ///
   /// - [name]: 検索するフォルダ名（必須）
   /// - [parentId]: 検索対象の親フォルダID（`null`でルート）
-  Future<List<DriveFolderJson>> find({
+  Future<List<MisskeyDriveFolder>> find({
     required String name,
     String? parentId,
   }) async {
@@ -129,8 +127,8 @@ class DriveFoldersApi {
       options: const RequestOptions(idempotent: true),
     );
     return res
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => e.cast<String, dynamic>())
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyDriveFolder.fromJson)
         .toList();
   }
 }
