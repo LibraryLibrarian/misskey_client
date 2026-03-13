@@ -81,16 +81,22 @@ class DriveFoldersApi {
   ///
   /// - [folderId]: 更新対象のフォルダID（必須）
   /// - [name]: 新しいフォルダ名（最大200文字）
-  /// - [parentId]: 移動先の親フォルダID（`null`でルートへ移動）
+  /// - [parentId]: 移動先の親フォルダID
+  /// - [moveToRoot]: `true` にするとルートフォルダへ移動する
+  ///   （`parentId: null` を明示送信する）
   Future<MisskeyDriveFolder> update({
     required String folderId,
     String? name,
     String? parentId,
+    bool moveToRoot = false,
   }) async {
     final body = <String, dynamic>{
       'folderId': folderId,
       if (name != null) 'name': name,
-      if (parentId != null) 'parentId': parentId,
+      if (moveToRoot)
+        'parentId': null
+      else if (parentId != null)
+        'parentId': parentId,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/drive/folders/update',

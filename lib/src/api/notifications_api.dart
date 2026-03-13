@@ -33,15 +33,15 @@ class NotificationsApi {
       if (sinceDate != null) 'sinceDate': sinceDate,
       if (untilDate != null) 'untilDate': untilDate,
       if (markAsRead != null) 'markAsRead': markAsRead,
-      if (includeTypes != null && includeTypes.isNotEmpty)
-        'includeTypes': includeTypes,
-      if (excludeTypes != null && excludeTypes.isNotEmpty)
-        'excludeTypes': excludeTypes,
+      if (includeTypes != null) 'includeTypes': includeTypes,
+      if (excludeTypes != null) 'excludeTypes': excludeTypes,
     };
+    // markAsRead=false のときのみ冪等として再試行可
+    final idempotent = markAsRead == false;
     final res = await http.send<List<dynamic>>(
       '/i/notifications',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: RequestOptions(idempotent: idempotent),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -76,10 +76,8 @@ class NotificationsApi {
       if (sinceDate != null) 'sinceDate': sinceDate,
       if (untilDate != null) 'untilDate': untilDate,
       if (markAsRead != null) 'markAsRead': markAsRead,
-      if (includeTypes != null && includeTypes.isNotEmpty)
-        'includeTypes': includeTypes,
-      if (excludeTypes != null && excludeTypes.isNotEmpty)
-        'excludeTypes': excludeTypes,
+      if (includeTypes != null) 'includeTypes': includeTypes,
+      if (excludeTypes != null) 'excludeTypes': excludeTypes,
     };
     // markAsRead=false のときのみ冪等として再試行可
     final idempotent = markAsRead == false;

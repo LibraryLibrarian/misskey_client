@@ -122,20 +122,26 @@ class DriveFilesApi {
   ///
   /// - [fileId]: 更新対象のファイルID（必須）
   /// - [name]: 新しいファイル名
-  /// - [folderId]: 移動先フォルダーID（`null`でルートへ移動）
+  /// - [folderId]: 移動先フォルダーID
+  /// - [moveToRoot]: `true` にするとルートフォルダへ移動する
+  ///   （`folderId: null` を明示送信する）
   /// - [comment]: コメント（最大512文字）
   /// - [isSensitive]: センシティブコンテンツとしてマークするか
   Future<MisskeyDriveFile> update({
     required String fileId,
     String? name,
     String? folderId,
+    bool moveToRoot = false,
     String? comment,
     bool? isSensitive,
   }) async {
     final body = <String, dynamic>{
       'fileId': fileId,
       if (name != null) 'name': name,
-      if (folderId != null) 'folderId': folderId,
+      if (moveToRoot)
+        'folderId': null
+      else if (folderId != null)
+        'folderId': folderId,
       if (comment != null) 'comment': comment,
       if (isSensitive != null) 'isSensitive': isSensitive,
     };

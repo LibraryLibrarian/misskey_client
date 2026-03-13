@@ -26,8 +26,10 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       if (userId != null) 'userId': userId,
-      if (username != null) 'username': username,
-      if (host != null && host.isNotEmpty) 'host': host,
+      if (username != null) ...{
+        'username': username,
+        'host': host?.isNotEmpty == true ? host : null,
+      },
     };
     final res = await http.send<Map<String, dynamic>>(
       '/users/show',
@@ -73,8 +75,10 @@ class UsersApi {
     final body = <String, dynamic>{
       if (limit != null) 'limit': limit,
       if (userId != null) 'userId': userId,
-      if (username != null) 'username': username,
-      if (host != null && host.isNotEmpty) 'host': host,
+      if (username != null) ...{
+        'username': username,
+        'host': host?.isNotEmpty == true ? host : null,
+      },
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,
@@ -110,8 +114,10 @@ class UsersApi {
     final body = <String, dynamic>{
       if (limit != null) 'limit': limit,
       if (userId != null) 'userId': userId,
-      if (username != null) 'username': username,
-      if (host != null && host.isNotEmpty) 'host': host,
+      if (username != null) ...{
+        'username': username,
+        'host': host?.isNotEmpty == true ? host : null,
+      },
       if (sinceId != null) 'sinceId': sinceId,
       if (untilId != null) 'untilId': untilId,
       if (sinceDate != null) 'sinceDate': sinceDate,
