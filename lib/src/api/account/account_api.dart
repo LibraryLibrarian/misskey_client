@@ -1,6 +1,8 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/account/misskey_signin_history.dart';
+import '../../models/gallery/misskey_gallery_like.dart';
+import '../../models/gallery/misskey_gallery_post.dart';
 import '../../models/misskey_note_favorite.dart';
 import '../../models/misskey_user.dart';
 import 'two_factor_api.dart';
@@ -545,4 +547,64 @@ class AccountApi {
         '/i/import-user-lists',
         body: <String, dynamic>{'fileId': fileId},
       );
+
+  /// 自分のギャラリー投稿一覧を取得する（`/api/i/gallery/posts`）
+  ///
+  /// - [limit]: 取得件数 1〜100（デフォルト10）
+  /// - [sinceId] / [untilId]: IDによるページング
+  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  Future<List<MisskeyGalleryPost>> galleryPosts({
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) async {
+    final body = <String, dynamic>{
+      if (limit != null) 'limit': limit,
+      if (sinceId != null) 'sinceId': sinceId,
+      if (untilId != null) 'untilId': untilId,
+      if (sinceDate != null) 'sinceDate': sinceDate,
+      if (untilDate != null) 'untilDate': untilDate,
+    };
+    final res = await http.send<List<dynamic>>(
+      '/i/gallery/posts',
+      body: body,
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyGalleryPost.fromJson)
+        .toList();
+  }
+
+  /// 自分がいいねしたギャラリー投稿一覧を取得する（`/api/i/gallery/likes`）
+  ///
+  /// - [limit]: 取得件数 1〜100（デフォルト10）
+  /// - [sinceId] / [untilId]: IDによるページング
+  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  Future<List<MisskeyGalleryLike>> galleryLikes({
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) async {
+    final body = <String, dynamic>{
+      if (limit != null) 'limit': limit,
+      if (sinceId != null) 'sinceId': sinceId,
+      if (untilId != null) 'untilId': untilId,
+      if (sinceDate != null) 'sinceDate': sinceDate,
+      if (untilDate != null) 'untilDate': untilDate,
+    };
+    final res = await http.send<List<dynamic>>(
+      '/i/gallery/likes',
+      body: body,
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyGalleryLike.fromJson)
+        .toList();
+  }
 }

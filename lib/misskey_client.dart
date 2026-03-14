@@ -21,6 +21,8 @@ export 'src/logging/logger.dart';
 export 'src/models/account/misskey_signin_history.dart';
 export 'src/models/account/misskey_totp_registration.dart';
 export 'src/models/drive/drive_capacity_info.dart';
+export 'src/models/gallery/misskey_gallery_like.dart';
+export 'src/models/gallery/misskey_gallery_post.dart';
 export 'src/models/json_converters.dart';
 export 'src/models/meta.dart';
 export 'src/models/misskey_channel.dart';
