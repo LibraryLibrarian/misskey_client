@@ -2,6 +2,7 @@
 library;
 
 export 'src/api/account/account_api.dart';
+export 'src/api/account/registry_api.dart';
 export 'src/api/account/two_factor_api.dart';
 export 'src/api/channels_api.dart';
 export 'src/api/drive/drive_api.dart';
@@ -18,6 +19,8 @@ export 'src/client/token_provider.dart';
 export 'src/exception/misskey_client_exception.dart';
 export 'src/logging/function_logger.dart';
 export 'src/logging/logger.dart';
+export 'src/models/account/misskey_registry_detail.dart';
+export 'src/models/account/misskey_registry_scope.dart';
 export 'src/models/account/misskey_signin_history.dart';
 export 'src/models/account/misskey_totp_registration.dart';
 export 'src/models/drive/drive_capacity_info.dart';

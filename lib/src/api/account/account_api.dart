@@ -5,14 +5,19 @@ import '../../models/gallery/misskey_gallery_like.dart';
 import '../../models/gallery/misskey_gallery_post.dart';
 import '../../models/misskey_note_favorite.dart';
 import '../../models/misskey_user.dart';
+import 'registry_api.dart';
 import 'two_factor_api.dart';
 
 /// 現在ログイン中ユーザー（自分）のAPI（`/api/i/*`）
 class AccountApi {
   AccountApi({required this.http})
-      : twoFactor = TwoFactorApi(http: http);
+      : registry = RegistryApi(http: http),
+        twoFactor = TwoFactorApi(http: http);
 
   final MisskeyHttp http;
+
+  /// レジストリ（クライアント設定保存領域）関連API
+  final RegistryApi registry;
 
   /// 二要素認証（2FA）関連API
   final TwoFactorApi twoFactor;
