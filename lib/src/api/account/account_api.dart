@@ -7,12 +7,14 @@ import '../../models/misskey_note_favorite.dart';
 import '../../models/misskey_user.dart';
 import 'registry_api.dart';
 import 'two_factor_api.dart';
+import 'webhooks_api.dart';
 
 /// 現在ログイン中ユーザー（自分）のAPI（`/api/i/*`）
 class AccountApi {
   AccountApi({required this.http})
       : registry = RegistryApi(http: http),
-        twoFactor = TwoFactorApi(http: http);
+        twoFactor = TwoFactorApi(http: http),
+        webhooks = WebhooksApi(http: http);
 
   final MisskeyHttp http;
 
@@ -21,6 +23,9 @@ class AccountApi {
 
   /// 二要素認証（2FA）関連API
   final TwoFactorApi twoFactor;
+
+  /// Webhook管理API
+  final WebhooksApi webhooks;
 
   /// 現在ログイン中ユーザーの詳細を取得（`/api/i`）
   ///
