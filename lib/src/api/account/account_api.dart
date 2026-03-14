@@ -76,6 +76,20 @@ class AccountApi {
   /// - [mutedInstances]: ミュートするインスタンスのホスト名リスト
   /// - [alsoKnownAs]: 別アカウント（引っ越し元）のURI（最大10件）
   /// - [followedMessage]: フォローされた時に表示するメッセージ
+  /// - [avatarDecorations]: アバターデコレーション（最大16件）。
+  ///   各要素は `{id: String, angle: double?,
+  ///   flipH: bool?, offsetX: double?, offsetY: double?}`
+  /// - [chatScope]: チャットの受信範囲（`everyone`/`followers`/`following`/`mutual`/`none`）
+  /// - [notificationRecieveConfig]: 通知タイプ別の受信設定。
+  ///   各キーは通知タイプ名（`note`/`follow`/`mention`/`reply`/`renote`/
+  ///   `quote`/`reaction`/`pollEnded`/`scheduledNotePosted`/
+  ///   `scheduledNotePostFailed`/`receiveFollowRequest`/
+  ///   `followRequestAccepted`/`roleAssigned`/
+  ///   `chatRoomInvitationReceived`/`achievementEarned`/`app`/`test`）。
+  ///   値は `{"type": "all"|"following"|"follower"|
+  ///   "mutualFollow"|"followingOrFollower"|"never"}`
+  ///   または `{"type": "list", "userListId": "<id>"}` のいずれか。
+  /// - [emailNotificationTypes]: メール通知を受け取る通知タイプのリスト
   Future<MisskeyUser> update({
     String? name,
     String? description,
@@ -83,6 +97,7 @@ class AccountApi {
     String? birthday,
     String? lang,
     String? avatarId,
+    List<Map<String, dynamic>>? avatarDecorations,
     String? bannerId,
     List<Map<String, String>>? fields,
     bool? isLocked,
@@ -101,6 +116,7 @@ class AccountApi {
     bool? autoSensitive,
     String? followingVisibility,
     String? followersVisibility,
+    String? chatScope,
     bool? requireSigninToViewContents,
     int? makeNotesFollowersOnlyBefore,
     int? makeNotesHiddenBefore,
@@ -108,6 +124,8 @@ class AccountApi {
     List<dynamic>? mutedWords,
     List<dynamic>? hardMutedWords,
     List<String>? mutedInstances,
+    Map<String, Map<String, dynamic>>? notificationRecieveConfig,
+    List<String>? emailNotificationTypes,
     List<String>? alsoKnownAs,
     String? followedMessage,
   }) async {
@@ -118,6 +136,7 @@ class AccountApi {
       if (birthday != null) 'birthday': birthday,
       if (lang != null) 'lang': lang,
       if (avatarId != null) 'avatarId': avatarId,
+      if (avatarDecorations != null) 'avatarDecorations': avatarDecorations,
       if (bannerId != null) 'bannerId': bannerId,
       if (fields != null) 'fields': fields,
       if (isLocked != null) 'isLocked': isLocked,
@@ -139,6 +158,7 @@ class AccountApi {
         'followingVisibility': followingVisibility,
       if (followersVisibility != null)
         'followersVisibility': followersVisibility,
+      if (chatScope != null) 'chatScope': chatScope,
       if (requireSigninToViewContents != null)
         'requireSigninToViewContents': requireSigninToViewContents,
       if (makeNotesFollowersOnlyBefore != null)
@@ -149,6 +169,10 @@ class AccountApi {
       if (mutedWords != null) 'mutedWords': mutedWords,
       if (hardMutedWords != null) 'hardMutedWords': hardMutedWords,
       if (mutedInstances != null) 'mutedInstances': mutedInstances,
+      if (notificationRecieveConfig != null)
+        'notificationRecieveConfig': notificationRecieveConfig,
+      if (emailNotificationTypes != null)
+        'emailNotificationTypes': emailNotificationTypes,
       if (alsoKnownAs != null) 'alsoKnownAs': alsoKnownAs,
       if (followedMessage != null) 'followedMessage': followedMessage,
     };
