@@ -379,29 +379,17 @@ class AccountApi {
         body: <String, dynamic>{'password': password},
       );
 
-  /// 認可済みトークンを取り消す（`/api/i/revoke-token`）
-  ///
-  /// [tokenId] または [token] のいずれか一方を指定する。
-  /// 両方省略した場合は [AssertionError] をスローする。
-  ///
-  /// - [tokenId]: 取り消すトークンのID
-  /// - [token]: トークン文字列
-  Future<void> revokeToken({
-    String? tokenId,
-    String? token,
-  }) {
-    assert(
-      tokenId != null || token != null,
-      'tokenId または token のいずれかを指定してください',
-    );
-    return http.send<Object?>(
-      '/i/revoke-token',
-      body: <String, dynamic>{
-        if (tokenId != null) 'tokenId': tokenId,
-        if (token != null) 'token': token,
-      },
-    );
-  }
+  /// トークンIDを指定して認可済みトークンを取り消す（`/api/i/revoke-token`）
+  Future<void> revokeTokenById(String tokenId) => http.send<Object?>(
+        '/i/revoke-token',
+        body: <String, dynamic>{'tokenId': tokenId},
+      );
+
+  /// トークン文字列を指定して認可済みトークンを取り消す（`/api/i/revoke-token`）
+  Future<void> revokeTokenByToken(String token) => http.send<Object?>(
+        '/i/revoke-token',
+        body: <String, dynamic>{'token': token},
+      );
 
   /// アカウントを削除する（`/api/i/delete-account`）
   ///

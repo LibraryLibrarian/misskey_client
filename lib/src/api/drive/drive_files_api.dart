@@ -56,21 +56,23 @@ class DriveFilesApi {
         .toList();
   }
 
-  /// ドライブファイルの詳細を取得する（`/api/drive/files/show`）
-  ///
-  /// [fileId] または [url] のいずれか一方を指定する。
-  /// どちらも省略した場合はサーバーがエラーを返す。
-  ///
-  /// - [fileId]: ファイルID
-  /// - [url]: ファイルのURL
-  Future<MisskeyDriveFile> show({String? fileId, String? url}) async {
-    final body = <String, dynamic>{
-      if (fileId != null) 'fileId': fileId,
-      if (url != null) 'url': url,
-    };
+  /// ファイルIDを指定してドライブファイルの詳細を取得する
+  /// （`/api/drive/files/show`）
+  Future<MisskeyDriveFile> showByFileId(String fileId) async {
     final res = await http.send<Map<String, dynamic>>(
       '/drive/files/show',
-      body: body,
+      body: <String, dynamic>{'fileId': fileId},
+      options: const RequestOptions(idempotent: true),
+    );
+    return MisskeyDriveFile.fromJson(res);
+  }
+
+  /// URLを指定してドライブファイルの詳細を取得する
+  /// （`/api/drive/files/show`）
+  Future<MisskeyDriveFile> showByUrl(String url) async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/drive/files/show',
+      body: <String, dynamic>{'url': url},
       options: const RequestOptions(idempotent: true),
     );
     return MisskeyDriveFile.fromJson(res);

@@ -14,27 +14,37 @@ class UsersApi {
 
   final MisskeyHttp http;
 
-  /// ユーザー情報を1件取得
+  /// ユーザーIDを指定してユーザー情報を1件取得
   ///
-  /// [userId]・[username] のいずれかでユーザーを指定する。
-  /// 複数ユーザーをまとめて取得する場合は `showMany` を使うこと。
-  /// [host] を省略するとローカルユーザーとして検索する。
+  /// 複数ユーザーをまとめて取得する場合は [showMany] を使うこと。
   /// 認証は任意（未認証でも利用可能）。
-  Future<MisskeyUser> showOne({
-    String? userId,
-    String? username,
+  Future<MisskeyUser> showOneByUserId(String userId) async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/users/show',
+      body: <String, dynamic>{'userId': userId},
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
+    );
+    return MisskeyUser.fromJson(res);
+  }
+
+  /// ユーザー名を指定してユーザー情報を1件取得
+  ///
+  /// [host] を省略するとローカルユーザーとして検索する。
+  /// 複数ユーザーをまとめて取得する場合は [showMany] を使うこと。
+  /// 認証は任意（未認証でも利用可能）。
+  Future<MisskeyUser> showOneByUsername(
+    String username, {
     String? host,
   }) async {
-    final body = <String, dynamic>{
-      if (userId != null) 'userId': userId,
-      if (username != null) ...{
+    final res = await http.send<Map<String, dynamic>>(
+      '/users/show',
+      body: <String, dynamic>{
         'username': username,
         'host': host?.isNotEmpty == true ? host : null,
       },
-    };
-    final res = await http.send<Map<String, dynamic>>(
-      '/users/show',
-      body: body,
       options: const RequestOptions(
         authMode: AuthMode.optional,
         idempotent: true,
@@ -63,89 +73,103 @@ class UsersApi {
         .toList();
   }
 
-  /// フォロワー一覧を取得
+  /// ユーザーIDを指定してフォロワー一覧を取得
   ///
-  /// [userId] または [username]（必要に応じて [host]）でユーザーを指定する。
   /// [limit] は1〜100。
   /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
   /// 認証は任意（未認証でも利用可能）。
-  Future<List<MisskeyFollowing>> followers({
-    String? userId,
-    String? username,
-    String? host,
+  Future<List<MisskeyFollowing>> followersByUserId(
+    String userId, {
     int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
     int? untilDate,
-  }) async {
-    final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (userId != null) 'userId': userId,
-      if (username != null) ...{
-        'username': username,
-        'host': host?.isNotEmpty == true ? host : null,
-      },
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-    };
-    final res = await http.send<List<dynamic>>(
-      '/users/followers',
-      body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.optional,
-        idempotent: true,
-      ),
-    );
-    return res
-        .whereType<Map<String, dynamic>>()
-        .map(MisskeyFollowing.fromJson)
-        .toList();
-  }
+  }) =>
+      _fetchFollowList(
+        path: '/users/followers',
+        userId: userId,
+        limit: limit,
+        sinceId: sinceId,
+        untilId: untilId,
+        sinceDate: sinceDate,
+        untilDate: untilDate,
+      );
 
-  /// フォロー一覧を取得
+  /// ユーザー名を指定してフォロワー一覧を取得
   ///
-  /// [userId] または [username]（必要に応じて [host]）でユーザーを指定する。
+  /// [host] を省略するとローカルユーザーとして検索する。
   /// [limit] は1〜100。
   /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
   /// 認証は任意（未認証でも利用可能）。
-  Future<List<MisskeyFollowing>> following({
-    String? userId,
-    String? username,
+  Future<List<MisskeyFollowing>> followersByUsername(
+    String username, {
     String? host,
     int? limit,
     String? sinceId,
     String? untilId,
     int? sinceDate,
     int? untilDate,
-  }) async {
-    final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (userId != null) 'userId': userId,
-      if (username != null) ...{
-        'username': username,
-        'host': host?.isNotEmpty == true ? host : null,
-      },
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-    };
-    final res = await http.send<List<dynamic>>(
-      '/users/following',
-      body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.optional,
-        idempotent: true,
-      ),
-    );
-    return res
-        .whereType<Map<String, dynamic>>()
-        .map(MisskeyFollowing.fromJson)
-        .toList();
-  }
+  }) =>
+      _fetchFollowList(
+        path: '/users/followers',
+        username: username,
+        host: host,
+        limit: limit,
+        sinceId: sinceId,
+        untilId: untilId,
+        sinceDate: sinceDate,
+        untilDate: untilDate,
+      );
+
+  /// ユーザーIDを指定してフォロー一覧を取得
+  ///
+  /// [limit] は1〜100。
+  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
+  /// 認証は任意（未認証でも利用可能）。
+  Future<List<MisskeyFollowing>> followingByUserId(
+    String userId, {
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) =>
+      _fetchFollowList(
+        path: '/users/following',
+        userId: userId,
+        limit: limit,
+        sinceId: sinceId,
+        untilId: untilId,
+        sinceDate: sinceDate,
+        untilDate: untilDate,
+      );
+
+  /// ユーザー名を指定してフォロー一覧を取得
+  ///
+  /// [host] を省略するとローカルユーザーとして検索する。
+  /// [limit] は1〜100。
+  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
+  /// 認証は任意（未認証でも利用可能）。
+  Future<List<MisskeyFollowing>> followingByUsername(
+    String username, {
+    String? host,
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) =>
+      _fetchFollowList(
+        path: '/users/following',
+        username: username,
+        host: host,
+        limit: limit,
+        sinceId: sinceId,
+        untilId: untilId,
+        sinceDate: sinceDate,
+        untilDate: untilDate,
+      );
 
   /// 指定ユーザーのノート一覧を取得する
   ///
@@ -191,6 +215,44 @@ class UsersApi {
     return res
         .whereType<Map<String, dynamic>>()
         .map(MisskeyNote.fromJson)
+        .toList();
+  }
+
+  /// フォロワー / フォロー一覧取得の共通ヘルパー
+  Future<List<MisskeyFollowing>> _fetchFollowList({
+    required String path,
+    String? userId,
+    String? username,
+    String? host,
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) async {
+    final body = <String, dynamic>{
+      if (limit != null) 'limit': limit,
+      if (userId != null) 'userId': userId,
+      if (username != null) ...{
+        'username': username,
+        'host': host?.isNotEmpty == true ? host : null,
+      },
+      if (sinceId != null) 'sinceId': sinceId,
+      if (untilId != null) 'untilId': untilId,
+      if (sinceDate != null) 'sinceDate': sinceDate,
+      if (untilDate != null) 'untilDate': untilDate,
+    };
+    final res = await http.send<List<dynamic>>(
+      path,
+      body: body,
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyFollowing.fromJson)
         .toList();
   }
 }

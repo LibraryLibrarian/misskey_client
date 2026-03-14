@@ -308,6 +308,18 @@ class NotesApi {
     int? pollExpiresAt,
     int? pollExpiredAfter,
   }) async {
+    final hasContent = text != null ||
+        renoteId != null ||
+        (fileIds != null && fileIds.isNotEmpty) ||
+        (mediaIds != null && mediaIds.isNotEmpty) ||
+        (pollChoices != null && pollChoices.isNotEmpty);
+    if (!hasContent) {
+      throw ArgumentError(
+        'text, renoteId, fileIds, mediaIds, pollChoices の'
+        'いずれかを指定してください',
+      );
+    }
+
     final body = <String, dynamic>{
       if (text != null) 'text': text,
       if (cw != null) 'cw': cw,
