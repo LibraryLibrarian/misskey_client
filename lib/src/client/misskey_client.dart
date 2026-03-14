@@ -1,4 +1,4 @@
-import '../api/account_api.dart';
+import '../api/account/account_api.dart';
 import '../api/channels_api.dart';
 import '../api/drive/drive_api.dart';
 import '../api/meta_api.dart';

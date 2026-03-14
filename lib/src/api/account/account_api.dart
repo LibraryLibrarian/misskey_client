@@ -1,14 +1,19 @@
-import '../client/misskey_http.dart';
-import '../client/request_options.dart';
-import '../models/misskey_note_favorite.dart';
-import '../models/misskey_signin_history.dart';
-import '../models/misskey_user.dart';
+import '../../client/misskey_http.dart';
+import '../../client/request_options.dart';
+import '../../models/account/misskey_signin_history.dart';
+import '../../models/misskey_note_favorite.dart';
+import '../../models/misskey_user.dart';
+import 'two_factor_api.dart';
 
 /// 現在ログイン中ユーザー（自分）のAPI（`/api/i/*`）
 class AccountApi {
-  const AccountApi({required this.http});
+  AccountApi({required this.http})
+      : twoFactor = TwoFactorApi(http: http);
 
   final MisskeyHttp http;
+
+  /// 二要素認証（2FA）関連API
+  final TwoFactorApi twoFactor;
 
   /// 現在ログイン中ユーザーの詳細を取得（`/api/i`）
   ///
