@@ -1,22 +1,26 @@
+import 'auth_mode.dart';
+
 /// リクエスト単位のオプション（内部使用）
 class RequestOptions {
   /// リクエスト単位のオプション
   ///
-  /// - [authRequired]: 認証必須か（デフォルト: true）
+  /// - [authMode]: 認証モード（デフォルト: [AuthMode.required]）
   /// - [idempotent]: 冪等なリクエストか（デフォルト: false）
   /// - [contentType]: リクエストのContent-Type（未指定時はDioが推論）
   /// - [headers]: リクエスト固有の追加ヘッダ
   const RequestOptions({
-    this.authRequired = true,
+    this.authMode = AuthMode.required,
     this.idempotent = false,
     this.contentType,
     this.headers = const {},
   });
 
-  /// 認証必須か
+  /// 認証モード
   ///
-  /// trueの場合 POSTのJSON bodyに`i`を自動注入する
-  final bool authRequired;
+  /// - [AuthMode.required]: トークンを必ず注入する
+  /// - [AuthMode.optional]: トークンがあれば注入する
+  /// - [AuthMode.none]: トークンを注入しない
+  final AuthMode authMode;
 
   /// 冪等リクエストか
   ///

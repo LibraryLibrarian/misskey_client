@@ -1,3 +1,4 @@
+import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/drive/drive_capacity_info.dart';
@@ -47,7 +48,7 @@ class DriveStatsApi {
       '/charts/drive',
       body: body,
       options: const RequestOptions(
-        authRequired: false,
+        authMode: AuthMode.none,
         idempotent: true,
       ),
     );
@@ -79,7 +80,7 @@ class DriveStatsApi {
       '/charts/user/drive',
       body: body,
       options: const RequestOptions(
-        authRequired: false,
+        authMode: AuthMode.none,
         idempotent: true,
       ),
     );

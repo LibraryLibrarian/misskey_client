@@ -1,3 +1,4 @@
+import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/meta.dart';
@@ -28,7 +29,7 @@ class MetaApi {
       '/meta',
       body: const <String, dynamic>{},
       options: const RequestOptions(
-        authRequired: false,
+        authMode: AuthMode.none,
         idempotent: true,
       ),
     );

@@ -1,3 +1,4 @@
+import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_note.dart';
@@ -44,7 +45,7 @@ class NotesApi {
         includeMyRenotes: includeMyRenotes,
         includeRenotedMyNotes: includeRenotedMyNotes,
         includeLocalRenotes: includeLocalRenotes,
-        authRequired: true,
+        authMode: AuthMode.required,
       );
 
   /// グローバルタイムラインを取得（`/api/notes/global-timeline`）
@@ -69,7 +70,7 @@ class NotesApi {
         untilDate: untilDate,
         withRenotes: withRenotes,
         withFiles: withFiles,
-        authRequired: false,
+        authMode: AuthMode.optional,
       );
 
   /// ハイブリッドタイムラインを取得（`/api/notes/hybrid-timeline`）
@@ -105,7 +106,7 @@ class NotesApi {
         includeMyRenotes: includeMyRenotes,
         includeRenotedMyNotes: includeRenotedMyNotes,
         includeLocalRenotes: includeLocalRenotes,
-        authRequired: true,
+        authMode: AuthMode.required,
       );
 
   /// ローカルタイムラインを取得（`/api/notes/local-timeline`）
@@ -136,7 +137,7 @@ class NotesApi {
         withRenotes: withRenotes,
         withReplies: withReplies,
         withFiles: withFiles,
-        authRequired: false,
+        authMode: AuthMode.optional,
       );
 
   /// 単一ノートを取得（`/api/notes/show`）
@@ -148,7 +149,10 @@ class NotesApi {
     final res = await http.send<Map<String, dynamic>>(
       '/notes/show',
       body: <String, dynamic>{'noteId': noteId},
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return MisskeyNote.fromJson(res);
   }
@@ -179,7 +183,10 @@ class NotesApi {
     final res = await http.send<List<dynamic>>(
       '/notes/replies',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -213,7 +220,10 @@ class NotesApi {
     final res = await http.send<List<dynamic>>(
       '/notes/renotes',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -251,7 +261,10 @@ class NotesApi {
     final res = await http.send<List<dynamic>>(
       '/notes/reactions',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -403,6 +416,10 @@ class NotesApi {
             if (host != null && host.isNotEmpty) 'host': host,
             'limit': 1,
           },
+          options: const RequestOptions(
+            authMode: AuthMode.optional,
+            idempotent: true,
+          ),
         );
         if (res.isNotEmpty && res.first is Map) {
           final user =
@@ -425,7 +442,7 @@ class NotesApi {
   Future<List<MisskeyNote>> _fetchTimeline({
     required String path,
     int? limit,
-    required bool authRequired,
+    required AuthMode authMode,
     String? sinceId,
     String? untilId,
     int? sinceDate,
@@ -458,7 +475,7 @@ class NotesApi {
     final res = await http.send<List<dynamic>>(
       path,
       body: body,
-      options: RequestOptions(authRequired: authRequired, idempotent: true),
+      options: RequestOptions(authMode: authMode, idempotent: true),
     );
 
     return res

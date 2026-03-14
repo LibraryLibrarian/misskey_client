@@ -1,3 +1,4 @@
+import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_following.dart';
@@ -34,7 +35,10 @@ class UsersApi {
     final res = await http.send<Map<String, dynamic>>(
       '/users/show',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return MisskeyUser.fromJson(res);
   }
@@ -48,7 +52,10 @@ class UsersApi {
     final res = await http.send<List<dynamic>>(
       '/users/show',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -87,7 +94,10 @@ class UsersApi {
     final res = await http.send<List<dynamic>>(
       '/users/followers',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -126,7 +136,10 @@ class UsersApi {
     final res = await http.send<List<dynamic>>(
       '/users/following',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -170,7 +183,10 @@ class UsersApi {
     final res = await http.send<List<dynamic>>(
       '/users/notes',
       body: body,
-      options: const RequestOptions(idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()

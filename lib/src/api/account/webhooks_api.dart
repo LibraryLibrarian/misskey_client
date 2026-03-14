@@ -1,5 +1,6 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/optional.dart';
 import '../../models/account/misskey_webhook.dart';
 
 /// Webhook管理API（`/api/i/webhooks/*`）
@@ -72,7 +73,7 @@ class WebhooksApi {
   /// - [webhookId]: 更新対象のWebhook ID（必須）
   /// - [name]: Webhook名（1〜100文字）
   /// - [url]: 送信先URL（1〜1024文字）
-  /// - [secret]: シークレット（最大1024文字、`null`でリセット）
+  /// - [secret]: シークレット（最大1024文字、`Optional.null_()`でリセット）
   /// - [on]: 購読するイベントタイプ
   /// - [active]: 有効/無効の切り替え
   ///
@@ -81,21 +82,25 @@ class WebhooksApi {
     required String webhookId,
     String? name,
     String? url,
-    String? secret,
+    Optional<String>? secret,
     List<String>? on,
     bool? active,
-  }) =>
-      http.send<Object?>(
-        '/i/webhooks/update',
-        body: <String, dynamic>{
-          'webhookId': webhookId,
-          if (name != null) 'name': name,
-          if (url != null) 'url': url,
-          if (secret != null) 'secret': secret,
-          if (on != null) 'on': on,
-          if (active != null) 'active': active,
-        },
-      );
+  }) {
+    final body = <String, dynamic>{
+      'webhookId': webhookId,
+      if (name != null) 'name': name,
+      if (url != null) 'url': url,
+      if (on != null) 'on': on,
+      if (active != null) 'active': active,
+    };
+    if (secret case Some<String>(:final value)) {
+      body['secret'] = value;
+    }
+    return http.send<Object?>(
+      '/i/webhooks/update',
+      body: body,
+    );
+  }
 
   /// Webhookを削除する（`/api/i/webhooks/delete`）
   ///

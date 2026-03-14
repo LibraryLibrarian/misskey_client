@@ -1,3 +1,4 @@
+import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_channel.dart';
@@ -33,7 +34,10 @@ class ChannelsApi {
     final res = await http.send<Map<String, dynamic>>(
       '/channels/show',
       body: <String, dynamic>{'channelId': channelId},
-      options: const RequestOptions(authRequired: false, idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return MisskeyChannel.fromJson(res);
   }
@@ -65,7 +69,10 @@ class ChannelsApi {
     final res = await http.send<List<dynamic>>(
       '/channels/timeline',
       body: body,
-      options: const RequestOptions(authRequired: false, idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -81,7 +88,10 @@ class ChannelsApi {
     final res = await http.send<List<dynamic>>(
       '/channels/featured',
       body: const <String, dynamic>{},
-      options: const RequestOptions(authRequired: false, idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -175,7 +185,10 @@ class ChannelsApi {
     final res = await http.send<List<dynamic>>(
       '/channels/search',
       body: body,
-      options: const RequestOptions(authRequired: false, idempotent: true),
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
     return res
         .whereType<Map<String, dynamic>>()

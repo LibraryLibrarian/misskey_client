@@ -1,5 +1,6 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/optional.dart';
 import '../../models/account/misskey_signin_history.dart';
 import '../../models/gallery/misskey_gallery_like.dart';
 import '../../models/gallery/misskey_gallery_post.dart';
@@ -43,11 +44,16 @@ class AccountApi {
   /// 更新対象のフィールドのみ指定する。指定しないフィールドは変更されない。
   /// 更新後のユーザー情報（MeDetailed）を返す。
   ///
-  /// - [name]: 表示名（`null`で空にリセット）
+  /// サーバー側で`null`を受け付ける項目は[Optional]型で受け取る。
+  /// - `Optional('値')` → 値をセット
+  /// - `Optional.null_()` → `null`を送信してクリア
+  /// - 省略（デフォルト`null`）→ 変更なし
+  ///
+  /// - [name]: 表示名
   /// - [description]: 自己紹介文
   /// - [location]: 所在地
-  /// - [birthday]: 誕生日（`YYYY-MM-DD`形式、`null`でリセット）
-  /// - [lang]: 言語コード（`null`でリセット）
+  /// - [birthday]: 誕生日（`YYYY-MM-DD`形式）
+  /// - [lang]: 言語コード
   /// - [avatarId]: アバター画像のドライブファイルID
   /// - [bannerId]: バナー画像のドライブファイルID
   /// - [fields]: プロフィールフィールド（最大16件、各 `{name, value}`）
@@ -68,9 +74,9 @@ class AccountApi {
   /// - [followingVisibility]: フォロー一覧の公開範囲（`public`/`followers`/`private`）
   /// - [followersVisibility]: フォロワー一覧の公開範囲（`public`/`followers`/`private`）
   /// - [requireSigninToViewContents]: コンテンツ閲覧にサインインを必須にするか
-  /// - [makeNotesFollowersOnlyBefore]: 指定時刻以前のノートをフォロワー限定にする（ms、`null`でリセット）
-  /// - [makeNotesHiddenBefore]: 指定時刻以前のノートを非公開にする（ms、`null`でリセット）
-  /// - [pinnedPageId]: ピン留めするページID（`null`でリセット）
+  /// - [makeNotesFollowersOnlyBefore]: 指定時刻以前のノートをフォロワー限定にする（ms）
+  /// - [makeNotesHiddenBefore]: 指定時刻以前のノートを非公開にする（ms）
+  /// - [pinnedPageId]: ピン留めするページID
   /// - [mutedWords]: ミュートワード（各要素は AND 条件の文字列リストまたは正規表現文字列）
   /// - [hardMutedWords]: ハードミュートワード
   /// - [mutedInstances]: ミュートするインスタンスのホスト名リスト
@@ -91,14 +97,14 @@ class AccountApi {
   ///   または `{"type": "list", "userListId": "<id>"}` のいずれか。
   /// - [emailNotificationTypes]: メール通知を受け取る通知タイプのリスト
   Future<MisskeyUser> update({
-    String? name,
-    String? description,
-    String? location,
-    String? birthday,
-    String? lang,
-    String? avatarId,
+    Optional<String>? name,
+    Optional<String>? description,
+    Optional<String>? location,
+    Optional<String>? birthday,
+    Optional<String>? lang,
+    Optional<String>? avatarId,
     List<Map<String, dynamic>>? avatarDecorations,
-    String? bannerId,
+    Optional<String>? bannerId,
     List<Map<String, String>>? fields,
     bool? isLocked,
     bool? isExplorable,
@@ -118,9 +124,9 @@ class AccountApi {
     String? followersVisibility,
     String? chatScope,
     bool? requireSigninToViewContents,
-    int? makeNotesFollowersOnlyBefore,
-    int? makeNotesHiddenBefore,
-    String? pinnedPageId,
+    Optional<int>? makeNotesFollowersOnlyBefore,
+    Optional<int>? makeNotesHiddenBefore,
+    Optional<String>? pinnedPageId,
     List<dynamic>? mutedWords,
     List<dynamic>? hardMutedWords,
     List<String>? mutedInstances,
@@ -129,53 +135,65 @@ class AccountApi {
     List<String>? alsoKnownAs,
     String? followedMessage,
   }) async {
-    final body = <String, dynamic>{
-      if (name != null) 'name': name,
-      if (description != null) 'description': description,
-      if (location != null) 'location': location,
-      if (birthday != null) 'birthday': birthday,
-      if (lang != null) 'lang': lang,
-      if (avatarId != null) 'avatarId': avatarId,
-      if (avatarDecorations != null) 'avatarDecorations': avatarDecorations,
-      if (bannerId != null) 'bannerId': bannerId,
-      if (fields != null) 'fields': fields,
-      if (isLocked != null) 'isLocked': isLocked,
-      if (isExplorable != null) 'isExplorable': isExplorable,
-      if (hideOnlineStatus != null) 'hideOnlineStatus': hideOnlineStatus,
-      if (publicReactions != null) 'publicReactions': publicReactions,
-      if (carefulBot != null) 'carefulBot': carefulBot,
-      if (autoAcceptFollowed != null) 'autoAcceptFollowed': autoAcceptFollowed,
-      if (noCrawle != null) 'noCrawle': noCrawle,
-      if (preventAiLearning != null) 'preventAiLearning': preventAiLearning,
-      if (isBot != null) 'isBot': isBot,
-      if (isCat != null) 'isCat': isCat,
-      if (injectFeaturedNote != null) 'injectFeaturedNote': injectFeaturedNote,
-      if (receiveAnnouncementEmail != null)
-        'receiveAnnouncementEmail': receiveAnnouncementEmail,
-      if (alwaysMarkNsfw != null) 'alwaysMarkNsfw': alwaysMarkNsfw,
-      if (autoSensitive != null) 'autoSensitive': autoSensitive,
-      if (followingVisibility != null)
-        'followingVisibility': followingVisibility,
-      if (followersVisibility != null)
-        'followersVisibility': followersVisibility,
-      if (chatScope != null) 'chatScope': chatScope,
-      if (requireSigninToViewContents != null)
-        'requireSigninToViewContents': requireSigninToViewContents,
-      if (makeNotesFollowersOnlyBefore != null)
-        'makeNotesFollowersOnlyBefore': makeNotesFollowersOnlyBefore,
-      if (makeNotesHiddenBefore != null)
-        'makeNotesHiddenBefore': makeNotesHiddenBefore,
-      if (pinnedPageId != null) 'pinnedPageId': pinnedPageId,
-      if (mutedWords != null) 'mutedWords': mutedWords,
-      if (hardMutedWords != null) 'hardMutedWords': hardMutedWords,
-      if (mutedInstances != null) 'mutedInstances': mutedInstances,
-      if (notificationRecieveConfig != null)
-        'notificationRecieveConfig': notificationRecieveConfig,
-      if (emailNotificationTypes != null)
-        'emailNotificationTypes': emailNotificationTypes,
-      if (alsoKnownAs != null) 'alsoKnownAs': alsoKnownAs,
-      if (followedMessage != null) 'followedMessage': followedMessage,
-    };
+    final body = <String, dynamic>{};
+    _putOptional(body, 'name', name);
+    _putOptional(body, 'description', description);
+    _putOptional(body, 'location', location);
+    _putOptional(body, 'birthday', birthday);
+    _putOptional(body, 'lang', lang);
+    _putOptional(body, 'avatarId', avatarId);
+    if (avatarDecorations != null) {
+      body['avatarDecorations'] = avatarDecorations;
+    }
+    _putOptional(body, 'bannerId', bannerId);
+    if (fields != null) body['fields'] = fields;
+    if (isLocked != null) body['isLocked'] = isLocked;
+    if (isExplorable != null) body['isExplorable'] = isExplorable;
+    if (hideOnlineStatus != null) body['hideOnlineStatus'] = hideOnlineStatus;
+    if (publicReactions != null) body['publicReactions'] = publicReactions;
+    if (carefulBot != null) body['carefulBot'] = carefulBot;
+    if (autoAcceptFollowed != null) {
+      body['autoAcceptFollowed'] = autoAcceptFollowed;
+    }
+    if (noCrawle != null) body['noCrawle'] = noCrawle;
+    if (preventAiLearning != null) {
+      body['preventAiLearning'] = preventAiLearning;
+    }
+    if (isBot != null) body['isBot'] = isBot;
+    if (isCat != null) body['isCat'] = isCat;
+    if (injectFeaturedNote != null) {
+      body['injectFeaturedNote'] = injectFeaturedNote;
+    }
+    if (receiveAnnouncementEmail != null) {
+      body['receiveAnnouncementEmail'] = receiveAnnouncementEmail;
+    }
+    if (alwaysMarkNsfw != null) body['alwaysMarkNsfw'] = alwaysMarkNsfw;
+    if (autoSensitive != null) body['autoSensitive'] = autoSensitive;
+    if (followingVisibility != null) {
+      body['followingVisibility'] = followingVisibility;
+    }
+    if (followersVisibility != null) {
+      body['followersVisibility'] = followersVisibility;
+    }
+    if (chatScope != null) body['chatScope'] = chatScope;
+    if (requireSigninToViewContents != null) {
+      body['requireSigninToViewContents'] = requireSigninToViewContents;
+    }
+    _putOptional(body, 'makeNotesFollowersOnlyBefore',
+        makeNotesFollowersOnlyBefore);
+    _putOptional(body, 'makeNotesHiddenBefore', makeNotesHiddenBefore);
+    _putOptional(body, 'pinnedPageId', pinnedPageId);
+    if (mutedWords != null) body['mutedWords'] = mutedWords;
+    if (hardMutedWords != null) body['hardMutedWords'] = hardMutedWords;
+    if (mutedInstances != null) body['mutedInstances'] = mutedInstances;
+    if (notificationRecieveConfig != null) {
+      body['notificationRecieveConfig'] = notificationRecieveConfig;
+    }
+    if (emailNotificationTypes != null) {
+      body['emailNotificationTypes'] = emailNotificationTypes;
+    }
+    if (alsoKnownAs != null) body['alsoKnownAs'] = alsoKnownAs;
+    if (followedMessage != null) body['followedMessage'] = followedMessage;
     final res = await http.send<Map<String, dynamic>>(
       '/i/update',
       body: body,
@@ -330,22 +348,23 @@ class AccountApi {
   /// メールアドレスを変更する（`/api/i/update-email`）
   ///
   /// - [password]: 現在のパスワード（必須）
-  /// - [email]: 新しいメールアドレス（`null`で解除）
+  /// - [email]: 新しいメールアドレス（`Optional.null_()`で解除）
   /// - [token]: 二要素認証が有効な場合のTOTPトークン
   ///
   /// 更新後のユーザー情報（MeDetailed）を返す。
   Future<MisskeyUser> updateEmail({
     required String password,
-    String? email,
+    Optional<String>? email,
     String? token,
   }) async {
+    final body = <String, dynamic>{
+      'password': password,
+      if (token != null) 'token': token,
+    };
+    _putOptional(body, 'email', email);
     final res = await http.send<Map<String, dynamic>>(
       '/i/update-email',
-      body: <String, dynamic>{
-        'password': password,
-        if (email != null) 'email': email,
-        if (token != null) 'token': token,
-      },
+      body: body,
     );
     return MisskeyUser.fromJson(res);
   }
@@ -648,5 +667,19 @@ class AccountApi {
         .whereType<Map<String, dynamic>>()
         .map(MisskeyGalleryLike.fromJson)
         .toList();
+  }
+}
+
+/// [Optional]で包まれた値をリクエストボディに追加するヘルパー
+///
+/// - `opt`が`null`（未指定）→ 何もしない
+/// - `opt`が[Some] → `body[key]`に値をセット（`Some.null_()`の場合は`null`）
+void _putOptional<T>(
+  Map<String, dynamic> body,
+  String key,
+  Optional<T>? opt,
+) {
+  if (opt case Some<T>(:final value)) {
+    body[key] = value;
   }
 }

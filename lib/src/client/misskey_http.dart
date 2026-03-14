@@ -83,7 +83,7 @@ class MisskeyHttp {
                 ? null
                 : Map<String, dynamic>.from(options.headers),
             extra: {
-              'authRequired': options.authRequired,
+              'authMode': options.authMode.name,
             },
           );
           final res = await _dio.request<dynamic>(
@@ -159,8 +159,10 @@ class _MisskeyInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final extra = options.extra;
-    final authRequired = (extra['authRequired'] as bool?) ?? true;
-    if (authRequired && options.method.toUpperCase() == 'POST') {
+    final authModeName = (extra['authMode'] as String?) ?? 'required';
+    final shouldInjectToken =
+        authModeName == 'required' || authModeName == 'optional';
+    if (shouldInjectToken && options.method.toUpperCase() == 'POST') {
       final token = await tokenProvider?.call();
       if (token != null && token.isNotEmpty) {
         final data = options.data;
