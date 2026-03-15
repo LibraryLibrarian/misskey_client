@@ -4,7 +4,7 @@ import '../api/drive/drive_api.dart';
 import '../api/meta_api.dart';
 import '../api/notes_api.dart';
 import '../api/notifications_api.dart';
-import '../api/users_api.dart';
+import '../api/users/users_api.dart';
 import '../logging/logger.dart';
 import 'misskey_client_config.dart';
 import 'misskey_http.dart';
