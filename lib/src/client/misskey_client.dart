@@ -1,6 +1,9 @@
 import '../api/account/account_api.dart';
+import '../api/antennas_api.dart';
 import '../api/blocking_api.dart';
 import '../api/channels/channels_api.dart';
+import '../api/chat/chat_api.dart';
+import '../api/clips_api.dart';
 import '../api/drive/drive_api.dart';
 import '../api/following_api.dart';
 import '../api/meta_api.dart';
@@ -28,8 +31,11 @@ class MisskeyClient {
           logger: logger,
         ) {
     account = AccountApi(http: http);
+    antennas = AntennasApi(http: http);
     blocking = BlockingApi(http: http);
     channels = ChannelsApi(http: http);
+    chat = ChatApi(http: http);
+    clips = ClipsApi(http: http);
     drive = DriveApi(http: http);
     following = FollowingApi(http: http);
     meta = MetaApi(http: http);
@@ -43,8 +49,11 @@ class MisskeyClient {
   final MisskeyHttp http;
 
   late final AccountApi account;
+  late final AntennasApi antennas;
   late final BlockingApi blocking;
   late final ChannelsApi channels;
+  late final ChatApi chat;
+  late final ClipsApi clips;
   late final DriveApi drive;
   late final FollowingApi following;
   late final MetaApi meta;
