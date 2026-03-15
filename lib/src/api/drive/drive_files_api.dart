@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' show FormData, MultipartFile;
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../models/chat/misskey_chat_message.dart';
 import '../../models/misskey_drive_file.dart';
 import '../../models/misskey_note.dart';
 
@@ -226,6 +227,76 @@ class DriveFilesApi {
           if (force != null) 'force': force,
         },
       );
+
+  /// MD5ハッシュでドライブファイルを検索する
+  /// （`/api/drive/files/find-by-hash`）
+  ///
+  /// [checkExistence] とは異なり、ファイル情報のリストを返す。
+  /// 自分が所有するファイルのみが検索対象。
+  ///
+  /// - [md5]: 検索対象ファイルのMD5ハッシュ（必須）
+  Future<List<MisskeyDriveFile>> findByHash({required String md5}) async {
+    final res = await http.send<List<dynamic>>(
+      '/drive/files/find-by-hash',
+      body: <String, dynamic>{'md5': md5},
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyDriveFile.fromJson)
+        .toList();
+  }
+
+  /// 複数ファイルを一括でフォルダ移動する
+  /// （`/api/drive/files/move-bulk`）
+  ///
+  /// - [fileIds]: 移動対象のファイルIDリスト（必須、1〜100件、重複不可）
+  /// - [folderId]: 移動先フォルダーID（`null`でルートフォルダへ移動）
+  Future<void> moveBulk({
+    required List<String> fileIds,
+    String? folderId,
+  }) =>
+      http.send<Object?>(
+        '/drive/files/move-bulk',
+        body: <String, dynamic>{
+          'fileIds': fileIds,
+          'folderId': folderId,
+        },
+      );
+
+  /// 指定ファイルが添付されているチャットメッセージ一覧を取得する
+  /// （`/api/drive/files/attached-chat-messages`）
+  ///
+  /// - [fileId]: 対象ファイルID（必須）
+  /// - [limit]: 取得件数（1〜100、デフォルト10）
+  /// - [sinceId] / [untilId]: IDによるページング
+  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  Future<List<MisskeyChatMessage>> attachedChatMessages({
+    required String fileId,
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) async {
+    final body = <String, dynamic>{
+      'fileId': fileId,
+      if (limit != null) 'limit': limit,
+      if (sinceId != null) 'sinceId': sinceId,
+      if (untilId != null) 'untilId': untilId,
+      if (sinceDate != null) 'sinceDate': sinceDate,
+      if (untilDate != null) 'untilDate': untilDate,
+    };
+    final res = await http.send<List<dynamic>>(
+      '/drive/files/attached-chat-messages',
+      body: body,
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyChatMessage.fromJson)
+        .toList();
+  }
 
   /// 指定ファイルが添付されているノート一覧を取得する
   /// （`/api/drive/files/attached-notes`）
