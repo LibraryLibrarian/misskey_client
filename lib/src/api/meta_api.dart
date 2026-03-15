@@ -2,6 +2,11 @@ import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/meta.dart';
+import '../models/misskey_custom_emoji.dart';
+import '../models/server/emoji_detailed.dart';
+import '../models/server/endpoint_info.dart';
+import '../models/server/instance_stats.dart';
+import '../models/server/server_info.dart';
 
 /// サーバーメタ情報API（`/api/meta`）
 ///
@@ -35,6 +40,116 @@ class MetaApi {
     );
     _cached = Meta.fromJson(res);
     return _cached!;
+  }
+
+  /// サーバーのマシン情報を取得する（`/api/server-info`）
+  ///
+  /// CPU・メモリ・ディスクなどのサーバー技術情報を返す。
+  /// サーバー側で `enableServerMachineStats` が無効の場合は
+  /// プレースホルダー値が返却される。
+  Future<ServerInfo> getServerInfo() async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/server-info',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return ServerInfo.fromJson(res);
+  }
+
+  /// インスタンスの統計情報を取得する（`/api/stats`）
+  ///
+  /// ユーザー数・ノート数・連合インスタンス数・ドライブ使用量等を返す。
+  Future<InstanceStats> getStats() async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/stats',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return InstanceStats.fromJson(res);
+  }
+
+  /// サーバーの疎通確認を行う（`/api/ping`）
+  ///
+  /// 成功時はサーバーの現在時刻（Unixタイムスタンプ ms）を返す。
+  Future<int> ping() async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/ping',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return (res['pong'] as num).toInt();
+  }
+
+  /// 利用可能な全エンドポイント名を取得する（`/api/endpoints`）
+  Future<List<String>> getEndpoints() async {
+    final res = await http.send<List<dynamic>>(
+      '/endpoints',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return res.cast<String>();
+  }
+
+  /// 指定エンドポイントのパラメーター情報を取得する（`/api/endpoint`）
+  ///
+  /// [endpoint] に対象エンドポイント名を指定する。
+  /// エンドポイントが存在しない場合は `null` を返す。
+  Future<EndpointInfo?> getEndpoint({required String endpoint}) async {
+    final res = await http.send<Map<String, dynamic>?>(
+      '/endpoint',
+      body: <String, dynamic>{'endpoint': endpoint},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    if (res == null) return null;
+    return EndpointInfo.fromJson(res);
+  }
+
+  /// ローカルカスタム絵文字の一覧を取得する（`/api/emojis`）
+  ///
+  /// カテゴリ・名前順でソートされたローカル絵文字を返す。
+  Future<List<MisskeyCustomEmoji>> getEmojis() async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/emojis',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    final list = res['emojis'] as List<dynamic>;
+    return list
+        .map((e) => MisskeyCustomEmoji.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// 指定名のカスタム絵文字の詳細情報を取得する（`/api/emoji`）
+  ///
+  /// [name] に絵文字のショートコードを指定する。
+  Future<EmojiDetailed> getEmoji({required String name}) async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/emoji',
+      body: <String, dynamic>{'name': name},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return EmojiDetailed.fromJson(res);
   }
 
   /// キャッシュ済みメタ情報に対する簡易な能力検出
