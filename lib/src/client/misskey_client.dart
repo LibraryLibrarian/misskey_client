@@ -5,12 +5,15 @@ import '../api/channels/channels_api.dart';
 import '../api/chat/chat_api.dart';
 import '../api/clips_api.dart';
 import '../api/drive/drive_api.dart';
+import '../api/federation_api.dart';
 import '../api/following_api.dart';
+import '../api/hashtags_api.dart';
 import '../api/meta_api.dart';
 import '../api/mute_api.dart';
 import '../api/notes_api.dart';
 import '../api/notifications_api.dart';
 import '../api/renote_mute_api.dart';
+import '../api/roles_api.dart';
 import '../api/users/users_api.dart';
 import '../logging/logger.dart';
 import 'misskey_client_config.dart';
@@ -37,12 +40,15 @@ class MisskeyClient {
     chat = ChatApi(http: http);
     clips = ClipsApi(http: http);
     drive = DriveApi(http: http);
+    federation = FederationApi(http: http);
     following = FollowingApi(http: http);
+    hashtags = HashtagsApi(http: http);
     meta = MetaApi(http: http);
     mute = MuteApi(http: http);
     notes = NotesApi(http: http);
     notifications = NotificationsApi(http: http);
     renoteMute = RenoteMuteApi(http: http);
+    roles = RolesApi(http: http);
     users = UsersApi(http: http);
   }
 
@@ -55,11 +61,14 @@ class MisskeyClient {
   late final ChatApi chat;
   late final ClipsApi clips;
   late final DriveApi drive;
+  late final FederationApi federation;
   late final FollowingApi following;
+  late final HashtagsApi hashtags;
   late final MetaApi meta;
   late final MuteApi mute;
   late final NotesApi notes;
   late final NotificationsApi notifications;
   late final RenoteMuteApi renoteMute;
+  late final RolesApi roles;
   late final UsersApi users;
 }
