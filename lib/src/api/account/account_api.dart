@@ -81,7 +81,7 @@ class AccountApi {
   /// - [hardMutedWords]: ハードミュートワード
   /// - [mutedInstances]: ミュートするインスタンスのホスト名リスト
   /// - [alsoKnownAs]: 別アカウント（引っ越し元）のURI（最大10件）
-  /// - [followedMessage]: フォローされた時に表示するメッセージ
+  /// - [followedMessage]: フォローされた時に表示するメッセージ（`Optional.null_()`でクリア）
   /// - [avatarDecorations]: アバターデコレーション（最大16件）。
   ///   各要素は `{id: String, angle: double?,
   ///   flipH: bool?, offsetX: double?, offsetY: double?}`
@@ -133,7 +133,7 @@ class AccountApi {
     Map<String, Map<String, dynamic>>? notificationRecieveConfig,
     List<String>? emailNotificationTypes,
     List<String>? alsoKnownAs,
-    String? followedMessage,
+    Optional<String>? followedMessage,
   }) async {
     final body = <String, dynamic>{};
     _putOptional(body, 'name', name);
@@ -193,7 +193,7 @@ class AccountApi {
       body['emailNotificationTypes'] = emailNotificationTypes;
     }
     if (alsoKnownAs != null) body['alsoKnownAs'] = alsoKnownAs;
-    if (followedMessage != null) body['followedMessage'] = followedMessage;
+    _putOptional(body, 'followedMessage', followedMessage);
     final res = await http.send<Map<String, dynamic>>(
       '/i/update',
       body: body,

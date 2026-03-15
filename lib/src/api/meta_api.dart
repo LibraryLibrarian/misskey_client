@@ -28,18 +28,24 @@ class MetaApi {
   /// 常に最新の情報をサーバーから取得する。
   /// デフォルトでは一度取得した結果をキャッシュし、
   /// 2回目以降はキャッシュを返す。
-  Future<Meta> getMeta({bool refresh = false}) async {
-    if (!refresh && _cached != null) return _cached!;
+  ///
+  /// [detail] を `false` にすると軽量な `MetaLite` 相当の
+  /// レスポンスを取得する（デフォルト: `true`）。
+  Future<Meta> getMeta({bool refresh = false, bool? detail}) async {
+    if (!refresh && detail != false && _cached != null) return _cached!;
     final res = await http.send<Map<String, dynamic>>(
       '/meta',
-      body: const <String, dynamic>{},
+      body: <String, dynamic>{
+        if (detail != null) 'detail': detail,
+      },
       options: const RequestOptions(
         authMode: AuthMode.none,
         idempotent: true,
       ),
     );
-    _cached = Meta.fromJson(res);
-    return _cached!;
+    final meta = Meta.fromJson(res);
+    if (detail != false) _cached = meta;
+    return meta;
   }
 
   /// サーバーのマシン情報を取得する（`/api/server-info`）

@@ -86,6 +86,7 @@ class DriveFilesApi {
   ///
   /// - [bytes]: アップロードするバイト列
   /// - [filename]: ファイル名
+  /// - [name]: サーバー側で保存するファイル名（省略時は[filename]が使用される）
   /// - [folderId]: 保存先フォルダーID
   /// - [comment]: コメント（`DB_MAX_IMAGE_COMMENT_LENGTH` 以内）
   /// - [isSensitive]: センシティブコンテンツとしてマークするか
@@ -94,6 +95,7 @@ class DriveFilesApi {
   Future<MisskeyDriveFile> create({
     required List<int> bytes,
     required String filename,
+    String? name,
     String? folderId,
     String? comment,
     bool? isSensitive,
@@ -104,6 +106,7 @@ class DriveFilesApi {
     form.files.add(
       MapEntry('file', MultipartFile.fromBytes(bytes, filename: filename)),
     );
+    if (name != null) form.fields.add(MapEntry('name', name));
     if (folderId != null) form.fields.add(MapEntry('folderId', folderId));
     if (comment != null) form.fields.add(MapEntry('comment', comment));
     if (isSensitive != null) {
