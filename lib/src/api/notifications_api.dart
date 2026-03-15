@@ -105,4 +105,39 @@ class NotificationsApi {
         '/notifications/mark-all-as-read',
         body: const <String, dynamic>{},
       );
+
+  /// アプリ通知を作成する（`/api/notifications/create`）
+  ///
+  /// アプリ（サードパーティクライアント等）からユーザーにカスタム通知を送信する。
+  /// 通知タイプは `app` として作成される。
+  /// 認証必須。権限: `write:notifications`。
+  /// レート制限: 1分間に最大10回。
+  ///
+  /// - [body]: 通知本文（必須）
+  /// - [header]: 通知ヘッダー（省略時はアクセストークン名が使用される）
+  /// - [icon]: 通知アイコンURL（省略時はトークンのアイコンURLが使用される）
+  Future<void> create({
+    required String body,
+    String? header,
+    String? icon,
+  }) =>
+      http.send<Object?>(
+        '/notifications/create',
+        body: <String, dynamic>{
+          'body': body,
+          if (header != null) 'header': header,
+          if (icon != null) 'icon': icon,
+        },
+      );
+
+  /// テスト通知を送信する（`/api/notifications/test-notification`）
+  ///
+  /// 自分自身にテスト通知（タイプ `test`）を送信する。
+  /// 通知の動作確認用エンドポイント。
+  /// 認証必須。権限: `write:notifications`。
+  /// レート制限: 1分間に最大10回。
+  Future<void> testNotification() => http.send<Object?>(
+        '/notifications/test-notification',
+        body: const <String, dynamic>{},
+      );
 }
