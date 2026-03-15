@@ -179,8 +179,8 @@ class AccountApi {
     if (requireSigninToViewContents != null) {
       body['requireSigninToViewContents'] = requireSigninToViewContents;
     }
-    _putOptional(body, 'makeNotesFollowersOnlyBefore',
-        makeNotesFollowersOnlyBefore);
+    _putOptional(
+        body, 'makeNotesFollowersOnlyBefore', makeNotesFollowersOnlyBefore);
     _putOptional(body, 'makeNotesHiddenBefore', makeNotesHiddenBefore);
     _putOptional(body, 'pinnedPageId', pinnedPageId);
     if (mutedWords != null) body['mutedWords'] = mutedWords;

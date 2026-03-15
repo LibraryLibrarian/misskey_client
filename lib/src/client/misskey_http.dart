@@ -139,7 +139,6 @@ class MisskeyHttp {
     }
     return false;
   }
-
 }
 
 class _MisskeyInterceptor extends Interceptor {

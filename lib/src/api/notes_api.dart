@@ -786,8 +786,7 @@ class NotesApi {
   /// ノートをお気に入りに追加する（`/api/notes/favorites/create`）
   ///
   /// 認証必須。レート制限: 20回/時。
-  Future<void> favoritesCreate({required String noteId}) =>
-      http.send<Object?>(
+  Future<void> favoritesCreate({required String noteId}) => http.send<Object?>(
         '/notes/favorites/create',
         body: <String, dynamic>{'noteId': noteId},
       );
@@ -795,8 +794,7 @@ class NotesApi {
   /// ノートのお気に入りを解除する（`/api/notes/favorites/delete`）
   ///
   /// 認証必須。
-  Future<void> favoritesDelete({required String noteId}) =>
-      http.send<Object?>(
+  Future<void> favoritesDelete({required String noteId}) => http.send<Object?>(
         '/notes/favorites/delete',
         body: <String, dynamic>{'noteId': noteId},
       );
