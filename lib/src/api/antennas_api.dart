@@ -23,11 +23,11 @@ class AntennasApi {
   /// - [excludeKeywords]: 除外キーワード（外側OR、内側AND、必須）
   /// - [users]: 対象ユーザー名リスト（必須）
   /// - [caseSensitive]: 大文字小文字を区別するか（必須）
-  /// - [localOnly]: ローカルノートのみ対象にするか（必須）
-  /// - [excludeBots]: botを除外するか（必須）
+  /// - [localOnly]: ローカルノートのみ対象にするか
+  /// - [excludeBots]: botを除外するか
   /// - [withReplies]: リプライを含めるか（必須）
   /// - [withFile]: ファイル付きのみ対象にするか（必須）
-  /// - [excludeNotesInSensitiveChannel]: センシティブチャンネルを除外するか（必須）
+  /// - [excludeNotesInSensitiveChannel]: センシティブチャンネルを除外するか
   ///
   /// 主なエラー:
   /// - `NO_SUCH_USER_LIST`: 指定したユーザーリストが存在しない
@@ -41,11 +41,11 @@ class AntennasApi {
     required List<List<String>> excludeKeywords,
     required List<String> users,
     required bool caseSensitive,
-    required bool localOnly,
-    required bool excludeBots,
+    bool? localOnly,
+    bool? excludeBots,
     required bool withReplies,
     required bool withFile,
-    required bool excludeNotesInSensitiveChannel,
+    bool? excludeNotesInSensitiveChannel,
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/antennas/create',
@@ -57,11 +57,12 @@ class AntennasApi {
         'excludeKeywords': excludeKeywords,
         'users': users,
         'caseSensitive': caseSensitive,
-        'localOnly': localOnly,
-        'excludeBots': excludeBots,
+        if (localOnly != null) 'localOnly': localOnly,
+        if (excludeBots != null) 'excludeBots': excludeBots,
         'withReplies': withReplies,
         'withFile': withFile,
-        'excludeNotesInSensitiveChannel': excludeNotesInSensitiveChannel,
+        if (excludeNotesInSensitiveChannel != null)
+          'excludeNotesInSensitiveChannel': excludeNotesInSensitiveChannel,
       },
     );
     return MisskeyAntenna.fromJson(res);

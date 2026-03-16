@@ -15,7 +15,7 @@ class ChatMessagesApi {
   /// ユーザーにメッセージを送信する（`/api/chat/messages/create-to-user`）
   ///
   /// - [toUserId]: 送信先ユーザーID（必須）
-  /// - [text]: メッセージ本文（最大2048文字）
+  /// - [text]: メッセージ本文（最大2000文字）
   /// - [fileId]: 添付ファイルのドライブファイルID
   ///
   /// [text] と [fileId] の少なくとも一方が必要。
@@ -43,7 +43,7 @@ class ChatMessagesApi {
   /// ルームにメッセージを送信する（`/api/chat/messages/create-to-room`）
   ///
   /// - [toRoomId]: 送信先ルームID（必須）
-  /// - [text]: メッセージ本文（最大2048文字）
+  /// - [text]: メッセージ本文（最大2000文字）
   /// - [fileId]: 添付ファイルのドライブファイルID
   ///
   /// [text] と [fileId] の少なくとも一方が必要。

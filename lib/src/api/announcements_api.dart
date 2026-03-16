@@ -49,4 +49,26 @@ class AnnouncementsApi {
         .map(MisskeyAnnouncement.fromJson)
         .toList();
   }
+
+  /// お知らせの詳細を取得する（`/api/announcements/show`）
+  ///
+  /// 認証不要。
+  ///
+  /// - [announcementId]: 対象のお知らせID（必須）
+  ///
+  /// 主なエラー:
+  /// - `NO_SUCH_ANNOUNCEMENT`: 指定したお知らせが存在しない
+  Future<MisskeyAnnouncement> show({
+    required String announcementId,
+  }) async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/announcements/show',
+      body: <String, dynamic>{'announcementId': announcementId},
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
+    );
+    return MisskeyAnnouncement.fromJson(res);
+  }
 }

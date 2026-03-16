@@ -30,4 +30,20 @@ class ApApi {
     );
     return ApShowResult.fromJson(res);
   }
+
+  /// ActivityPub URIからリモートオブジェクトを直接取得する（`/api/ap/get`）
+  ///
+  /// 管理者専用エンドポイント。認証必須。
+  /// レート制限: 30回/時。
+  ///
+  /// - [uri]: 取得するActivityPub URI（必須）
+  ///
+  /// ActivityPubオブジェクトの生データ（Map）を返す。
+  Future<Map<String, dynamic>> get({required String uri}) async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/ap/get',
+      body: <String, dynamic>{'uri': uri},
+    );
+    return res;
+  }
 }
