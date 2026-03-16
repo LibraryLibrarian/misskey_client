@@ -26,6 +26,14 @@ MisskeyPage _$MisskeyPageFromJson(Map<String, dynamic> json) => MisskeyPage(
       font: json['font'] as String?,
       script: json['script'] as String?,
       eyeCatchingImageId: json['eyeCatchingImageId'] as String?,
+      eyeCatchingImage: json['eyeCatchingImage'] == null
+          ? null
+          : MisskeyDriveFile.fromJson(
+              json['eyeCatchingImage'] as Map<String, dynamic>),
+      attachedFiles: (json['attachedFiles'] as List<dynamic>?)
+              ?.map((e) => MisskeyDriveFile.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       likedCount: (json['likedCount'] as num?)?.toInt() ?? 0,
       isLiked: json['isLiked'] as bool?,
     );

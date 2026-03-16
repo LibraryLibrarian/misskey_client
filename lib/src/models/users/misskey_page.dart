@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../json_converters.dart';
+import '../misskey_drive_file.dart';
 import '../misskey_user.dart';
 
 part 'misskey_page.g.dart';
@@ -24,6 +25,8 @@ class MisskeyPage {
     this.font,
     this.script,
     this.eyeCatchingImageId,
+    this.eyeCatchingImage,
+    this.attachedFiles = const [],
     this.likedCount = 0,
     this.isLiked,
   });
@@ -73,6 +76,12 @@ class MisskeyPage {
 
   /// アイキャッチ画像のファイルID
   final String? eyeCatchingImageId;
+
+  /// アイキャッチ画像オブジェクト
+  final MisskeyDriveFile? eyeCatchingImage;
+
+  /// コンテンツ内の画像ブロックから自動収集されたファイル一覧
+  final List<MisskeyDriveFile> attachedFiles;
 
   /// いいね数
   @JsonKey(defaultValue: 0)
