@@ -3,9 +3,12 @@ import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/meta.dart';
 import '../models/misskey_custom_emoji.dart';
+import '../models/misskey_user.dart';
+import '../models/server/avatar_decoration.dart';
 import '../models/server/emoji_detailed.dart';
 import '../models/server/endpoint_info.dart';
 import '../models/server/instance_stats.dart';
+import '../models/server/retention_record.dart';
 import '../models/server/server_info.dart';
 
 /// サーバーメタ情報API（`/api/meta`）
@@ -156,6 +159,77 @@ class MetaApi {
       ),
     );
     return EmojiDetailed.fromJson(res);
+  }
+
+  /// 管理者が設定したピン留めユーザー一覧を取得する（`/api/pinned-users`）
+  ///
+  /// 認証不要。
+  Future<List<MisskeyUser>> getPinnedUsers() async {
+    final res = await http.send<List<dynamic>>(
+      '/pinned-users',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyUser.fromJson)
+        .toList();
+  }
+
+  /// オンラインユーザー数を取得する（`/api/get-online-users-count`）
+  ///
+  /// 認証不要。レスポンスは60秒キャッシュされる。
+  Future<int> getOnlineUsersCount() async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/get-online-users-count',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return (res['count'] as num).toInt();
+  }
+
+  /// 利用可能なアバターデコレーション一覧を取得する
+  /// （`/api/get-avatar-decorations`）
+  ///
+  /// 認証不要。
+  Future<List<AvatarDecoration>> getAvatarDecorations() async {
+    final res = await http.send<List<dynamic>>(
+      '/get-avatar-decorations',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(AvatarDecoration.fromJson)
+        .toList();
+  }
+
+  /// ユーザーリテンション（定着率）統計を取得する（`/api/retention`）
+  ///
+  /// 認証不要。レスポンスは3600秒キャッシュされる。
+  /// 直近30件の日次リテンションデータを返す。
+  Future<List<RetentionRecord>> getRetention() async {
+    final res = await http.send<List<dynamic>>(
+      '/retention',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(RetentionRecord.fromJson)
+        .toList();
   }
 
   /// キャッシュ済みメタ情報に対する簡易な能力検出
