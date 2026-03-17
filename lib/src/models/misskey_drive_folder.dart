@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_drive_folder.g.dart';
 
 /// Misskey のドライブフォルダ
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyDriveFolder {
   const MisskeyDriveFolder({
     required this.id,
@@ -17,6 +17,8 @@ class MisskeyDriveFolder {
 
   factory MisskeyDriveFolder.fromJson(Map<String, dynamic> json) =>
       _$MisskeyDriveFolderFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyDriveFolderToJson(this);
 
   final String id;
   final DateTime createdAt;

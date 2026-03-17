@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'avatar_decoration.g.dart';
 
 /// アバターデコレーション情報（`/api/get-avatar-decorations`）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class AvatarDecoration {
   const AvatarDecoration({
     required this.id,
@@ -15,6 +15,8 @@ class AvatarDecoration {
 
   factory AvatarDecoration.fromJson(Map<String, dynamic> json) =>
       _$AvatarDecorationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AvatarDecorationToJson(this);
 
   /// デコレーションID
   final String id;

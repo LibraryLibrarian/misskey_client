@@ -5,7 +5,7 @@ import 'json_converters.dart';
 part 'misskey_poll.g.dart';
 
 /// 投票の選択肢
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyPollChoice {
   const MisskeyPollChoice({
     required this.text,
@@ -15,6 +15,8 @@ class MisskeyPollChoice {
 
   factory MisskeyPollChoice.fromJson(Map<String, dynamic> json) =>
       _$MisskeyPollChoiceFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyPollChoiceToJson(this);
 
   final String text;
 
@@ -26,7 +28,7 @@ class MisskeyPollChoice {
 }
 
 /// Misskey の投票
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyPoll {
   const MisskeyPoll({
     required this.choices,
@@ -36,6 +38,8 @@ class MisskeyPoll {
 
   factory MisskeyPoll.fromJson(Map<String, dynamic> json) =>
       _$MisskeyPollFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyPollToJson(this);
 
   final List<MisskeyPollChoice> choices;
 

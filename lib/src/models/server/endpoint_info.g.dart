@@ -11,3 +11,8 @@ EndpointInfo _$EndpointInfoFromJson(Map<String, dynamic> json) => EndpointInfo(
           .map((e) => EndpointParam.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
+
+Map<String, dynamic> _$EndpointInfoToJson(EndpointInfo instance) =>
+    <String, dynamic>{
+      'params': instance.params,
+    };

@@ -32,3 +32,20 @@ MisskeyGalleryPost _$MisskeyGalleryPostFromJson(Map<String, dynamic> json) =>
       likedCount: (json['likedCount'] as num?)?.toInt() ?? 0,
       isLiked: json['isLiked'] as bool?,
     );
+
+Map<String, dynamic> _$MisskeyGalleryPostToJson(MisskeyGalleryPost instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
+      'userId': instance.userId,
+      'user': instance.user,
+      'title': instance.title,
+      'description': instance.description,
+      'fileIds': instance.fileIds,
+      'files': instance.files,
+      'tags': instance.tags,
+      'isSensitive': instance.isSensitive,
+      'likedCount': instance.likedCount,
+      'isLiked': instance.isLiked,
+    };

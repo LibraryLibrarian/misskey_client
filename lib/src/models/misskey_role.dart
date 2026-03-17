@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_role.g.dart';
 
 /// ロール情報（`/api/roles/show` 等のレスポンス）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyRole {
   const MisskeyRole({
     required this.id,
@@ -24,6 +24,8 @@ class MisskeyRole {
 
   factory MisskeyRole.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRoleFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyRoleToJson(this);
 
   final String id;
   final DateTime createdAt;

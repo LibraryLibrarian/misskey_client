@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_totp_registration.g.dart';
 
 /// TOTP二要素認証の登録開始時レスポンス（`/api/i/2fa/register`）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyTotpRegistration {
   const MisskeyTotpRegistration({
     required this.qr,
@@ -15,6 +15,8 @@ class MisskeyTotpRegistration {
 
   factory MisskeyTotpRegistration.fromJson(Map<String, dynamic> json) =>
       _$MisskeyTotpRegistrationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyTotpRegistrationToJson(this);
 
   /// QRコード画像のDataURL
   final String qr;

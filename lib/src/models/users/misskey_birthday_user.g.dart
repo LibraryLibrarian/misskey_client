@@ -14,3 +14,11 @@ MisskeyBirthdayUser _$MisskeyBirthdayUserFromJson(Map<String, dynamic> json) =>
           ? null
           : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
     );
+
+Map<String, dynamic> _$MisskeyBirthdayUserToJson(
+        MisskeyBirthdayUser instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'birthday': instance.birthday,
+      'user': instance.user,
+    };

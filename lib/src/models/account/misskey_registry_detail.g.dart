@@ -12,3 +12,10 @@ MisskeyRegistryDetail _$MisskeyRegistryDetailFromJson(
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       value: json['value'],
     );
+
+Map<String, dynamic> _$MisskeyRegistryDetailToJson(
+        MisskeyRegistryDetail instance) =>
+    <String, dynamic>{
+      'updatedAt': instance.updatedAt.toIso8601String(),
+      'value': instance.value,
+    };

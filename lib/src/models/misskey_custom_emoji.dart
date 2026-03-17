@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_custom_emoji.g.dart';
 
 /// Misskey のカスタム絵文字
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyCustomEmoji {
   const MisskeyCustomEmoji({
     required this.shortcode,
@@ -21,6 +21,8 @@ class MisskeyCustomEmoji {
   // This factory handles the full object format.
   factory MisskeyCustomEmoji.fromJson(Map<String, dynamic> json) =>
       _$MisskeyCustomEmojiFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyCustomEmojiToJson(this);
 
   /// ショートコード（コロンを除いた部分）
   @JsonKey(name: 'name')

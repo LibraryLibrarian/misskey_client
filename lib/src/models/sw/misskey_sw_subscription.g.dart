@@ -13,3 +13,11 @@ MisskeySwSubscription _$MisskeySwSubscriptionFromJson(
       endpoint: json['endpoint'] as String,
       sendReadMessage: json['sendReadMessage'] as bool,
     );
+
+Map<String, dynamic> _$MisskeySwSubscriptionToJson(
+        MisskeySwSubscription instance) =>
+    <String, dynamic>{
+      'userId': instance.userId,
+      'endpoint': instance.endpoint,
+      'sendReadMessage': instance.sendReadMessage,
+    };

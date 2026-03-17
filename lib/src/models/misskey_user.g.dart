@@ -99,6 +99,68 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
       securityKeys: json['securityKeys'] as bool? ?? false,
     );
 
+Map<String, dynamic> _$MisskeyUserToJson(MisskeyUser instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'username': instance.username,
+      'name': instance.name,
+      'host': instance.host,
+      'avatarUrl': instance.avatarUrl,
+      'avatarBlurhash': instance.avatarBlurhash,
+      'isBot': instance.isBot,
+      'isCat': instance.isCat,
+      'emojis': instance.emojis,
+      'onlineStatus': _$MisskeyOnlineStatusEnumMap[instance.onlineStatus],
+      'createdAt': const SafeDateTimeConverter().toJson(instance.createdAt),
+      'description': instance.description,
+      'followersCount': instance.followersCount,
+      'followingCount': instance.followingCount,
+      'notesCount': instance.notesCount,
+      'isLocked': instance.isLocked,
+      'isSuspended': instance.isSuspended,
+      'isSilenced': instance.isSilenced,
+      'pinnedNoteIds': instance.pinnedNoteIds,
+      'pinnedNotes': instance.pinnedNotes,
+      'bannerUrl': instance.bannerUrl,
+      'bannerBlurhash': instance.bannerBlurhash,
+      'fields': instance.fields,
+      'isFollowing': instance.isFollowing,
+      'isFollowed': instance.isFollowed,
+      'hasPendingFollowRequestFromYou': instance.hasPendingFollowRequestFromYou,
+      'hasPendingFollowRequestToYou': instance.hasPendingFollowRequestToYou,
+      'isBlocking': instance.isBlocking,
+      'isBlocked': instance.isBlocked,
+      'isMuted': instance.isMuted,
+      'isRenoteMuted': instance.isRenoteMuted,
+      'avatarDecorations': instance.avatarDecorations,
+      'requireSigninToViewContents': instance.requireSigninToViewContents,
+      'makeNotesFollowersOnlyBefore': instance.makeNotesFollowersOnlyBefore,
+      'makeNotesHiddenBefore': instance.makeNotesHiddenBefore,
+      'instance': instance.instance,
+      'badgeRoles': instance.badgeRoles,
+      'url': instance.url,
+      'uri': instance.uri,
+      'movedTo': instance.movedTo,
+      'alsoKnownAs': instance.alsoKnownAs,
+      'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
+      'lastFetchedAt':
+          const SafeDateTimeConverter().toJson(instance.lastFetchedAt),
+      'location': instance.location,
+      'birthday': instance.birthday,
+      'lang': instance.lang,
+      'verifiedLinks': instance.verifiedLinks,
+      'publicReactions': instance.publicReactions,
+      'followingVisibility': instance.followingVisibility,
+      'followersVisibility': instance.followersVisibility,
+      'roles': instance.roles,
+      'memo': instance.memo,
+      'notify': instance.notify,
+      'withReplies': instance.withReplies,
+      'twoFactorEnabled': instance.twoFactorEnabled,
+      'usePasswordLessLogin': instance.usePasswordLessLogin,
+      'securityKeys': instance.securityKeys,
+    };
+
 const _$MisskeyOnlineStatusEnumMap = {
   MisskeyOnlineStatus.unknown: 'unknown',
   MisskeyOnlineStatus.online: 'online',
@@ -112,6 +174,12 @@ MisskeyUserField _$MisskeyUserFieldFromJson(Map<String, dynamic> json) =>
       value: json['value'] as String,
     );
 
+Map<String, dynamic> _$MisskeyUserFieldToJson(MisskeyUserField instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'value': instance.value,
+    };
+
 MisskeyAvatarDecoration _$MisskeyAvatarDecorationFromJson(
         Map<String, dynamic> json) =>
     MisskeyAvatarDecoration(
@@ -123,6 +191,17 @@ MisskeyAvatarDecoration _$MisskeyAvatarDecorationFromJson(
       offsetY: (json['offsetY'] as num?)?.toDouble(),
     );
 
+Map<String, dynamic> _$MisskeyAvatarDecorationToJson(
+        MisskeyAvatarDecoration instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'angle': instance.angle,
+      'flipH': instance.flipH,
+      'url': instance.url,
+      'offsetX': instance.offsetX,
+      'offsetY': instance.offsetY,
+    };
+
 MisskeyUserInstance _$MisskeyUserInstanceFromJson(Map<String, dynamic> json) =>
     MisskeyUserInstance(
       name: json['name'] as String?,
@@ -133,12 +212,30 @@ MisskeyUserInstance _$MisskeyUserInstanceFromJson(Map<String, dynamic> json) =>
       themeColor: json['themeColor'] as String?,
     );
 
+Map<String, dynamic> _$MisskeyUserInstanceToJson(
+        MisskeyUserInstance instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'softwareName': instance.softwareName,
+      'softwareVersion': instance.softwareVersion,
+      'iconUrl': instance.iconUrl,
+      'faviconUrl': instance.faviconUrl,
+      'themeColor': instance.themeColor,
+    };
+
 MisskeyBadgeRole _$MisskeyBadgeRoleFromJson(Map<String, dynamic> json) =>
     MisskeyBadgeRole(
       name: json['name'] as String,
       iconUrl: json['iconUrl'] as String?,
       displayOrder: (json['displayOrder'] as num?)?.toInt() ?? 0,
     );
+
+Map<String, dynamic> _$MisskeyBadgeRoleToJson(MisskeyBadgeRole instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'iconUrl': instance.iconUrl,
+      'displayOrder': instance.displayOrder,
+    };
 
 MisskeyRoleLite _$MisskeyRoleLiteFromJson(Map<String, dynamic> json) =>
     MisskeyRoleLite(
@@ -151,3 +248,15 @@ MisskeyRoleLite _$MisskeyRoleLiteFromJson(Map<String, dynamic> json) =>
       isAdministrator: json['isAdministrator'] as bool? ?? false,
       displayOrder: (json['displayOrder'] as num?)?.toInt() ?? 0,
     );
+
+Map<String, dynamic> _$MisskeyRoleLiteToJson(MisskeyRoleLite instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'color': instance.color,
+      'iconUrl': instance.iconUrl,
+      'description': instance.description,
+      'isModerator': instance.isModerator,
+      'isAdministrator': instance.isAdministrator,
+      'displayOrder': instance.displayOrder,
+    };

@@ -10,7 +10,7 @@ part 'misskey_chat_message.g.dart';
 ///
 /// 1対1メッセージの場合は [toUserId]/[toUser] が設定され、
 /// ルームメッセージの場合は [toRoomId]/[toRoom] が設定される。
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyChatMessage {
   const MisskeyChatMessage({
     required this.id,
@@ -30,6 +30,8 @@ class MisskeyChatMessage {
 
   factory MisskeyChatMessage.fromJson(Map<String, dynamic> json) =>
       _$MisskeyChatMessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyChatMessageToJson(this);
 
   final String id;
   final DateTime createdAt;
@@ -65,7 +67,7 @@ class MisskeyChatMessage {
 }
 
 /// チャットメッセージに付与されたリアクション
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyChatMessageReaction {
   const MisskeyChatMessageReaction({
     required this.reaction,
@@ -74,6 +76,8 @@ class MisskeyChatMessageReaction {
 
   factory MisskeyChatMessageReaction.fromJson(Map<String, dynamic> json) =>
       _$MisskeyChatMessageReactionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyChatMessageReactionToJson(this);
 
   /// リアクション文字列（Unicode絵文字またはカスタム絵文字コード）
   final String reaction;

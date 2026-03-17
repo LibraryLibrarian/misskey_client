@@ -5,7 +5,7 @@ import 'misskey_federation_instance.dart';
 part 'misskey_federation_stats.g.dart';
 
 /// 連合統計情報（`/api/federation/stats` のレスポンス）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyFederationStats {
   const MisskeyFederationStats({
     required this.topSubInstances,
@@ -16,6 +16,8 @@ class MisskeyFederationStats {
 
   factory MisskeyFederationStats.fromJson(Map<String, dynamic> json) =>
       _$MisskeyFederationStatsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyFederationStatsToJson(this);
 
   /// フォロワー数上位のインスタンス一覧
   final List<MisskeyFederationInstance> topSubInstances;

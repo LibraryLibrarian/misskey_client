@@ -11,3 +11,9 @@ MisskeyAchievement _$MisskeyAchievementFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       unlockedAt: (json['unlockedAt'] as num).toInt(),
     );
+
+Map<String, dynamic> _$MisskeyAchievementToJson(MisskeyAchievement instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'unlockedAt': instance.unlockedAt,
+    };

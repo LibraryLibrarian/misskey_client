@@ -17,3 +17,15 @@ InstanceStats _$InstanceStatsFromJson(Map<String, dynamic> json) =>
       driveUsageRemote: (json['driveUsageRemote'] as num).toInt(),
       reactionsCount: (json['reactionsCount'] as num?)?.toInt(),
     );
+
+Map<String, dynamic> _$InstanceStatsToJson(InstanceStats instance) =>
+    <String, dynamic>{
+      'notesCount': instance.notesCount,
+      'originalNotesCount': instance.originalNotesCount,
+      'usersCount': instance.usersCount,
+      'originalUsersCount': instance.originalUsersCount,
+      'instances': instance.instances,
+      'driveUsageLocal': instance.driveUsageLocal,
+      'driveUsageRemote': instance.driveUsageRemote,
+      'reactionsCount': instance.reactionsCount,
+    };

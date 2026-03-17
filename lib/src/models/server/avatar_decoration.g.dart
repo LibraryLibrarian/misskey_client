@@ -17,3 +17,13 @@ AvatarDecoration _$AvatarDecorationFromJson(Map<String, dynamic> json) =>
               .map((e) => e as String)
               .toList(),
     );
+
+Map<String, dynamic> _$AvatarDecorationToJson(AvatarDecoration instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'url': instance.url,
+      'roleIdsThatCanBeUsedThisDecoration':
+          instance.roleIdsThatCanBeUsedThisDecoration,
+    };

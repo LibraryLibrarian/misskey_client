@@ -6,7 +6,7 @@ import 'misskey_user.dart';
 part 'misskey_invite_code.g.dart';
 
 /// 招待コード（`/api/invite/*` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyInviteCode {
   const MisskeyInviteCode({
     required this.id,
@@ -21,6 +21,8 @@ class MisskeyInviteCode {
 
   factory MisskeyInviteCode.fromJson(Map<String, dynamic> json) =>
       _$MisskeyInviteCodeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyInviteCodeToJson(this);
 
   final String id;
 

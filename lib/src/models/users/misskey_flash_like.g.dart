@@ -11,3 +11,9 @@ MisskeyFlashLike _$MisskeyFlashLikeFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       flash: MisskeyFlash.fromJson(json['flash'] as Map<String, dynamic>),
     );
+
+Map<String, dynamic> _$MisskeyFlashLikeToJson(MisskeyFlashLike instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'flash': instance.flash,
+    };

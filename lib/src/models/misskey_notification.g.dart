@@ -32,6 +32,26 @@ MisskeyNotification _$MisskeyNotificationFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
+Map<String, dynamic> _$MisskeyNotificationToJson(
+        MisskeyNotification instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'type': _$MisskeyNotificationTypeEnumMap[instance.type]!,
+      'userId': instance.userId,
+      'user': instance.user,
+      'note': instance.note,
+      'reaction': instance.reaction,
+      'achievement': instance.achievement,
+      'body': instance.body,
+      'header': instance.header,
+      'icon': instance.icon,
+      'role': instance.role,
+      'message': instance.message,
+      'reactions': instance.reactions,
+      'users': instance.users,
+    };
+
 const _$MisskeyNotificationTypeEnumMap = {
   MisskeyNotificationType.follow: 'follow',
   MisskeyNotificationType.mention: 'mention',

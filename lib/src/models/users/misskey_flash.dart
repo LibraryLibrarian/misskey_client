@@ -6,7 +6,7 @@ import '../misskey_user.dart';
 part 'misskey_flash.g.dart';
 
 /// Misskey Flash（Play）（`/api/users/flashs` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyFlash {
   const MisskeyFlash({
     required this.id,
@@ -24,6 +24,8 @@ class MisskeyFlash {
 
   factory MisskeyFlash.fromJson(Map<String, dynamic> json) =>
       _$MisskeyFlashFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyFlashToJson(this);
 
   final String id;
 

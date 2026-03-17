@@ -19,3 +19,14 @@ MisskeyHashtag _$MisskeyHashtagFromJson(Map<String, dynamic> json) =>
       attachedRemoteUsersCount:
           (json['attachedRemoteUsersCount'] as num).toInt(),
     );
+
+Map<String, dynamic> _$MisskeyHashtagToJson(MisskeyHashtag instance) =>
+    <String, dynamic>{
+      'tag': instance.tag,
+      'mentionedUsersCount': instance.mentionedUsersCount,
+      'mentionedLocalUsersCount': instance.mentionedLocalUsersCount,
+      'mentionedRemoteUsersCount': instance.mentionedRemoteUsersCount,
+      'attachedUsersCount': instance.attachedUsersCount,
+      'attachedLocalUsersCount': instance.attachedLocalUsersCount,
+      'attachedRemoteUsersCount': instance.attachedRemoteUsersCount,
+    };

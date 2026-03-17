@@ -5,7 +5,7 @@ import 'misskey_user.dart';
 part 'misskey_blocking.g.dart';
 
 /// ブロック関係（`/api/blocking/list` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyBlocking {
   const MisskeyBlocking({
     required this.id,
@@ -16,6 +16,8 @@ class MisskeyBlocking {
 
   factory MisskeyBlocking.fromJson(Map<String, dynamic> json) =>
       _$MisskeyBlockingFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyBlockingToJson(this);
 
   final String id;
   final DateTime createdAt;

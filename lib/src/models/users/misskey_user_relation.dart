@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_user_relation.g.dart';
 
 /// ユーザー間の関係情報（`/api/users/relation` のレスポンス）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyUserRelation {
   const MisskeyUserRelation({
     required this.id,
@@ -19,6 +19,8 @@ class MisskeyUserRelation {
 
   factory MisskeyUserRelation.fromJson(Map<String, dynamic> json) =>
       _$MisskeyUserRelationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyUserRelationToJson(this);
 
   /// 対象ユーザーのID
   final String id;

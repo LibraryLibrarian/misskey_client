@@ -5,7 +5,7 @@ part 'meta.g.dart';
 /// Misskey `/api/meta` レスポンスモデル
 ///
 /// 型付きフィールドを提供しつつ、未知フィールドを [raw] に保持する。
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class Meta {
   const Meta({
     this.maintainerName,
@@ -94,4 +94,6 @@ class Meta {
   /// レスポンス JSON の全フィールドを保持するマップ（能力検出用）
   @JsonKey(includeFromJson: false, includeToJson: false)
   final Map<String, dynamic> raw;
+
+  Map<String, dynamic> toJson() => _$MetaToJson(this);
 }

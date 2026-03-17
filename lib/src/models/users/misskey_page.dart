@@ -7,7 +7,7 @@ import '../misskey_user.dart';
 part 'misskey_page.g.dart';
 
 /// Misskeyページ（`/api/users/pages` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyPage {
   const MisskeyPage({
     required this.id,
@@ -33,6 +33,8 @@ class MisskeyPage {
 
   factory MisskeyPage.fromJson(Map<String, dynamic> json) =>
       _$MisskeyPageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyPageToJson(this);
 
   final String id;
 

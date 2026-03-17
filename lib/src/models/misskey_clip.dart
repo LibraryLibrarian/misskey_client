@@ -6,7 +6,7 @@ import 'misskey_user.dart';
 part 'misskey_clip.g.dart';
 
 /// Misskey のクリップ
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyClip {
   const MisskeyClip({
     required this.id,
@@ -23,6 +23,8 @@ class MisskeyClip {
 
   factory MisskeyClip.fromJson(Map<String, dynamic> json) =>
       _$MisskeyClipFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyClipToJson(this);
 
   final String id;
   final DateTime createdAt;

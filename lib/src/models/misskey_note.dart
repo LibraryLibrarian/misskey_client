@@ -27,7 +27,7 @@ enum MisskeyReactionAcceptance {
 }
 
 /// Misskey のノート（投稿）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyNote {
   const MisskeyNote({
     required this.id,
@@ -68,6 +68,8 @@ class MisskeyNote {
 
   factory MisskeyNote.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNoteFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyNoteToJson(this);
 
   final String id;
   final DateTime createdAt;
@@ -171,7 +173,7 @@ class MisskeyNote {
 }
 
 /// ノートに含まれるチャンネル情報（軽量版）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyNoteChannel {
   const MisskeyNoteChannel({
     required this.id,
@@ -184,6 +186,8 @@ class MisskeyNoteChannel {
 
   factory MisskeyNoteChannel.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNoteChannelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyNoteChannelToJson(this);
 
   final String id;
   final String? name;

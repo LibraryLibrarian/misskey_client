@@ -12,3 +12,10 @@ MisskeyNoteTranslation _$MisskeyNoteTranslationFromJson(
       sourceLang: json['sourceLang'] as String,
       text: json['text'] as String,
     );
+
+Map<String, dynamic> _$MisskeyNoteTranslationToJson(
+        MisskeyNoteTranslation instance) =>
+    <String, dynamic>{
+      'sourceLang': instance.sourceLang,
+      'text': instance.text,
+    };

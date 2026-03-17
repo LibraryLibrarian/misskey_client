@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_sw_registration.g.dart';
 
 /// プッシュ通知の登録結果
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeySwRegistration {
   const MisskeySwRegistration({
     required this.state,
@@ -15,6 +15,8 @@ class MisskeySwRegistration {
 
   factory MisskeySwRegistration.fromJson(Map<String, dynamic> json) =>
       _$MisskeySwRegistrationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeySwRegistrationToJson(this);
 
   /// 登録状態（`'subscribed'` または `'already-subscribed'`）
   final String state;

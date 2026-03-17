@@ -20,3 +20,12 @@ MisskeyFederationStats _$MisskeyFederationStatsFromJson(
           .toList(),
       otherFollowingCount: (json['otherFollowingCount'] as num).toInt(),
     );
+
+Map<String, dynamic> _$MisskeyFederationStatsToJson(
+        MisskeyFederationStats instance) =>
+    <String, dynamic>{
+      'topSubInstances': instance.topSubInstances,
+      'otherFollowersCount': instance.otherFollowersCount,
+      'topPubInstances': instance.topPubInstances,
+      'otherFollowingCount': instance.otherFollowingCount,
+    };

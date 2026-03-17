@@ -5,7 +5,7 @@ import 'misskey_user.dart';
 part 'misskey_role_user.g.dart';
 
 /// ロール所属ユーザー（`/api/roles/users` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyRoleUser {
   const MisskeyRoleUser({
     required this.id,
@@ -14,6 +14,8 @@ class MisskeyRoleUser {
 
   factory MisskeyRoleUser.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRoleUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyRoleUserToJson(this);
 
   /// ロール割り当てID
   final String id;

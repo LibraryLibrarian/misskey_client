@@ -14,3 +14,10 @@ MisskeyRegistryScope _$MisskeyRegistryScopeFromJson(
           .toList(),
       domain: json['domain'] as String?,
     );
+
+Map<String, dynamic> _$MisskeyRegistryScopeToJson(
+        MisskeyRegistryScope instance) =>
+    <String, dynamic>{
+      'scopes': instance.scopes,
+      'domain': instance.domain,
+    };

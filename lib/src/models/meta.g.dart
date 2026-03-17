@@ -31,3 +31,28 @@ Meta _$MetaFromJson(Map<String, dynamic> json) => Meta(
       requireSetup: json['requireSetup'] as bool?,
       notesPerOneAd: (json['notesPerOneAd'] as num?)?.toInt() ?? 0,
     );
+
+Map<String, dynamic> _$MetaToJson(Meta instance) => <String, dynamic>{
+      'maintainerName': instance.maintainerName,
+      'maintainerEmail': instance.maintainerEmail,
+      'version': instance.version,
+      'name': instance.name,
+      'shortName': instance.shortName,
+      'uri': instance.uri,
+      'description': instance.description,
+      'langs': instance.langs,
+      'disableRegistration': instance.disableRegistration,
+      'emailRequiredForSignup': instance.emailRequiredForSignup,
+      'enableHcaptcha': instance.enableHcaptcha,
+      'enableRecaptcha': instance.enableRecaptcha,
+      'enableTurnstile': instance.enableTurnstile,
+      'maxNoteTextLength': instance.maxNoteTextLength,
+      'enableEmail': instance.enableEmail,
+      'enableServiceWorker': instance.enableServiceWorker,
+      'translatorAvailable': instance.translatorAvailable,
+      'mediaProxy': instance.mediaProxy,
+      'cacheRemoteFiles': instance.cacheRemoteFiles,
+      'cacheRemoteSensitiveFiles': instance.cacheRemoteSensitiveFiles,
+      'requireSetup': instance.requireSetup,
+      'notesPerOneAd': instance.notesPerOneAd,
+    };

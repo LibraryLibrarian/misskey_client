@@ -20,3 +20,14 @@ MisskeyUserList _$MisskeyUserListFromJson(Map<String, dynamic> json) =>
       likedCount: (json['likedCount'] as num?)?.toInt(),
       isLiked: json['isLiked'] as bool?,
     );
+
+Map<String, dynamic> _$MisskeyUserListToJson(MisskeyUserList instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': const SafeDateTimeConverter().toJson(instance.createdAt),
+      'name': instance.name,
+      'userIds': instance.userIds,
+      'isPublic': instance.isPublic,
+      'likedCount': instance.likedCount,
+      'isLiked': instance.isLiked,
+    };

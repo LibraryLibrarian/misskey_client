@@ -21,3 +21,18 @@ MisskeyClip _$MisskeyClipFromJson(Map<String, dynamic> json) => MisskeyClip(
       favoritedCount: (json['favoritedCount'] as num?)?.toInt() ?? 0,
       isFavorited: json['isFavorited'] as bool?,
     );
+
+Map<String, dynamic> _$MisskeyClipToJson(MisskeyClip instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'lastClippedAt':
+          const SafeDateTimeConverter().toJson(instance.lastClippedAt),
+      'userId': instance.userId,
+      'user': instance.user,
+      'name': instance.name,
+      'description': instance.description,
+      'isPublic': instance.isPublic,
+      'favoritedCount': instance.favoritedCount,
+      'isFavorited': instance.isFavorited,
+    };

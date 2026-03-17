@@ -20,3 +20,15 @@ MisskeyCustomEmoji _$MisskeyCustomEmojiFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList(),
     );
+
+Map<String, dynamic> _$MisskeyCustomEmojiToJson(MisskeyCustomEmoji instance) =>
+    <String, dynamic>{
+      'name': instance.shortcode,
+      'url': instance.url,
+      'category': instance.category,
+      'aliases': instance.aliases,
+      'localOnly': instance.localOnly,
+      'isSensitive': instance.isSensitive,
+      'roleIdsThatCanBeUsedThisEmojiAsReaction':
+          instance.roleIdsThatCanBeUsedThisEmojiAsReaction,
+    };

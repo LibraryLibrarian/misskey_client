@@ -34,3 +34,26 @@ MisskeyChannel _$MisskeyChannelFromJson(Map<String, dynamic> json) =>
       bannerId: json['bannerId'] as String?,
       isMuting: json['isMuting'] as bool?,
     );
+
+Map<String, dynamic> _$MisskeyChannelToJson(MisskeyChannel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'name': instance.name,
+      'description': instance.description,
+      'userId': instance.userId,
+      'lastNotedAt': const SafeDateTimeConverter().toJson(instance.lastNotedAt),
+      'bannerUrl': instance.bannerUrl,
+      'pinnedNoteIds': instance.pinnedNoteIds,
+      'color': instance.color,
+      'isArchived': instance.isArchived,
+      'usersCount': instance.usersCount,
+      'notesCount': instance.notesCount,
+      'isSensitive': instance.isSensitive,
+      'allowRenoteToExternal': instance.allowRenoteToExternal,
+      'isFollowing': instance.isFollowing,
+      'isFavorited': instance.isFavorited,
+      'pinnedNotes': instance.pinnedNotes,
+      'bannerId': instance.bannerId,
+      'isMuting': instance.isMuting,
+    };

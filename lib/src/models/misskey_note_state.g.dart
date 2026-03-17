@@ -11,3 +11,9 @@ MisskeyNoteState _$MisskeyNoteStateFromJson(Map<String, dynamic> json) =>
       isFavorited: json['isFavorited'] as bool? ?? false,
       isMutedThread: json['isMutedThread'] as bool? ?? false,
     );
+
+Map<String, dynamic> _$MisskeyNoteStateToJson(MisskeyNoteState instance) =>
+    <String, dynamic>{
+      'isFavorited': instance.isFavorited,
+      'isMutedThread': instance.isMutedThread,
+    };
