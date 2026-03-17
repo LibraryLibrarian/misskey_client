@@ -94,4 +94,6 @@ class Meta {
   /// レスポンス JSON の全フィールドを保持するマップ（能力検出用）
   @JsonKey(includeFromJson: false, includeToJson: false)
   final Map<String, dynamic> raw;
+
+  Map<String, dynamic> toJson() => _$MetaToJson(this);
 }
