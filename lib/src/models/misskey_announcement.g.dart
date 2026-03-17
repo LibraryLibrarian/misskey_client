@@ -22,3 +22,20 @@ MisskeyAnnouncement _$MisskeyAnnouncementFromJson(Map<String, dynamic> json) =>
       forYou: json['forYou'] as bool? ?? false,
       isRead: json['isRead'] as bool?,
     );
+
+Map<String, dynamic> _$MisskeyAnnouncementToJson(
+        MisskeyAnnouncement instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
+      'title': instance.title,
+      'text': instance.text,
+      'imageUrl': instance.imageUrl,
+      'icon': instance.icon,
+      'display': instance.display,
+      'needConfirmationToRead': instance.needConfirmationToRead,
+      'silence': instance.silence,
+      'forYou': instance.forYou,
+      'isRead': instance.isRead,
+    };

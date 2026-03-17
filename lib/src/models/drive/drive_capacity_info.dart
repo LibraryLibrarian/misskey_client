@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'drive_capacity_info.g.dart';
 
 /// ユーザーのドライブ容量情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class DriveCapacityInfo {
   const DriveCapacityInfo({
     required this.capacity,
@@ -12,6 +12,8 @@ class DriveCapacityInfo {
 
   factory DriveCapacityInfo.fromJson(Map<String, dynamic> json) =>
       _$DriveCapacityInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DriveCapacityInfoToJson(this);
 
   /// ユーザーに割り当てられた最大ストレージ容量（バイト）
   final int capacity;

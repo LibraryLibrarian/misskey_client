@@ -6,7 +6,7 @@ import '../misskey_user.dart';
 part 'misskey_user_list_membership.g.dart';
 
 /// ユーザーリストのメンバーシップ情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyUserListMembership {
   const MisskeyUserListMembership({
     required this.id,
@@ -18,6 +18,8 @@ class MisskeyUserListMembership {
 
   factory MisskeyUserListMembership.fromJson(Map<String, dynamic> json) =>
       _$MisskeyUserListMembershipFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyUserListMembershipToJson(this);
 
   final String id;
 

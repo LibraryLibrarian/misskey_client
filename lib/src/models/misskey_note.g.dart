@@ -78,6 +78,45 @@ MisskeyNote _$MisskeyNoteFromJson(Map<String, dynamic> json) => MisskeyNote(
               .toList(),
     );
 
+Map<String, dynamic> _$MisskeyNoteToJson(MisskeyNote instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'userId': instance.userId,
+      'user': instance.user,
+      'text': instance.text,
+      'cw': instance.cw,
+      'visibility': _$MisskeyNoteVisibilityEnumMap[instance.visibility],
+      'localOnly': instance.localOnly,
+      'reactionAcceptance':
+          _$MisskeyReactionAcceptanceEnumMap[instance.reactionAcceptance],
+      'renoteCount': instance.renoteCount,
+      'repliesCount': instance.repliesCount,
+      'reactionCount': instance.reactionCount,
+      'reactions': instance.reactions,
+      'emojis': instance.emojis,
+      'fileIds': instance.fileIds,
+      'files': instance.files,
+      'replyId': instance.replyId,
+      'renoteId': instance.renoteId,
+      'reply': instance.reply,
+      'renote': instance.renote,
+      'uri': instance.uri,
+      'url': instance.url,
+      'channelId': instance.channelId,
+      'channel': instance.channel,
+      'mentions': instance.mentions,
+      'visibleUserIds': instance.visibleUserIds,
+      'tags': instance.tags,
+      'poll': instance.poll,
+      'myReaction': instance.myReaction,
+      'clippedCount': instance.clippedCount,
+      'deletedAt': const SafeDateTimeConverter().toJson(instance.deletedAt),
+      'isHidden': instance.isHidden,
+      'reactionEmojis': instance.reactionEmojis,
+      'reactionAndUserPairCache': instance.reactionAndUserPairCache,
+    };
+
 const _$MisskeyNoteVisibilityEnumMap = {
   MisskeyNoteVisibility.public: 'public',
   MisskeyNoteVisibility.home: 'home',
@@ -102,3 +141,13 @@ MisskeyNoteChannel _$MisskeyNoteChannelFromJson(Map<String, dynamic> json) =>
       allowRenoteToExternal: json['allowRenoteToExternal'] as bool?,
       userId: json['userId'] as String?,
     );
+
+Map<String, dynamic> _$MisskeyNoteChannelToJson(MisskeyNoteChannel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'color': instance.color,
+      'isSensitive': instance.isSensitive,
+      'allowRenoteToExternal': instance.allowRenoteToExternal,
+      'userId': instance.userId,
+    };

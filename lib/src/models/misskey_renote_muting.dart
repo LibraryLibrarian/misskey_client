@@ -5,7 +5,7 @@ import 'misskey_user.dart';
 part 'misskey_renote_muting.g.dart';
 
 /// リノートミュート関係（`/api/renote-mute/list` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyRenoteMuting {
   const MisskeyRenoteMuting({
     required this.id,
@@ -16,6 +16,8 @@ class MisskeyRenoteMuting {
 
   factory MisskeyRenoteMuting.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRenoteMutingFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyRenoteMutingToJson(this);
 
   final String id;
   final DateTime createdAt;

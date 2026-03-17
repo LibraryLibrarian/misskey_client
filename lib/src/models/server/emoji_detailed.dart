@@ -8,7 +8,7 @@ part 'emoji_detailed.g.dart';
 /// [id], [host], [license] を含み、
 /// [isSensitive], [localOnly], [roleIdsThatCanBeUsedThisEmojiAsReaction]
 /// が常に返却される。
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class EmojiDetailed {
   const EmojiDetailed({
     required this.id,
@@ -25,6 +25,8 @@ class EmojiDetailed {
 
   factory EmojiDetailed.fromJson(Map<String, dynamic> json) =>
       _$EmojiDetailedFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EmojiDetailedToJson(this);
 
   /// 絵文字ID
   final String id;

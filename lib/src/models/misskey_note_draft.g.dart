@@ -36,3 +36,25 @@ MisskeyNoteDraft _$MisskeyNoteDraftFromJson(Map<String, dynamic> json) =>
       scheduledAt: (json['scheduledAt'] as num?)?.toInt(),
       isActuallyScheduled: json['isActuallyScheduled'] as bool? ?? false,
     );
+
+Map<String, dynamic> _$MisskeyNoteDraftToJson(MisskeyNoteDraft instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
+      'userId': instance.userId,
+      'visibility': instance.visibility,
+      'visibleUserIds': instance.visibleUserIds,
+      'cw': instance.cw,
+      'hashtag': instance.hashtag,
+      'localOnly': instance.localOnly,
+      'reactionAcceptance': instance.reactionAcceptance,
+      'replyId': instance.replyId,
+      'renoteId': instance.renoteId,
+      'channelId': instance.channelId,
+      'text': instance.text,
+      'fileIds': instance.fileIds,
+      'poll': instance.poll,
+      'scheduledAt': instance.scheduledAt,
+      'isActuallyScheduled': instance.isActuallyScheduled,
+    };

@@ -5,7 +5,7 @@ part 'misskey_note_partial.g.dart';
 /// ノートの部分情報（`/api/notes/show-partial-bulk`）
 ///
 /// リアクション数と絵文字情報のみを含む軽量なノート情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyNotePartial {
   const MisskeyNotePartial({
     required this.id,
@@ -15,6 +15,8 @@ class MisskeyNotePartial {
 
   factory MisskeyNotePartial.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNotePartialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyNotePartialToJson(this);
 
   final String id;
 

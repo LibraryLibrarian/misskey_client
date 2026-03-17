@@ -5,7 +5,7 @@ import '../misskey_user.dart';
 part 'misskey_frequent_user.g.dart';
 
 /// よくリプライするユーザー（`/api/users/get-frequently-replied-users` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyFrequentUser {
   const MisskeyFrequentUser({
     required this.user,
@@ -14,6 +14,8 @@ class MisskeyFrequentUser {
 
   factory MisskeyFrequentUser.fromJson(Map<String, dynamic> json) =>
       _$MisskeyFrequentUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyFrequentUserToJson(this);
 
   /// ユーザー情報
   final MisskeyUser user;

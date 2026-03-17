@@ -6,7 +6,7 @@ import 'misskey_chat_room.dart';
 part 'misskey_chat_room_invitation.g.dart';
 
 /// チャットルーム招待
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyChatRoomInvitation {
   const MisskeyChatRoomInvitation({
     required this.id,
@@ -19,6 +19,8 @@ class MisskeyChatRoomInvitation {
 
   factory MisskeyChatRoomInvitation.fromJson(Map<String, dynamic> json) =>
       _$MisskeyChatRoomInvitationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyChatRoomInvitationToJson(this);
 
   final String id;
   final DateTime createdAt;

@@ -19,3 +19,13 @@ MisskeyFollowing _$MisskeyFollowingFromJson(Map<String, dynamic> json) =>
           ? null
           : MisskeyUser.fromJson(json['follower'] as Map<String, dynamic>),
     );
+
+Map<String, dynamic> _$MisskeyFollowingToJson(MisskeyFollowing instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'followeeId': instance.followeeId,
+      'followerId': instance.followerId,
+      'followee': instance.followee,
+      'follower': instance.follower,
+    };

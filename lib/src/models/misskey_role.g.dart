@@ -22,3 +22,21 @@ MisskeyRole _$MisskeyRoleFromJson(Map<String, dynamic> json) => MisskeyRole(
       displayOrder: (json['displayOrder'] as num).toInt(),
       usersCount: (json['usersCount'] as num).toInt(),
     );
+
+Map<String, dynamic> _$MisskeyRoleToJson(MisskeyRole instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
+      'name': instance.name,
+      'description': instance.description,
+      'color': instance.color,
+      'iconUrl': instance.iconUrl,
+      'target': instance.target,
+      'isPublic': instance.isPublic,
+      'isExplorable': instance.isExplorable,
+      'asBadge': instance.asBadge,
+      'canEditMembersByModerator': instance.canEditMembersByModerator,
+      'displayOrder': instance.displayOrder,
+      'usersCount': instance.usersCount,
+    };

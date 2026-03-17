@@ -23,3 +23,18 @@ EmojiDetailed _$EmojiDetailedFromJson(Map<String, dynamic> json) =>
               .map((e) => e as String)
               .toList(),
     );
+
+Map<String, dynamic> _$EmojiDetailedToJson(EmojiDetailed instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'aliases': instance.aliases,
+      'name': instance.name,
+      'category': instance.category,
+      'host': instance.host,
+      'url': instance.url,
+      'license': instance.license,
+      'isSensitive': instance.isSensitive,
+      'localOnly': instance.localOnly,
+      'roleIdsThatCanBeUsedThisEmojiAsReaction':
+          instance.roleIdsThatCanBeUsedThisEmojiAsReaction,
+    };

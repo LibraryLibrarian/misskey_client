@@ -18,3 +18,13 @@ MisskeyUserListMembership _$MisskeyUserListMembershipFromJson(
           : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
       withReplies: json['withReplies'] as bool? ?? false,
     );
+
+Map<String, dynamic> _$MisskeyUserListMembershipToJson(
+        MisskeyUserListMembership instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': const SafeDateTimeConverter().toJson(instance.createdAt),
+      'userId': instance.userId,
+      'user': instance.user,
+      'withReplies': instance.withReplies,
+    };

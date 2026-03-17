@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'instance_stats.g.dart';
 
 /// インスタンスの統計情報（`/api/stats`）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class InstanceStats {
   const InstanceStats({
     required this.notesCount,
@@ -18,6 +18,8 @@ class InstanceStats {
 
   factory InstanceStats.fromJson(Map<String, dynamic> json) =>
       _$InstanceStatsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$InstanceStatsToJson(this);
 
   /// 総ノート数
   final int notesCount;

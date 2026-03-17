@@ -5,7 +5,7 @@ import 'json_converters.dart';
 part 'misskey_announcement.g.dart';
 
 /// サーバーのお知らせ（`/api/announcements` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyAnnouncement {
   const MisskeyAnnouncement({
     required this.id,
@@ -24,6 +24,8 @@ class MisskeyAnnouncement {
 
   factory MisskeyAnnouncement.fromJson(Map<String, dynamic> json) =>
       _$MisskeyAnnouncementFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyAnnouncementToJson(this);
 
   final String id;
 

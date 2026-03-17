@@ -15,3 +15,13 @@ MisskeySigninHistory _$MisskeySigninHistoryFromJson(
       headers: json['headers'] as Map<String, dynamic>?,
       success: json['success'] as bool?,
     );
+
+Map<String, dynamic> _$MisskeySigninHistoryToJson(
+        MisskeySigninHistory instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'ip': instance.ip,
+      'headers': instance.headers,
+      'success': instance.success,
+    };

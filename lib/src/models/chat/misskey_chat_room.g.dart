@@ -19,3 +19,15 @@ MisskeyChatRoom _$MisskeyChatRoomFromJson(Map<String, dynamic> json) =>
       isMuted: json['isMuted'] as bool?,
       invitationExists: json['invitationExists'] as bool?,
     );
+
+Map<String, dynamic> _$MisskeyChatRoomToJson(MisskeyChatRoom instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'ownerId': instance.ownerId,
+      'owner': instance.owner,
+      'name': instance.name,
+      'description': instance.description,
+      'isMuted': instance.isMuted,
+      'invitationExists': instance.invitationExists,
+    };

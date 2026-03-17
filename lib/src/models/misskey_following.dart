@@ -5,7 +5,7 @@ import 'misskey_user.dart';
 part 'misskey_following.g.dart';
 
 /// フォロー関係（`/api/users/followers` / `/api/users/following` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyFollowing {
   const MisskeyFollowing({
     required this.id,
@@ -18,6 +18,8 @@ class MisskeyFollowing {
 
   factory MisskeyFollowing.fromJson(Map<String, dynamic> json) =>
       _$MisskeyFollowingFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyFollowingToJson(this);
 
   final String id;
   final DateTime createdAt;

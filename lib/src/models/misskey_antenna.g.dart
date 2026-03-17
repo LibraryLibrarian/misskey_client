@@ -31,3 +31,24 @@ MisskeyAntenna _$MisskeyAntennaFromJson(Map<String, dynamic> json) =>
       hasUnreadNote: json['hasUnreadNote'] as bool? ?? false,
       notify: json['notify'] as bool? ?? false,
     );
+
+Map<String, dynamic> _$MisskeyAntennaToJson(MisskeyAntenna instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'name': instance.name,
+      'keywords': instance.keywords,
+      'excludeKeywords': instance.excludeKeywords,
+      'src': instance.src,
+      'userListId': instance.userListId,
+      'users': instance.users,
+      'caseSensitive': instance.caseSensitive,
+      'localOnly': instance.localOnly,
+      'excludeBots': instance.excludeBots,
+      'withReplies': instance.withReplies,
+      'withFile': instance.withFile,
+      'excludeNotesInSensitiveChannel': instance.excludeNotesInSensitiveChannel,
+      'isActive': instance.isActive,
+      'hasUnreadNote': instance.hasUnreadNote,
+      'notify': instance.notify,
+    };

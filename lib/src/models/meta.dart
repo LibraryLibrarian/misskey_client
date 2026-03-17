@@ -5,7 +5,7 @@ part 'meta.g.dart';
 /// Misskey `/api/meta` レスポンスモデル
 ///
 /// 型付きフィールドを提供しつつ、未知フィールドを [raw] に保持する。
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class Meta {
   const Meta({
     this.maintainerName,

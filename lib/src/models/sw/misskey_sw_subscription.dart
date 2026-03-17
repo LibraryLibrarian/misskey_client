@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_sw_subscription.g.dart';
 
 /// プッシュ通知のサブスクリプション情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeySwSubscription {
   const MisskeySwSubscription({
     required this.userId,
@@ -13,6 +13,8 @@ class MisskeySwSubscription {
 
   factory MisskeySwSubscription.fromJson(Map<String, dynamic> json) =>
       _$MisskeySwSubscriptionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeySwSubscriptionToJson(this);
 
   /// サブスクリプションに紐づくユーザーID
   final String userId;

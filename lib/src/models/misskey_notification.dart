@@ -40,7 +40,7 @@ enum MisskeyNotificationType {
 }
 
 /// Misskey の通知
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyNotification {
   const MisskeyNotification({
     required this.id,
@@ -62,6 +62,8 @@ class MisskeyNotification {
 
   factory MisskeyNotification.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNotificationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyNotificationToJson(this);
 
   final String id;
   final DateTime createdAt;

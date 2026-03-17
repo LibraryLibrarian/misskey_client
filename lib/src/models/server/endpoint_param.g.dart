@@ -11,3 +11,9 @@ EndpointParam _$EndpointParamFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       type: json['type'] as String,
     );
+
+Map<String, dynamic> _$EndpointParamToJson(EndpointParam instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'type': instance.type,
+    };

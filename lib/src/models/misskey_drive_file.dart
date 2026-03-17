@@ -6,7 +6,7 @@ import 'misskey_user.dart';
 part 'misskey_drive_file.g.dart';
 
 /// Misskey のドライブファイル
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyDriveFile {
   const MisskeyDriveFile({
     required this.id,
@@ -29,6 +29,8 @@ class MisskeyDriveFile {
 
   factory MisskeyDriveFile.fromJson(Map<String, dynamic> json) =>
       _$MisskeyDriveFileFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyDriveFileToJson(this);
 
   final String id;
   final DateTime createdAt;
@@ -59,7 +61,7 @@ class MisskeyDriveFile {
 }
 
 /// ドライブファイルのプロパティ（画像サイズ等）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyDriveFileProperties {
   const MisskeyDriveFileProperties({
     this.width,
@@ -70,6 +72,8 @@ class MisskeyDriveFileProperties {
 
   factory MisskeyDriveFileProperties.fromJson(Map<String, dynamic> json) =>
       _$MisskeyDriveFilePropertiesFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyDriveFilePropertiesToJson(this);
 
   final int? width;
   final int? height;

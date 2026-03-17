@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_hashtag_trend.g.dart';
 
 /// トレンドハッシュタグ（`/api/hashtags/trend` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyHashtagTrend {
   const MisskeyHashtagTrend({
     required this.tag,
@@ -13,6 +13,8 @@ class MisskeyHashtagTrend {
 
   factory MisskeyHashtagTrend.fromJson(Map<String, dynamic> json) =>
       _$MisskeyHashtagTrendFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyHashtagTrendToJson(this);
 
   /// ハッシュタグ文字列
   final String tag;

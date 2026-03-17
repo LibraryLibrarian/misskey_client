@@ -18,3 +18,10 @@ MisskeyNotePartial _$MisskeyNotePartialFromJson(Map<String, dynamic> json) =>
           ) ??
           {},
     );
+
+Map<String, dynamic> _$MisskeyNotePartialToJson(MisskeyNotePartial instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'reactions': instance.reactions,
+      'reactionEmojis': instance.reactionEmojis,
+    };

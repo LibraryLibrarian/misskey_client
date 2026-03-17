@@ -37,3 +37,32 @@ MisskeyFederationInstance _$MisskeyFederationInstanceFromJson(
           ? null
           : DateTime.parse(json['latestRequestReceivedAt'] as String),
     );
+
+Map<String, dynamic> _$MisskeyFederationInstanceToJson(
+        MisskeyFederationInstance instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'firstRetrievedAt': instance.firstRetrievedAt.toIso8601String(),
+      'host': instance.host,
+      'usersCount': instance.usersCount,
+      'notesCount': instance.notesCount,
+      'followingCount': instance.followingCount,
+      'followersCount': instance.followersCount,
+      'isNotResponding': instance.isNotResponding,
+      'isSuspended': instance.isSuspended,
+      'isBlocked': instance.isBlocked,
+      'isSilenced': instance.isSilenced,
+      'softwareName': instance.softwareName,
+      'softwareVersion': instance.softwareVersion,
+      'openRegistrations': instance.openRegistrations,
+      'name': instance.name,
+      'description': instance.description,
+      'maintainerName': instance.maintainerName,
+      'maintainerEmail': instance.maintainerEmail,
+      'iconUrl': instance.iconUrl,
+      'faviconUrl': instance.faviconUrl,
+      'themeColor': instance.themeColor,
+      'infoUpdatedAt': instance.infoUpdatedAt?.toIso8601String(),
+      'latestRequestReceivedAt':
+          instance.latestRequestReceivedAt?.toIso8601String(),
+    };

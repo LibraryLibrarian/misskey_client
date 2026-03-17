@@ -18,3 +18,14 @@ MisskeyDriveFolder _$MisskeyDriveFolderFromJson(Map<String, dynamic> json) =>
       foldersCount: (json['foldersCount'] as num?)?.toInt() ?? 0,
       filesCount: (json['filesCount'] as num?)?.toInt() ?? 0,
     );
+
+Map<String, dynamic> _$MisskeyDriveFolderToJson(MisskeyDriveFolder instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'name': instance.name,
+      'parentId': instance.parentId,
+      'parent': instance.parent,
+      'foldersCount': instance.foldersCount,
+      'filesCount': instance.filesCount,
+    };

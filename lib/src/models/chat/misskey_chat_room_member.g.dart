@@ -17,3 +17,13 @@ MisskeyChatRoomMember _$MisskeyChatRoomMemberFromJson(
           : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
       roomId: json['roomId'] as String,
     );
+
+Map<String, dynamic> _$MisskeyChatRoomMemberToJson(
+        MisskeyChatRoomMember instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'userId': instance.userId,
+      'user': instance.user,
+      'roomId': instance.roomId,
+    };

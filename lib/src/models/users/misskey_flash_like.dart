@@ -5,7 +5,7 @@ import 'misskey_flash.dart';
 part 'misskey_flash_like.g.dart';
 
 /// Flash（Play）へのいいね情報（`/api/flash/my-likes` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyFlashLike {
   const MisskeyFlashLike({
     required this.id,
@@ -14,6 +14,8 @@ class MisskeyFlashLike {
 
   factory MisskeyFlashLike.fromJson(Map<String, dynamic> json) =>
       _$MisskeyFlashLikeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyFlashLikeToJson(this);
 
   final String id;
 

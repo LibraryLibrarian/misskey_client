@@ -37,3 +37,26 @@ MisskeyPage _$MisskeyPageFromJson(Map<String, dynamic> json) => MisskeyPage(
       likedCount: (json['likedCount'] as num?)?.toInt() ?? 0,
       isLiked: json['isLiked'] as bool?,
     );
+
+Map<String, dynamic> _$MisskeyPageToJson(MisskeyPage instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': const SafeDateTimeConverter().toJson(instance.createdAt),
+      'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
+      'userId': instance.userId,
+      'user': instance.user,
+      'title': instance.title,
+      'name': instance.name,
+      'summary': instance.summary,
+      'content': instance.content,
+      'variables': instance.variables,
+      'alignCenter': instance.alignCenter,
+      'hideTitleWhenPinned': instance.hideTitleWhenPinned,
+      'font': instance.font,
+      'script': instance.script,
+      'eyeCatchingImageId': instance.eyeCatchingImageId,
+      'eyeCatchingImage': instance.eyeCatchingImage,
+      'attachedFiles': instance.attachedFiles,
+      'likedCount': instance.likedCount,
+      'isLiked': instance.isLiked,
+    };

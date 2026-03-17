@@ -33,6 +33,26 @@ MisskeyDriveFile _$MisskeyDriveFileFromJson(Map<String, dynamic> json) =>
               json['properties'] as Map<String, dynamic>),
     );
 
+Map<String, dynamic> _$MisskeyDriveFileToJson(MisskeyDriveFile instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'name': instance.name,
+      'type': instance.type,
+      'size': instance.size,
+      'md5': instance.md5,
+      'url': instance.url,
+      'thumbnailUrl': instance.thumbnailUrl,
+      'comment': instance.comment,
+      'folderId': instance.folderId,
+      'folder': instance.folder,
+      'userId': instance.userId,
+      'user': instance.user,
+      'isSensitive': instance.isSensitive,
+      'blurhash': instance.blurhash,
+      'properties': instance.properties,
+    };
+
 MisskeyDriveFileProperties _$MisskeyDriveFilePropertiesFromJson(
         Map<String, dynamic> json) =>
     MisskeyDriveFileProperties(
@@ -41,3 +61,12 @@ MisskeyDriveFileProperties _$MisskeyDriveFilePropertiesFromJson(
       orientation: (json['orientation'] as num?)?.toInt(),
       avgColor: json['avgColor'] as String?,
     );
+
+Map<String, dynamic> _$MisskeyDriveFilePropertiesToJson(
+        MisskeyDriveFileProperties instance) =>
+    <String, dynamic>{
+      'width': instance.width,
+      'height': instance.height,
+      'orientation': instance.orientation,
+      'avgColor': instance.avgColor,
+    };

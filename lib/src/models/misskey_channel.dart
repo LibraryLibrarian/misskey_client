@@ -6,7 +6,7 @@ import 'misskey_note.dart';
 part 'misskey_channel.g.dart';
 
 /// Misskey のチャンネル
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyChannel {
   const MisskeyChannel({
     required this.id,
@@ -32,6 +32,8 @@ class MisskeyChannel {
 
   factory MisskeyChannel.fromJson(Map<String, dynamic> json) =>
       _$MisskeyChannelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyChannelToJson(this);
 
   final String id;
   final DateTime createdAt;

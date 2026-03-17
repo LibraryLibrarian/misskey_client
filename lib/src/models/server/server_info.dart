@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'server_info.g.dart';
 
 /// サーバーのマシン情報（`/api/server-info`）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class ServerInfo {
   const ServerInfo({
     required this.machine,
@@ -14,6 +14,8 @@ class ServerInfo {
 
   factory ServerInfo.fromJson(Map<String, dynamic> json) =>
       _$ServerInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ServerInfoToJson(this);
 
   /// マシン名
   final String machine;
@@ -29,7 +31,7 @@ class ServerInfo {
 }
 
 /// サーバーのCPU情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class ServerCpuInfo {
   const ServerCpuInfo({
     required this.model,
@@ -39,6 +41,8 @@ class ServerCpuInfo {
   factory ServerCpuInfo.fromJson(Map<String, dynamic> json) =>
       _$ServerCpuInfoFromJson(json);
 
+  Map<String, dynamic> toJson() => _$ServerCpuInfoToJson(this);
+
   /// CPUモデル名
   final String model;
 
@@ -47,7 +51,7 @@ class ServerCpuInfo {
 }
 
 /// サーバーのメモリ情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class ServerMemInfo {
   const ServerMemInfo({
     required this.total,
@@ -56,12 +60,14 @@ class ServerMemInfo {
   factory ServerMemInfo.fromJson(Map<String, dynamic> json) =>
       _$ServerMemInfoFromJson(json);
 
+  Map<String, dynamic> toJson() => _$ServerMemInfoToJson(this);
+
   /// 総メモリ容量（バイト）
   final num total;
 }
 
 /// サーバーのファイルシステム情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class ServerFsInfo {
   const ServerFsInfo({
     required this.total,
@@ -70,6 +76,8 @@ class ServerFsInfo {
 
   factory ServerFsInfo.fromJson(Map<String, dynamic> json) =>
       _$ServerFsInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ServerFsInfoToJson(this);
 
   /// 総ディスク容量（バイト）
   final num total;

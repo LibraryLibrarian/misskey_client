@@ -5,7 +5,7 @@ import '../json_converters.dart';
 part 'misskey_registry_detail.g.dart';
 
 /// レジストリアイテムの詳細情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyRegistryDetail {
   const MisskeyRegistryDetail({
     required this.updatedAt,
@@ -14,6 +14,8 @@ class MisskeyRegistryDetail {
 
   factory MisskeyRegistryDetail.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRegistryDetailFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyRegistryDetailToJson(this);
 
   /// 最終更新日時
   @SafeDateTimeConverter()

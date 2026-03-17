@@ -15,3 +15,13 @@ MisskeyTotpRegistration _$MisskeyTotpRegistrationFromJson(
       label: json['label'] as String,
       issuer: json['issuer'] as String,
     );
+
+Map<String, dynamic> _$MisskeyTotpRegistrationToJson(
+        MisskeyTotpRegistration instance) =>
+    <String, dynamic>{
+      'qr': instance.qr,
+      'url': instance.url,
+      'secret': instance.secret,
+      'label': instance.label,
+      'issuer': instance.issuer,
+    };

@@ -5,7 +5,7 @@ import 'misskey_user.dart';
 part 'misskey_note_reaction.g.dart';
 
 /// ノートへのリアクション（`/api/notes/reactions` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyNoteReaction {
   const MisskeyNoteReaction({
     required this.id,
@@ -16,6 +16,8 @@ class MisskeyNoteReaction {
 
   factory MisskeyNoteReaction.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNoteReactionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyNoteReactionToJson(this);
 
   final String id;
   final DateTime createdAt;

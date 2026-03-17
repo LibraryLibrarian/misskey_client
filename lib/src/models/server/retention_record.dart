@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'retention_record.g.dart';
 
 /// ユーザーリテンション（定着率）レコード（`/api/retention`）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class RetentionRecord {
   const RetentionRecord({
     required this.createdAt,
@@ -13,6 +13,8 @@ class RetentionRecord {
 
   factory RetentionRecord.fromJson(Map<String, dynamic> json) =>
       _$RetentionRecordFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RetentionRecordToJson(this);
 
   /// 集計対象日時
   final DateTime createdAt;

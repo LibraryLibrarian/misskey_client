@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_registry_scope.g.dart';
 
 /// レジストリのスコープ・ドメイン情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyRegistryScope {
   const MisskeyRegistryScope({
     required this.scopes,
@@ -12,6 +12,8 @@ class MisskeyRegistryScope {
 
   factory MisskeyRegistryScope.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRegistryScopeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyRegistryScopeToJson(this);
 
   /// スコープの二次元配列
   final List<List<String>> scopes;

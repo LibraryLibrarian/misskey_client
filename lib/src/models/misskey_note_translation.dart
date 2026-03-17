@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_note_translation.g.dart';
 
 /// ノート翻訳結果（`/api/notes/translate`）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyNoteTranslation {
   const MisskeyNoteTranslation({
     required this.sourceLang,
@@ -12,6 +12,8 @@ class MisskeyNoteTranslation {
 
   factory MisskeyNoteTranslation.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNoteTranslationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyNoteTranslationToJson(this);
 
   /// 検出された原文の言語コード
   final String sourceLang;

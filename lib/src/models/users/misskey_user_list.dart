@@ -5,7 +5,7 @@ import '../json_converters.dart';
 part 'misskey_user_list.g.dart';
 
 /// ユーザーリスト（`/api/users/lists/*` のレスポンス）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyUserList {
   const MisskeyUserList({
     required this.id,
@@ -19,6 +19,8 @@ class MisskeyUserList {
 
   factory MisskeyUserList.fromJson(Map<String, dynamic> json) =>
       _$MisskeyUserListFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyUserListToJson(this);
 
   final String id;
 

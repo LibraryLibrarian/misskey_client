@@ -5,7 +5,7 @@ import '../misskey_user.dart';
 part 'misskey_birthday_user.g.dart';
 
 /// 誕生日ユーザー情報（`/api/users/get-following-users-by-birthday` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyBirthdayUser {
   const MisskeyBirthdayUser({
     required this.id,
@@ -15,6 +15,8 @@ class MisskeyBirthdayUser {
 
   factory MisskeyBirthdayUser.fromJson(Map<String, dynamic> json) =>
       _$MisskeyBirthdayUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyBirthdayUserToJson(this);
 
   /// ユーザーID
   final String id;

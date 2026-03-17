@@ -15,3 +15,13 @@ MisskeySwRegistration _$MisskeySwRegistrationFromJson(
       endpoint: json['endpoint'] as String,
       sendReadMessage: json['sendReadMessage'] as bool,
     );
+
+Map<String, dynamic> _$MisskeySwRegistrationToJson(
+        MisskeySwRegistration instance) =>
+    <String, dynamic>{
+      'state': instance.state,
+      'key': instance.key,
+      'userId': instance.userId,
+      'endpoint': instance.endpoint,
+      'sendReadMessage': instance.sendReadMessage,
+    };

@@ -6,7 +6,7 @@ import 'misskey_note.dart';
 part 'misskey_note_favorite.g.dart';
 
 /// ノートのお気に入り情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyNoteFavorite {
   const MisskeyNoteFavorite({
     required this.id,
@@ -17,6 +17,8 @@ class MisskeyNoteFavorite {
 
   factory MisskeyNoteFavorite.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNoteFavoriteFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyNoteFavoriteToJson(this);
 
   final String id;
 

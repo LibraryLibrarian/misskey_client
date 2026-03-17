@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_federation_instance.g.dart';
 
 /// 連合インスタンス情報（`/api/federation/instances` 等のレスポンス）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyFederationInstance {
   const MisskeyFederationInstance({
     required this.id,
@@ -33,6 +33,8 @@ class MisskeyFederationInstance {
 
   factory MisskeyFederationInstance.fromJson(Map<String, dynamic> json) =>
       _$MisskeyFederationInstanceFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyFederationInstanceToJson(this);
 
   final String id;
 

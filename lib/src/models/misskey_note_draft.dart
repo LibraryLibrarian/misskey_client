@@ -6,7 +6,7 @@ import 'misskey_poll.dart';
 part 'misskey_note_draft.g.dart';
 
 /// ノート下書き（`/api/notes/drafts/*`）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyNoteDraft {
   const MisskeyNoteDraft({
     required this.id,
@@ -31,6 +31,8 @@ class MisskeyNoteDraft {
 
   factory MisskeyNoteDraft.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNoteDraftFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyNoteDraftToJson(this);
 
   final String id;
   final DateTime createdAt;

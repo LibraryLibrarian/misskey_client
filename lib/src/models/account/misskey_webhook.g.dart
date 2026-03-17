@@ -19,3 +19,17 @@ MisskeyWebhook _$MisskeyWebhookFromJson(Map<String, dynamic> json) =>
           .fromJson(json['latestSentAt'] as String?),
       latestStatus: (json['latestStatus'] as num?)?.toInt(),
     );
+
+Map<String, dynamic> _$MisskeyWebhookToJson(MisskeyWebhook instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'userId': instance.userId,
+      'name': instance.name,
+      'on': instance.on,
+      'url': instance.url,
+      'secret': instance.secret,
+      'active': instance.active,
+      'latestSentAt':
+          const SafeDateTimeConverter().toJson(instance.latestSentAt),
+      'latestStatus': instance.latestStatus,
+    };

@@ -5,7 +5,7 @@ import 'misskey_user.dart';
 part 'misskey_muting.g.dart';
 
 /// ミュート関係（`/api/mute/list` のレスポンス要素）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyMuting {
   const MisskeyMuting({
     required this.id,
@@ -17,6 +17,8 @@ class MisskeyMuting {
 
   factory MisskeyMuting.fromJson(Map<String, dynamic> json) =>
       _$MisskeyMutingFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyMutingToJson(this);
 
   final String id;
   final DateTime createdAt;

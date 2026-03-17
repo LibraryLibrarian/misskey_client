@@ -7,7 +7,7 @@ import '../misskey_user.dart';
 part 'misskey_gallery_post.g.dart';
 
 /// ギャラリー投稿
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyGalleryPost {
   const MisskeyGalleryPost({
     required this.id,
@@ -27,6 +27,8 @@ class MisskeyGalleryPost {
 
   factory MisskeyGalleryPost.fromJson(Map<String, dynamic> json) =>
       _$MisskeyGalleryPostFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyGalleryPostToJson(this);
 
   final String id;
 

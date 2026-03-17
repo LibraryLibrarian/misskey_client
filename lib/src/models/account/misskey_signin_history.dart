@@ -5,7 +5,7 @@ import '../json_converters.dart';
 part 'misskey_signin_history.g.dart';
 
 /// サインイン履歴
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeySigninHistory {
   const MisskeySigninHistory({
     required this.id,
@@ -17,6 +17,8 @@ class MisskeySigninHistory {
 
   factory MisskeySigninHistory.fromJson(Map<String, dynamic> json) =>
       _$MisskeySigninHistoryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeySigninHistoryToJson(this);
 
   final String id;
 

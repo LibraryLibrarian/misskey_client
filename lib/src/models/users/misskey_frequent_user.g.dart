@@ -11,3 +11,10 @@ MisskeyFrequentUser _$MisskeyFrequentUserFromJson(Map<String, dynamic> json) =>
       user: MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
       weight: (json['weight'] as num).toDouble(),
     );
+
+Map<String, dynamic> _$MisskeyFrequentUserToJson(
+        MisskeyFrequentUser instance) =>
+    <String, dynamic>{
+      'user': instance.user,
+      'weight': instance.weight,
+    };

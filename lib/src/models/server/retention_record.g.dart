@@ -12,3 +12,10 @@ RetentionRecord _$RetentionRecordFromJson(Map<String, dynamic> json) =>
       users: (json['users'] as num).toInt(),
       data: Map<String, int>.from(json['data'] as Map),
     );
+
+Map<String, dynamic> _$RetentionRecordToJson(RetentionRecord instance) =>
+    <String, dynamic>{
+      'createdAt': instance.createdAt.toIso8601String(),
+      'users': instance.users,
+      'data': instance.data,
+    };

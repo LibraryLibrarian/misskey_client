@@ -15,7 +15,7 @@ enum MisskeyOnlineStatus {
 }
 
 /// Misskey ユーザー（UserLite + UserDetailed の統合モデル）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyUser {
   const MisskeyUser({
     required this.id,
@@ -79,6 +79,8 @@ class MisskeyUser {
 
   factory MisskeyUser.fromJson(Map<String, dynamic> json) =>
       _$MisskeyUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyUserToJson(this);
 
   final String id;
   final String username;
@@ -214,19 +216,21 @@ class MisskeyUser {
 }
 
 /// プロフィールフィールド
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyUserField {
   const MisskeyUserField({required this.name, required this.value});
 
   factory MisskeyUserField.fromJson(Map<String, dynamic> json) =>
       _$MisskeyUserFieldFromJson(json);
 
+  Map<String, dynamic> toJson() => _$MisskeyUserFieldToJson(this);
+
   final String name;
   final String value;
 }
 
 /// アバターデコレーション
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyAvatarDecoration {
   const MisskeyAvatarDecoration({
     required this.id,
@@ -240,6 +244,8 @@ class MisskeyAvatarDecoration {
   factory MisskeyAvatarDecoration.fromJson(Map<String, dynamic> json) =>
       _$MisskeyAvatarDecorationFromJson(json);
 
+  Map<String, dynamic> toJson() => _$MisskeyAvatarDecorationToJson(this);
+
   final String id;
   final double? angle;
   final bool? flipH;
@@ -249,7 +255,7 @@ class MisskeyAvatarDecoration {
 }
 
 /// リモートユーザーのインスタンス情報
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyUserInstance {
   const MisskeyUserInstance({
     this.name,
@@ -263,6 +269,8 @@ class MisskeyUserInstance {
   factory MisskeyUserInstance.fromJson(Map<String, dynamic> json) =>
       _$MisskeyUserInstanceFromJson(json);
 
+  Map<String, dynamic> toJson() => _$MisskeyUserInstanceToJson(this);
+
   final String? name;
   final String? softwareName;
   final String? softwareVersion;
@@ -272,7 +280,7 @@ class MisskeyUserInstance {
 }
 
 /// バッジロール
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyBadgeRole {
   const MisskeyBadgeRole({
     required this.name,
@@ -283,6 +291,8 @@ class MisskeyBadgeRole {
   factory MisskeyBadgeRole.fromJson(Map<String, dynamic> json) =>
       _$MisskeyBadgeRoleFromJson(json);
 
+  Map<String, dynamic> toJson() => _$MisskeyBadgeRoleToJson(this);
+
   final String name;
   final String? iconUrl;
 
@@ -291,7 +301,7 @@ class MisskeyBadgeRole {
 }
 
 /// ロール（簡易版）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyRoleLite {
   const MisskeyRoleLite({
     required this.id,
@@ -306,6 +316,8 @@ class MisskeyRoleLite {
 
   factory MisskeyRoleLite.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRoleLiteFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyRoleLiteToJson(this);
 
   final String id;
   final String name;

@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_antenna.g.dart';
 
 /// Misskey のアンテナ（カスタムタイムラインフィルター）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyAntenna {
   const MisskeyAntenna({
     required this.id,
@@ -27,6 +27,8 @@ class MisskeyAntenna {
 
   factory MisskeyAntenna.fromJson(Map<String, dynamic> json) =>
       _$MisskeyAntennaFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyAntennaToJson(this);
 
   final String id;
   final DateTime createdAt;

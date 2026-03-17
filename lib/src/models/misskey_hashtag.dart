@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'misskey_hashtag.g.dart';
 
 /// ハッシュタグ情報（`/api/hashtags/show` 等のレスポンス）
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyHashtag {
   const MisskeyHashtag({
     required this.tag,
@@ -17,6 +17,8 @@ class MisskeyHashtag {
 
   factory MisskeyHashtag.fromJson(Map<String, dynamic> json) =>
       _$MisskeyHashtagFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyHashtagToJson(this);
 
   /// ハッシュタグ文字列
   final String tag;

@@ -5,7 +5,7 @@ import '../json_converters.dart';
 part 'misskey_webhook.g.dart';
 
 /// ユーザーWebhook
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class MisskeyWebhook {
   const MisskeyWebhook({
     required this.id,
@@ -21,6 +21,8 @@ class MisskeyWebhook {
 
   factory MisskeyWebhook.fromJson(Map<String, dynamic> json) =>
       _$MisskeyWebhookFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MisskeyWebhookToJson(this);
 
   /// Webhook ID
   final String id;
