@@ -142,17 +142,17 @@ class TwoFactorApi {
 
   /// セキュリティキーの名前を更新する（`/api/i/2fa/update-key`）
   ///
-  /// - [name]: 新しいキー名（必須、1〜30文字）
   /// - [credentialId]: 対象キーのID（必須）
+  /// - [name]: 新しいキー名（1〜30文字）
   Future<void> updateKey({
-    required String name,
     required String credentialId,
+    String? name,
   }) =>
       http.send<Object?>(
         '/i/2fa/update-key',
         body: <String, dynamic>{
-          'name': name,
           'credentialId': credentialId,
+          if (name != null) 'name': name,
         },
       );
 
