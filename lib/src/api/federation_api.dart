@@ -233,8 +233,7 @@ class FederationApi {
   /// 指定したリモートユーザーのActivityPub情報を再フェッチする。認証必須。
   ///
   /// - [userId]: 更新対象のユーザーID（必須）
-  Future<void> updateRemoteUser({required String userId}) =>
-      http.send<Object?>(
+  Future<void> updateRemoteUser({required String userId}) => http.send<Object?>(
         '/federation/update-remote-user',
         body: <String, dynamic>{'userId': userId},
       );

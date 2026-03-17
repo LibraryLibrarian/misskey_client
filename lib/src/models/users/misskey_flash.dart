@@ -17,6 +17,7 @@ class MisskeyFlash {
     required this.summary,
     required this.script,
     this.user,
+    this.visibility,
     this.likedCount = 0,
     this.isLiked,
   });
@@ -43,6 +44,9 @@ class MisskeyFlash {
 
   /// AiScript コード
   final String script;
+
+  /// 公開範囲（`public` / `private`）
+  final String? visibility;
 
   /// いいね数
   @JsonKey(defaultValue: 0)

@@ -15,6 +15,56 @@ class NotesApi {
 
   final MisskeyHttp http;
 
+  /// 公開ノート一覧を取得（`/api/notes`）
+  ///
+  /// `visibility = public` かつ `localOnly = false` のノートを返す。認証不要。
+  ///
+  /// - [local]: ローカル投稿のみに絞る（デフォルト: false）
+  /// - [reply]: リプライのみ/除外（null=フィルタなし）
+  /// - [renote]: リノートのみ/除外（null=フィルタなし）
+  /// - [withFiles]: ファイル付きのみ/除外（null=フィルタなし）
+  /// - [poll]: 投票付きのみ/除外（null=フィルタなし）
+  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
+  /// - [sinceId] / [untilId]: IDによるページング
+  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  Future<List<MisskeyNote>> list({
+    bool? local,
+    bool? reply,
+    bool? renote,
+    bool? withFiles,
+    bool? poll,
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) async {
+    final body = <String, dynamic>{
+      if (local != null) 'local': local,
+      if (reply != null) 'reply': reply,
+      if (renote != null) 'renote': renote,
+      if (withFiles != null) 'withFiles': withFiles,
+      if (poll != null) 'poll': poll,
+      if (limit != null) 'limit': limit,
+      if (sinceId != null) 'sinceId': sinceId,
+      if (untilId != null) 'untilId': untilId,
+      if (sinceDate != null) 'sinceDate': sinceDate,
+      if (untilDate != null) 'untilDate': untilDate,
+    };
+    final res = await http.send<List<dynamic>>(
+      '/notes',
+      body: body,
+      options: const RequestOptions(
+        authMode: AuthMode.none,
+        idempotent: true,
+      ),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyNote.fromJson)
+        .toList();
+  }
+
   /// ホームタイムラインを取得（`/api/notes/timeline`）
   ///
   /// フォロー中ユーザーのノートを返す。認証必須。

@@ -29,7 +29,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/active-users', span: span, limit: limit, offset: offset);
+    return _fetchChart('/charts/active-users',
+        span: span, limit: limit, offset: offset);
   }
 
   /// ActivityPubリクエスト統計を取得する（`/api/charts/ap-request`）
@@ -45,7 +46,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/ap-request', span: span, limit: limit, offset: offset);
+    return _fetchChart('/charts/ap-request',
+        span: span, limit: limit, offset: offset);
   }
 
   /// 連合統計を取得する（`/api/charts/federation`）
@@ -62,7 +64,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/federation', span: span, limit: limit, offset: offset);
+    return _fetchChart('/charts/federation',
+        span: span, limit: limit, offset: offset);
   }
 
   /// 特定インスタンスの統計を取得する（`/api/charts/instance`）
@@ -116,7 +119,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/notes', span: span, limit: limit, offset: offset);
+    return _fetchChart('/charts/notes',
+        span: span, limit: limit, offset: offset);
   }
 
   /// ユーザー統計を取得する（`/api/charts/users`）
@@ -133,7 +137,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/users', span: span, limit: limit, offset: offset);
+    return _fetchChart('/charts/users',
+        span: span, limit: limit, offset: offset);
   }
 
   /// 指定ユーザーのフォロー統計を取得する（`/api/charts/user/following`）
@@ -154,7 +159,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchUserChart('/charts/user/following', userId: userId, span: span, limit: limit, offset: offset);
+    return _fetchUserChart('/charts/user/following',
+        userId: userId, span: span, limit: limit, offset: offset);
   }
 
   /// 指定ユーザーのノート統計を取得する（`/api/charts/user/notes`）
@@ -173,7 +179,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchUserChart('/charts/user/notes', userId: userId, span: span, limit: limit, offset: offset);
+    return _fetchUserChart('/charts/user/notes',
+        userId: userId, span: span, limit: limit, offset: offset);
   }
 
   /// 指定ユーザーのページビュー統計を取得する（`/api/charts/user/pv`）
@@ -192,7 +199,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchUserChart('/charts/user/pv', userId: userId, span: span, limit: limit, offset: offset);
+    return _fetchUserChart('/charts/user/pv',
+        userId: userId, span: span, limit: limit, offset: offset);
   }
 
   /// 指定ユーザーのリアクション統計を取得する（`/api/charts/user/reactions`）
@@ -211,7 +219,8 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchUserChart('/charts/user/reactions', userId: userId, span: span, limit: limit, offset: offset);
+    return _fetchUserChart('/charts/user/reactions',
+        userId: userId, span: span, limit: limit, offset: offset);
   }
 
   /// 共通のチャートデータ取得処理（サーバー全体用）

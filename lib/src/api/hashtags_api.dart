@@ -38,8 +38,7 @@ class HashtagsApi {
     final body = <String, dynamic>{
       'sort': sort,
       if (limit != null) 'limit': limit,
-      if (attachedToUserOnly != null)
-        'attachedToUserOnly': attachedToUserOnly,
+      if (attachedToUserOnly != null) 'attachedToUserOnly': attachedToUserOnly,
       if (attachedToLocalUserOnly != null)
         'attachedToLocalUserOnly': attachedToLocalUserOnly,
       if (attachedToRemoteUserOnly != null)

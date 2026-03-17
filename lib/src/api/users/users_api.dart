@@ -29,6 +29,49 @@ class UsersApi {
   /// ユーザーリスト関連API
   final UserListsApi lists;
 
+  /// ユーザー一覧を取得する（`/api/users`）
+  ///
+  /// 探索可能（`isExplorable`）かつ凍結されていないユーザーを返す。
+  /// 認証不要（認証時はミュート・ブロックユーザーを除外）。
+  /// offsetベースのページネーション。
+  ///
+  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
+  /// - [offset]: スキップ件数（デフォルト: 0）
+  /// - [sort]: ソート順（`+follower`/`-follower`/`+createdAt`/`-createdAt`/
+  ///   `+updatedAt`/`-updatedAt`）
+  /// - [state]: ユーザー状態フィルタ（`all`/`alive`、デフォルト: `all`）
+  /// - [origin]: 連合フィルタ（`combined`/`local`/`remote`、デフォルト: `local`）
+  /// - [hostname]: リモートホスト名で絞り込む（`null`でローカル）
+  Future<List<MisskeyUser>> list({
+    int? limit,
+    int? offset,
+    String? sort,
+    String? state,
+    String? origin,
+    String? hostname,
+  }) async {
+    final body = <String, dynamic>{
+      if (limit != null) 'limit': limit,
+      if (offset != null) 'offset': offset,
+      if (sort != null) 'sort': sort,
+      if (state != null) 'state': state,
+      if (origin != null) 'origin': origin,
+      if (hostname != null) 'hostname': hostname,
+    };
+    final res = await _http.send<List<dynamic>>(
+      '/users',
+      body: body,
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyUser.fromJson)
+        .toList();
+  }
+
   /// ユーザーIDを指定してユーザー情報を1件取得
   ///
   /// 複数ユーザーをまとめて取得する場合は [showMany] を使うこと。

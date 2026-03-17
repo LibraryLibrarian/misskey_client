@@ -9,6 +9,7 @@ import '../api/chat/chat_api.dart';
 import '../api/clips_api.dart';
 import '../api/drive/drive_api.dart';
 import '../api/federation_api.dart';
+import '../api/flash_api.dart';
 import '../api/following_api.dart';
 import '../api/gallery/gallery_api.dart';
 import '../api/hashtags_api.dart';
@@ -51,6 +52,7 @@ class MisskeyClient {
     clips = ClipsApi(http: http);
     drive = DriveApi(http: http);
     federation = FederationApi(http: http);
+    flash = FlashApi(http: http);
     following = FollowingApi(http: http);
     gallery = GalleryApi(http: http);
     hashtags = HashtagsApi(http: http);
@@ -88,6 +90,10 @@ class MisskeyClient {
   late final ClipsApi clips;
   late final DriveApi drive;
   late final FederationApi federation;
+
+  /// Flash（Play）関連API
+  late final FlashApi flash;
+
   late final FollowingApi following;
 
   /// ギャラリー関連API

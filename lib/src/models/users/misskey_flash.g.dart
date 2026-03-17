@@ -19,6 +19,7 @@ MisskeyFlash _$MisskeyFlashFromJson(Map<String, dynamic> json) => MisskeyFlash(
       user: json['user'] == null
           ? null
           : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
+      visibility: json['visibility'] as String?,
       likedCount: (json['likedCount'] as num?)?.toInt() ?? 0,
       isLiked: json['isLiked'] as bool?,
     );
