@@ -76,7 +76,7 @@ client.chat          // Direct messaging
 client.clips         // Note clip management
 client.drive         // File storage (drive.files, drive.folders, drive.stats)
 client.federation    // Federated instance information
-client.flash         // Flash (Play) management
+client.flash         // Play (Flash) management
 client.following     // Follow / unfollow operations
 client.gallery       // Gallery post management
 client.hashtags      // Hashtag information

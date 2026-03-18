@@ -5,7 +5,7 @@ title: "Content"
 
 # Content
 
-This page covers four content-focused APIs: clips for bookmarking notes, Flash (Play) for AiScript mini-apps, gallery for photo collections, and pages for rich-text documents.
+This page covers four content-focused APIs: clips for bookmarking notes, Play (Flash) for AiScript mini-apps, gallery for photo collections, and pages for rich-text documents.
 
 ## Clips
 
@@ -39,11 +39,11 @@ await client.clips.update(clipId: clip.id, name: 'Must-reads');
 await client.clips.delete(clipId: clip.id);
 ```
 
-## Flash
+## Play
 
-Flash (also called Play) lets users create and run small AiScript-powered mini-apps.
+Play (also known by the legacy API name Flash) lets users create and run small AiScript-powered mini-apps.
 
-### Creating a Flash
+### Creating a Play
 
 ```dart
 final flash = await client.flash.create(

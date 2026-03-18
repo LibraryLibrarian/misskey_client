@@ -1,15 +1,15 @@
 ---
 sidebar_position: 7
-title: "コンテンツ"
+title: "Contenu"
 ---
 
-# コンテンツ
+# Contenu
 
-このページではコンテンツ系の4つの API を説明します。ノートのブックマークを管理するクリップ、AiScript 製ミニアプリの Play（Flash）、写真コレクションのギャラリー、リッチテキスト文書のページを扱います。
+Cette page couvre quatre API axées sur le contenu : les clips pour la mise en signet des notes, Play (Flash) pour les mini-applications AiScript, la galerie pour les collections de photos, et les pages pour les documents en texte enrichi.
 
-## クリップ
+## Clips
 
-クリップはノートのブックマークを名前付きでまとめる機能です。
+Les clips sont des collections nommées de notes mises en signet.
 
 ```dart
 final clip = await client.clips.create(
@@ -18,32 +18,32 @@ final clip = await client.clips.create(
   description: 'Notes I want to revisit.',
 );
 
-// ノートの追加・削除
+// Add / remove notes
 await client.clips.addNote(clipId: clip.id, noteId: noteId);
 await client.clips.removeNote(clipId: clip.id, noteId: noteId);
 
-// クリップ内のノート一覧（検索・ページネーション対応）
+// Notes in a clip (supports search and pagination)
 final notes = await client.clips.notes(clipId: clip.id, limit: 20);
 final found = await client.clips.notes(clipId: clip.id, search: 'Misskey');
 
-// 自分のクリップ一覧
+// List your clips
 final clips = await client.clips.list(limit: 20);
 
-// クリップのお気に入り
+// Favorite clips
 await client.clips.favorite(clipId: clip.id);
 await client.clips.unfavorite(clipId: clip.id);
 final favorites = await client.clips.myFavorites();
 
-// 更新・削除
+// Update and delete
 await client.clips.update(clipId: clip.id, name: 'Must-reads');
 await client.clips.delete(clipId: clip.id);
 ```
 
 ## Play
 
-Play（旧 API 名 Flash）は AiScript 製のミニアプリを作成・実行する機能です。
+Play (connu sous le nom legacy Flash dans l'API) permet aux utilisateurs de créer et d'exécuter de petites mini-applications alimentées par AiScript.
 
-### Play の作成
+### Créer un Play
 
 ```dart
 final flash = await client.flash.create(
@@ -51,27 +51,27 @@ final flash = await client.flash.create(
   summary: 'A simple greeting app.',
   script: 'Mk:dialog("Hello", "Hello, World!", "info")',
   permissions: [],
-  visibility: 'public', // 'public' または 'private'
+  visibility: 'public', // 'public' or 'private'
 );
 ```
 
-### 取得と検索
+### Récupérer et rechercher
 
 ```dart
-// IDで取得（認証不要）
+// Single Flash by ID (no auth required)
 final flash = await client.flash.show(flashId: flashId);
 
-// 自分の Flash 一覧
+// Your Flashes
 final myFlashes = await client.flash.my(limit: 20);
 
-// 注目の Flash（オフセットページング）
+// Featured (offset-based pagination)
 final featured = await client.flash.featured(limit: 10, offset: 0);
 
-// 検索
+// Search
 final results = await client.flash.search(query: 'game', limit: 10);
 ```
 
-### いいね・更新・削除
+### J'aime, mise à jour et suppression
 
 ```dart
 await client.flash.like(flashId: flashId);
@@ -82,30 +82,30 @@ await client.flash.update(flashId: flash.id, title: 'Hello World v2');
 await client.flash.delete(flashId: flash.id);
 ```
 
-## ギャラリー
+## Galerie
 
-ギャラリー投稿は Drive ファイル（画像・動画）のキュレーションコレクションです。
+Les publications de galerie sont des collections organisées de fichiers Drive (images, vidéos).
 
-### 投稿の閲覧
+### Parcourir les publications
 
 ```dart
-// 注目の投稿（ランキングキャッシュ、TTL 30分）
+// Featured (ranking cache, 30-minute TTL)
 final featured = await client.gallery.featured(limit: 10);
 
-// 人気の投稿（いいね数順）
+// Popular (sorted by like count)
 final popular = await client.gallery.popular();
 
-// 全投稿（新しい順）— untilId でページネーション
+// All posts, newest first — paginate with untilId
 final posts = await client.gallery.posts(limit: 20);
 final older = await client.gallery.posts(limit: 20, untilId: posts.last.id);
 
-// 投稿の詳細
+// Single post
 final post = await client.gallery.postsShow(postId: postId);
 ```
 
-### 投稿の作成と管理
+### Créer et gérer des publications
 
-`fileIds` には Drive ファイル ID を 1〜32 個指定できます。
+`fileIds` accepte entre 1 et 32 identifiants de fichiers Drive uniques.
 
 ```dart
 final post = await client.gallery.postsCreate(
@@ -125,34 +125,34 @@ await client.gallery.postsLike(postId: postId);
 await client.gallery.postsUnlike(postId: postId);
 ```
 
-## ページ
+## Pages
 
-ページはコンテンツブロックと AiScript 変数で構成されるリッチドキュメントです。
+Les pages sont des documents enrichis composés de blocs de contenu et de variables AiScript.
 
-### ページの取得
+### Récupérer des pages
 
 ```dart
-// ID で取得（認証不要）
+// By ID (no auth required)
 final page = await client.pages.showById(pageId: pageId);
 
-// ユーザー名と URL パス名で取得（認証不要）
+// By username and URL path name (no auth required)
 final page = await client.pages.showByName(
   name: 'my-first-page',
   username: 'alice',
 );
 
-// 注目のページ（いいね数順）
+// Featured pages (sorted by like count)
 final featured = await client.pages.featured();
 ```
 
-### ページの作成
+### Créer une page
 
-`content` はブロックオブジェクトのリスト、`variables` は変数定義のリスト、`script` はページ読み込み時に実行される AiScript です。
+`content` est une liste d'objets blocs ; `variables` est une liste de définitions de variables ; `script` est du AiScript exécuté au chargement de la page.
 
 ```dart
 final page = await client.pages.create(
   title: 'My First Page',
-  name: 'my-first-page', // URL パス名 — ユーザーごとに一意
+  name: 'my-first-page', // URL path name — must be unique per user
   content: [
     {'type': 'text', 'text': 'Welcome to my page!'},
   ],
@@ -162,7 +162,7 @@ final page = await client.pages.create(
 );
 ```
 
-### 更新・削除・いいね
+### Mettre à jour, supprimer et aimer
 
 ```dart
 await client.pages.update(

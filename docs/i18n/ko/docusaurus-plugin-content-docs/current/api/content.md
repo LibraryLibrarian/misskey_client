@@ -1,77 +1,77 @@
 ---
 sidebar_position: 7
-title: "コンテンツ"
+title: "콘텐츠"
 ---
 
-# コンテンツ
+# 콘텐츠
 
-このページではコンテンツ系の4つの API を説明します。ノートのブックマークを管理するクリップ、AiScript 製ミニアプリの Play（Flash）、写真コレクションのギャラリー、リッチテキスト文書のページを扱います。
+이 페이지에서는 네 가지 콘텐츠 관련 API를 다룹니다: 노트를 북마크하는 클립, AiScript 미니앱인 Play (Flash), 사진 컬렉션을 위한 갤러리, 리치 텍스트 문서를 위한 페이지입니다.
 
-## クリップ
+## 클립
 
-クリップはノートのブックマークを名前付きでまとめる機能です。
+클립은 북마크한 노트의 이름이 붙은 컬렉션입니다.
 
 ```dart
 final clip = await client.clips.create(
   name: 'Interesting reads',
   isPublic: true,
-  description: 'Notes I want to revisit.',
+  description: '다시 보고 싶은 노트들.',
 );
 
-// ノートの追加・削除
+// 노트 추가 / 제거
 await client.clips.addNote(clipId: clip.id, noteId: noteId);
 await client.clips.removeNote(clipId: clip.id, noteId: noteId);
 
-// クリップ内のノート一覧（検索・ページネーション対応）
+// 클립 내 노트 (검색 및 페이지네이션 지원)
 final notes = await client.clips.notes(clipId: clip.id, limit: 20);
 final found = await client.clips.notes(clipId: clip.id, search: 'Misskey');
 
-// 自分のクリップ一覧
+// 내 클립 목록
 final clips = await client.clips.list(limit: 20);
 
-// クリップのお気に入り
+// 클립 즐겨찾기
 await client.clips.favorite(clipId: clip.id);
 await client.clips.unfavorite(clipId: clip.id);
 final favorites = await client.clips.myFavorites();
 
-// 更新・削除
+// 업데이트 및 삭제
 await client.clips.update(clipId: clip.id, name: 'Must-reads');
 await client.clips.delete(clipId: clip.id);
 ```
 
-## Play
+## Flash
 
-Play（旧 API 名 Flash）は AiScript 製のミニアプリを作成・実行する機能です。
+Play (Flash라고도 함)는 사용자가 AiScript로 구동되는 작은 미니앱을 만들고 실행할 수 있게 해줍니다.
 
-### Play の作成
+### Flash 생성
 
 ```dart
 final flash = await client.flash.create(
   title: 'Hello World',
-  summary: 'A simple greeting app.',
+  summary: '간단한 인사 앱입니다.',
   script: 'Mk:dialog("Hello", "Hello, World!", "info")',
   permissions: [],
-  visibility: 'public', // 'public' または 'private'
+  visibility: 'public', // 'public' 또는 'private'
 );
 ```
 
-### 取得と検索
+### 조회 및 검색
 
 ```dart
-// IDで取得（認証不要）
+// ID로 단일 Flash 조회 (인증 불필요)
 final flash = await client.flash.show(flashId: flashId);
 
-// 自分の Flash 一覧
+// 내 Flash 목록
 final myFlashes = await client.flash.my(limit: 20);
 
-// 注目の Flash（オフセットページング）
+// 추천 (오프셋 기반 페이지네이션)
 final featured = await client.flash.featured(limit: 10, offset: 0);
 
-// 検索
+// 검색
 final results = await client.flash.search(query: 'game', limit: 10);
 ```
 
-### いいね・更新・削除
+### 좋아요, 업데이트 및 삭제
 
 ```dart
 await client.flash.like(flashId: flashId);
@@ -82,41 +82,41 @@ await client.flash.update(flashId: flash.id, title: 'Hello World v2');
 await client.flash.delete(flashId: flash.id);
 ```
 
-## ギャラリー
+## 갤러리
 
-ギャラリー投稿は Drive ファイル（画像・動画）のキュレーションコレクションです。
+갤러리 게시물은 드라이브 파일(이미지, 동영상)의 큐레이션된 컬렉션입니다.
 
-### 投稿の閲覧
+### 게시물 탐색
 
 ```dart
-// 注目の投稿（ランキングキャッシュ、TTL 30分）
+// 추천 (순위 캐시, TTL 30분)
 final featured = await client.gallery.featured(limit: 10);
 
-// 人気の投稿（いいね数順）
+// 인기순 (좋아요 수 기준)
 final popular = await client.gallery.popular();
 
-// 全投稿（新しい順）— untilId でページネーション
+// 모든 게시물, 최신순 — untilId로 페이지네이션
 final posts = await client.gallery.posts(limit: 20);
 final older = await client.gallery.posts(limit: 20, untilId: posts.last.id);
 
-// 投稿の詳細
+// 단일 게시물
 final post = await client.gallery.postsShow(postId: postId);
 ```
 
-### 投稿の作成と管理
+### 게시물 작성 및 관리
 
-`fileIds` には Drive ファイル ID を 1〜32 個指定できます。
+`fileIds`는 1개에서 32개의 고유한 드라이브 파일 ID를 받습니다.
 
 ```dart
 final post = await client.gallery.postsCreate(
-  title: 'Summer photos',
+  title: '여름 사진',
   fileIds: [fileId1, fileId2, fileId3],
-  description: 'A few shots from the trip.',
+  description: '여행에서 찍은 몇 장의 사진.',
 );
 
 await client.gallery.postsUpdate(
   postId: post.id,
-  title: 'Summer 2025 photos',
+  title: '2025 여름 사진',
 );
 
 await client.gallery.postsDelete(postId: post.id);
@@ -125,44 +125,44 @@ await client.gallery.postsLike(postId: postId);
 await client.gallery.postsUnlike(postId: postId);
 ```
 
-## ページ
+## 페이지
 
-ページはコンテンツブロックと AiScript 変数で構成されるリッチドキュメントです。
+페이지는 콘텐츠 블록과 AiScript 변수로 구성된 리치 문서입니다.
 
-### ページの取得
+### 페이지 조회
 
 ```dart
-// ID で取得（認証不要）
+// ID로 조회 (인증 불필요)
 final page = await client.pages.showById(pageId: pageId);
 
-// ユーザー名と URL パス名で取得（認証不要）
+// 사용자명과 URL 경로명으로 조회 (인증 불필요)
 final page = await client.pages.showByName(
   name: 'my-first-page',
   username: 'alice',
 );
 
-// 注目のページ（いいね数順）
+// 추천 페이지 (좋아요 수 기준)
 final featured = await client.pages.featured();
 ```
 
-### ページの作成
+### 페이지 생성
 
-`content` はブロックオブジェクトのリスト、`variables` は変数定義のリスト、`script` はページ読み込み時に実行される AiScript です。
+`content`는 블록 객체의 목록이며, `variables`는 변수 정의의 목록이고, `script`는 페이지 로드 시 실행되는 AiScript입니다.
 
 ```dart
 final page = await client.pages.create(
   title: 'My First Page',
-  name: 'my-first-page', // URL パス名 — ユーザーごとに一意
+  name: 'my-first-page', // URL 경로명 — 사용자당 고유해야 함
   content: [
     {'type': 'text', 'text': 'Welcome to my page!'},
   ],
   variables: [],
   script: '',
-  summary: 'An introduction.',
+  summary: '소개글입니다.',
 );
 ```
 
-### 更新・削除・いいね
+### 업데이트, 삭제 및 좋아요
 
 ```dart
 await client.pages.update(

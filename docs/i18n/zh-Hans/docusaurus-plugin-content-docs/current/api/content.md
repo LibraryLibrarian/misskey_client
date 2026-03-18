@@ -1,15 +1,15 @@
 ---
 sidebar_position: 7
-title: "コンテンツ"
+title: "内容"
 ---
 
-# コンテンツ
+# 内容
 
-このページではコンテンツ系の4つの API を説明します。ノートのブックマークを管理するクリップ、AiScript 製ミニアプリの Play（Flash）、写真コレクションのギャラリー、リッチテキスト文書のページを扱います。
+本页面介绍四个内容相关的 API：用于收藏笔记的便签、用于 AiScript 小程序的 Play（Flash）、用于照片集合的图库，以及用于富文本文档的页面。
 
-## クリップ
+## 便签
 
-クリップはノートのブックマークを名前付きでまとめる機能です。
+便签是收藏笔记的命名集合。
 
 ```dart
 final clip = await client.clips.create(
@@ -18,32 +18,32 @@ final clip = await client.clips.create(
   description: 'Notes I want to revisit.',
 );
 
-// ノートの追加・削除
+// 添加 / 移除笔记
 await client.clips.addNote(clipId: clip.id, noteId: noteId);
 await client.clips.removeNote(clipId: clip.id, noteId: noteId);
 
-// クリップ内のノート一覧（検索・ページネーション対応）
+// 便签中的笔记（支持搜索和分页）
 final notes = await client.clips.notes(clipId: clip.id, limit: 20);
 final found = await client.clips.notes(clipId: clip.id, search: 'Misskey');
 
-// 自分のクリップ一覧
+// 列出你的便签
 final clips = await client.clips.list(limit: 20);
 
-// クリップのお気に入り
+// 收藏便签
 await client.clips.favorite(clipId: clip.id);
 await client.clips.unfavorite(clipId: clip.id);
 final favorites = await client.clips.myFavorites();
 
-// 更新・削除
+// 更新和删除
 await client.clips.update(clipId: clip.id, name: 'Must-reads');
 await client.clips.delete(clipId: clip.id);
 ```
 
-## Play
+## Play（Flash）
 
-Play（旧 API 名 Flash）は AiScript 製のミニアプリを作成・実行する機能です。
+Play（Flash）允许用户创建和运行由 AiScript 驱动的小程序。
 
-### Play の作成
+### 创建 Flash
 
 ```dart
 final flash = await client.flash.create(
@@ -51,27 +51,27 @@ final flash = await client.flash.create(
   summary: 'A simple greeting app.',
   script: 'Mk:dialog("Hello", "Hello, World!", "info")',
   permissions: [],
-  visibility: 'public', // 'public' または 'private'
+  visibility: 'public', // 'public' 或 'private'
 );
 ```
 
-### 取得と検索
+### 获取与搜索
 
 ```dart
-// IDで取得（認証不要）
+// 通过 ID 获取单个 Flash（无需认证）
 final flash = await client.flash.show(flashId: flashId);
 
-// 自分の Flash 一覧
+// 你的 Flash
 final myFlashes = await client.flash.my(limit: 20);
 
-// 注目の Flash（オフセットページング）
+// 精选（基于偏移量的分页）
 final featured = await client.flash.featured(limit: 10, offset: 0);
 
-// 検索
+// 搜索
 final results = await client.flash.search(query: 'game', limit: 10);
 ```
 
-### いいね・更新・削除
+### 点赞、更新与删除
 
 ```dart
 await client.flash.like(flashId: flashId);
@@ -82,30 +82,30 @@ await client.flash.update(flashId: flash.id, title: 'Hello World v2');
 await client.flash.delete(flashId: flash.id);
 ```
 
-## ギャラリー
+## 图库
 
-ギャラリー投稿は Drive ファイル（画像・動画）のキュレーションコレクションです。
+图库帖子是精心策划的网盘文件（图片、视频）集合。
 
-### 投稿の閲覧
+### 浏览帖子
 
 ```dart
-// 注目の投稿（ランキングキャッシュ、TTL 30分）
+// 精选（排名缓存，TTL 30 分钟）
 final featured = await client.gallery.featured(limit: 10);
 
-// 人気の投稿（いいね数順）
+// 热门（按点赞数排序）
 final popular = await client.gallery.popular();
 
-// 全投稿（新しい順）— untilId でページネーション
+// 所有帖子，最新在前——使用 untilId 分页
 final posts = await client.gallery.posts(limit: 20);
 final older = await client.gallery.posts(limit: 20, untilId: posts.last.id);
 
-// 投稿の詳細
+// 单个帖子
 final post = await client.gallery.postsShow(postId: postId);
 ```
 
-### 投稿の作成と管理
+### 创建和管理帖子
 
-`fileIds` には Drive ファイル ID を 1〜32 個指定できます。
+`fileIds` 接受 1 到 32 个唯一的网盘文件 ID。
 
 ```dart
 final post = await client.gallery.postsCreate(
@@ -125,34 +125,34 @@ await client.gallery.postsLike(postId: postId);
 await client.gallery.postsUnlike(postId: postId);
 ```
 
-## ページ
+## 页面
 
-ページはコンテンツブロックと AiScript 変数で構成されるリッチドキュメントです。
+页面是由内容块和 AiScript 变量组成的富文档。
 
-### ページの取得
+### 获取页面
 
 ```dart
-// ID で取得（認証不要）
+// 通过 ID（无需认证）
 final page = await client.pages.showById(pageId: pageId);
 
-// ユーザー名と URL パス名で取得（認証不要）
+// 通过用户名和 URL 路径名（无需认证）
 final page = await client.pages.showByName(
   name: 'my-first-page',
   username: 'alice',
 );
 
-// 注目のページ（いいね数順）
+// 精选页面（按点赞数排序）
 final featured = await client.pages.featured();
 ```
 
-### ページの作成
+### 创建页面
 
-`content` はブロックオブジェクトのリスト、`variables` は変数定義のリスト、`script` はページ読み込み時に実行される AiScript です。
+`content` 是块对象的列表；`variables` 是变量定义的列表；`script` 是页面加载时运行的 AiScript。
 
 ```dart
 final page = await client.pages.create(
   title: 'My First Page',
-  name: 'my-first-page', // URL パス名 — ユーザーごとに一意
+  name: 'my-first-page', // URL 路径名——每个用户必须唯一
   content: [
     {'type': 'text', 'text': 'Welcome to my page!'},
   ],
@@ -162,7 +162,7 @@ final page = await client.pages.create(
 );
 ```
 
-### 更新・削除・いいね
+### 更新、删除与点赞
 
 ```dart
 await client.pages.update(
