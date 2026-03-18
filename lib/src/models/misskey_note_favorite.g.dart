@@ -22,5 +22,5 @@ Map<String, dynamic> _$MisskeyNoteFavoriteToJson(
       'id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),
       'noteId': instance.noteId,
-      'note': instance.note,
+      'note': instance.note?.toJson(),
     };

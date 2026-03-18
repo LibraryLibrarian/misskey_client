@@ -39,16 +39,16 @@ Map<String, dynamic> _$MisskeyChatMessageToJson(MisskeyChatMessage instance) =>
       'id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),
       'fromUserId': instance.fromUserId,
-      'fromUser': instance.fromUser,
+      'fromUser': instance.fromUser?.toJson(),
       'toUserId': instance.toUserId,
-      'toUser': instance.toUser,
+      'toUser': instance.toUser?.toJson(),
       'toRoomId': instance.toRoomId,
-      'toRoom': instance.toRoom,
+      'toRoom': instance.toRoom?.toJson(),
       'text': instance.text,
       'fileId': instance.fileId,
-      'file': instance.file,
+      'file': instance.file?.toJson(),
       'isRead': instance.isRead,
-      'reactions': instance.reactions,
+      'reactions': instance.reactions.map((e) => e.toJson()).toList(),
     };
 
 MisskeyChatMessageReaction _$MisskeyChatMessageReactionFromJson(
@@ -64,5 +64,5 @@ Map<String, dynamic> _$MisskeyChatMessageReactionToJson(
         MisskeyChatMessageReaction instance) =>
     <String, dynamic>{
       'reaction': instance.reaction,
-      'user': instance.user,
+      'user': instance.user?.toJson(),
     };

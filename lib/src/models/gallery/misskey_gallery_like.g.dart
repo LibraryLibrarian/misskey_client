@@ -15,5 +15,5 @@ MisskeyGalleryLike _$MisskeyGalleryLikeFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$MisskeyGalleryLikeToJson(MisskeyGalleryLike instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'post': instance.post,
+      'post': instance.post.toJson(),
     };

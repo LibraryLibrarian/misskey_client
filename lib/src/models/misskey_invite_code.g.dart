@@ -29,8 +29,8 @@ Map<String, dynamic> _$MisskeyInviteCodeToJson(MisskeyInviteCode instance) =>
       'code': instance.code,
       'expiresAt': const SafeDateTimeConverter().toJson(instance.expiresAt),
       'createdAt': instance.createdAt.toIso8601String(),
-      'createdBy': instance.createdBy,
-      'usedBy': instance.usedBy,
+      'createdBy': instance.createdBy?.toJson(),
+      'usedBy': instance.usedBy?.toJson(),
       'usedAt': const SafeDateTimeConverter().toJson(instance.usedAt),
       'used': instance.used,
     };

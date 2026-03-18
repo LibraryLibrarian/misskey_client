@@ -16,9 +16,9 @@ ServerInfo _$ServerInfoFromJson(Map<String, dynamic> json) => ServerInfo(
 Map<String, dynamic> _$ServerInfoToJson(ServerInfo instance) =>
     <String, dynamic>{
       'machine': instance.machine,
-      'cpu': instance.cpu,
-      'mem': instance.mem,
-      'fs': instance.fs,
+      'cpu': instance.cpu.toJson(),
+      'mem': instance.mem.toJson(),
+      'fs': instance.fs.toJson(),
     };
 
 ServerCpuInfo _$ServerCpuInfoFromJson(Map<String, dynamic> json) =>

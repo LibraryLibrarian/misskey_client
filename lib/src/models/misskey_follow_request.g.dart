@@ -18,6 +18,6 @@ Map<String, dynamic> _$MisskeyFollowRequestToJson(
         MisskeyFollowRequest instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'follower': instance.follower,
-      'followee': instance.followee,
+      'follower': instance.follower.toJson(),
+      'followee': instance.followee.toJson(),
     };

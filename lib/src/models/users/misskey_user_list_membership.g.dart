@@ -25,6 +25,6 @@ Map<String, dynamic> _$MisskeyUserListMembershipToJson(
       'id': instance.id,
       'createdAt': const SafeDateTimeConverter().toJson(instance.createdAt),
       'userId': instance.userId,
-      'user': instance.user,
+      'user': instance.user?.toJson(),
       'withReplies': instance.withReplies,
     };

@@ -30,7 +30,7 @@ Map<String, dynamic> _$MisskeyFlashToJson(MisskeyFlash instance) =>
       'createdAt': const SafeDateTimeConverter().toJson(instance.createdAt),
       'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
       'userId': instance.userId,
-      'user': instance.user,
+      'user': instance.user?.toJson(),
       'title': instance.title,
       'summary': instance.summary,
       'script': instance.script,

@@ -27,7 +27,7 @@ Map<String, dynamic> _$MisskeyChatRoomInvitationToJson(
       'id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),
       'roomId': instance.roomId,
-      'room': instance.room,
+      'room': instance.room?.toJson(),
       'userId': instance.userId,
-      'user': instance.user,
+      'user': instance.user?.toJson(),
     };

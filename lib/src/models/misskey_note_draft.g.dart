@@ -54,7 +54,7 @@ Map<String, dynamic> _$MisskeyNoteDraftToJson(MisskeyNoteDraft instance) =>
       'channelId': instance.channelId,
       'text': instance.text,
       'fileIds': instance.fileIds,
-      'poll': instance.poll,
+      'poll': instance.poll?.toJson(),
       'scheduledAt': instance.scheduledAt,
       'isActuallyScheduled': instance.isActuallyScheduled,
     };

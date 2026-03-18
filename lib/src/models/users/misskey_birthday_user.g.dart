@@ -20,5 +20,5 @@ Map<String, dynamic> _$MisskeyBirthdayUserToJson(
     <String, dynamic>{
       'id': instance.id,
       'birthday': instance.birthday,
-      'user': instance.user,
+      'user': instance.user?.toJson(),
     };

@@ -25,7 +25,7 @@ Map<String, dynamic> _$MisskeyDriveFolderToJson(MisskeyDriveFolder instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'name': instance.name,
       'parentId': instance.parentId,
-      'parent': instance.parent,
+      'parent': instance.parent?.toJson(),
       'foldersCount': instance.foldersCount,
       'filesCount': instance.filesCount,
     };
