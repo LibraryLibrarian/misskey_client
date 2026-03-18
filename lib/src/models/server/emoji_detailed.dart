@@ -2,12 +2,12 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'emoji_detailed.g.dart';
 
-/// カスタム絵文字の詳細情報（`/api/emoji`）
+/// Detailed information about a custom emoji returned by `/api/emoji`.
 ///
-/// `MisskeyCustomEmoji`（`EmojiSimple`相当）と異なり、
-/// [id], [host], [license] を含み、
-/// [isSensitive], [localOnly], [roleIdsThatCanBeUsedThisEmojiAsReaction]
-/// が常に返却される。
+/// Unlike `MisskeyCustomEmoji` (which corresponds to `EmojiSimple`), this
+/// includes [id], [host], and [license], and always returns
+/// [isSensitive], [localOnly], and
+/// [roleIdsThatCanBeUsedThisEmojiAsReaction].
 @JsonSerializable()
 class EmojiDetailed {
   const EmojiDetailed({
@@ -28,33 +28,33 @@ class EmojiDetailed {
 
   Map<String, dynamic> toJson() => _$EmojiDetailedToJson(this);
 
-  /// 絵文字ID
+  /// The emoji ID.
   final String id;
 
-  /// エイリアス一覧
+  /// The list of aliases.
   final List<String> aliases;
 
-  /// 絵文字名（ショートコード）
+  /// The emoji name (shortcode).
   final String name;
 
-  /// カテゴリ
+  /// The category, if any.
   final String? category;
 
-  /// ホスト（ローカル絵文字の場合はnull）
+  /// The host, or `null` for local emoji.
   final String? host;
 
-  /// 画像URL
+  /// The image URL.
   final String url;
 
-  /// ライセンス情報
+  /// The license information, if any.
   final String? license;
 
-  /// センシティブフラグ
+  /// Whether this emoji is marked as sensitive.
   final bool isSensitive;
 
-  /// ローカル限定フラグ
+  /// Whether this emoji is restricted to local use only.
   final bool localOnly;
 
-  /// この絵文字をリアクションとして使用可能なロールID一覧
+  /// The list of role IDs that can use this emoji as a reaction.
   final List<String> roleIdsThatCanBeUsedThisEmojiAsReaction;
 }

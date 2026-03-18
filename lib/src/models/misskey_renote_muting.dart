@@ -4,7 +4,7 @@ import 'misskey_user.dart';
 
 part 'misskey_renote_muting.g.dart';
 
-/// リノートミュート関係（`/api/renote-mute/list` のレスポンス要素）
+/// A renote mute record (element of `/api/renote-mute/list` response).
 @JsonSerializable()
 class MisskeyRenoteMuting {
   const MisskeyRenoteMuting({
@@ -19,8 +19,15 @@ class MisskeyRenoteMuting {
 
   Map<String, dynamic> toJson() => _$MisskeyRenoteMutingToJson(this);
 
+  /// The unique identifier of this mute record.
   final String id;
+
+  /// The date and time when this mute was created.
   final DateTime createdAt;
+
+  /// The ID of the muted user.
   final String muteeId;
+
+  /// The muted user.
   final MisskeyUser? mutee;
 }

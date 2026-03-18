@@ -3,25 +3,23 @@ import '../client/request_options.dart';
 import '../models/misskey_blocking.dart';
 import '../models/misskey_user.dart';
 
-/// ブロック関連API（`/api/blocking/*`）
+/// Provides blocking APIs (`/api/blocking/*`).
 ///
-/// ユーザーのブロック・ブロック解除・ブロック一覧取得を提供する。
+/// Offers blocking, unblocking, and listing blocked users.
 class BlockingApi {
   const BlockingApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// ユーザーをブロックする（`/api/blocking/create`）
+  /// Blocks a user (`/api/blocking/create`).
   ///
-  /// ブロックすると相互のフォロー関係が解除される。
-  /// レート制限: 20回/時。
+  /// Blocking removes the mutual follow relationship. Pass the target user's
+  /// ID as [userId]. Rate limit: 20 per hour.
   ///
-  /// - [userId]: ブロック対象のユーザーID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `BLOCKEE_IS_YOURSELF`: 自分自身をブロックしようとした
-  /// - `ALREADY_BLOCKING`: 既にブロック済み
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The target user does not exist
+  /// - `BLOCKEE_IS_YOURSELF`: Attempted to block yourself
+  /// - `ALREADY_BLOCKING`: Already blocking the user
   Future<MisskeyUser> create({required String userId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/blocking/create',
@@ -30,16 +28,14 @@ class BlockingApi {
     return MisskeyUser.fromJson(res);
   }
 
-  /// ユーザーのブロックを解除する（`/api/blocking/delete`）
+  /// Unblocks a user (`/api/blocking/delete`).
   ///
-  /// レート制限: 100回/時。
+  /// Pass the target user's ID as [userId]. Rate limit: 100 per hour.
   ///
-  /// - [userId]: ブロック解除対象のユーザーID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `BLOCKEE_IS_YOURSELF`: 自分自身を指定した
-  /// - `NOT_BLOCKING`: ブロックしていない
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The target user does not exist
+  /// - `BLOCKEE_IS_YOURSELF`: Specified yourself
+  /// - `NOT_BLOCKING`: Not blocking the user
   Future<MisskeyUser> delete({required String userId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/blocking/delete',
@@ -48,11 +44,11 @@ class BlockingApi {
     return MisskeyUser.fromJson(res);
   }
 
-  /// ブロック中のユーザー一覧を取得する（`/api/blocking/list`）
+  /// Retrieves the list of blocked users (`/api/blocking/list`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Use [limit] to cap the number of items (1-100, default 30). Paginate by
+  /// ID with [sinceId] and [untilId], or by Unix timestamp (ms) with
+  /// [sinceDate] and [untilDate].
   Future<List<MisskeyBlocking>> list({
     int? limit,
     String? sinceId,

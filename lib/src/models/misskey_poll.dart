@@ -4,7 +4,7 @@ import 'json_converters.dart';
 
 part 'misskey_poll.g.dart';
 
-/// 投票の選択肢
+/// A poll choice.
 @JsonSerializable()
 class MisskeyPollChoice {
   const MisskeyPollChoice({
@@ -18,16 +18,19 @@ class MisskeyPollChoice {
 
   Map<String, dynamic> toJson() => _$MisskeyPollChoiceToJson(this);
 
+  /// The display text of this choice.
   final String text;
 
+  /// The number of votes for this choice.
   @JsonKey(defaultValue: 0)
   final int votes;
 
+  /// Whether the authenticated user has voted for this choice.
   @JsonKey(defaultValue: false)
   final bool isVoted;
 }
 
-/// Misskey の投票
+/// A Misskey poll.
 @JsonSerializable()
 class MisskeyPoll {
   const MisskeyPoll({
@@ -41,11 +44,14 @@ class MisskeyPoll {
 
   Map<String, dynamic> toJson() => _$MisskeyPollToJson(this);
 
+  /// The list of poll choices.
   final List<MisskeyPollChoice> choices;
 
+  /// Whether multiple choices can be selected.
   @JsonKey(defaultValue: false)
   final bool? multiple;
 
+  /// The expiration date and time of this poll.
   @SafeDateTimeConverter()
   final DateTime? expiresAt;
 }

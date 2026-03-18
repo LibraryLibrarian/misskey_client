@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_hashtag.g.dart';
 
-/// ハッシュタグ情報（`/api/hashtags/show` 等のレスポンス）
+/// Hashtag information (response from `/api/hashtags/show`, etc.).
 @JsonSerializable()
 class MisskeyHashtag {
   const MisskeyHashtag({
@@ -20,24 +20,24 @@ class MisskeyHashtag {
 
   Map<String, dynamic> toJson() => _$MisskeyHashtagToJson(this);
 
-  /// ハッシュタグ文字列
+  /// The hashtag string.
   final String tag;
 
-  /// メンションしたユーザー数（全体）
+  /// The total number of users who mentioned this hashtag.
   final int mentionedUsersCount;
 
-  /// メンションしたローカルユーザー数
+  /// The number of local users who mentioned this hashtag.
   final int mentionedLocalUsersCount;
 
-  /// メンションしたリモートユーザー数
+  /// The number of remote users who mentioned this hashtag.
   final int mentionedRemoteUsersCount;
 
-  /// プロフィールに設定しているユーザー数（全体）
+  /// The total number of users who have this hashtag on their profile.
   final int attachedUsersCount;
 
-  /// プロフィールに設定しているローカルユーザー数
+  /// The number of local users who have this hashtag on their profile.
   final int attachedLocalUsersCount;
 
-  /// プロフィールに設定しているリモートユーザー数
+  /// The number of remote users who have this hashtag on their profile.
   final int attachedRemoteUsersCount;
 }

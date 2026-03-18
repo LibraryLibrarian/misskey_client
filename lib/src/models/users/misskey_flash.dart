@@ -5,7 +5,7 @@ import '../misskey_user.dart';
 
 part 'misskey_flash.g.dart';
 
-/// Misskey Flash（Play）（`/api/users/flashs` のレスポンス要素）
+/// A Misskey Flash (Play) from the `/api/users/flashs` response.
 @JsonSerializable()
 class MisskeyFlash {
   const MisskeyFlash({
@@ -27,33 +27,39 @@ class MisskeyFlash {
 
   Map<String, dynamic> toJson() => _$MisskeyFlashToJson(this);
 
+  /// The Flash ID.
   final String id;
 
+  /// The creation date and time.
   @SafeDateTimeConverter()
   final DateTime? createdAt;
 
+  /// The last update date and time.
   @SafeDateTimeConverter()
   final DateTime? updatedAt;
 
+  /// The ID of the user who created this Flash.
   final String userId;
+
+  /// The user who created this Flash.
   final MisskeyUser? user;
 
-  /// Flash タイトル
+  /// The Flash title.
   final String title;
 
-  /// 概要
+  /// The summary.
   final String summary;
 
-  /// AiScript コード
+  /// The AiScript source code.
   final String script;
 
-  /// 公開範囲（`public` / `private`）
+  /// The visibility (`public` or `private`).
   final String? visibility;
 
-  /// いいね数
+  /// The number of likes.
   @JsonKey(defaultValue: 0)
   final int likedCount;
 
-  /// 認証ユーザーがいいね済みか
+  /// Whether the authenticated user has liked this Flash.
   final bool? isLiked;
 }

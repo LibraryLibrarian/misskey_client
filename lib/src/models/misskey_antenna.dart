@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_antenna.g.dart';
 
-/// Misskey のアンテナ（カスタムタイムラインフィルター）
+/// A Misskey antenna (custom timeline filter).
 @JsonSerializable()
 class MisskeyAntenna {
   const MisskeyAntenna({
@@ -30,53 +30,56 @@ class MisskeyAntenna {
 
   Map<String, dynamic> toJson() => _$MisskeyAntennaToJson(this);
 
+  /// The antenna ID.
   final String id;
+
+  /// The creation timestamp.
   final DateTime createdAt;
 
-  /// アンテナ名（1〜100文字）
+  /// The antenna name (1--100 characters).
   final String name;
 
-  /// キーワード（外側OR、内側AND）
+  /// The keywords to match (outer list is OR, inner list is AND).
   final List<List<String>> keywords;
 
-  /// 除外キーワード（外側OR、内側AND）
+  /// The keywords to exclude (outer list is OR, inner list is AND).
   final List<List<String>> excludeKeywords;
 
-  /// ソース種別（`home` / `all` / `users` / `list` / `users_blacklist`）
+  /// The source type (`home` / `all` / `users` / `list` / `users_blacklist`).
   final String src;
 
-  /// ソースが `list` の場合のユーザーリストID
+  /// The user list ID when [src] is `list`.
   final String? userListId;
 
-  /// ソースが `users` / `users_blacklist` の場合の対象ユーザー名リスト
+  /// The target usernames when [src] is `users` or `users_blacklist`.
   final List<String> users;
 
-  /// 大文字小文字を区別するか
+  /// Whether keyword matching is case-sensitive.
   final bool caseSensitive;
 
-  /// ローカルノートのみ対象にするか
+  /// Whether only local notes are targeted.
   final bool localOnly;
 
-  /// botアカウントを除外するか
+  /// Whether bot accounts are excluded.
   final bool excludeBots;
 
-  /// リプライを含めるか
+  /// Whether replies are included.
   final bool withReplies;
 
-  /// ファイル付きノートのみ対象にするか
+  /// Whether only notes with files are targeted.
   final bool withFile;
 
-  /// センシティブチャンネルのノートを除外するか
+  /// Whether notes in sensitive channels are excluded.
   final bool excludeNotesInSensitiveChannel;
 
-  /// アンテナがアクティブかどうか
+  /// Whether the antenna is currently active.
   final bool isActive;
 
-  /// 未読ノートがあるか
+  /// Whether there are unread notes.
   @JsonKey(defaultValue: false)
   final bool hasUnreadNote;
 
-  /// 通知を有効にするか
+  /// Whether notifications are enabled.
   @JsonKey(defaultValue: false)
   final bool notify;
 }

@@ -2,9 +2,9 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'meta.g.dart';
 
-/// Misskey `/api/meta` レスポンスモデル
+/// Response model for the Misskey `/api/meta` endpoint.
 ///
-/// 型付きフィールドを提供しつつ、未知フィールドを [raw] に保持する。
+/// Provides typed fields while retaining unknown fields in [raw].
 @JsonSerializable()
 class Meta {
   const Meta({
@@ -63,35 +63,75 @@ class Meta {
     );
   }
 
+  /// The instance maintainer's display name.
   final String? maintainerName;
+
+  /// The instance maintainer's email address.
   final String? maintainerEmail;
+
+  /// The Misskey software version.
   final String? version;
+
+  /// The instance name.
   final String? name;
+
+  /// The instance short name.
   final String? shortName;
+
+  /// The instance URI.
   final String? uri;
+
+  /// The instance description.
   final String? description;
+
+  /// The languages supported by the instance.
   final List<String>? langs;
+
+  /// Whether new user registration is disabled.
   final bool? disableRegistration;
+
+  /// Whether email is required for sign-up.
   final bool? emailRequiredForSignup;
+
+  /// Whether hCaptcha is enabled.
   final bool? enableHcaptcha;
+
+  /// Whether reCAPTCHA is enabled.
   final bool? enableRecaptcha;
+
+  /// Whether Turnstile is enabled.
   final bool? enableTurnstile;
 
+  /// The maximum allowed note text length.
   @JsonKey(defaultValue: 3000)
   final int? maxNoteTextLength;
 
+  /// Whether email delivery is enabled.
   final bool? enableEmail;
+
+  /// Whether the service worker is enabled.
   final bool? enableServiceWorker;
+
+  /// Whether the translator feature is available.
   final bool? translatorAvailable;
+
+  /// The media proxy URL.
   final String? mediaProxy;
+
+  /// Whether remote files are cached locally.
   final bool? cacheRemoteFiles;
+
+  /// Whether remote sensitive files are cached locally.
   final bool? cacheRemoteSensitiveFiles;
+
+  /// Whether initial setup is required.
   final bool? requireSetup;
 
+  /// The number of notes displayed per ad insertion.
   @JsonKey(defaultValue: 0)
   final int? notesPerOneAd;
 
-  /// レスポンス JSON の全フィールドを保持するマップ（能力検出用）
+  /// A map holding all response JSON fields for capability detection.
   @JsonKey(includeFromJson: false, includeToJson: false)
   final Map<String, dynamic> raw;
 

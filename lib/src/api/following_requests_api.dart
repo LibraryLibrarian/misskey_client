@@ -3,20 +3,20 @@ import '../client/request_options.dart';
 import '../models/misskey_follow_request.dart';
 import '../models/misskey_user.dart';
 
-/// フォローリクエスト関連API（`/api/following/requests/*`）
+/// Provides follow request operations (`/api/following/requests/*`).
 ///
-/// 受信したフォローリクエストの承認・拒否、
-/// 送信済みリクエストの確認・キャンセルを提供する。
+/// Handles accepting, rejecting received follow requests,
+/// and viewing or cancelling sent requests.
 class FollowingRequestsApi {
   const FollowingRequestsApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// 受信したフォローリクエスト一覧を取得する（`/api/following/requests/list`）
+  /// Retrieves received follow requests (`/api/following/requests/list`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Use [limit] to cap the number of results (1-100, default 10).
+  /// Pass [sinceId] or [untilId] to paginate by ID, or pass [sinceDate]
+  /// or [untilDate] to paginate by Unix timestamp (ms).
   Future<List<MisskeyFollowRequest>> list({
     int? limit,
     String? sinceId,
@@ -42,36 +42,36 @@ class FollowingRequestsApi {
         .toList();
   }
 
-  /// フォローリクエストを承認する（`/api/following/requests/accept`）
+  /// Accepts a follow request (`/api/following/requests/accept`).
   ///
-  /// - [userId]: リクエスト送信者のユーザーID（必須）
+  /// Pass [userId] as the user ID of the request sender.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `NO_FOLLOW_REQUEST`: フォローリクエストが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_USER`: The target user does not exist.
+  /// - `NO_FOLLOW_REQUEST`: The follow request does not exist.
   Future<void> accept({required String userId}) => http.send<Object?>(
         '/following/requests/accept',
         body: <String, dynamic>{'userId': userId},
       );
 
-  /// フォローリクエストを拒否する（`/api/following/requests/reject`）
+  /// Rejects a follow request (`/api/following/requests/reject`).
   ///
-  /// - [userId]: リクエスト送信者のユーザーID（必須）
+  /// Pass [userId] as the user ID of the request sender.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_USER`: The target user does not exist.
   Future<void> reject({required String userId}) => http.send<Object?>(
         '/following/requests/reject',
         body: <String, dynamic>{'userId': userId},
       );
 
-  /// 送信済みフォローリクエストをキャンセルする（`/api/following/requests/cancel`）
+  /// Cancels a sent follow request (`/api/following/requests/cancel`).
   ///
-  /// - [userId]: リクエスト送信先のユーザーID（必須）
+  /// Pass [userId] as the user ID the request was sent to.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `FOLLOW_REQUEST_NOT_FOUND`: フォローリクエストが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_USER`: The target user does not exist.
+  /// - `FOLLOW_REQUEST_NOT_FOUND`: The follow request does not exist.
   Future<MisskeyUser> cancel({required String userId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/following/requests/cancel',
@@ -80,11 +80,11 @@ class FollowingRequestsApi {
     return MisskeyUser.fromJson(res);
   }
 
-  /// 送信済みフォローリクエスト一覧を取得する（`/api/following/requests/sent`）
+  /// Retrieves sent follow requests (`/api/following/requests/sent`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Use [limit] to cap the number of results (1-100, default 10).
+  /// Pass [sinceId] or [untilId] to paginate by ID, or pass [sinceDate]
+  /// or [untilDate] to paginate by Unix timestamp (ms).
   Future<List<MisskeyFollowRequest>> sent({
     int? limit,
     String? sinceId,

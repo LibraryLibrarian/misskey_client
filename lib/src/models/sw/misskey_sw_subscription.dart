@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_sw_subscription.g.dart';
 
-/// プッシュ通知のサブスクリプション情報
+/// Push notification subscription information.
 @JsonSerializable()
 class MisskeySwSubscription {
   const MisskeySwSubscription({
@@ -16,12 +16,12 @@ class MisskeySwSubscription {
 
   Map<String, dynamic> toJson() => _$MisskeySwSubscriptionToJson(this);
 
-  /// サブスクリプションに紐づくユーザーID
+  /// The user ID associated with the subscription.
   final String userId;
 
-  /// プッシュ通知の送信先エンドポイントURL
+  /// The push notification endpoint URL.
   final String endpoint;
 
-  /// 既読メッセージの通知を送信するか
+  /// Whether to send notifications for read messages.
   final bool sendReadMessage;
 }

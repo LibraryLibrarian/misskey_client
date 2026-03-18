@@ -5,7 +5,7 @@ import 'misskey_user.dart';
 
 part 'misskey_invite_code.g.dart';
 
-/// 招待コード（`/api/invite/*` のレスポンス要素）
+/// An invite code (element of the `/api/invite/*` response).
 @JsonSerializable()
 class MisskeyInviteCode {
   const MisskeyInviteCode({
@@ -24,28 +24,30 @@ class MisskeyInviteCode {
 
   Map<String, dynamic> toJson() => _$MisskeyInviteCodeToJson(this);
 
+  /// The invite code record ID.
   final String id;
 
-  /// 招待コード文字列
+  /// The invite code string.
   final String code;
 
-  /// 有効期限
+  /// The expiration timestamp.
   @SafeDateTimeConverter()
   final DateTime? expiresAt;
 
+  /// The creation timestamp.
   @SafeDateTimeConverter()
   final DateTime createdAt;
 
-  /// 作成者
+  /// The user who created the invite code.
   final MisskeyUser? createdBy;
 
-  /// 使用者
+  /// The user who used the invite code.
   final MisskeyUser? usedBy;
 
-  /// 使用日時
+  /// The timestamp when the invite code was used.
   @SafeDateTimeConverter()
   final DateTime? usedAt;
 
-  /// 使用済みか
+  /// Whether the invite code has been used.
   final bool used;
 }

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'retention_record.g.dart';
 
-/// ユーザーリテンション（定着率）レコード（`/api/retention`）
+/// A user retention record returned by `/api/retention`.
 @JsonSerializable()
 class RetentionRecord {
   const RetentionRecord({
@@ -16,12 +16,13 @@ class RetentionRecord {
 
   Map<String, dynamic> toJson() => _$RetentionRecordToJson(this);
 
-  /// 集計対象日時
+  /// The date and time of the aggregation.
   final DateTime createdAt;
 
-  /// 対象ユーザー数
+  /// The number of target users.
   final int users;
 
-  /// 日数ごとのリテンションデータ（キーは経過日数の文字列、値はユーザー数）
+  /// Retention data keyed by elapsed days (as strings) with user
+  /// counts as values.
   final Map<String, int> data;
 }

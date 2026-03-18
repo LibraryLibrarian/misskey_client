@@ -3,22 +3,22 @@ import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/users/misskey_page.dart';
 
-/// ページ関連API（`/api/pages/*`）
+/// Provides page-related API endpoints (`/api/pages/*`).
 ///
-/// ページの作成・更新・削除・閲覧・いいね操作を提供する。
-/// 自分のページ一覧は `AccountApi.pages`、
-/// 他ユーザーのページは `UsersApi.pages` を使用する。
+/// Supports creating, updating, deleting, viewing, and liking pages.
+/// For own pages, use `AccountApi.pages`;
+/// for other users' pages, use `UsersApi.pages`.
 class PagesApi {
   const PagesApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// ページIDを指定してページ詳細を取得する（`/api/pages/show`）
+  /// Retrieves page details by page ID (`/api/pages/show`).
   ///
-  /// 認証不要。
+  /// No authentication required.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_PAGE`: ページが存在しない
+  /// Common errors:
+  /// - `NO_SUCH_PAGE`: The page does not exist
   Future<MisskeyPage> showById({required String pageId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/pages/show',
@@ -31,15 +31,15 @@ class PagesApi {
     return MisskeyPage.fromJson(res);
   }
 
-  /// ユーザー名とページ名を指定してページ詳細を取得する（`/api/pages/show`）
+  /// Retrieves page details by username and page name (`/api/pages/show`).
   ///
-  /// 認証不要。
+  /// No authentication required.
   ///
-  /// - [name]: ページのURLパス名（必須）
-  /// - [username]: ページ作成者のユーザー名（必須）
+  /// Pass the URL path name of the page in [name] and the username of the
+  /// page creator in [username].
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_PAGE`: ページが存在しない
+  /// Common errors:
+  /// - `NO_SUCH_PAGE`: The page does not exist
   Future<MisskeyPage> showByName({
     required String name,
     required String username,
@@ -55,9 +55,10 @@ class PagesApi {
     return MisskeyPage.fromJson(res);
   }
 
-  /// 人気ページ一覧を取得する（`/api/pages/featured`）
+  /// Fetches featured pages (`/api/pages/featured`).
   ///
-  /// いいね数が1以上のページをいいね数降順で最大10件返す。認証不要。
+  /// Returns up to 10 pages with at least one like, sorted by like count
+  /// in descending order. No authentication required.
   Future<List<MisskeyPage>> featured() async {
     final res = await http.send<List<dynamic>>(
       '/pages/featured',
@@ -73,24 +74,20 @@ class PagesApi {
         .toList();
   }
 
-  /// ページを作成する（`/api/pages/create`）
+  /// Creates a page (`/api/pages/create`).
   ///
-  /// 認証必須。レート制限: 10回/時。
+  /// Authentication required. Rate limit: 10 requests/hour.
   ///
-  /// - [title]: タイトル（必須）
-  /// - [name]: ページのURLパス名（1文字以上、必須）
-  /// - [content]: コンテンツブロック配列（必須）
-  /// - [variables]: 変数定義配列（必須）
-  /// - [script]: スクリプト（必須）
-  /// - [summary]: 概要文
-  /// - [eyeCatchingImageId]: アイキャッチ画像のドライブファイルID
-  /// - [font]: フォント設定（`serif` / `sans-serif`、デフォルト: `sans-serif`）
-  /// - [alignCenter]: 中央揃えにするか（デフォルト: false）
-  /// - [hideTitleWhenPinned]: ピン留め時にタイトルを隠すか（デフォルト: false）
+  /// Provide a [title], a URL path [name] (min 1 character), a [content]
+  /// block array, a [variables] definition array, and a [script].
+  /// Optionally supply a [summary], an [eyeCatchingImageId] for the
+  /// eye-catching drive file, a [font] setting (`serif` / `sans-serif`,
+  /// default: `sans-serif`), and boolean flags [alignCenter] (default: false)
+  /// and [hideTitleWhenPinned] (default: false).
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_FILE`: アイキャッチ画像が存在しない
-  /// - `NAME_ALREADY_EXISTS`: 同名のページが既に存在する
+  /// Common errors:
+  /// - `NO_SUCH_FILE`: The eye-catching image does not exist
+  /// - `NAME_ALREADY_EXISTS`: A page with the same name already exists
   Future<MisskeyPage> create({
     required String title,
     required String name,
@@ -123,28 +120,23 @@ class PagesApi {
     return MisskeyPage.fromJson(res);
   }
 
-  /// ページを更新する（`/api/pages/update`）
+  /// Updates a page (`/api/pages/update`).
   ///
-  /// 認証必須。レート制限: 300回/時。
-  /// [pageId] のみ必須。他のパラメータは指定した項目のみ更新される。
+  /// Authentication required. Rate limit: 300 requests/hour.
+  /// Only [pageId] is required.
+  /// Other parameters update only the specified fields.
   ///
-  /// - [pageId]: 更新対象のページID（必須）
-  /// - [title]: タイトル
-  /// - [name]: ページのURLパス名（1文字以上）
-  /// - [content]: コンテンツブロック配列
-  /// - [variables]: 変数定義配列
-  /// - [script]: スクリプト
-  /// - [summary]: 概要文
-  /// - [eyeCatchingImageId]: アイキャッチ画像のドライブファイルID
-  /// - [font]: フォント設定（`serif` / `sans-serif`）
-  /// - [alignCenter]: 中央揃えにするか
-  /// - [hideTitleWhenPinned]: ピン留め時にタイトルを隠すか
+  /// Pass the ID of the page to update in [pageId]. All other parameters are
+  /// optional and update only the specified fields: [title], [name] (min 1
+  /// character), [content] block array, [variables] definition array,
+  /// [script], [summary], [eyeCatchingImageId], [font] (`serif` /
+  /// `sans-serif`), [alignCenter], and [hideTitleWhenPinned].
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_PAGE`: ページが存在しない
-  /// - `ACCESS_DENIED`: 権限がない
-  /// - `NO_SUCH_FILE`: アイキャッチ画像が存在しない
-  /// - `NAME_ALREADY_EXISTS`: 同名のページが既に存在する
+  /// Common errors:
+  /// - `NO_SUCH_PAGE`: The page does not exist
+  /// - `ACCESS_DENIED`: Insufficient permissions
+  /// - `NO_SUCH_FILE`: The eye-catching image does not exist
+  /// - `NAME_ALREADY_EXISTS`: A page with the same name already exists
   Future<void> update({
     required String pageId,
     String? title,
@@ -178,40 +170,40 @@ class PagesApi {
     );
   }
 
-  /// ページを削除する（`/api/pages/delete`）
+  /// Deletes a page (`/api/pages/delete`).
   ///
-  /// 認証必須。本人またはモデレーターのみ削除可能。
+  /// Authentication required. Only the owner or a moderator can delete.
   ///
-  /// - [pageId]: 削除対象のページID（必須）
+  /// Pass the ID of the page to delete in [pageId].
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_PAGE`: ページが存在しない
-  /// - `ACCESS_DENIED`: 権限がない
+  /// Common errors:
+  /// - `NO_SUCH_PAGE`: The page does not exist
+  /// - `ACCESS_DENIED`: Insufficient permissions
   Future<void> delete({required String pageId}) => http.send<Object?>(
         '/pages/delete',
         body: <String, dynamic>{'pageId': pageId},
       );
 
-  /// ページにいいねする（`/api/pages/like`）
+  /// Likes a page (`/api/pages/like`).
   ///
-  /// 認証必須。
+  /// Authentication required.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_PAGE`: ページが存在しない
-  /// - `YOUR_PAGE`: 自分のページにはいいねできない
-  /// - `ALREADY_LIKED`: 既にいいね済み
+  /// Common errors:
+  /// - `NO_SUCH_PAGE`: The page does not exist
+  /// - `YOUR_PAGE`: Cannot like your own page
+  /// - `ALREADY_LIKED`: Already liked
   Future<void> like({required String pageId}) => http.send<Object?>(
         '/pages/like',
         body: <String, dynamic>{'pageId': pageId},
       );
 
-  /// ページのいいねを解除する（`/api/pages/unlike`）
+  /// Unlikes a page (`/api/pages/unlike`).
   ///
-  /// 認証必須。
+  /// Authentication required.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_PAGE`: ページが存在しない
-  /// - `NOT_LIKED`: いいねしていない
+  /// Common errors:
+  /// - `NO_SUCH_PAGE`: The page does not exist
+  /// - `NOT_LIKED`: Not liked yet
   Future<void> unlike({required String pageId}) => http.send<Object?>(
         '/pages/unlike',
         body: <String, dynamic>{'pageId': pageId},

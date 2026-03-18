@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 
 import '../exception/misskey_client_exception.dart';
 
-/// [DioException]を[MisskeyClientException]に変換する
+/// Converts a [DioException] into a [MisskeyClientException].
 ///
-/// MisskeyHttp内で共通して使用する内部ユーティリティ
+/// Internal utility shared across MisskeyHttp methods.
 MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
   final status = e.response?.statusCode;
   var message = e.message ?? 'HTTP error';

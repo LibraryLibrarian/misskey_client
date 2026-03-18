@@ -3,36 +3,30 @@ import '../client/request_options.dart';
 import '../models/misskey_antenna.dart';
 import '../models/misskey_note.dart';
 
-/// アンテナ関連API（`/api/antennas/*`）
+/// Provides antenna APIs (`/api/antennas/*`).
 ///
-/// カスタムタイムラインフィルター（アンテナ）の
-/// 作成・更新・削除・一覧取得・ノート取得を提供する。
-/// 全エンドポイントで認証必須。
+/// Offers creation, updating, deletion, listing, and note retrieval for
+/// custom timeline filters (antennas). All endpoints require authentication.
 class AntennasApi {
   const AntennasApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// アンテナを作成する（`/api/antennas/create`）
+  /// Creates an antenna (`/api/antennas/create`).
   ///
-  /// - [name]: アンテナ名（1〜100文字、必須）
-  /// - [src]: ソース種別（必須）
-  ///   `home` / `all` / `users` / `list` / `users_blacklist`
-  /// - [userListId]: ソースが `list` の場合のユーザーリストID
-  /// - [keywords]: キーワード（外側OR、内側AND、必須）
-  /// - [excludeKeywords]: 除外キーワード（外側OR、内側AND、必須）
-  /// - [users]: 対象ユーザー名リスト（必須）
-  /// - [caseSensitive]: 大文字小文字を区別するか（必須）
-  /// - [localOnly]: ローカルノートのみ対象にするか
-  /// - [excludeBots]: botを除外するか
-  /// - [withReplies]: リプライを含めるか（必須）
-  /// - [withFile]: ファイル付きのみ対象にするか（必須）
-  /// - [excludeNotesInSensitiveChannel]: センシティブチャンネルを除外するか
+  /// [name] (1-100 characters), [src], [keywords], [excludeKeywords],
+  /// [users], [caseSensitive], [withReplies], and [withFile] are required.
+  /// [src] must be one of `home`, `all`, `users`, `list`, or
+  /// `users_blacklist`; when using `list`, supply [userListId].
+  /// [keywords] and [excludeKeywords] use outer-OR / inner-AND matching.
+  /// Optionally set [localOnly] to target only local notes, [excludeBots] to
+  /// skip bot accounts, and [excludeNotesInSensitiveChannel] to skip
+  /// sensitive channels.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER_LIST`: 指定したユーザーリストが存在しない
-  /// - `TOO_MANY_ANTENNAS`: アンテナ上限に達している
-  /// - `EMPTY_KEYWORD`: キーワードと除外キーワードの両方が空
+  /// Common errors:
+  /// - `NO_SUCH_USER_LIST`: The specified user list does not exist
+  /// - `TOO_MANY_ANTENNAS`: Antenna limit reached
+  /// - `EMPTY_KEYWORD`: Both keywords and excluded keywords are empty
   Future<MisskeyAntenna> create({
     required String name,
     required String src,
@@ -68,14 +62,15 @@ class AntennasApi {
     return MisskeyAntenna.fromJson(res);
   }
 
-  /// アンテナを更新する（`/api/antennas/update`）
+  /// Updates an antenna (`/api/antennas/update`).
   ///
-  /// [antennaId] のみ必須。他のパラメータは指定した項目のみ更新される。
+  /// Only [antennaId] is required. Other parameters update only the specified
+  /// fields.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ANTENNA`: アンテナが存在しない
-  /// - `NO_SUCH_USER_LIST`: 指定したユーザーリストが存在しない
-  /// - `EMPTY_KEYWORD`: キーワードと除外キーワードの両方が空
+  /// Common errors:
+  /// - `NO_SUCH_ANTENNA`: The antenna does not exist
+  /// - `NO_SUCH_USER_LIST`: The specified user list does not exist
+  /// - `EMPTY_KEYWORD`: Both keywords and excluded keywords are empty
   Future<MisskeyAntenna> update({
     required String antennaId,
     String? name,
@@ -114,23 +109,23 @@ class AntennasApi {
     return MisskeyAntenna.fromJson(res);
   }
 
-  /// アンテナを削除する（`/api/antennas/delete`）
+  /// Deletes an antenna (`/api/antennas/delete`).
   ///
-  /// - [antennaId]: 削除対象のアンテナID（必須）
+  /// Pass the target antenna's ID as [antennaId].
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ANTENNA`: アンテナが存在しない
+  /// Common errors:
+  /// - `NO_SUCH_ANTENNA`: The antenna does not exist
   Future<void> delete({required String antennaId}) => http.send<Object?>(
         '/antennas/delete',
         body: <String, dynamic>{'antennaId': antennaId},
       );
 
-  /// アンテナの詳細を取得する（`/api/antennas/show`）
+  /// Retrieves the details of an antenna (`/api/antennas/show`).
   ///
-  /// - [antennaId]: 対象のアンテナID（必須）
+  /// Pass the target antenna's ID as [antennaId].
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ANTENNA`: アンテナが存在しない
+  /// Common errors:
+  /// - `NO_SUCH_ANTENNA`: The antenna does not exist
   Future<MisskeyAntenna> show({required String antennaId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/antennas/show',
@@ -140,9 +135,9 @@ class AntennasApi {
     return MisskeyAntenna.fromJson(res);
   }
 
-  /// アンテナ一覧を取得する（`/api/antennas/list`）
+  /// Retrieves the list of antennas (`/api/antennas/list`).
   ///
-  /// 認証ユーザーが所有する全アンテナを返す。
+  /// Returns all antennas owned by the authenticated user.
   Future<List<MisskeyAntenna>> list() async {
     final res = await http.send<List<dynamic>>(
       '/antennas/list',
@@ -155,15 +150,14 @@ class AntennasApi {
         .toList();
   }
 
-  /// アンテナに一致するノートを取得する（`/api/antennas/notes`）
+  /// Retrieves notes matching an antenna (`/api/antennas/notes`).
   ///
-  /// - [antennaId]: 対象のアンテナID（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Pass the target antenna's ID as [antennaId]. Use [limit] to cap the
+  /// number of items (1-100, default 10). Paginate by ID with [sinceId] and
+  /// [untilId], or by Unix timestamp (ms) with [sinceDate] and [untilDate].
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ANTENNA`: アンテナが存在しない
+  /// Common errors:
+  /// - `NO_SUCH_ANTENNA`: The antenna does not exist
   Future<List<MisskeyNote>> notes({
     required String antennaId,
     int? limit,

@@ -6,7 +6,7 @@ import '../misskey_user.dart';
 
 part 'misskey_gallery_post.g.dart';
 
-/// ギャラリー投稿
+/// A gallery post.
 @JsonSerializable()
 class MisskeyGalleryPost {
   const MisskeyGalleryPost({
@@ -30,39 +30,44 @@ class MisskeyGalleryPost {
 
   Map<String, dynamic> toJson() => _$MisskeyGalleryPostToJson(this);
 
+  /// The post ID.
   final String id;
 
+  /// The date and time when the post was created.
   @SafeDateTimeConverter()
   final DateTime createdAt;
 
+  /// The date and time when the post was last updated.
   @SafeDateTimeConverter()
   final DateTime updatedAt;
 
+  /// The user ID of the post author.
   final String userId;
 
+  /// The post author.
   final MisskeyUser? user;
 
-  /// 投稿タイトル（最大256文字）
+  /// The post title (up to 256 characters).
   final String title;
 
-  /// 投稿の説明文（最大2048文字）
+  /// The post description (up to 2048 characters).
   final String? description;
 
-  /// 添付ファイルIDリスト
+  /// The list of attached file IDs.
   final List<String> fileIds;
 
-  /// 添付ファイルオブジェクトリスト
+  /// The list of attached file objects.
   final List<MisskeyDriveFile> files;
 
-  /// タグリスト（空の場合レスポンスに含まれないことがある）
+  /// The list of tags (may be absent from the response when empty).
   final List<String> tags;
 
-  /// センシティブコンテンツかどうか
+  /// Whether the post contains sensitive content.
   final bool isSensitive;
 
-  /// いいね数
+  /// The number of likes.
   final int likedCount;
 
-  /// 認証ユーザーがいいね済みかどうか（認証時のみ）
+  /// Whether the authenticated user has liked this post.
   final bool? isLiked;
 }

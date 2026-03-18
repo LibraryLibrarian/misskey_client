@@ -1,8 +1,8 @@
-/// Dart環境でのビルドモード検出用定数
+/// Constants for detecting the Dart build mode.
 library;
 
-/// リリースモードかどうかを示す定数
+/// Whether the app is running in release mode.
 const bool kReleaseMode = bool.fromEnvironment('dart.vm.product');
 
-/// デバッグモードかどうかを示す定数
+/// Whether the app is running in debug mode.
 const bool kDebugMode = !kReleaseMode;

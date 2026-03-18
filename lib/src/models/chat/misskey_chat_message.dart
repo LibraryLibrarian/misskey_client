@@ -6,10 +6,10 @@ import 'misskey_chat_room.dart';
 
 part 'misskey_chat_message.g.dart';
 
-/// Misskey チャットメッセージ
+/// A Misskey chat message.
 ///
-/// 1対1メッセージの場合は [toUserId]/[toUser] が設定され、
-/// ルームメッセージの場合は [toRoomId]/[toRoom] が設定される。
+/// For direct messages, [toUserId] and [toUser] are set.
+/// For room messages, [toRoomId] and [toRoom] are set.
 @JsonSerializable()
 class MisskeyChatMessage {
   const MisskeyChatMessage({
@@ -33,40 +33,47 @@ class MisskeyChatMessage {
 
   Map<String, dynamic> toJson() => _$MisskeyChatMessageToJson(this);
 
+  /// The message ID.
   final String id;
+
+  /// The date and time when the message was created.
   final DateTime createdAt;
+
+  /// The user ID of the sender.
   final String fromUserId;
+
+  /// The sender user.
   final MisskeyUser? fromUser;
 
-  /// 1対1チャットの宛先ユーザーID
+  /// The recipient user ID for direct messages.
   final String? toUserId;
 
-  /// 1対1チャットの宛先ユーザー
+  /// The recipient user for direct messages.
   final MisskeyUser? toUser;
 
-  /// ルームチャットの宛先ルームID
+  /// The destination room ID for room messages.
   final String? toRoomId;
 
-  /// ルームチャットの宛先ルーム
+  /// The destination room for room messages.
   final MisskeyChatRoom? toRoom;
 
-  /// メッセージ本文
+  /// The message body text.
   final String? text;
 
-  /// 添付ファイルID
+  /// The attached file ID.
   final String? fileId;
 
-  /// 添付ファイル
+  /// The attached file.
   final MisskeyDriveFile? file;
 
-  /// 既読かどうか（認証ユーザーに対する状態）
+  /// Whether the message has been read by the authenticated user.
   final bool? isRead;
 
-  /// リアクション一覧
+  /// The list of reactions on this message.
   final List<MisskeyChatMessageReaction> reactions;
 }
 
-/// チャットメッセージに付与されたリアクション
+/// A reaction on a chat message.
 @JsonSerializable()
 class MisskeyChatMessageReaction {
   const MisskeyChatMessageReaction({
@@ -79,9 +86,9 @@ class MisskeyChatMessageReaction {
 
   Map<String, dynamic> toJson() => _$MisskeyChatMessageReactionToJson(this);
 
-  /// リアクション文字列（Unicode絵文字またはカスタム絵文字コード）
+  /// The reaction string (Unicode emoji or custom emoji code).
   final String reaction;
 
-  /// リアクションしたユーザー
+  /// The user who reacted.
   final MisskeyUser? user;
 }

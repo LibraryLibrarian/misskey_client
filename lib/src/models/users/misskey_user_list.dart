@@ -4,7 +4,7 @@ import '../json_converters.dart';
 
 part 'misskey_user_list.g.dart';
 
-/// ユーザーリスト（`/api/users/lists/*` のレスポンス）
+/// A user list from the `/api/users/lists/*` endpoints.
 @JsonSerializable()
 class MisskeyUserList {
   const MisskeyUserList({
@@ -22,25 +22,28 @@ class MisskeyUserList {
 
   Map<String, dynamic> toJson() => _$MisskeyUserListToJson(this);
 
+  /// The list ID.
   final String id;
 
+  /// The creation date and time.
   @SafeDateTimeConverter()
   final DateTime? createdAt;
 
-  /// リスト名
+  /// The list name.
   final String name;
 
-  /// リストに含まれるユーザーIDの配列
+  /// The array of user IDs in the list.
   @JsonKey(defaultValue: <String>[])
   final List<String> userIds;
 
-  /// 公開リストかどうか
+  /// Whether the list is public.
   @JsonKey(defaultValue: false)
   final bool isPublic;
 
-  /// お気に入り数（`forPublic: true` の場合のみ）
+  /// The number of likes (only when `forPublic: true`).
   final int? likedCount;
 
-  /// 認証ユーザーがお気に入り済みか（`forPublic: true` の場合のみ）
+  /// Whether the authenticated user has liked this list
+  /// (only when `forPublic: true`).
   final bool? isLiked;
 }

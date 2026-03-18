@@ -4,11 +4,11 @@ import '../../models/chat/misskey_chat_message.dart';
 import 'chat_messages_api.dart';
 import 'chat_rooms_api.dart';
 
-/// チャット関連APIのファサード（`/api/chat/*`）
+/// Provides a facade for chat APIs (`/api/chat/*`).
 ///
-/// [messages] でメッセージ操作、[rooms] でルーム操作を提供し、
-/// トップレベルの `/api/chat/*` エンドポイントも直接提供する。
-/// 全エンドポイントで認証必須。
+/// Offers message operations via [messages], room operations via [rooms],
+/// and top-level `/api/chat/*` endpoints directly.
+/// All endpoints require authentication.
 class ChatApi {
   ChatApi({required MisskeyHttp http})
       : _http = http,
@@ -17,18 +17,19 @@ class ChatApi {
 
   final MisskeyHttp _http;
 
-  /// チャットメッセージ関連API
+  /// Provides chat message APIs.
   final ChatMessagesApi messages;
 
-  /// チャットルーム関連API
+  /// Provides chat room APIs.
   final ChatRoomsApi rooms;
 
-  /// チャット履歴を取得する（`/api/chat/history`）
+  /// Retrieves chat history (`/api/chat/history`).
   ///
-  /// 1対1チャット・ルームチャットの最新メッセージ履歴を返す。
+  /// Returns the latest message history for both direct messages and room
+  /// chats.
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [room]: `true`でルーム履歴、`false`でDM履歴（デフォルト: false）
+  /// [limit] controls how many items to fetch (1-100, default 10). Set [room]
+  /// to `true` for room history or `false` for DM history (default false).
   Future<List<MisskeyChatMessage>> history({
     int? limit,
     bool? room,
@@ -48,7 +49,7 @@ class ChatApi {
         .toList();
   }
 
-  /// すべてのチャットメッセージを既読にする（`/api/chat/read-all`）
+  /// Marks all chat messages as read (`/api/chat/read-all`).
   Future<void> readAll() => _http.send<Object?>(
         '/chat/read-all',
         body: const <String, dynamic>{},

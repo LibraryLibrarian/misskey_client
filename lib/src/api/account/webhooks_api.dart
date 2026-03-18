@@ -3,24 +3,24 @@ import '../../client/request_options.dart';
 import '../../internal/optional.dart';
 import '../../models/account/misskey_webhook.dart';
 
-/// Webhook管理API（`/api/i/webhooks/*`）
+/// Provides webhook management APIs (`/api/i/webhooks/*`).
 ///
-/// ユーザーWebhookの作成・取得・更新・削除・テスト送信を提供する。
+/// Offers creation, retrieval, updating, deletion, and test delivery of
+/// user webhooks.
 class WebhooksApi {
   const WebhooksApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// Webhookを新規作成する（`/api/i/webhooks/create`）
+  /// Creates a new webhook (`/api/i/webhooks/create`).
   ///
-  /// - [name]: Webhook名（必須、1〜100文字）
-  /// - [url]: 送信先URL（必須、1〜1024文字）
-  /// - [secret]: シークレット（最大1024文字、デフォルト空文字）
-  /// - [on]: 購読するイベントタイプ（必須）
-  ///   有効な値: `mention`, `unfollow`, `follow`, `followed`,
-  ///   `note`, `reply`, `renote`, `reaction`
+  /// [name] is the webhook name (1-100 characters) and [url] is the
+  /// destination URL (1-1024 characters). [secret] is an optional secret of
+  /// up to 1024 characters and defaults to an empty string. [on] specifies
+  /// the event types to subscribe to; valid values are `mention`, `unfollow`,
+  /// `follow`, `followed`, `note`, `reply`, `renote`, and `reaction`.
   ///
-  /// ロールポリシーで定められた上限を超えると `TOO_MANY_WEBHOOKS` エラーになる。
+  /// Throws a `TOO_MANY_WEBHOOKS` error if the role policy limit is exceeded.
   Future<MisskeyWebhook> create({
     required String name,
     required String url,
@@ -40,9 +40,9 @@ class WebhooksApi {
     return MisskeyWebhook.fromJson(res);
   }
 
-  /// Webhook一覧を取得する（`/api/i/webhooks/list`）
+  /// Retrieves the list of webhooks (`/api/i/webhooks/list`).
   ///
-  /// 認証ユーザーが所有する全Webhookを返す。
+  /// Returns all webhooks owned by the authenticated user.
   Future<List<MisskeyWebhook>> list() async {
     final res = await http.send<List<dynamic>>(
       '/i/webhooks/list',
@@ -55,10 +55,11 @@ class WebhooksApi {
         .toList();
   }
 
-  /// Webhookの詳細を取得する（`/api/i/webhooks/show`）
+  /// Retrieves the details of a webhook (`/api/i/webhooks/show`).
   ///
-  /// [webhookId] で対象のWebhookを指定する。
-  /// 存在しないまたは自分のものでない場合は `NO_SUCH_WEBHOOK` エラーになる。
+  /// Specify the target webhook with [webhookId].
+  /// Throws a `NO_SUCH_WEBHOOK` error if the webhook does not exist or is not
+  /// owned by the user.
   Future<MisskeyWebhook> show({required String webhookId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/i/webhooks/show',
@@ -68,16 +69,16 @@ class WebhooksApi {
     return MisskeyWebhook.fromJson(res);
   }
 
-  /// Webhookを更新する（`/api/i/webhooks/update`）
+  /// Updates a webhook (`/api/i/webhooks/update`).
   ///
-  /// - [webhookId]: 更新対象のWebhook ID（必須）
-  /// - [name]: Webhook名（1〜100文字）
-  /// - [url]: 送信先URL（1〜1024文字）
-  /// - [secret]: シークレット（最大1024文字、`Optional.null_()`でリセット）
-  /// - [on]: 購読するイベントタイプ
-  /// - [active]: 有効/無効の切り替え
+  /// [webhookId] identifies the webhook to update. [name] sets a new name
+  /// (1-100 characters) and [url] sets a new destination URL (1-1024
+  /// characters). [secret] sets a new secret of up to 1024 characters; pass
+  /// `Optional.null_()` to reset it. [on] updates the subscribed event types
+  /// and [active] enables or disables the webhook.
   ///
-  /// 存在しないまたは自分のものでない場合は `NO_SUCH_WEBHOOK` エラーになる。
+  /// Throws a `NO_SUCH_WEBHOOK` error if the webhook does not exist or is not
+  /// owned by the user.
   Future<void> update({
     required String webhookId,
     String? name,
@@ -102,26 +103,25 @@ class WebhooksApi {
     );
   }
 
-  /// Webhookを削除する（`/api/i/webhooks/delete`）
+  /// Deletes a webhook (`/api/i/webhooks/delete`).
   ///
-  /// [webhookId] で対象のWebhookを指定する。
-  /// 存在しないまたは自分のものでない場合は `NO_SUCH_WEBHOOK` エラーになる。
+  /// Specify the target webhook with [webhookId].
+  /// Throws a `NO_SUCH_WEBHOOK` error if the webhook does not exist or is not
+  /// owned by the user.
   Future<void> delete({required String webhookId}) => http.send<Object?>(
         '/i/webhooks/delete',
         body: <String, dynamic>{'webhookId': webhookId},
       );
 
-  /// Webhookのテスト送信を行う（`/api/i/webhooks/test`）
+  /// Sends a test event to a webhook (`/api/i/webhooks/test`).
   ///
-  /// 指定したWebhookに対してテストイベントを送信する。
-  /// レートリミット: 15分間に60回まで。
+  /// Sends a test event to the specified webhook.
+  /// Rate limit: 60 times per 15 minutes.
   ///
-  /// - [webhookId]: 対象のWebhook ID（必須）
-  /// - [type]: テスト送信するイベントタイプ（必須）
-  ///   有効な値: `mention`, `unfollow`, `follow`, `followed`,
-  ///   `note`, `reply`, `renote`, `reaction`
-  /// - [override]: テスト用の一時的な設定上書き
-  ///   `url` と `secret` を一時的に変更してテストできる
+  /// [webhookId] identifies the target webhook. [type] is the event type to
+  /// test; valid values are `mention`, `unfollow`, `follow`, `followed`,
+  /// `note`, `reply`, `renote`, and `reaction`. [override] allows temporarily
+  /// changing settings such as `url` and `secret` for the test only.
   Future<void> test({
     required String webhookId,
     required String type,

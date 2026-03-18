@@ -4,7 +4,7 @@ import 'misskey_user.dart';
 
 part 'misskey_blocking.g.dart';
 
-/// ブロック関係（`/api/blocking/list` のレスポンス要素）
+/// A block relationship (element of the `/api/blocking/list` response).
 @JsonSerializable()
 class MisskeyBlocking {
   const MisskeyBlocking({
@@ -19,8 +19,15 @@ class MisskeyBlocking {
 
   Map<String, dynamic> toJson() => _$MisskeyBlockingToJson(this);
 
+  /// The block record ID.
   final String id;
+
+  /// The creation timestamp.
   final DateTime createdAt;
+
+  /// The blocked user's ID.
   final String blockeeId;
+
+  /// The blocked user.
   final MisskeyUser? blockee;
 }

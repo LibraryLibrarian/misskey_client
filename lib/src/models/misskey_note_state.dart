@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_note_state.g.dart';
 
-/// ノートに対する認証ユーザーの状態（`/api/notes/state`）
+/// The authenticated user's state for a note (`/api/notes/state`).
 @JsonSerializable()
 class MisskeyNoteState {
   const MisskeyNoteState({
@@ -15,11 +15,11 @@ class MisskeyNoteState {
 
   Map<String, dynamic> toJson() => _$MisskeyNoteStateToJson(this);
 
-  /// お気に入り済みかどうか
+  /// Whether the note is favorited.
   @JsonKey(defaultValue: false)
   final bool isFavorited;
 
-  /// スレッドをミュート済みかどうか
+  /// Whether the thread is muted.
   @JsonKey(defaultValue: false)
   final bool isMutedThread;
 }

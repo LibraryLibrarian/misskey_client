@@ -15,10 +15,10 @@ import '../../models/users/misskey_page.dart';
 import '../../models/users/misskey_user_relation.dart';
 import 'user_lists_api.dart';
 
-/// ユーザー関連API
+/// Provides user-related API endpoints.
 ///
-/// `users/*` の各エンドポイントを提供する。
-/// リスト操作は [lists] サブAPIを使用する。
+/// Covers `users/*` endpoints.
+/// Use [lists] for list operations.
 class UsersApi {
   UsersApi({required MisskeyHttp http})
       : _http = http,
@@ -26,22 +26,19 @@ class UsersApi {
 
   final MisskeyHttp _http;
 
-  /// ユーザーリスト関連API
+  /// User list API.
   final UserListsApi lists;
 
-  /// ユーザー一覧を取得する（`/api/users`）
+  /// Fetches a list of users (`/api/users`).
   ///
-  /// 探索可能（`isExplorable`）かつ凍結されていないユーザーを返す。
-  /// 認証不要（認証時はミュート・ブロックユーザーを除外）。
-  /// offsetベースのページネーション。
-  ///
-  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
-  /// - [offset]: スキップ件数（デフォルト: 0）
-  /// - [sort]: ソート順（`+follower`/`-follower`/`+createdAt`/`-createdAt`/
-  ///   `+updatedAt`/`-updatedAt`）
-  /// - [state]: ユーザー状態フィルタ（`all`/`alive`、デフォルト: `all`）
-  /// - [origin]: 連合フィルタ（`combined`/`local`/`remote`、デフォルト: `local`）
-  /// - [hostname]: リモートホスト名で絞り込む（`null`でローカル）
+  /// Returns explorable (`isExplorable`) and non-suspended users.
+  /// No authentication required (when authenticated, muted/blocked users are
+  /// excluded). Uses offset-based pagination via [offset] (default: 0).
+  /// Use [limit] to cap results (1-100, default: 10), [sort] to order them
+  /// (`+follower`/`-follower`/`+createdAt`/`-createdAt`/`+updatedAt`/
+  /// `-updatedAt`), [state] to filter by user state (`all`/`alive`, default:
+  /// `all`), [origin] to filter by federation (`combined`/`local`/`remote`,
+  /// default: `local`), and [hostname] to filter by remote hostname.
   Future<List<MisskeyUser>> list({
     int? limit,
     int? offset,
@@ -72,10 +69,10 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーIDを指定してユーザー情報を1件取得
+  /// Fetches a single user by user ID.
   ///
-  /// 複数ユーザーをまとめて取得する場合は [showMany] を使うこと。
-  /// 認証は任意（未認証でも利用可能）。
+  /// Use [showMany] to retrieve multiple users at once.
+  /// Authentication optional (works without authentication).
   Future<MisskeyUser> showOneByUserId(String userId) async {
     final res = await _http.send<Map<String, dynamic>>(
       '/users/show',
@@ -88,11 +85,11 @@ class UsersApi {
     return MisskeyUser.fromJson(res);
   }
 
-  /// ユーザー名を指定してユーザー情報を1件取得
+  /// Fetches a single user by username.
   ///
-  /// [host] を省略するとローカルユーザーとして検索する。
-  /// 複数ユーザーをまとめて取得する場合は [showMany] を使うこと。
-  /// 認証は任意（未認証でも利用可能）。
+  /// Omit [host] to search for a local user.
+  /// Use [showMany] to retrieve multiple users at once.
+  /// Authentication optional (works without authentication).
   Future<MisskeyUser> showOneByUsername(
     String username, {
     String? host,
@@ -111,10 +108,10 @@ class UsersApi {
     return MisskeyUser.fromJson(res);
   }
 
-  /// 複数ユーザーの情報をまとめて取得
+  /// Fetches multiple users at once.
   ///
-  /// [userIds] に1件以上のユーザーIDを指定する。
-  /// 認証は任意（未認証でも利用可能）。
+  /// Specify one or more user IDs in [userIds].
+  /// Authentication optional (works without authentication).
   Future<List<MisskeyUser>> showMany({required List<String> userIds}) async {
     final body = <String, dynamic>{'userIds': userIds};
     final res = await _http.send<List<dynamic>>(
@@ -131,11 +128,11 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーIDを指定してフォロワー一覧を取得
+  /// Fetches the followers of a user by user ID.
   ///
-  /// [limit] は1〜100。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
-  /// 認証は任意（未認証でも利用可能）。
+  /// [limit] is 1-100.
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
+  /// Authentication optional (works without authentication).
   Future<List<MisskeyFollowing>> followersByUserId(
     String userId, {
     int? limit,
@@ -154,12 +151,12 @@ class UsersApi {
         untilDate: untilDate,
       );
 
-  /// ユーザー名を指定してフォロワー一覧を取得
+  /// Fetches the followers of a user by username.
   ///
-  /// [host] を省略するとローカルユーザーとして検索する。
-  /// [limit] は1〜100。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
-  /// 認証は任意（未認証でも利用可能）。
+  /// Omit [host] to search for a local user.
+  /// [limit] is 1-100.
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
+  /// Authentication optional (works without authentication).
   Future<List<MisskeyFollowing>> followersByUsername(
     String username, {
     String? host,
@@ -180,11 +177,11 @@ class UsersApi {
         untilDate: untilDate,
       );
 
-  /// ユーザーIDを指定してフォロー一覧を取得
+  /// Fetches the following list of a user by user ID.
   ///
-  /// [limit] は1〜100。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
-  /// 認証は任意（未認証でも利用可能）。
+  /// [limit] is 1-100.
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
+  /// Authentication optional (works without authentication).
   Future<List<MisskeyFollowing>> followingByUserId(
     String userId, {
     int? limit,
@@ -203,12 +200,12 @@ class UsersApi {
         untilDate: untilDate,
       );
 
-  /// ユーザー名を指定してフォロー一覧を取得
+  /// Fetches the following list of a user by username.
   ///
-  /// [host] を省略するとローカルユーザーとして検索する。
-  /// [limit] は1〜100。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
-  /// 認証は任意（未認証でも利用可能）。
+  /// Omit [host] to search for a local user.
+  /// [limit] is 1-100.
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
+  /// Authentication optional (works without authentication).
   Future<List<MisskeyFollowing>> followingByUsername(
     String username, {
     String? host,
@@ -229,13 +226,14 @@ class UsersApi {
         untilDate: untilDate,
       );
 
-  /// 指定ユーザーのノート一覧を取得する
+  /// Fetches notes by a user.
   ///
-  /// [userId] は必須。
-  /// [limit] は1〜100。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
-  /// [withReplies] と [withFiles] は同時に `true` にできない（サーバー側制約）。
-  /// [allowPartial] を `true` にするとキャッシュが不十分でも部分的な結果を返す。
+  /// [userId] is required.
+  /// [limit] is 1-100.
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
+  /// [withReplies] and [withFiles] cannot both be `true` (server constraint).
+  /// Set [allowPartial] to `true` to return partial results
+  /// even if the cache is insufficient.
   Future<List<MisskeyNote>> notes({
     required String userId,
     int? limit,
@@ -276,9 +274,9 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーの実績一覧を取得
+  /// Fetches a user's achievements.
   ///
-  /// 認証不要。ページネーションなし。
+  /// No authentication required. No pagination.
   Future<List<MisskeyAchievement>> achievements({
     required String userId,
   }) async {
@@ -296,10 +294,10 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーの公開クリップ一覧を取得
+  /// Fetches a user's public clips.
   ///
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
   Future<List<MisskeyClip>> clips({
     required String userId,
     int? limit,
@@ -330,10 +328,10 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーの注目ノートを取得
+  /// Fetches a user's featured notes.
   ///
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// ページングは [untilId] のみ対応。
+  /// [limit] is 1-100 (default: 10).
+  /// Pagination supports [untilId] only.
   Future<List<MisskeyNote>> featuredNotes({
     required String userId,
     int? limit,
@@ -358,10 +356,10 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーの公開Flash(Play)一覧を取得
+  /// Fetches a user's public Flash (Play) posts.
   ///
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
   Future<List<MisskeyFlash>> flashs({
     required String userId,
     int? limit,
@@ -392,11 +390,11 @@ class UsersApi {
         .toList();
   }
 
-  /// よくリプライするユーザー一覧を取得
+  /// Fetches users that a user frequently replies to.
   ///
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// レスポンスは `{ user, weight }` のリストで、
-  /// weight は0.0〜1.0の正規化された頻度。
+  /// [limit] is 1-100 (default: 10).
+  /// The response is a list of `{ user, weight }` where
+  /// weight is a normalized frequency between 0.0 and 1.0.
   Future<List<MisskeyFrequentUser>> getFrequentlyRepliedUsers({
     required String userId,
     int? limit,
@@ -419,10 +417,10 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーの公開ページ一覧を取得
+  /// Fetches a user's public pages.
   ///
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
   Future<List<MisskeyPage>> pages({
     required String userId,
     int? limit,
@@ -453,12 +451,12 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーのリアクション一覧を取得
+  /// Fetches a user's reactions.
   ///
-  /// 対象ユーザーがリアクションを公開設定にしている場合のみ取得可能。
-  /// 認証済みの場合、本人またはモデレータであれば非公開でも取得可。
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
+  /// Only available if the target user has public reactions enabled.
+  /// When authenticated, the user or a moderator can access private reactions.
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
   Future<List<MisskeyNoteReaction>> reactions({
     required String userId,
     int? limit,
@@ -489,11 +487,11 @@ class UsersApi {
         .toList();
   }
 
-  /// おすすめユーザー一覧を取得
+  /// Fetches recommended users.
   ///
-  /// 認証必須。
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [offset] でページングを行う（デフォルト: 0）。
+  /// Authentication required.
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [offset] (default: 0).
   Future<List<MisskeyUser>> recommendation({
     int? limit,
     int? offset,
@@ -513,9 +511,9 @@ class UsersApi {
         .toList();
   }
 
-  /// 指定ユーザーとの関係情報を1件取得
+  /// Fetches the relationship with a single user.
   ///
-  /// 認証必須。
+  /// Authentication required.
   Future<MisskeyUserRelation> relation({required String userId}) async {
     final res = await _http.send<Map<String, dynamic>>(
       '/users/relation',
@@ -525,9 +523,9 @@ class UsersApi {
     return MisskeyUserRelation.fromJson(res);
   }
 
-  /// 複数ユーザーとの関係情報をまとめて取得
+  /// Fetches relationships with multiple users at once.
   ///
-  /// 認証必須。
+  /// Authentication required.
   Future<List<MisskeyUserRelation>> relationMany({
     required List<String> userIds,
   }) async {
@@ -542,10 +540,10 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーを通報する
+  /// Reports a user.
   ///
-  /// 認証必須。
-  /// [comment] は1〜2048文字。
+  /// Authentication required.
+  /// [comment] must be 1-2048 characters.
   Future<void> reportAbuse({
     required String userId,
     required String comment,
@@ -555,12 +553,12 @@ class UsersApi {
         body: <String, dynamic>{'userId': userId, 'comment': comment},
       );
 
-  /// ユーザーを検索する
+  /// Searches for users.
   ///
-  /// [origin] は `local` / `remote` / `combined`（デフォルト: `combined`）。
-  /// [detail] を `false` にするとUserLite形式で返す（デフォルト: `true`）。
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [offset] でページングを行う（デフォルト: 0）。
+  /// [origin] is `local` / `remote` / `combined` (default: `combined`).
+  /// Set [detail] to `false` to return UserLite format (default: `true`).
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [offset] (default: 0).
   Future<List<MisskeyUser>> search({
     required String query,
     int? offset,
@@ -589,11 +587,11 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザー名・ホスト名でユーザーを検索する
+  /// Searches for users by username and host.
   ///
-  /// [username] または [host] のいずれか一方は必須。
-  /// [detail] を `false` にするとUserLite形式で返す（デフォルト: `true`）。
-  /// [limit] は1〜100（デフォルト: 10）。
+  /// At least one of [username] or [host] is required.
+  /// Set [detail] to `false` to return UserLite format (default: `true`).
+  /// [limit] is 1-100 (default: 10).
   Future<List<MisskeyUser>> searchByUsernameAndHost({
     String? username,
     String? host,
@@ -620,10 +618,10 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーメモを更新する
+  /// Updates the user memo.
   ///
-  /// 認証必須。
-  /// [memo] に `null` を渡すとメモを削除する。
+  /// Authentication required.
+  /// Pass `null` to [memo] to delete the memo.
   Future<void> updateMemo({
     required String userId,
     required String? memo,
@@ -633,12 +631,12 @@ class UsersApi {
         body: <String, dynamic>{'userId': userId, 'memo': memo},
       );
 
-  /// 誕生日でフォロー中ユーザーを取得する（単一日付指定）
+  /// Fetches followed users by birthday (single date).
   ///
-  /// 認証必須。
-  /// [month] は1〜12、[day] は1〜31。
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [offset] でページングを行う（デフォルト: 0）。
+  /// Authentication required.
+  /// [month] is 1-12, [day] is 1-31.
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [offset] (default: 0).
   Future<List<MisskeyBirthdayUser>> getFollowingUsersByBirthday({
     required int month,
     required int day,
@@ -661,12 +659,12 @@ class UsersApi {
         .toList();
   }
 
-  /// 誕生日の期間指定でフォロー中ユーザーを取得する
+  /// Fetches followed users by birthday range.
   ///
-  /// 認証必須。
-  /// 開始日と終了日をそれぞれ月・日で指定する。
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [offset] でページングを行う（デフォルト: 0）。
+  /// Authentication required.
+  /// Specify start and end dates by month and day.
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [offset] (default: 0).
   Future<List<MisskeyBirthdayUser>> getFollowingUsersByBirthdayRange({
     required int beginMonth,
     required int beginDay,
@@ -694,10 +692,10 @@ class UsersApi {
         .toList();
   }
 
-  /// ユーザーのギャラリー投稿一覧を取得
+  /// Fetches a user's gallery posts.
   ///
-  /// [limit] は1〜100（デフォルト: 10）。
-  /// [sinceId] / [untilId] / [sinceDate] / [untilDate] でページングを行う。
+  /// [limit] is 1-100 (default: 10).
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
   Future<List<MisskeyGalleryPost>> galleryPosts({
     required String userId,
     int? limit,

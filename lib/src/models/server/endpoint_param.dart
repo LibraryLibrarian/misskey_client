@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'endpoint_param.g.dart';
 
-/// エンドポイントのパラメーター情報（`/api/endpoint`）
+/// A parameter definition for an API endpoint from `/api/endpoint`.
 @JsonSerializable()
 class EndpointParam {
   const EndpointParam({
@@ -15,9 +15,9 @@ class EndpointParam {
 
   Map<String, dynamic> toJson() => _$EndpointParamToJson(this);
 
-  /// パラメーター名
+  /// The parameter name.
   final String name;
 
-  /// パラメーターの型（大文字）
+  /// The parameter type (uppercase).
   final String type;
 }

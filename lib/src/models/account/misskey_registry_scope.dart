@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_registry_scope.g.dart';
 
-/// レジストリのスコープ・ドメイン情報
+/// Registry scope and domain information.
 @JsonSerializable()
 class MisskeyRegistryScope {
   const MisskeyRegistryScope({
@@ -15,9 +15,9 @@ class MisskeyRegistryScope {
 
   Map<String, dynamic> toJson() => _$MisskeyRegistryScopeToJson(this);
 
-  /// スコープの二次元配列
+  /// Two-dimensional array of scopes.
   final List<List<String>> scopes;
 
-  /// ドメイン（アクセストークン由来の場合はnull）
+  /// The domain, or `null` if derived from an access token.
   final String? domain;
 }

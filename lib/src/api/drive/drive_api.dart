@@ -5,12 +5,12 @@ import 'drive_files_api.dart';
 import 'drive_folders_api.dart';
 import 'drive_stats_api.dart';
 
-/// Drive関連APIのファサード
+/// Serves as a facade for Drive-related APIs.
 ///
-/// [files]・[folders]・[stats] を束ねて単一のアクセスポイントを提供し、
-/// トップレベルの `/api/drive/*` エンドポイントも直接提供する。
+/// Aggregates [files], [folders], and [stats] into a single access point,
+/// and also provides top-level `/api/drive/*` endpoints directly.
 class DriveApi {
-  /// コンストラクタ
+  /// Creates a [DriveApi] instance.
   DriveApi({required MisskeyHttp http})
       : _http = http,
         files = DriveFilesApi(http: http),
@@ -19,25 +19,26 @@ class DriveApi {
 
   final MisskeyHttp _http;
 
-  /// ドライブファイル関連API
+  /// Provides Drive file operations.
   final DriveFilesApi files;
 
-  /// ドライブフォルダ関連API
+  /// Provides Drive folder operations.
   final DriveFoldersApi folders;
 
-  /// ドライブ統計情報関連API
+  /// Provides Drive statistics operations.
   final DriveStatsApi stats;
 
-  /// フォルダを問わずドライブ内の全ファイルを取得する
-  /// （`/api/drive/stream`）
+  /// Retrieves all files in the Drive regardless of folder
+  /// (`/api/drive/stream`).
   ///
-  /// [DriveFilesApi.list] とは異なり、フォルダ指定やソートは無く、
-  /// MIMEタイプフィルタとページネーションに特化したエンドポイント。
+  /// Unlike [DriveFilesApi.list], this endpoint does not support folder
+  /// filtering or sorting, and is specialized for MIME type filtering
+  /// and pagination.
   ///
-  /// - [limit]: 取得件数（1〜100、デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  /// - [type]: MIMEタイプパターンで絞り込む（例: `"image/*"`）
+  /// [limit] caps the number of results (1-100, default 10). Use [sinceId]
+  /// and [untilId] to paginate by ID, or [sinceDate] and [untilDate] to
+  /// paginate by Unix timestamp in milliseconds. Pass [type] to filter by MIME
+  /// type pattern (e.g., `"image/*"`).
   Future<List<MisskeyDriveFile>> stream({
     int? limit,
     String? sinceId,

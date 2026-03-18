@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_achievement.g.dart';
 
-/// ユーザーの実績（`/api/users/achievements` のレスポンス要素）
+/// A user achievement from the `/api/users/achievements` response.
 @JsonSerializable()
 class MisskeyAchievement {
   const MisskeyAchievement({
@@ -15,9 +15,9 @@ class MisskeyAchievement {
 
   Map<String, dynamic> toJson() => _$MisskeyAchievementToJson(this);
 
-  /// 実績名
+  /// The achievement name.
   final String name;
 
-  /// 解除日時（Unixタイムスタンプ秒）
+  /// When the achievement was unlocked (Unix timestamp in seconds).
   final int unlockedAt;
 }

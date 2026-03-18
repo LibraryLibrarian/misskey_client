@@ -2,28 +2,29 @@ import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 
-/// 統計チャート関連API
+/// Provides statistics chart APIs.
 ///
-/// `/api/charts/*` エンドポイントを [MisskeyHttp] に委譲して呼び出す。
-/// 各メソッドはネストされた `Map<String, dynamic>` を返し、
-/// リーフ値はすべて `List<num>`（時系列データ）となる。
+/// Delegates `/api/charts/*` endpoint calls to [MisskeyHttp].
+/// Each method returns a nested `Map<String, dynamic>` where all leaf
+/// values are `List<num>` (time-series data).
 class ChartsApi {
-  /// コンストラクタ
+  /// Creates a [ChartsApi] instance.
   const ChartsApi({required this.http});
 
-  /// HTTPクライアント
+  /// The HTTP client.
   final MisskeyHttp http;
 
-  /// アクティブユーザー統計を取得する（`/api/charts/active-users`）
+  /// Retrieves active user statistics (`/api/charts/active-users`).
   ///
-  /// レスポンスフィールド:
+  /// Response fields:
   /// `readWrite`, `read`, `write`,
-  /// `registeredWithinWeek`, `registeredWithinMonth`, `registeredWithinYear`,
-  /// `registeredOutsideWeek`, `registeredOutsideMonth`, `registeredOutsideYear`
+  /// `registeredWithinWeek`, `registeredWithinMonth`,
+  /// `registeredWithinYear`, `registeredOutsideWeek`,
+  /// `registeredOutsideMonth`, `registeredOutsideYear`
   ///
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getActiveUsers({
     required String span,
     int? limit,
@@ -33,14 +34,14 @@ class ChartsApi {
         span: span, limit: limit, offset: offset);
   }
 
-  /// ActivityPubリクエスト統計を取得する（`/api/charts/ap-request`）
+  /// Retrieves ActivityPub request statistics (`/api/charts/ap-request`).
   ///
-  /// レスポンスフィールド:
+  /// Response fields:
   /// `deliverFailed`, `deliverSucceeded`, `inboxReceived`
   ///
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getApRequest({
     required String span,
     int? limit,
@@ -50,15 +51,15 @@ class ChartsApi {
         span: span, limit: limit, offset: offset);
   }
 
-  /// 連合統計を取得する（`/api/charts/federation`）
+  /// Retrieves federation statistics (`/api/charts/federation`).
   ///
-  /// レスポンスフィールド:
+  /// Response fields:
   /// `deliveredInstances`, `inboxInstances`, `stalled`,
   /// `sub`, `pub`, `pubsub`, `subActive`, `pubActive`
   ///
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getFederation({
     required String span,
     int? limit,
@@ -68,9 +69,9 @@ class ChartsApi {
         span: span, limit: limit, offset: offset);
   }
 
-  /// 特定インスタンスの統計を取得する（`/api/charts/instance`）
+  /// Retrieves statistics for a specific instance (`/api/charts/instance`).
   ///
-  /// レスポンスフィールド（ネスト構造）:
+  /// Response fields (nested):
   /// `requests.{failed, succeeded, received}`,
   /// `notes.{total, inc, dec, diffs.{normal, reply, renote, withFile}}`,
   /// `users.{total, inc, dec}`,
@@ -78,10 +79,10 @@ class ChartsApi {
   /// `followers.{total, inc, dec}`,
   /// `drive.{totalFiles, incFiles, decFiles, incUsage, decUsage}`
   ///
-  /// - [host]: 対象インスタンスのホスト名
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [host] as the hostname of the target instance.
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getInstance({
     required String host,
     required String span,
@@ -105,15 +106,15 @@ class ChartsApi {
     return res;
   }
 
-  /// ノート統計を取得する（`/api/charts/notes`）
+  /// Retrieves note statistics (`/api/charts/notes`).
   ///
-  /// レスポンスフィールド（ネスト構造）:
+  /// Response fields (nested):
   /// `local.{total, inc, dec, diffs.{normal, reply, renote, withFile}}`,
   /// `remote.{total, inc, dec, diffs.{normal, reply, renote, withFile}}`
   ///
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getNotes({
     required String span,
     int? limit,
@@ -123,15 +124,15 @@ class ChartsApi {
         span: span, limit: limit, offset: offset);
   }
 
-  /// ユーザー統計を取得する（`/api/charts/users`）
+  /// Retrieves user statistics (`/api/charts/users`).
   ///
-  /// レスポンスフィールド（ネスト構造）:
+  /// Response fields (nested):
   /// `local.{total, inc, dec}`,
   /// `remote.{total, inc, dec}`
   ///
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getUsers({
     required String span,
     int? limit,
@@ -141,18 +142,19 @@ class ChartsApi {
         span: span, limit: limit, offset: offset);
   }
 
-  /// 指定ユーザーのフォロー統計を取得する（`/api/charts/user/following`）
+  /// Retrieves following statistics for a specific user
+  /// (`/api/charts/user/following`).
   ///
-  /// レスポンスフィールド（ネスト構造）:
+  /// Response fields (nested):
   /// `local.followings.{total, inc, dec}`,
   /// `local.followers.{total, inc, dec}`,
   /// `remote.followings.{total, inc, dec}`,
   /// `remote.followers.{total, inc, dec}`
   ///
-  /// - [userId]: 対象ユーザーのID
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [userId] to identify the target user.
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getUserFollowing({
     required String userId,
     required String span,
@@ -163,16 +165,17 @@ class ChartsApi {
         userId: userId, span: span, limit: limit, offset: offset);
   }
 
-  /// 指定ユーザーのノート統計を取得する（`/api/charts/user/notes`）
+  /// Retrieves note statistics for a specific user
+  /// (`/api/charts/user/notes`).
   ///
-  /// レスポンスフィールド（ネスト構造）:
+  /// Response fields (nested):
   /// `total`, `inc`, `dec`,
   /// `diffs.{normal, reply, renote, withFile}`
   ///
-  /// - [userId]: 対象ユーザーのID
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [userId] to identify the target user.
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getUserNotes({
     required String userId,
     required String span,
@@ -183,16 +186,17 @@ class ChartsApi {
         userId: userId, span: span, limit: limit, offset: offset);
   }
 
-  /// 指定ユーザーのページビュー統計を取得する（`/api/charts/user/pv`）
+  /// Retrieves page view statistics for a specific user
+  /// (`/api/charts/user/pv`).
   ///
-  /// レスポンスフィールド（ネスト構造）:
+  /// Response fields (nested):
   /// `upv.{user, visitor}`,
   /// `pv.{user, visitor}`
   ///
-  /// - [userId]: 対象ユーザーのID
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [userId] to identify the target user.
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getUserPv({
     required String userId,
     required String span,
@@ -203,16 +207,17 @@ class ChartsApi {
         userId: userId, span: span, limit: limit, offset: offset);
   }
 
-  /// 指定ユーザーのリアクション統計を取得する（`/api/charts/user/reactions`）
+  /// Retrieves reaction statistics for a specific user
+  /// (`/api/charts/user/reactions`).
   ///
-  /// レスポンスフィールド（ネスト構造）:
+  /// Response fields (nested):
   /// `local.{count}`,
   /// `remote.{count}`
   ///
-  /// - [userId]: 対象ユーザーのID
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Pass [userId] to identify the target user.
+  /// Pass [span] to set the aggregation period (`'day'` or `'hour'`).
+  /// Use [limit] to cap the number of data points (1-500, default 30).
+  /// Pass [offset] to shift the retrieval start position.
   Future<Map<String, dynamic>> getUserReactions({
     required String userId,
     required String span,

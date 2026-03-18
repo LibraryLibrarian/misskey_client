@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'server_info.g.dart';
 
-/// サーバーのマシン情報（`/api/server-info`）
+/// Server machine information returned by `/api/server-info`.
 @JsonSerializable()
 class ServerInfo {
   const ServerInfo({
@@ -17,20 +17,20 @@ class ServerInfo {
 
   Map<String, dynamic> toJson() => _$ServerInfoToJson(this);
 
-  /// マシン名
+  /// The machine name.
   final String machine;
 
-  /// CPU情報
+  /// The CPU information.
   final ServerCpuInfo cpu;
 
-  /// メモリ情報
+  /// The memory information.
   final ServerMemInfo mem;
 
-  /// ファイルシステム情報
+  /// The filesystem information.
   final ServerFsInfo fs;
 }
 
-/// サーバーのCPU情報
+/// Server CPU information.
 @JsonSerializable()
 class ServerCpuInfo {
   const ServerCpuInfo({
@@ -43,14 +43,14 @@ class ServerCpuInfo {
 
   Map<String, dynamic> toJson() => _$ServerCpuInfoToJson(this);
 
-  /// CPUモデル名
+  /// The CPU model name.
   final String model;
 
-  /// コア数
+  /// The number of CPU cores.
   final int cores;
 }
 
-/// サーバーのメモリ情報
+/// Server memory information.
 @JsonSerializable()
 class ServerMemInfo {
   const ServerMemInfo({
@@ -62,11 +62,11 @@ class ServerMemInfo {
 
   Map<String, dynamic> toJson() => _$ServerMemInfoToJson(this);
 
-  /// 総メモリ容量（バイト）
+  /// The total memory capacity in bytes.
   final num total;
 }
 
-/// サーバーのファイルシステム情報
+/// Server filesystem information.
 @JsonSerializable()
 class ServerFsInfo {
   const ServerFsInfo({
@@ -79,9 +79,9 @@ class ServerFsInfo {
 
   Map<String, dynamic> toJson() => _$ServerFsInfoToJson(this);
 
-  /// 総ディスク容量（バイト）
+  /// The total disk capacity in bytes.
   final num total;
 
-  /// 使用済みディスク容量（バイト）
+  /// The used disk space in bytes.
   final num used;
 }

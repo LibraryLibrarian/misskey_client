@@ -12,7 +12,7 @@ import 'misskey_client_config.dart';
 import 'request_options.dart' as ro;
 import 'token_provider.dart';
 
-/// MisskeyAPI用の内部HTTPクライアント
+/// Internal HTTP client for the Misskey API.
 class MisskeyHttp {
   MisskeyHttp({
     required this.config,
@@ -49,16 +49,19 @@ class MisskeyHttp {
   final TokenProvider? tokenProvider;
   final Logger logger;
 
-  /// 公開ベースURL（`/api` 付与前の元URL）
+  /// The public base URL (the original URL before `/api` is appended).
   Uri get baseUrl => config.baseUrl;
 
   late final Dio _dio;
 
-  /// `path`は`/notes/create`のように`/api`より後のパスを渡す
+  /// Sends an HTTP request to the given [path].
   ///
-  /// [body]には`Map<String,dynamic>`（JSON）・`FormData`（multipart）・`null`を指定可能
+  /// The [path] should be relative to `/api` (e.g. `/notes/create`).
   ///
-  /// アップロード時は[onSendProgress]で進捗を受け取れる
+  /// [body] accepts `Map<String, dynamic>` (JSON), [FormData] (multipart),
+  /// or `null`.
+  ///
+  /// Use [onSendProgress] to receive upload progress callbacks.
   Future<T> send<T>(
     String path, {
     String method = 'POST',

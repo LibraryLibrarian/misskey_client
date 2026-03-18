@@ -4,16 +4,16 @@ import '../../client/request_options.dart';
 import '../../models/users/misskey_user_list.dart';
 import '../../models/users/misskey_user_list_membership.dart';
 
-/// ユーザーリスト関連API（`/api/users/lists/*`）
+/// Provides user list API endpoints (`/api/users/lists/*`).
 class UserListsApi {
   const UserListsApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// リスト一覧を取得
+  /// Fetches user lists.
   ///
-  /// [userId] を指定するとそのユーザーの公開リストを返す。
-  /// 省略時は認証ユーザー自身のリストを返す。
+  /// Returns public lists for the specified [userId].
+  /// If omitted, returns the authenticated user's own lists.
   Future<List<MisskeyUserList>> list({String? userId}) async {
     final body = <String, dynamic>{
       if (userId != null) 'userId': userId,
@@ -32,10 +32,10 @@ class UserListsApi {
         .toList();
   }
 
-  /// リストの詳細情報を取得
+  /// Retrieves detailed information for a list.
   ///
-  /// [forPublic] を `true` にすると公開リストとして取得し、
-  /// `likedCount` / `isLiked` が含まれる。
+  /// Set [forPublic] to `true` to retrieve as a public list,
+  /// which includes `likedCount` and `isLiked`.
   Future<MisskeyUserList> show({
     required String listId,
     bool? forPublic,
@@ -55,7 +55,7 @@ class UserListsApi {
     return MisskeyUserList.fromJson(res);
   }
 
-  /// リストを新規作成
+  /// Creates a new list.
   Future<MisskeyUserList> create({required String name}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/users/lists/create',
@@ -64,7 +64,7 @@ class UserListsApi {
     return MisskeyUserList.fromJson(res);
   }
 
-  /// 公開リストをコピーして新規作成
+  /// Creates a new list by copying a public list.
   Future<MisskeyUserList> createFromPublic({
     required String name,
     required String listId,
@@ -76,9 +76,10 @@ class UserListsApi {
     return MisskeyUserList.fromJson(res);
   }
 
-  /// リストを更新
+  /// Updates a list.
   ///
-  /// [name] と [isPublic] はいずれも省略可能。指定した項目のみ更新される。
+  /// Both [name] and [isPublic] are optional.
+  /// Only specified fields are updated.
   Future<MisskeyUserList> update({
     required String listId,
     String? name,
@@ -96,13 +97,13 @@ class UserListsApi {
     return MisskeyUserList.fromJson(res);
   }
 
-  /// リストを削除
+  /// Deletes a list.
   Future<void> delete({required String listId}) => http.send<Object?>(
         '/users/lists/delete',
         body: <String, dynamic>{'listId': listId},
       );
 
-  /// リストにユーザーを追加
+  /// Adds a user to a list.
   Future<void> push({
     required String listId,
     required String userId,
@@ -112,7 +113,7 @@ class UserListsApi {
         body: <String, dynamic>{'listId': listId, 'userId': userId},
       );
 
-  /// リストからユーザーを削除
+  /// Removes a user from a list.
   Future<void> pull({
     required String listId,
     required String userId,
@@ -122,10 +123,10 @@ class UserListsApi {
         body: <String, dynamic>{'listId': listId, 'userId': userId},
       );
 
-  /// リストのメンバーシップ一覧を取得
+  /// Fetches list memberships.
   ///
-  /// [forPublic] を `true` にすると公開リストのメンバーを取得する。
-  /// [limit] は1〜100（デフォルト: 30）。
+  /// Set [forPublic] to `true` to retrieve members of a public list.
+  /// [limit] is 1-100 (default: 30).
   Future<List<MisskeyUserListMembership>> getMemberships({
     required String listId,
     bool? forPublic,
@@ -158,7 +159,7 @@ class UserListsApi {
         .toList();
   }
 
-  /// メンバーシップを更新（リプライ含めるかの設定変更）
+  /// Updates a membership (changes whether to include replies).
   Future<void> updateMembership({
     required String listId,
     required String userId,
@@ -173,13 +174,13 @@ class UserListsApi {
         },
       );
 
-  /// リストをお気に入り登録
+  /// Favorites a list.
   Future<void> favorite({required String listId}) => http.send<Object?>(
         '/users/lists/favorite',
         body: <String, dynamic>{'listId': listId},
       );
 
-  /// リストのお気に入りを解除
+  /// Unfavorites a list.
   Future<void> unfavorite({required String listId}) => http.send<Object?>(
         '/users/lists/unfavorite',
         body: <String, dynamic>{'listId': listId},

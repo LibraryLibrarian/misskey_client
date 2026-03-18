@@ -4,7 +4,7 @@ import 'misskey_federation_instance.dart';
 
 part 'misskey_federation_stats.g.dart';
 
-/// 連合統計情報（`/api/federation/stats` のレスポンス）
+/// Federation statistics (response from `/api/federation/stats`).
 @JsonSerializable()
 class MisskeyFederationStats {
   const MisskeyFederationStats({
@@ -19,15 +19,15 @@ class MisskeyFederationStats {
 
   Map<String, dynamic> toJson() => _$MisskeyFederationStatsToJson(this);
 
-  /// フォロワー数上位のインスタンス一覧
+  /// The instances with the most followers.
   final List<MisskeyFederationInstance> topSubInstances;
 
-  /// 上位以外のフォロワー数合計
+  /// The total follower count from instances outside the top list.
   final int otherFollowersCount;
 
-  /// フォロー数上位のインスタンス一覧
+  /// The instances with the most following.
   final List<MisskeyFederationInstance> topPubInstances;
 
-  /// 上位以外のフォロー数合計
+  /// The total following count from instances outside the top list.
   final int otherFollowingCount;
 }

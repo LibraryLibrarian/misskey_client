@@ -1,13 +1,14 @@
 import 'auth_mode.dart';
 
-/// リクエスト単位のオプション（内部使用）
+/// Per-request options (internal use).
 class RequestOptions {
-  /// リクエスト単位のオプション
+  /// Creates per-request options.
   ///
-  /// - [authMode]: 認証モード（デフォルト: [AuthMode.required]）
-  /// - [idempotent]: 冪等なリクエストか（デフォルト: false）
-  /// - [contentType]: リクエストのContent-Type（未指定時はDioが推論）
-  /// - [headers]: リクエスト固有の追加ヘッダ
+  /// [authMode] controls token injection (default: [AuthMode.required]).
+  /// Set [idempotent] to `true` to enable automatic retries for this request
+  /// (default: `false`). Use [contentType] to override the Content-Type header;
+  /// Dio infers it automatically when omitted. Supply [headers] to attach
+  /// additional headers specific to this request.
   const RequestOptions({
     this.authMode = AuthMode.required,
     this.idempotent = false,
@@ -15,23 +16,23 @@ class RequestOptions {
     this.headers = const {},
   });
 
-  /// 認証モード
+  /// The authentication mode for this request.
   ///
-  /// - [AuthMode.required]: トークンを必ず注入する
-  /// - [AuthMode.optional]: トークンがあれば注入する
-  /// - [AuthMode.none]: トークンを注入しない
+  /// Use [AuthMode.required] to always inject the token,
+  /// [AuthMode.optional] to inject it only when available,
+  /// or [AuthMode.none] to never inject the token.
   final AuthMode authMode;
 
-  /// 冪等リクエストか
+  /// Whether this request is idempotent.
   ///
-  /// true の場合のみ自動リトライ対象
+  /// Only idempotent requests are eligible for automatic retries.
   final bool idempotent;
 
-  /// このリクエストのContent-Typeを明示的に指定する
+  /// Explicitly sets the Content-Type for this request.
   ///
-  /// 未指定時はDioが推論する
+  /// When omitted, Dio infers the Content-Type automatically.
   final String? contentType;
 
-  /// このリクエスト固有の追加ヘッダ
+  /// Additional headers specific to this request.
   final Map<String, String> headers;
 }

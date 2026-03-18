@@ -2,27 +2,26 @@ import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_muting.dart';
 
-/// ミュート関連API（`/api/mute/*`）
+/// Provides mute-related API endpoints (`/api/mute/*`).
 ///
-/// ユーザーのミュート・ミュート解除・ミュート一覧取得を提供する。
+/// Supports muting, unmuting, and listing muted users.
 class MuteApi {
   const MuteApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// ユーザーをミュートする（`/api/mute/create`）
+  /// Mutes a user (`/api/mute/create`).
   ///
-  /// レート制限: 20回/時。
+  /// Rate limit: 20 requests/hour.
   ///
-  /// - [userId]: ミュート対象のユーザーID（必須）
-  /// - [expiresAt]: ミュートの有効期限（Unixタイムスタンプms）。
-  ///   `null`の場合は無期限ミュート。
-  ///   過去の時刻を指定した場合は何も起きない。
+  /// Pass the ID of the user to mute in [userId]. Optionally set [expiresAt]
+  /// to a Unix timestamp in milliseconds for a time-limited mute; if omitted
+  /// the mute is permanent. Specifying a past time has no effect.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `MUTEE_IS_YOURSELF`: 自分自身をミュートしようとした
-  /// - `ALREADY_MUTING`: 既にミュート済み
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The target user does not exist
+  /// - `MUTEE_IS_YOURSELF`: Attempted to mute yourself
+  /// - `ALREADY_MUTING`: Already muting this user
   Future<void> create({
     required String userId,
     int? expiresAt,
@@ -35,24 +34,24 @@ class MuteApi {
         },
       );
 
-  /// ユーザーのミュートを解除する（`/api/mute/delete`）
+  /// Unmutes a user (`/api/mute/delete`).
   ///
-  /// - [userId]: ミュート解除対象のユーザーID（必須）
+  /// Pass the ID of the user to unmute in [userId].
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `MUTEE_IS_YOURSELF`: 自分自身を指定した
-  /// - `NOT_MUTING`: ミュートしていない
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The target user does not exist
+  /// - `MUTEE_IS_YOURSELF`: Specified yourself
+  /// - `NOT_MUTING`: Not currently muting this user
   Future<void> delete({required String userId}) => http.send<Object?>(
         '/mute/delete',
         body: <String, dynamic>{'userId': userId},
       );
 
-  /// ミュート中のユーザー一覧を取得する（`/api/mute/list`）
+  /// Lists currently muted users (`/api/mute/list`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Use [limit] to cap the number of results (1–100, default 30).
+  /// Pass [sinceId] or [untilId] for cursor-based pagination, or
+  /// [sinceDate] / [untilDate] for timestamp-based pagination in Unix milliseconds.
   Future<List<MisskeyMuting>> list({
     int? limit,
     String? sinceId,

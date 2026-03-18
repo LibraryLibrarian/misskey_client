@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_custom_emoji.g.dart';
 
-/// Misskey のカスタム絵文字
+/// A Misskey custom emoji.
 @JsonSerializable()
 class MisskeyCustomEmoji {
   const MisskeyCustomEmoji({
@@ -24,20 +24,25 @@ class MisskeyCustomEmoji {
 
   Map<String, dynamic> toJson() => _$MisskeyCustomEmojiToJson(this);
 
-  /// ショートコード（コロンを除いた部分）
+  /// The shortcode (without surrounding colons).
   @JsonKey(name: 'name')
   final String shortcode;
 
-  /// 画像URL
+  /// The emoji image URL.
   final String url;
 
+  /// The category this emoji belongs to.
   final String? category;
 
+  /// Alternative names for this emoji.
   final List<String>? aliases;
 
+  /// Whether the emoji is restricted to the local instance.
   final bool? localOnly;
 
+  /// Whether the emoji is marked as sensitive.
   final bool? isSensitive;
 
+  /// The role IDs that are allowed to use this emoji as a reaction.
   final List<String>? roleIdsThatCanBeUsedThisEmojiAsReaction;
 }

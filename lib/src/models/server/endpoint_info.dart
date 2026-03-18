@@ -4,7 +4,7 @@ import 'endpoint_param.dart';
 
 part 'endpoint_info.g.dart';
 
-/// エンドポイントの詳細情報（`/api/endpoint`）
+/// Detailed information about an API endpoint from `/api/endpoint`.
 @JsonSerializable()
 class EndpointInfo {
   const EndpointInfo({
@@ -16,6 +16,6 @@ class EndpointInfo {
 
   Map<String, dynamic> toJson() => _$EndpointInfoToJson(this);
 
-  /// エンドポイントのパラメーター一覧
+  /// The list of parameters for this endpoint.
   final List<EndpointParam> params;
 }

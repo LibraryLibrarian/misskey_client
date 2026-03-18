@@ -4,7 +4,7 @@ import 'json_converters.dart';
 
 part 'misskey_announcement.g.dart';
 
-/// サーバーのお知らせ（`/api/announcements` のレスポンス要素）
+/// A server announcement (element of the `/api/announcements` response).
 @JsonSerializable()
 class MisskeyAnnouncement {
   const MisskeyAnnouncement({
@@ -27,41 +27,44 @@ class MisskeyAnnouncement {
 
   Map<String, dynamic> toJson() => _$MisskeyAnnouncementToJson(this);
 
+  /// The announcement ID.
   final String id;
 
+  /// The creation timestamp.
   @SafeDateTimeConverter()
   final DateTime createdAt;
 
+  /// The last-updated timestamp.
   @SafeDateTimeConverter()
   final DateTime? updatedAt;
 
-  /// お知らせのタイトル
+  /// The announcement title.
   final String title;
 
-  /// お知らせの本文
+  /// The announcement body text.
   final String text;
 
-  /// 画像URL
+  /// The image URL.
   final String? imageUrl;
 
-  /// アイコン種別（`info` / `warning` / `error` / `success`）
+  /// The icon type (`info` / `warning` / `error` / `success`).
   final String icon;
 
-  /// 表示方法（`dialog` / `normal` / `banner`）
+  /// The display style (`dialog` / `normal` / `banner`).
   final String display;
 
-  /// 既読確認が必要か
+  /// Whether the user must confirm before marking as read.
   @JsonKey(defaultValue: false)
   final bool needConfirmationToRead;
 
-  /// サイレント（通知なし）か
+  /// Whether this is a silent announcement (no notification).
   @JsonKey(defaultValue: false)
   final bool silence;
 
-  /// 自分宛てのお知らせか
+  /// Whether this announcement is targeted at the current user.
   @JsonKey(defaultValue: false)
   final bool forYou;
 
-  /// 既読かどうか（認証時のみ返却される）
+  /// Whether the announcement has been read (only present when authenticated).
   final bool? isRead;
 }

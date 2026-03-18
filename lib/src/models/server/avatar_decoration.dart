@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'avatar_decoration.g.dart';
 
-/// アバターデコレーション情報（`/api/get-avatar-decorations`）
+/// An avatar decoration returned by `/api/get-avatar-decorations`.
 @JsonSerializable()
 class AvatarDecoration {
   const AvatarDecoration({
@@ -18,18 +18,18 @@ class AvatarDecoration {
 
   Map<String, dynamic> toJson() => _$AvatarDecorationToJson(this);
 
-  /// デコレーションID
+  /// The decoration ID.
   final String id;
 
-  /// デコレーション名
+  /// The decoration name.
   final String name;
 
-  /// 説明文
+  /// The description of this decoration.
   final String description;
 
-  /// 画像URL
+  /// The image URL.
   final String url;
 
-  /// このデコレーションを使用可能なロールIDのリスト
+  /// The list of role IDs that can use this decoration.
   final List<String> roleIdsThatCanBeUsedThisDecoration;
 }

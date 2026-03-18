@@ -5,29 +5,30 @@ import '../models/misskey_hashtag.dart';
 import '../models/misskey_hashtag_trend.dart';
 import '../models/misskey_user.dart';
 
-/// ハッシュタグ関連API（`/api/hashtags/*`）
+/// Provides hashtag-related API endpoints (`/api/hashtags/*`).
 ///
-/// ハッシュタグの検索・一覧取得・トレンド取得を提供する。
+/// Supports searching, listing, and retrieving trending hashtags.
 class HashtagsApi {
   const HashtagsApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// ハッシュタグ一覧を取得する（`/api/hashtags/list`）
+  /// Fetches a list of hashtags (`/api/hashtags/list`).
   ///
-  /// ソート順を指定してハッシュタグを一覧取得する。認証不要。
+  /// Returns hashtags sorted by the specified order.
+  /// No authentication required.
   ///
-  /// - [sort]: ソート順（必須）。以下のいずれかを指定:
-  ///   `+mentionedUsers` / `-mentionedUsers` /
-  ///   `+mentionedLocalUsers` / `-mentionedLocalUsers` /
-  ///   `+mentionedRemoteUsers` / `-mentionedRemoteUsers` /
-  ///   `+attachedUsers` / `-attachedUsers` /
-  ///   `+attachedLocalUsers` / `-attachedLocalUsers` /
-  ///   `+attachedRemoteUsers` / `-attachedRemoteUsers`
-  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
-  /// - [attachedToUserOnly]: プロフィールに設定されたタグのみ
-  /// - [attachedToLocalUserOnly]: ローカルユーザーのプロフィールに設定されたタグのみ
-  /// - [attachedToRemoteUserOnly]: リモートユーザーのプロフィールに設定されたタグのみ
+  /// Pass [sort] to specify the sort order (required); accepted values are
+  /// `+mentionedUsers` / `-mentionedUsers` /
+  /// `+mentionedLocalUsers` / `-mentionedLocalUsers` /
+  /// `+mentionedRemoteUsers` / `-mentionedRemoteUsers` /
+  /// `+attachedUsers` / `-attachedUsers` /
+  /// `+attachedLocalUsers` / `-attachedLocalUsers` /
+  /// `+attachedRemoteUsers` / `-attachedRemoteUsers`.
+  /// Use [limit] to cap the number of results (1-100, default: 10).
+  /// Set [attachedToUserOnly], [attachedToLocalUserOnly], or
+  /// [attachedToRemoteUserOnly] to restrict results to tags attached
+  /// to those profile types.
   Future<List<MisskeyHashtag>> list({
     required String sort,
     int? limit,
@@ -58,14 +59,14 @@ class HashtagsApi {
         .toList();
   }
 
-  /// ハッシュタグを検索する（`/api/hashtags/search`）
+  /// Searches for hashtags by prefix (`/api/hashtags/search`).
   ///
-  /// 前方一致でハッシュタグ名を検索する。認証不要。
-  /// レスポンスはハッシュタグ名の文字列リスト。
+  /// Performs a prefix match on hashtag names. No authentication required.
+  /// Returns a list of matching hashtag name strings.
   ///
-  /// - [query]: 検索文字列（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
-  /// - [offset]: スキップ件数（デフォルト: 0）
+  /// Pass [query] as the search string. Use [limit] to cap the number of
+  /// results (1-100, default: 10) and [offset] to skip entries
+  /// (default: 0).
   Future<List<String>> search({
     required String query,
     int? limit,
@@ -87,14 +88,12 @@ class HashtagsApi {
     return res.cast<String>();
   }
 
-  /// ハッシュタグの詳細情報を取得する（`/api/hashtags/show`）
+  /// Retrieves detailed information for a hashtag (`/api/hashtags/show`).
   ///
-  /// 認証不要。
+  /// No authentication required. Pass [tag] as the hashtag name to look up.
   ///
-  /// - [tag]: ハッシュタグ名（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_HASHTAG`: 指定したハッシュタグが存在しない
+  /// Common errors:
+  /// - `NO_SUCH_HASHTAG`: The specified hashtag does not exist
   Future<MisskeyHashtag> show({required String tag}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/hashtags/show',
@@ -107,10 +106,10 @@ class HashtagsApi {
     return MisskeyHashtag.fromJson(res);
   }
 
-  /// トレンドハッシュタグを取得する（`/api/hashtags/trend`）
+  /// Retrieves trending hashtags (`/api/hashtags/trend`).
   ///
-  /// 直近の人気ハッシュタグを最大10件返す。認証不要。
-  /// レスポンスは60秒間キャッシュされる。
+  /// Returns up to 10 recently popular hashtags. No authentication required.
+  /// The response is cached for 60 seconds on the server.
   Future<List<MisskeyHashtagTrend>> trend() async {
     final res = await http.send<List<dynamic>>(
       '/hashtags/trend',
@@ -126,19 +125,16 @@ class HashtagsApi {
         .toList();
   }
 
-  /// ハッシュタグを使用しているユーザー一覧を取得する（`/api/hashtags/users`）
+  /// Retrieves users associated with a hashtag (`/api/hashtags/users`).
   ///
-  /// 認証不要。
-  ///
-  /// - [tag]: ハッシュタグ名（必須）
-  /// - [sort]: ソート順（必須）。以下のいずれかを指定:
-  ///   `+follower` / `-follower` /
-  ///   `+createdAt` / `-createdAt` /
-  ///   `+updatedAt` / `-updatedAt`
-  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
-  /// - [offset]: スキップ件数（デフォルト: 0）
-  /// - [state]: アクティビティ状態でフィルタ（`all` / `alive`、デフォルト: `all`）
-  /// - [origin]: ユーザーの所在でフィルタ（`combined` / `local` / `remote`、デフォルト: `local`）
+  /// No authentication required. Pass [tag] as the hashtag name and [sort]
+  /// to control the order; accepted values are `+follower` / `-follower` /
+  /// `+createdAt` / `-createdAt` / `+updatedAt` / `-updatedAt`.
+  /// Use [limit] to cap the number of results (1-100, default: 10) and
+  /// [offset] to skip entries (default: 0). Pass [state] to filter by
+  /// activity state (`all` / `alive`, default: `all`) and [origin] to
+  /// filter by user origin (`combined` / `local` / `remote`,
+  /// default: `local`).
   Future<List<MisskeyUser>> users({
     required String tag,
     required String sort,

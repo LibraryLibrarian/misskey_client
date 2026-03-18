@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'instance_stats.g.dart';
 
-/// インスタンスの統計情報（`/api/stats`）
+/// Instance statistics returned by `/api/stats`.
 @JsonSerializable()
 class InstanceStats {
   const InstanceStats({
@@ -21,27 +21,28 @@ class InstanceStats {
 
   Map<String, dynamic> toJson() => _$InstanceStatsToJson(this);
 
-  /// 総ノート数
+  /// The total number of notes.
   final int notesCount;
 
-  /// ローカル発信ノート数
+  /// The number of notes originating from this instance.
   final int originalNotesCount;
 
-  /// 総ユーザー数
+  /// The total number of users.
   final int usersCount;
 
-  /// ローカルユーザー数
+  /// The number of local users.
   final int originalUsersCount;
 
-  /// 連合インスタンス数
+  /// The number of federated instances.
   final int instances;
 
-  /// ローカルドライブ使用量（バイト）
+  /// Local drive usage in bytes.
   final int driveUsageLocal;
 
-  /// リモートドライブ使用量（バイト）
+  /// Remote drive usage in bytes.
   final int driveUsageRemote;
 
-  /// リアクション数（公式スキーマ未定義だがハンドラーで返却される）
+  /// The number of reactions (not in the official schema but returned
+  /// by the handler).
   final int? reactionsCount;
 }

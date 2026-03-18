@@ -4,7 +4,7 @@ import 'misskey_user.dart';
 
 part 'misskey_muting.g.dart';
 
-/// ミュート関係（`/api/mute/list` のレスポンス要素）
+/// A mute relationship (element of the `/api/mute/list` response).
 @JsonSerializable()
 class MisskeyMuting {
   const MisskeyMuting({
@@ -20,12 +20,18 @@ class MisskeyMuting {
 
   Map<String, dynamic> toJson() => _$MisskeyMutingToJson(this);
 
+  /// The mute record ID.
   final String id;
+
+  /// The creation timestamp.
   final DateTime createdAt;
 
-  /// ミュートの有効期限。nullの場合は無期限
+  /// The mute expiration timestamp, or `null` for indefinite mutes.
   final DateTime? expiresAt;
 
+  /// The muted user's ID.
   final String muteeId;
+
+  /// The muted user.
   final MisskeyUser? mutee;
 }

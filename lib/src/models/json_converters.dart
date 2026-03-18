@@ -1,8 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
-/// [DateTime.tryParse] を使用する安全な [JsonConverter]。
+/// A safe [JsonConverter] that uses [DateTime.tryParse].
 ///
-/// 不正な書式で例外を投げる代わりに `null` にフォールバックする。
+/// Falls back to `null` instead of throwing on malformed input.
 class SafeDateTimeConverter implements JsonConverter<DateTime?, String?> {
   const SafeDateTimeConverter();
 

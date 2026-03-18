@@ -3,24 +3,25 @@ import '../client/request_options.dart';
 import '../models/sw/misskey_sw_registration.dart';
 import '../models/sw/misskey_sw_subscription.dart';
 
-/// Service Worker プッシュ通知関連API
+/// Provides Service Worker push notification API endpoints.
 ///
-/// `/api/sw/*` エンドポイントを [MisskeyHttp] に委譲して呼び出す
+/// Delegates `/api/sw/*` endpoint calls to [MisskeyHttp].
 class SwApi {
-  /// コンストラクタ
+  /// Creates an instance.
   const SwApi({required this.http});
 
-  /// HTTPクライアント
+  /// HTTP client.
   final MisskeyHttp http;
 
-  /// プッシュ通知を受信するための登録を行う（`/api/sw/register`）
+  /// Registers for push notifications (`/api/sw/register`).
   ///
-  /// 既に同じ情報で登録済みの場合は `already-subscribed` 状態を返す。
+  /// Returns an `already-subscribed` state if already registered
+  /// with the same information.
   ///
-  /// - [endpoint]: プッシュサービスのエンドポイントURL
-  /// - [auth]: Web Push認証シークレット
-  /// - [publickey]: クライアント側のVAPID公開鍵
-  /// - [sendReadMessage]: 既読メッセージの通知も受信するか（デフォルト: false）
+  /// Provide the push service [endpoint] URL, the Web Push authentication
+  /// secret in [auth], and the client-side VAPID public key in [publickey].
+  /// Set [sendReadMessage] to `true` to also receive read message
+  /// notifications (default: false).
   Future<MisskeySwRegistration> register({
     required String endpoint,
     required String auth,
@@ -40,9 +41,9 @@ class SwApi {
     return MisskeySwRegistration.fromJson(res);
   }
 
-  /// プッシュ通知の登録を解除する（`/api/sw/unregister`）
+  /// Unregisters from push notifications (`/api/sw/unregister`).
   ///
-  /// - [endpoint]: 登録解除するエンドポイントURL
+  /// Pass the endpoint URL to unregister in [endpoint].
   Future<void> unregister({required String endpoint}) async {
     await http.send<void>(
       '/sw/unregister',
@@ -53,11 +54,11 @@ class SwApi {
     );
   }
 
-  /// プッシュ通知の登録情報を確認する（`/api/sw/show-registration`）
+  /// Checks push notification registration (`/api/sw/show-registration`).
   ///
-  /// 登録が存在しない場合は `null` を返す。
+  /// Returns `null` if the registration does not exist.
   ///
-  /// - [endpoint]: 確認するエンドポイントURL
+  /// Pass the endpoint URL to check in [endpoint].
   Future<MisskeySwSubscription?> showRegistration({
     required String endpoint,
   }) async {
@@ -72,12 +73,13 @@ class SwApi {
     return MisskeySwSubscription.fromJson(res);
   }
 
-  /// プッシュ通知の登録情報を更新する（`/api/sw/update-registration`）
+  /// Updates push notification registration (`/api/sw/update-registration`).
   ///
-  /// 該当する登録が存在しない場合はエラーとなる。
+  /// Returns an error if the corresponding registration does not exist.
   ///
-  /// - [endpoint]: 更新対象のエンドポイントURL
-  /// - [sendReadMessage]: 既読メッセージの通知を送信するか
+  /// Pass the endpoint URL of the registration to update in [endpoint].
+  /// Set [sendReadMessage] to control whether read message notifications
+  /// are sent.
   Future<MisskeySwSubscription> updateRegistration({
     required String endpoint,
     bool? sendReadMessage,
