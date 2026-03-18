@@ -4,6 +4,7 @@ const sidebars: SidebarsConfig = {
   docsSidebar: [
     'getting-started',
     'authentication',
+    'pagination',
     'error-handling',
     {
       type: 'category',
