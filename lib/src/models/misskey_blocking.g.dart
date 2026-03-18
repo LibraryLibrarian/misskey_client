@@ -21,5 +21,5 @@ Map<String, dynamic> _$MisskeyBlockingToJson(MisskeyBlocking instance) =>
       'id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),
       'blockeeId': instance.blockeeId,
-      'blockee': instance.blockee,
+      'blockee': instance.blockee?.toJson(),
     };

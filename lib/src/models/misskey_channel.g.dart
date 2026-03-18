@@ -53,7 +53,7 @@ Map<String, dynamic> _$MisskeyChannelToJson(MisskeyChannel instance) =>
       'allowRenoteToExternal': instance.allowRenoteToExternal,
       'isFollowing': instance.isFollowing,
       'isFavorited': instance.isFavorited,
-      'pinnedNotes': instance.pinnedNotes,
+      'pinnedNotes': instance.pinnedNotes?.map((e) => e.toJson()).toList(),
       'bannerId': instance.bannerId,
       'isMuting': instance.isMuting,
     };

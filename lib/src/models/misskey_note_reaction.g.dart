@@ -20,5 +20,5 @@ Map<String, dynamic> _$MisskeyNoteReactionToJson(
       'id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),
       'type': instance.type,
-      'user': instance.user,
+      'user': instance.user.toJson(),
     };

@@ -45,12 +45,12 @@ Map<String, dynamic> _$MisskeyDriveFileToJson(MisskeyDriveFile instance) =>
       'thumbnailUrl': instance.thumbnailUrl,
       'comment': instance.comment,
       'folderId': instance.folderId,
-      'folder': instance.folder,
+      'folder': instance.folder?.toJson(),
       'userId': instance.userId,
-      'user': instance.user,
+      'user': instance.user?.toJson(),
       'isSensitive': instance.isSensitive,
       'blurhash': instance.blurhash,
-      'properties': instance.properties,
+      'properties': instance.properties?.toJson(),
     };
 
 MisskeyDriveFileProperties _$MisskeyDriveFilePropertiesFromJson(

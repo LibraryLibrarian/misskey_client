@@ -39,8 +39,8 @@ Map<String, dynamic> _$MisskeyNotificationToJson(
       'createdAt': instance.createdAt.toIso8601String(),
       'type': _$MisskeyNotificationTypeEnumMap[instance.type]!,
       'userId': instance.userId,
-      'user': instance.user,
-      'note': instance.note,
+      'user': instance.user?.toJson(),
+      'note': instance.note?.toJson(),
       'reaction': instance.reaction,
       'achievement': instance.achievement,
       'body': instance.body,
@@ -49,7 +49,7 @@ Map<String, dynamic> _$MisskeyNotificationToJson(
       'role': instance.role,
       'message': instance.message,
       'reactions': instance.reactions,
-      'users': instance.users,
+      'users': instance.users?.map((e) => e.toJson()).toList(),
     };
 
 const _$MisskeyNotificationTypeEnumMap = {

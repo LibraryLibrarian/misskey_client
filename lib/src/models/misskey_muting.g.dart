@@ -25,5 +25,5 @@ Map<String, dynamic> _$MisskeyMutingToJson(MisskeyMuting instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'expiresAt': instance.expiresAt?.toIso8601String(),
       'muteeId': instance.muteeId,
-      'mutee': instance.mutee,
+      'mutee': instance.mutee?.toJson(),
     };

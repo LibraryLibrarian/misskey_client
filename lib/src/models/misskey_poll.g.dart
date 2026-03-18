@@ -31,7 +31,7 @@ MisskeyPoll _$MisskeyPollFromJson(Map<String, dynamic> json) => MisskeyPoll(
 
 Map<String, dynamic> _$MisskeyPollToJson(MisskeyPoll instance) =>
     <String, dynamic>{
-      'choices': instance.choices,
+      'choices': instance.choices.map((e) => e.toJson()).toList(),
       'multiple': instance.multiple,
       'expiresAt': const SafeDateTimeConverter().toJson(instance.expiresAt),
     };

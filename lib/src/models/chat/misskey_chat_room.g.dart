@@ -25,7 +25,7 @@ Map<String, dynamic> _$MisskeyChatRoomToJson(MisskeyChatRoom instance) =>
       'id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),
       'ownerId': instance.ownerId,
-      'owner': instance.owner,
+      'owner': instance.owner?.toJson(),
       'name': instance.name,
       'description': instance.description,
       'isMuted': instance.isMuted,
