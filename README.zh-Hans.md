@@ -4,6 +4,8 @@
 
 面向 [Misskey](https://misskey-hub.net/) API 的纯 Dart 客户端库。提供对 25 个 API 域的强类型访问，内置认证、重试逻辑和结构化错误处理。
 
+> **Beta 版本**: API 实现已完成，但测试覆盖率较低。响应模型和方法签名可能会根据测试结果进行调整。详情请参阅 [CHANGELOG](CHANGELOG.md)。
+
 ## 特性
 
 - 覆盖 25 个 Misskey API 域（帖子、网盘、用户、频道、聊天等）
@@ -20,7 +22,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^0.0.1
+  misskey_client: ^1.0.0-beta.1
 ```
 
 然后运行：

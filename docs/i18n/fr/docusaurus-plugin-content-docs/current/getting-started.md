@@ -6,6 +6,14 @@ title: Premiers pas
 
 # Premiers pas
 
+:::warning Bêta
+
+Cette bibliothèque est actuellement en **bêta**. L'implémentation de l'API est complète, mais la couverture de tests est minimale. Les modèles de réponse et les signatures de méthodes peuvent évoluer suite aux résultats des tests.
+
+Si vous constatez des modèles de réponse incorrects ou un comportement inattendu, veuillez le signaler via [GitHub Issues](https://github.com/LibraryLibrarian/misskey_client/issues) ou soumettre une [Pull Request](https://github.com/LibraryLibrarian/misskey_client/pulls).
+
+:::
+
 misskey_client est une bibliothèque cliente Misskey API écrite en Dart pur.
 Elle fonctionne dans tout environnement Dart : Flutter, Dart côté serveur, outils CLI, et bien d'autres.
 
@@ -15,7 +23,7 @@ Ajoutez la dépendance à votre `pubspec.yaml` :
 
 ```yaml
 dependencies:
-  misskey_client: ^0.0.1
+  misskey_client: ^1.0.0-beta.1
 ```
 
 Puis récupérez-la :

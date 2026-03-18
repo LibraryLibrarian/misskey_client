@@ -4,6 +4,8 @@
 
 [Misskey](https://misskey-hub.net/) API를 위한 순수 Dart 클라이언트 라이브러리입니다. 25개의 API 도메인에 대한 타입 안전 접근을 제공하며, 인증, 재시도 로직, 구조화된 오류 처리를 내장하고 있습니다.
 
+> **베타**: API 구현은 완료되었으나 테스트 커버리지가 최소한입니다. 테스트 결과에 따라 응답 모델 및 메서드 시그니처가 변경될 수 있습니다. 자세한 내용은 [CHANGELOG](CHANGELOG.md)를 참조하세요.
+
 ## 기능
 
 - 25개의 Misskey API 도메인 지원 (노트, 드라이브, 사용자, 채널, 채팅 등)
@@ -20,7 +22,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^0.0.1
+  misskey_client: ^1.0.0-beta.1
 ```
 
 그런 다음 실행합니다:

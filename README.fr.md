@@ -4,6 +4,8 @@
 
 Une bibliothèque cliente Dart pure pour l'API [Misskey](https://misskey-hub.net/). Fournit un accès typé à 25 domaines d'API avec authentification intégrée, logique de réessai et gestion structurée des erreurs.
 
+> **Bêta** : L'implémentation de l'API est complète mais la couverture de tests est minimale. Les modèles de réponse et les signatures de méthodes peuvent évoluer suite aux résultats des tests. Voir le [CHANGELOG](CHANGELOG.md) pour plus de détails.
+
 ## Fonctionnalités
 
 - Couverture de 25 domaines de l'API Misskey (Notes, Drive, utilisateurs, Channels, Chat, etc.)
@@ -20,7 +22,7 @@ Ajoutez le package à votre `pubspec.yaml` :
 
 ```yaml
 dependencies:
-  misskey_client: ^0.0.1
+  misskey_client: ^1.0.0-beta.1
 ```
 
 Puis exécutez :

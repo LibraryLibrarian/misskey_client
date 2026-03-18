@@ -6,6 +6,14 @@ title: 快速入门
 
 # 快速入门
 
+:::warning Beta 版本
+
+本库目前处于 **Beta** 阶段。API 实现已完成，但测试覆盖率较低。响应模型和方法签名可能会根据测试结果进行调整。
+
+如果您发现响应模型不正确或行为异常，请通过 [GitHub Issues](https://github.com/LibraryLibrarian/misskey_client/issues) 反馈，或提交 [Pull Request](https://github.com/LibraryLibrarian/misskey_client/pulls)。
+
+:::
+
 misskey_client 是一个纯 Dart 编写的 Misskey API 客户端库。
 它可以在所有支持 Dart 的环境中运行：Flutter、服务端 Dart、CLI 工具等。
 
@@ -15,7 +23,7 @@ misskey_client 是一个纯 Dart 编写的 Misskey API 客户端库。
 
 ```yaml
 dependencies:
-  misskey_client: ^0.0.1
+  misskey_client: ^1.0.0-beta.1
 ```
 
 然后获取依赖：

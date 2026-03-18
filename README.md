@@ -4,6 +4,8 @@
 
 A pure Dart client library for the [Misskey](https://misskey-hub.net/) API. Provides typed access to 25 API domains with built-in authentication, retry logic, and structured error handling.
 
+> **Beta**: API implementation is complete but test coverage is minimal. Response models and method signatures may change based on test findings. See the [changelog](CHANGELOG.md) for details.
+
 ## Features
 
 - Covers 25 Misskey API domains (Notes, Drive, Users, Channels, Chat, and more)
@@ -20,7 +22,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  misskey_client: ^0.0.1
+  misskey_client: ^1.0.0-beta.1
 ```
 
 Then run:

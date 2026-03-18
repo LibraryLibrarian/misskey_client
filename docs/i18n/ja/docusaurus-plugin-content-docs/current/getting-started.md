@@ -5,13 +5,21 @@ slug: /
 
 # はじめに
 
+:::warning ベータ版
+
+このライブラリは現在**ベータ版**です。API実装は完了していますが、テストカバレッジは最小限です。テスト結果に基づき、レスポンスモデルやメソッドシグネチャが変更される可能性があります。
+
+レスポンスモデルの不備や予期しない動作を発見された場合は、[GitHub Issues](https://github.com/LibraryLibrarian/misskey_client/issues) での報告、または [Pull Request](https://github.com/LibraryLibrarian/misskey_client/pulls) の送信をお願いいたします。
+
+:::
+
 ## インストール
 
 `pubspec.yaml` に以下を追加してください。
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0
+  misskey_client: ^1.0.0-beta.1
 ```
 
 その後、依存関係を取得します。

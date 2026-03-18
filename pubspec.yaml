@@ -1,5 +1,5 @@
 name: misskey_client
-version: 0.0.1
+version: 1.0.0-beta.1
 documentation: https://librarylibrarian.github.io/misskey_client/
 environment:
   sdk: ">=3.5.0 <4.0.0"
