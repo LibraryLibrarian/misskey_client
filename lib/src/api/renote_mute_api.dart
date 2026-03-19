@@ -2,49 +2,49 @@ import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_renote_muting.dart';
 
-/// リノートミュート関連API（`/api/renote-mute/*`）
+/// Provides renote mute API endpoints (`/api/renote-mute/*`).
 ///
-/// 特定ユーザーのリノートのみをミュートする機能を提供する。
-/// 通常のミュートとは異なり、対象ユーザーの通常のノートは
-/// タイムラインに表示される。
+/// Allows muting only renotes from a specific user.
+/// Unlike regular muting, the target user's original notes
+/// remain visible in the timeline.
 class RenoteMuteApi {
   const RenoteMuteApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// ユーザーのリノートをミュートする（`/api/renote-mute/create`）
+  /// Mutes renotes from a user (`/api/renote-mute/create`).
   ///
-  /// レート制限: 20回/時。
+  /// Rate limit: 20 requests/hour.
   ///
-  /// - [userId]: リノートミュート対象のユーザーID（必須）
+  /// Pass [userId] to identify the user whose renotes should be muted.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `MUTEE_IS_YOURSELF`: 自分自身を指定した
-  /// - `ALREADY_MUTING`: 既にリノートミュート済み
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The target user does not exist
+  /// - `MUTEE_IS_YOURSELF`: Specified yourself
+  /// - `ALREADY_MUTING`: Already renote-muting this user
   Future<void> create({required String userId}) => http.send<Object?>(
         '/renote-mute/create',
         body: <String, dynamic>{'userId': userId},
       );
 
-  /// ユーザーのリノートミュートを解除する（`/api/renote-mute/delete`）
+  /// Unmutes renotes from a user (`/api/renote-mute/delete`).
   ///
-  /// - [userId]: リノートミュート解除対象のユーザーID（必須）
+  /// Pass [userId] to identify the user whose renotes should be unmuted.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `MUTEE_IS_YOURSELF`: 自分自身を指定した
-  /// - `NOT_MUTING`: リノートミュートしていない
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The target user does not exist
+  /// - `MUTEE_IS_YOURSELF`: Specified yourself
+  /// - `NOT_MUTING`: Not renote-muting this user
   Future<void> delete({required String userId}) => http.send<Object?>(
         '/renote-mute/delete',
         body: <String, dynamic>{'userId': userId},
       );
 
-  /// リノートミュート中のユーザー一覧を取得する（`/api/renote-mute/list`）
+  /// Lists users whose renotes are muted (`/api/renote-mute/list`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Use [limit] to cap the number of results (1–100, default 30).
+  /// Pass [sinceId] or [untilId] for cursor-based pagination by ID,
+  /// or [sinceDate] / [untilDate] for pagination by Unix timestamp (ms).
   Future<List<MisskeyRenoteMuting>> list({
     int? limit,
     String? sinceId,

@@ -2,11 +2,11 @@ import '../client/misskey_http.dart';
 import '../models/misskey_user.dart';
 import 'following_requests_api.dart';
 
-/// フォロー関連API（`/api/following/*`）
+/// Provides following operations (`/api/following/*`).
 ///
-/// ユーザーのフォロー・アンフォロー・フォロー設定の更新、
-/// およびフォロワーの強制解除を提供する。
-/// フォローリクエスト操作は [requests] サブAPIを使用する。
+/// Handles following, unfollowing, updating follow settings,
+/// and forcibly removing followers.
+/// Use [requests] for follow request operations.
 class FollowingApi {
   FollowingApi({required MisskeyHttp http})
       : _http = http,
@@ -14,23 +14,23 @@ class FollowingApi {
 
   final MisskeyHttp _http;
 
-  /// フォローリクエスト関連API
+  /// Provides follow request operations.
   final FollowingRequestsApi requests;
 
-  /// ユーザーをフォローする（`/api/following/create`）
+  /// Follows a user (`/api/following/create`).
   ///
-  /// 対象ユーザーが承認制の場合はフォローリクエストが送信される。
-  /// レート制限: 100回/時。
+  /// If the target user requires approval, a follow request is sent instead.
+  /// Rate limit: 100 requests/hour.
   ///
-  /// - [userId]: フォロー対象のユーザーID（必須）
-  /// - [withReplies]: リプライをタイムラインに含めるか
+  /// Pass [userId] as the ID of the user to follow. Set [withReplies] to
+  /// include that user's replies in the timeline.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `FOLLOWEE_IS_YOURSELF`: 自分自身をフォローしようとした
-  /// - `ALREADY_FOLLOWING`: 既にフォロー済み
-  /// - `BLOCKING`: 対象ユーザーをブロック中
-  /// - `BLOCKED`: 対象ユーザーからブロックされている
+  /// Notable errors:
+  /// - `NO_SUCH_USER`: The target user does not exist.
+  /// - `FOLLOWEE_IS_YOURSELF`: Attempted to follow yourself.
+  /// - `ALREADY_FOLLOWING`: Already following.
+  /// - `BLOCKING`: Currently blocking the target user.
+  /// - `BLOCKED`: Blocked by the target user.
   Future<MisskeyUser> create({
     required String userId,
     bool? withReplies,
@@ -45,16 +45,15 @@ class FollowingApi {
     return MisskeyUser.fromJson(res);
   }
 
-  /// ユーザーのフォローを解除する（`/api/following/delete`）
+  /// Unfollows a user (`/api/following/delete`).
   ///
-  /// レート制限: 100回/時。
+  /// Rate limit: 100 requests/hour. Pass [userId] as the ID of the user
+  /// to unfollow.
   ///
-  /// - [userId]: フォロー解除対象のユーザーID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `FOLLOWEE_IS_YOURSELF`: 自分自身を指定した
-  /// - `NOT_FOLLOWING`: フォローしていない
+  /// Notable errors:
+  /// - `NO_SUCH_USER`: The target user does not exist.
+  /// - `FOLLOWEE_IS_YOURSELF`: Specified yourself.
+  /// - `NOT_FOLLOWING`: Not following the user.
   Future<MisskeyUser> delete({required String userId}) async {
     final res = await _http.send<Map<String, dynamic>>(
       '/following/delete',
@@ -63,19 +62,19 @@ class FollowingApi {
     return MisskeyUser.fromJson(res);
   }
 
-  /// フォロー設定を更新する（`/api/following/update`）
+  /// Updates follow settings (`/api/following/update`).
   ///
-  /// 通知設定やリプライ表示設定を個別のフォロー関係に対して変更する。
-  /// レート制限: 100回/時。
+  /// Changes notification and reply display settings for an individual
+  /// follow relationship. Rate limit: 100 requests/hour.
   ///
-  /// - [userId]: 対象ユーザーID（必須）
-  /// - [notify]: 通知設定（`normal` / `none`）
-  /// - [withReplies]: リプライをタイムラインに含めるか
+  /// Pass [userId] to identify the follow relationship to update.
+  /// Use [notify] to control notifications (`normal` / `none`) and
+  /// [withReplies] to toggle reply visibility in the timeline.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `FOLLOWEE_IS_YOURSELF`: 自分自身を指定した
-  /// - `NOT_FOLLOWING`: フォローしていない
+  /// Notable errors:
+  /// - `NO_SUCH_USER`: The target user does not exist.
+  /// - `FOLLOWEE_IS_YOURSELF`: Specified yourself.
+  /// - `NOT_FOLLOWING`: Not following the user.
   Future<MisskeyUser> update({
     required String userId,
     String? notify,
@@ -92,12 +91,11 @@ class FollowingApi {
     return MisskeyUser.fromJson(res);
   }
 
-  /// 全フォローの設定を一括更新する（`/api/following/update-all`）
+  /// Updates settings for all follows at once (`/api/following/update-all`).
   ///
-  /// レート制限: 10回/時。
-  ///
-  /// - [notify]: 通知設定（`normal` / `none`）
-  /// - [withReplies]: リプライをタイムラインに含めるか
+  /// Rate limit: 10 requests/hour. Use [notify] to control notifications
+  /// (`normal` / `none`) and [withReplies] to toggle reply visibility
+  /// in the timeline for all followed users.
   Future<void> updateAll({
     String? notify,
     bool? withReplies,
@@ -110,17 +108,16 @@ class FollowingApi {
         },
       );
 
-  /// フォロワーを強制解除する（`/api/following/invalidate`）
+  /// Forcibly removes a follower (`/api/following/invalidate`).
   ///
-  /// 自分をフォローしているユーザーのフォローを強制的に解除する。
-  /// レート制限: 100回/時。
+  /// Forcibly removes a user who is following the authenticated user.
+  /// Rate limit: 100 requests/hour. Pass [userId] as the ID of the
+  /// follower to remove.
   ///
-  /// - [userId]: 強制解除対象のフォロワーID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `FOLLOWER_IS_YOURSELF`: 自分自身を指定した
-  /// - `NOT_FOLLOWING`: 対象ユーザーにフォローされていない
+  /// Notable errors:
+  /// - `NO_SUCH_USER`: The target user does not exist.
+  /// - `FOLLOWER_IS_YOURSELF`: Specified yourself.
+  /// - `NOT_FOLLOWING`: The target user is not following you.
   Future<MisskeyUser> invalidate({required String userId}) async {
     final res = await _http.send<Map<String, dynamic>>(
       '/following/invalidate',

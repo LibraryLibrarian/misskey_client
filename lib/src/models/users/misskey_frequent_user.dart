@@ -4,7 +4,7 @@ import '../misskey_user.dart';
 
 part 'misskey_frequent_user.g.dart';
 
-/// よくリプライするユーザー（`/api/users/get-frequently-replied-users` のレスポンス要素）
+/// A frequently replied-to user from `/api/users/get-frequently-replied-users`.
 @JsonSerializable()
 class MisskeyFrequentUser {
   const MisskeyFrequentUser({
@@ -17,9 +17,9 @@ class MisskeyFrequentUser {
 
   Map<String, dynamic> toJson() => _$MisskeyFrequentUserToJson(this);
 
-  /// ユーザー情報
+  /// The user information.
   final MisskeyUser user;
 
-  /// リプライ頻度の重み（0.0〜1.0）
+  /// The reply frequency weight (0.0 to 1.0).
   final double weight;
 }

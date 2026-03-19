@@ -28,9 +28,7 @@ import 'misskey_client_config.dart';
 import 'misskey_http.dart';
 import 'token_provider.dart';
 
-/// Misskey API クライアント。
-///
-/// 全APIドメインへのアクセスを提供するメインエントリーポイント
+/// The main entry point for accessing all Misskey API domains.
 class MisskeyClient {
   MisskeyClient({
     required MisskeyClientConfig config,
@@ -68,55 +66,81 @@ class MisskeyClient {
     users = UsersApi(http: http);
   }
 
+  /// The underlying HTTP client used for all API requests.
   final MisskeyHttp http;
 
+  /// Account and profile management API.
   late final AccountApi account;
 
-  /// お知らせ関連API
+  /// Announcements API.
   late final AnnouncementsApi announcements;
 
+  /// Antennas API.
   late final AntennasApi antennas;
 
-  /// ActivityPub関連API
+  /// ActivityPub API.
   late final ApApi ap;
 
+  /// User blocking API.
   late final BlockingApi blocking;
+
+  /// Channels API.
   late final ChannelsApi channels;
 
-  /// 統計チャート関連API
+  /// Statistics charts API.
   late final ChartsApi charts;
 
+  /// Chat API.
   late final ChatApi chat;
+
+  /// Clips API.
   late final ClipsApi clips;
+
+  /// Drive (file storage) API.
   late final DriveApi drive;
+
+  /// Federation API.
   late final FederationApi federation;
 
-  /// Flash（Play）関連API
+  /// Flash (Play) API.
   late final FlashApi flash;
 
+  /// Following API.
   late final FollowingApi following;
 
-  /// ギャラリー関連API
+  /// Gallery API.
   late final GalleryApi gallery;
 
+  /// Hashtags API.
   late final HashtagsApi hashtags;
 
-  /// 招待コード関連API
+  /// Invite code API.
   late final InviteApi invite;
 
+  /// Server metadata API.
   late final MetaApi meta;
+
+  /// User muting API.
   late final MuteApi mute;
+
+  /// Notes API.
   late final NotesApi notes;
+
+  /// Notifications API.
   late final NotificationsApi notifications;
 
-  /// ページ関連API
+  /// Pages API.
   late final PagesApi pages;
 
+  /// Renote muting API.
   late final RenoteMuteApi renoteMute;
+
+  /// Roles API.
   late final RolesApi roles;
 
-  /// プッシュ通知関連API
+  /// Push notifications (Service Worker) API.
   late final SwApi sw;
 
+  /// Users API.
   late final UsersApi users;
 }

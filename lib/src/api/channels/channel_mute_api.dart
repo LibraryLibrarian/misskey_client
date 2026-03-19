@@ -2,20 +2,19 @@ import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/misskey_channel.dart';
 
-/// チャンネルミュート関連API
+/// Provides channel mute APIs.
 ///
-/// `channels/mute/*` の各エンドポイントを提供する。
+/// Offers endpoints under `channels/mute/*`.
 class ChannelMuteApi {
   const ChannelMuteApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// チャンネルをミュート
+  /// Mutes a channel.
   ///
-  /// [channelId] で対象チャンネルを指定する。
-  /// [expiresAt] にUnixエポックタイムスタンプ（ms）を指定すると
-  /// その時刻まで有効な期限付きミュートになる。
-  /// `null`の場合は無期限ミュートとなる。
+  /// Specify the target channel with [channelId].
+  /// Set [expiresAt] to a Unix epoch timestamp (ms) for a time-limited mute.
+  /// If `null`, the mute is indefinite.
   Future<void> create({
     required String channelId,
     int? expiresAt,
@@ -28,17 +27,18 @@ class ChannelMuteApi {
         },
       );
 
-  /// チャンネルのミュートを解除
+  /// Unmutes a channel.
   ///
-  /// [channelId] で対象チャンネルを指定する。
+  /// Specify the target channel with [channelId].
   Future<void> delete({required String channelId}) => http.send<Object?>(
         '/channels/mute/delete',
         body: <String, dynamic>{'channelId': channelId},
       );
 
-  /// ミュート中のチャンネル一覧を取得
+  /// Retrieves the list of muted channels.
   ///
-  /// パラメータなし。認証ユーザーがミュートしているチャンネルをすべて返す。
+  /// Takes no parameters. Returns all channels muted by the authenticated
+  /// user.
   Future<List<MisskeyChannel>> list() async {
     final res = await http.send<List<dynamic>>(
       '/channels/mute/list',

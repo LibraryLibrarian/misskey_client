@@ -1,18 +1,21 @@
-/// リクエストの認証モード
+/// The authentication mode for a request.
 enum AuthMode {
-  /// 認証必須：トークンがなければエラー相当（デフォルト）
+  /// Authentication required: raises an error if no token is available
+  /// (default).
   ///
-  /// POSTリクエストのbodyに`i`（トークン）を自動注入する。
+  /// Automatically injects the token (`i`) into the POST request body.
   required,
 
-  /// 認証任意：トークンがあれば付与するが、なくてもリクエストを送信する
+  /// Authentication optional: attaches the token if available, but still sends
+  /// the request without one.
   ///
-  /// 未認証でも利用可能だが、認証済みの場合は追加情報
-  /// （例: `isFollowing`, `isFavorited`）を含むレスポンスを返すエンドポイント向け。
+  /// For endpoints that work unauthenticated but return extra fields
+  /// (e.g. `isFollowing`, `isFavorited`) when authenticated.
   optional,
 
-  /// 認証なし：トークンを付与しない
+  /// No authentication: never attaches a token.
   ///
-  /// 認証不要かつトークン送信が不適切なエンドポイント向け。
+  /// For endpoints that do not require authentication and where sending a
+  /// token would be inappropriate.
   none,
 }

@@ -11,29 +11,28 @@ import '../models/server/instance_stats.dart';
 import '../models/server/retention_record.dart';
 import '../models/server/server_info.dart';
 
-/// サーバーメタ情報API（`/api/meta`）
+/// Provides server metadata API endpoints (`/api/meta`).
 ///
-/// 取得結果をインメモリでキャッシュし、2回目以降の呼び出しでは
-/// ネットワークリクエストを省略する。
-/// [supports] でサーバーの能力をドット記法キーパスで検出できる。
+/// Caches results in memory so that subsequent calls skip the network request.
+/// Use [supports] to detect server capabilities via dot-notation key paths.
 class MetaApi {
-  /// [http] を使用してメタ情報APIを操作するインスタンスを生成する。
+  /// Creates an instance that operates the metadata API using [http].
   MetaApi({required this.http});
 
-  /// HTTP クライアント
+  /// HTTP client.
   final MisskeyHttp http;
 
   Meta? _cached;
 
-  /// サーバーのメタ情報を取得する（`/api/meta`）
+  /// Retrieves server metadata (`/api/meta`).
   ///
-  /// [refresh] を `true` にするとキャッシュを無視して
-  /// 常に最新の情報をサーバーから取得する。
-  /// デフォルトでは一度取得した結果をキャッシュし、
-  /// 2回目以降はキャッシュを返す。
+  /// Set [refresh] to `true` to bypass the cache and always fetch
+  /// the latest information from the server.
+  /// By default, the result is cached after the first fetch
+  /// and subsequent calls return the cached value.
   ///
-  /// [detail] を `false` にすると軽量な `MetaLite` 相当の
-  /// レスポンスを取得する（デフォルト: `true`）。
+  /// Set [detail] to `false` to retrieve a lightweight `MetaLite`-equivalent
+  /// response (default: `true`).
   Future<Meta> getMeta({bool refresh = false, bool? detail}) async {
     if (!refresh && detail != false && _cached != null) return _cached!;
     final res = await http.send<Map<String, dynamic>>(
@@ -51,11 +50,11 @@ class MetaApi {
     return meta;
   }
 
-  /// サーバーのマシン情報を取得する（`/api/server-info`）
+  /// Retrieves server machine information (`/api/server-info`).
   ///
-  /// CPU・メモリ・ディスクなどのサーバー技術情報を返す。
-  /// サーバー側で `enableServerMachineStats` が無効の場合は
-  /// プレースホルダー値が返却される。
+  /// Returns technical details such as CPU, memory, and disk usage.
+  /// If `enableServerMachineStats` is disabled on the server,
+  /// placeholder values are returned.
   Future<ServerInfo> getServerInfo() async {
     final res = await http.send<Map<String, dynamic>>(
       '/server-info',
@@ -68,9 +67,10 @@ class MetaApi {
     return ServerInfo.fromJson(res);
   }
 
-  /// インスタンスの統計情報を取得する（`/api/stats`）
+  /// Retrieves instance statistics (`/api/stats`).
   ///
-  /// ユーザー数・ノート数・連合インスタンス数・ドライブ使用量等を返す。
+  /// Returns user count, note count, federated instance count,
+  /// drive usage, and more.
   Future<InstanceStats> getStats() async {
     final res = await http.send<Map<String, dynamic>>(
       '/stats',
@@ -83,9 +83,10 @@ class MetaApi {
     return InstanceStats.fromJson(res);
   }
 
-  /// サーバーの疎通確認を行う（`/api/ping`）
+  /// Pings the server (`/api/ping`).
   ///
-  /// 成功時はサーバーの現在時刻（Unixタイムスタンプ ms）を返す。
+  /// Returns the server's current time as a Unix timestamp in milliseconds
+  /// on success.
   Future<int> ping() async {
     final res = await http.send<Map<String, dynamic>>(
       '/ping',
@@ -98,7 +99,7 @@ class MetaApi {
     return (res['pong'] as num).toInt();
   }
 
-  /// 利用可能な全エンドポイント名を取得する（`/api/endpoints`）
+  /// Retrieves all available endpoint names (`/api/endpoints`).
   Future<List<String>> getEndpoints() async {
     final res = await http.send<List<dynamic>>(
       '/endpoints',
@@ -111,10 +112,10 @@ class MetaApi {
     return res.cast<String>();
   }
 
-  /// 指定エンドポイントのパラメーター情報を取得する（`/api/endpoint`）
+  /// Retrieves parameter information for a specific endpoint (`/api/endpoint`).
   ///
-  /// [endpoint] に対象エンドポイント名を指定する。
-  /// エンドポイントが存在しない場合は `null` を返す。
+  /// Specify the target endpoint name in [endpoint].
+  /// Returns `null` if the endpoint does not exist.
   Future<EndpointInfo?> getEndpoint({required String endpoint}) async {
     final res = await http.send<Map<String, dynamic>?>(
       '/endpoint',
@@ -128,9 +129,9 @@ class MetaApi {
     return EndpointInfo.fromJson(res);
   }
 
-  /// ローカルカスタム絵文字の一覧を取得する（`/api/emojis`）
+  /// Retrieves the list of local custom emoji (`/api/emojis`).
   ///
-  /// カテゴリ・名前順でソートされたローカル絵文字を返す。
+  /// Returns local emoji sorted by category and name.
   Future<List<MisskeyCustomEmoji>> getEmojis() async {
     final res = await http.send<Map<String, dynamic>>(
       '/emojis',
@@ -146,9 +147,9 @@ class MetaApi {
         .toList();
   }
 
-  /// 指定名のカスタム絵文字の詳細情報を取得する（`/api/emoji`）
+  /// Retrieves detailed information for a custom emoji by name (`/api/emoji`).
   ///
-  /// [name] に絵文字のショートコードを指定する。
+  /// Specify the emoji shortcode in [name].
   Future<EmojiDetailed> getEmoji({required String name}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/emoji',
@@ -161,9 +162,9 @@ class MetaApi {
     return EmojiDetailed.fromJson(res);
   }
 
-  /// 管理者が設定したピン留めユーザー一覧を取得する（`/api/pinned-users`）
+  /// Retrieves the list of pinned users set by administrators (`/api/pinned-users`).
   ///
-  /// 認証不要。
+  /// No authentication required.
   Future<List<MisskeyUser>> getPinnedUsers() async {
     final res = await http.send<List<dynamic>>(
       '/pinned-users',
@@ -179,9 +180,9 @@ class MetaApi {
         .toList();
   }
 
-  /// オンラインユーザー数を取得する（`/api/get-online-users-count`）
+  /// Retrieves the count of online users (`/api/get-online-users-count`).
   ///
-  /// 認証不要。レスポンスは60秒キャッシュされる。
+  /// No authentication required. The response is cached for 60 seconds.
   Future<int> getOnlineUsersCount() async {
     final res = await http.send<Map<String, dynamic>>(
       '/get-online-users-count',
@@ -194,10 +195,10 @@ class MetaApi {
     return (res['count'] as num).toInt();
   }
 
-  /// 利用可能なアバターデコレーション一覧を取得する
-  /// （`/api/get-avatar-decorations`）
+  /// Retrieves the list of available avatar decorations
+  /// (`/api/get-avatar-decorations`).
   ///
-  /// 認証不要。
+  /// No authentication required.
   Future<List<AvatarDecoration>> getAvatarDecorations() async {
     final res = await http.send<List<dynamic>>(
       '/get-avatar-decorations',
@@ -213,10 +214,10 @@ class MetaApi {
         .toList();
   }
 
-  /// ユーザーリテンション（定着率）統計を取得する（`/api/retention`）
+  /// Retrieves user retention statistics (`/api/retention`).
   ///
-  /// 認証不要。レスポンスは3600秒キャッシュされる。
-  /// 直近30件の日次リテンションデータを返す。
+  /// No authentication required. The response is cached for 3600 seconds.
+  /// Returns up to 30 daily retention records.
   Future<List<RetentionRecord>> getRetention() async {
     final res = await http.send<List<dynamic>>(
       '/retention',
@@ -232,11 +233,11 @@ class MetaApi {
         .toList();
   }
 
-  /// キャッシュ済みメタ情報に対する簡易な能力検出
+  /// Performs a simple capability check against cached metadata.
   ///
-  /// [keyPath] にドット区切りのキーパス（例: `"features.miauth"`）を
-  /// 指定し、そのキーが [Meta.raw] 内に存在すれば `true` を返す。
-  /// [getMeta] を一度も呼んでいない場合は常に `false` を返す。
+  /// Specify a dot-separated key path in [keyPath] (e.g., `"features.miauth"`)
+  /// and returns `true` if that key exists in [Meta.raw].
+  /// Always returns `false` if [getMeta] has not been called yet.
   bool supports(String keyPath) {
     final meta = _cached;
     if (meta == null) return false;

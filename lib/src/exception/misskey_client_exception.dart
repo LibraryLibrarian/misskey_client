@@ -1,4 +1,4 @@
-/// Misskey API クライアントが送出する例外の基底クラス
+/// Base class for all exceptions thrown by the Misskey API client.
 sealed class MisskeyClientException implements Exception {
   const MisskeyClientException(this.message);
 
@@ -8,9 +8,10 @@ sealed class MisskeyClientException implements Exception {
   String toString() => '$runtimeType: $message';
 }
 
-/// HTTP レスポンスエラーを表す例外
+/// An exception representing an HTTP response error.
 ///
-/// [statusCode] に HTTP ステータスコード、[message] にサーバーから返されたメッセージを持つ。
+/// Contains the HTTP [statusCode] and the error [message] returned by the
+/// server.
 class MisskeyApiException extends MisskeyClientException {
   const MisskeyApiException({
     required this.statusCode,
@@ -23,16 +24,16 @@ class MisskeyApiException extends MisskeyClientException {
 
   final int statusCode;
 
-  /// Misskey固有のエラーコード（例: `AUTHENTICATION_FAILED`）
+  /// Misskey-specific error code (e.g. `AUTHENTICATION_FAILED`).
   final String? code;
 
-  /// Misskeyエラー種別のUUID
+  /// UUID identifying the Misskey error type.
   final String? errorId;
 
-  /// エラーが発生したAPIエンドポイント
+  /// The API endpoint where the error occurred.
   final String? endpoint;
 
-  /// 元例外やエラーオブジェクト
+  /// The underlying exception or raw error object.
   final Object? raw;
 
   @override
@@ -41,9 +42,9 @@ class MisskeyApiException extends MisskeyClientException {
       '${endpoint != null ? ' endpoint=$endpoint' : ''}';
 }
 
-/// 認証エラー（HTTP 401）
+/// Authentication error (HTTP 401).
 ///
-/// アクセストークンが無効または期限切れ
+/// Thrown when the access token is invalid or expired.
 class MisskeyUnauthorizedException extends MisskeyApiException {
   const MisskeyUnauthorizedException({
     super.message = 'Unauthorized',
@@ -54,9 +55,9 @@ class MisskeyUnauthorizedException extends MisskeyApiException {
   }) : super(statusCode: 401);
 }
 
-/// 権限エラー（HTTP 403）
+/// Authorization error (HTTP 403).
 ///
-/// 操作が許可されていない
+/// Thrown when the requested operation is not permitted.
 class MisskeyForbiddenException extends MisskeyApiException {
   const MisskeyForbiddenException({
     super.message = 'Forbidden',
@@ -67,7 +68,7 @@ class MisskeyForbiddenException extends MisskeyApiException {
   }) : super(statusCode: 403);
 }
 
-/// リソースが見つからない（HTTP 404）
+/// Resource not found (HTTP 404).
 class MisskeyNotFoundException extends MisskeyApiException {
   const MisskeyNotFoundException({
     super.message = 'Not found',
@@ -78,9 +79,9 @@ class MisskeyNotFoundException extends MisskeyApiException {
   }) : super(statusCode: 404);
 }
 
-/// レートリミットエラー（HTTP 429）
+/// Rate limit error (HTTP 429).
 ///
-/// リクエスト頻度が制限を超えた
+/// Thrown when the request rate exceeds the server's limit.
 class MisskeyRateLimitException extends MisskeyApiException {
   const MisskeyRateLimitException({
     super.message = 'Rate limited',
@@ -91,13 +92,13 @@ class MisskeyRateLimitException extends MisskeyApiException {
     this.retryAfter,
   }) : super(statusCode: 429);
 
-  /// サーバーが示した推奨待機時間
+  /// The server-suggested retry delay.
   final Duration? retryAfter;
 }
 
-/// バリデーションエラー（HTTP 422）
+/// Validation error (HTTP 422).
 ///
-/// リクエストの内容が不正
+/// Thrown when the request body is invalid.
 class MisskeyValidationException extends MisskeyApiException {
   const MisskeyValidationException({
     super.message = 'Unprocessable entity',
@@ -108,7 +109,7 @@ class MisskeyValidationException extends MisskeyApiException {
   }) : super(statusCode: 422);
 }
 
-/// サーバーエラー（HTTP 5xx）
+/// Server error (HTTP 5xx).
 class MisskeyServerException extends MisskeyApiException {
   const MisskeyServerException({
     required super.statusCode,
@@ -120,7 +121,7 @@ class MisskeyServerException extends MisskeyApiException {
   });
 }
 
-/// ネットワーク接続エラー（タイムアウト・接続不可など）
+/// Network connectivity error (timeout, connection refused, etc.).
 class MisskeyNetworkException extends MisskeyClientException {
   const MisskeyNetworkException({
     String message = 'Network error',
@@ -128,9 +129,9 @@ class MisskeyNetworkException extends MisskeyClientException {
     this.cause,
   }) : super(message);
 
-  /// エラーが発生したAPIエンドポイント
+  /// The API endpoint where the error occurred.
   final String? endpoint;
 
-  /// 元となった例外
+  /// The underlying exception that caused this error.
   final Object? cause;
 }

@@ -5,7 +5,7 @@ import '../misskey_user.dart';
 
 part 'misskey_user_list_membership.g.dart';
 
-/// ユーザーリストのメンバーシップ情報
+/// A user list membership entry.
 @JsonSerializable()
 class MisskeyUserListMembership {
   const MisskeyUserListMembership({
@@ -21,16 +21,20 @@ class MisskeyUserListMembership {
 
   Map<String, dynamic> toJson() => _$MisskeyUserListMembershipToJson(this);
 
+  /// The membership ID.
   final String id;
 
+  /// The date and time the membership was created.
   @SafeDateTimeConverter()
   final DateTime? createdAt;
 
+  /// The user ID of the member.
   final String userId;
 
+  /// The member's user information.
   final MisskeyUser? user;
 
-  /// リプライを含めるかどうか
+  /// Whether to include replies from this member.
   @JsonKey(defaultValue: false)
   final bool withReplies;
 }

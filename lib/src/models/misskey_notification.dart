@@ -5,7 +5,7 @@ import 'misskey_user.dart';
 
 part 'misskey_notification.g.dart';
 
-/// 通知の種別
+/// The type of a notification.
 @JsonEnum()
 enum MisskeyNotificationType {
   follow,
@@ -35,11 +35,11 @@ enum MisskeyNotificationType {
   @JsonValue('renote:grouped')
   renoteGrouped,
 
-  /// 未知の通知タイプ
+  /// An unknown notification type.
   unknown,
 }
 
-/// Misskey の通知
+/// A Misskey notification.
 @JsonSerializable()
 class MisskeyNotification {
   const MisskeyNotification({
@@ -65,40 +65,49 @@ class MisskeyNotification {
 
   Map<String, dynamic> toJson() => _$MisskeyNotificationToJson(this);
 
+  /// The unique identifier of this notification.
   final String id;
+
+  /// The date and time when this notification was created.
   final DateTime createdAt;
 
+  /// The type of this notification.
   @JsonKey(unknownEnumValue: MisskeyNotificationType.unknown)
   final MisskeyNotificationType type;
 
+  /// The ID of the user related to this notification.
   final String? userId;
+
+  /// The user related to this notification.
   final MisskeyUser? user;
+
+  /// The note related to this notification.
   final MisskeyNote? note;
 
-  /// リアクション通知の場合のリアクション文字列
+  /// The reaction string for reaction notifications.
   final String? reaction;
 
-  /// 実績通知の場合の実績名
+  /// The achievement name for achievement notifications.
   final String? achievement;
 
-  /// アプリ通知の場合の本文
+  /// The body text for app notifications.
   final String? body;
 
-  /// アプリ通知の場合のヘッダー
+  /// The header text for app notifications.
   final String? header;
 
-  /// アプリ通知の場合のアイコンURL
+  /// The icon URL for app notifications.
   final String? icon;
 
-  /// ロール割り当て通知の場合のロール情報
+  /// The role information for role assignment notifications.
   final dynamic role;
 
-  /// フォローリクエスト承認通知の場合のメッセージ
+  /// The message for follow request accepted notifications.
   final String? message;
 
-  /// グループ化リアクション通知の場合のリアクションリスト
+  /// The list of reactions for grouped reaction notifications.
   final List<dynamic>? reactions;
 
-  /// グループ化リノート通知の場合のユーザーリスト
+  /// The list of users for grouped renote notifications.
   final List<MisskeyUser>? users;
 }

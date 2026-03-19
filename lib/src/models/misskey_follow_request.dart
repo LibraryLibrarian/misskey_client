@@ -4,7 +4,7 @@ import 'misskey_user.dart';
 
 part 'misskey_follow_request.g.dart';
 
-/// フォローリクエスト（`/api/following/requests/list` 等のレスポンス要素）
+/// A follow request (element of the `/api/following/requests/list` response).
 @JsonSerializable()
 class MisskeyFollowRequest {
   const MisskeyFollowRequest({
@@ -18,11 +18,12 @@ class MisskeyFollowRequest {
 
   Map<String, dynamic> toJson() => _$MisskeyFollowRequestToJson(this);
 
+  /// The follow request ID.
   final String id;
 
-  /// フォローリクエストの送信者
+  /// The user who sent the follow request.
   final MisskeyUser follower;
 
-  /// フォローリクエストの受信者
+  /// The user who received the follow request.
   final MisskeyUser followee;
 }

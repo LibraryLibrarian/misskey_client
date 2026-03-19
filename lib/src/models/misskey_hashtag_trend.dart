@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_hashtag_trend.g.dart';
 
-/// トレンドハッシュタグ（`/api/hashtags/trend` のレスポンス要素）
+/// A trending hashtag (element of the `/api/hashtags/trend` response).
 @JsonSerializable()
 class MisskeyHashtagTrend {
   const MisskeyHashtagTrend({
@@ -16,12 +16,12 @@ class MisskeyHashtagTrend {
 
   Map<String, dynamic> toJson() => _$MisskeyHashtagTrendToJson(this);
 
-  /// ハッシュタグ文字列
+  /// The hashtag string.
   final String tag;
 
-  /// 直近のアクティビティ推移（データポイント数20）
+  /// Recent activity chart (20 data points).
   final List<int> chart;
 
-  /// ピーク時のユーザー数
+  /// The peak user count.
   final int usersCount;
 }

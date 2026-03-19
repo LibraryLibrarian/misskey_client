@@ -2,20 +2,21 @@ import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_notification.dart';
 
-/// 通知関連API
+/// Provides notification-related API endpoints.
 class NotificationsApi {
   const NotificationsApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// 通知一覧を取得する（`/api/i/notifications`）
+  /// Fetches a list of notifications (`/api/i/notifications`).
   ///
-  /// - [limit]: 取得件数 1〜100
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  /// - [markAsRead]: 取得と同時に既読にするか（デフォルト: true）
-  /// - [includeTypes]: 含める通知タイプ（空リストは結果なし）
-  /// - [excludeTypes]: 除外する通知タイプ
+  /// Use [limit] to cap the number of results (1–100).
+  /// Pass [sinceId] or [untilId] for cursor-based pagination, or
+  /// [sinceDate] / [untilDate] for timestamp-based pagination in Unix milliseconds.
+  /// Set [markAsRead] to `false` to suppress the read-marking on retrieval
+  /// (default: true). Pass [includeTypes] to restrict to specific notification
+  /// types (an empty list returns no results), or [excludeTypes] to omit
+  /// certain types.
   Future<List<MisskeyNotification>> list({
     int? limit,
     String? sinceId,
@@ -49,16 +50,17 @@ class NotificationsApi {
         .toList();
   }
 
-  /// グループ化された通知一覧を取得する（`/api/i/notifications-grouped`）
+  /// Fetches grouped notifications (`/api/i/notifications-grouped`).
   ///
-  /// 同一ノートへのリアクション・リノートをまとめて1件として返す
+  /// Groups reactions and renotes on the same note into a single entry.
   ///
-  /// - [limit]: 取得件数 1〜100
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  /// - [markAsRead]: 取得と同時に既読にするか（デフォルト: true）
-  /// - [includeTypes]: 含める通知タイプ（空リストは結果なし）
-  /// - [excludeTypes]: 除外する通知タイプ
+  /// Use [limit] to cap the number of results (1–100).
+  /// Pass [sinceId] or [untilId] for cursor-based pagination, or
+  /// [sinceDate] / [untilDate] for timestamp-based pagination in Unix milliseconds.
+  /// Set [markAsRead] to `false` to suppress the read-marking on retrieval
+  /// (default: true). Pass [includeTypes] to restrict to specific notification
+  /// types (an empty list returns no results), or [excludeTypes] to omit
+  /// certain types.
   Future<List<MisskeyNotification>> listGrouped({
     int? limit,
     String? sinceId,
@@ -92,30 +94,31 @@ class NotificationsApi {
         .toList();
   }
 
-  /// すべての通知を削除（フラッシュ）する（`/api/notifications/flush`）
+  /// Flushes (deletes) all notifications (`/api/notifications/flush`).
   ///
-  /// 204 No Content を返す
+  /// Returns 204 No Content.
   Future<void> flush() => http
       .send<Object?>('/notifications/flush', body: const <String, dynamic>{});
 
-  /// すべての通知を既読にする（`/api/notifications/mark-all-as-read`）
+  /// Marks all notifications as read (`/api/notifications/mark-all-as-read`).
   ///
-  /// 204 No Content を返す
+  /// Returns 204 No Content.
   Future<void> markAllAsRead() => http.send<Object?>(
         '/notifications/mark-all-as-read',
         body: const <String, dynamic>{},
       );
 
-  /// アプリ通知を作成する（`/api/notifications/create`）
+  /// Creates an app notification (`/api/notifications/create`).
   ///
-  /// アプリ（サードパーティクライアント等）からユーザーにカスタム通知を送信する。
-  /// 通知タイプは `app` として作成される。
-  /// 認証必須。権限: `write:notifications`。
-  /// レート制限: 1分間に最大10回。
+  /// Sends a custom notification to the user from an app
+  /// (e.g., third-party client).
+  /// The notification type is created as `app`.
+  /// Authentication required. Permission: `write:notifications`.
+  /// Rate limit: 10 requests per minute.
   ///
-  /// - [body]: 通知本文（必須）
-  /// - [header]: 通知ヘッダー（省略時はアクセストークン名が使用される）
-  /// - [icon]: 通知アイコンURL（省略時はトークンのアイコンURLが使用される）
+  /// Provide the notification body text in [body]. Use [header] to set a
+  /// custom title (defaults to the access token name if omitted), and [icon]
+  /// to set a custom icon URL (defaults to the token's icon URL if omitted).
   Future<void> create({
     required String body,
     String? header,
@@ -130,12 +133,12 @@ class NotificationsApi {
         },
       );
 
-  /// テスト通知を送信する（`/api/notifications/test-notification`）
+  /// Sends a test notification (`/api/notifications/test-notification`).
   ///
-  /// 自分自身にテスト通知（タイプ `test`）を送信する。
-  /// 通知の動作確認用エンドポイント。
-  /// 認証必須。権限: `write:notifications`。
-  /// レート制限: 1分間に最大10回。
+  /// Sends a test notification (type `test`) to yourself.
+  /// An endpoint for verifying notification behavior.
+  /// Authentication required. Permission: `write:notifications`.
+  /// Rate limit: 10 requests per minute.
   Future<void> testNotification() => http.send<Object?>(
         '/notifications/test-notification',
         body: const <String, dynamic>{},

@@ -4,7 +4,7 @@ import '../json_converters.dart';
 
 part 'misskey_registry_detail.g.dart';
 
-/// レジストリアイテムの詳細情報
+/// Detailed information about a registry item.
 @JsonSerializable()
 class MisskeyRegistryDetail {
   const MisskeyRegistryDetail({
@@ -17,10 +17,10 @@ class MisskeyRegistryDetail {
 
   Map<String, dynamic> toJson() => _$MisskeyRegistryDetailToJson(this);
 
-  /// 最終更新日時
+  /// The date and time when this registry item was last updated.
   @SafeDateTimeConverter()
   final DateTime updatedAt;
 
-  /// レジストリに格納されている値
+  /// The value stored in the registry.
   final dynamic value;
 }

@@ -2,9 +2,9 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_note_partial.g.dart';
 
-/// ノートの部分情報（`/api/notes/show-partial-bulk`）
+/// Partial note information from `/api/notes/show-partial-bulk`.
 ///
-/// リアクション数と絵文字情報のみを含む軽量なノート情報
+/// A lightweight representation containing only reaction counts and emoji data.
 @JsonSerializable()
 class MisskeyNotePartial {
   const MisskeyNotePartial({
@@ -18,13 +18,14 @@ class MisskeyNotePartial {
 
   Map<String, dynamic> toJson() => _$MisskeyNotePartialToJson(this);
 
+  /// The unique identifier of the note.
   final String id;
 
-  /// リアクションのマップ {emoji: count}
+  /// A map of reactions where keys are emoji strings and values are counts.
   @JsonKey(defaultValue: <String, int>{})
   final Map<String, int>? reactions;
 
-  /// リアクション絵文字マップ {shortcode: url}
+  /// Reaction emoji map where keys are shortcodes and values are URLs.
   @JsonKey(defaultValue: <String, String>{})
   final Map<String, String>? reactionEmojis;
 }

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_role.g.dart';
 
-/// ロール情報（`/api/roles/show` 等のレスポンス）
+/// A role (`/api/roles/show` and related responses).
 @JsonSerializable()
 class MisskeyRole {
   const MisskeyRole({
@@ -27,40 +27,45 @@ class MisskeyRole {
 
   Map<String, dynamic> toJson() => _$MisskeyRoleToJson(this);
 
+  /// The unique identifier of this role.
   final String id;
+
+  /// The date and time when this role was created.
   final DateTime createdAt;
+
+  /// The date and time when this role was last updated.
   final DateTime updatedAt;
 
-  /// ロール名
+  /// The name of this role.
   final String name;
 
-  /// ロールの説明
+  /// The description of this role.
   final String description;
 
-  /// テーマカラー（例: `#ff0000`）
+  /// The theme color (e.g. `#ff0000`).
   final String? color;
 
-  /// アイコンURL
+  /// The icon URL.
   final String? iconUrl;
 
-  /// 割り当て方式（`manual` / `conditional`）
+  /// The assignment method (`manual` / `conditional`).
   final String target;
 
-  /// 公開ロールか
+  /// Whether this is a public role.
   final bool isPublic;
 
-  /// おすすめロール一覧に表示するか
+  /// Whether this role appears in the discoverable roles list.
   final bool isExplorable;
 
-  /// バッジとして表示するか
+  /// Whether this role is displayed as a badge.
   final bool asBadge;
 
-  /// モデレーターがメンバーを編集可能か
+  /// Whether moderators can edit members of this role.
   final bool canEditMembersByModerator;
 
-  /// 表示順
+  /// The display order.
   final int displayOrder;
 
-  /// 所属ユーザー数
+  /// The number of users assigned to this role.
   final int usersCount;
 }

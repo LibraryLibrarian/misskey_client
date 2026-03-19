@@ -2,21 +2,23 @@ import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_invite_code.dart';
 
-/// 招待コード関連API（`/api/invite/*`）
+/// Provides invite code API endpoints (`/api/invite/*`).
 ///
-/// 招待制サーバーにおける招待コードの作成・削除・残数確認・一覧取得を提供する。
-/// 全エンドポイントで認証必須かつ `canInvite` ロールポリシーが必要。
+/// Supports creating, deleting, listing invite codes and checking
+/// remaining invite quota on invitation-only servers.
+/// All endpoints require authentication and the `canInvite` role policy.
 class InviteApi {
   const InviteApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// 招待コードを作成する（`/api/invite/create`）
+  /// Creates a new invite code (`/api/invite/create`).
   ///
-  /// ロールポリシーの上限に基づき有効期限付きチケットを生成する。
+  /// Generates a time-limited ticket based on the role policy quota.
   ///
-  /// 主なエラー:
-  /// - `EXCEEDED_LIMIT_OF_CREATE_INVITE_CODE`: 招待コード作成上限超過
+  /// Common errors:
+  /// - `EXCEEDED_LIMIT_OF_CREATE_INVITE_CODE`:
+  ///   Invite code creation limit exceeded
   Future<MisskeyInviteCode> create() async {
     final res = await http.send<Map<String, dynamic>>(
       '/invite/create',
@@ -25,22 +27,22 @@ class InviteApi {
     return MisskeyInviteCode.fromJson(res);
   }
 
-  /// 招待コードを削除する（`/api/invite/delete`）
+  /// Deletes an invite code (`/api/invite/delete`).
   ///
-  /// - [inviteId]: 削除対象の招待コードID（必須）
+  /// Pass [inviteId] to identify the invite code to remove.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_INVITE_CODE`: 指定の招待コードが存在しない
-  /// - `CAN_NOT_DELETE_INVITE_CODE`: この招待コードは削除できない
-  /// - `ACCESS_DENIED`: 作成者でもモデレーターでもない
+  /// Common errors:
+  /// - `NO_SUCH_INVITE_CODE`: The specified invite code does not exist
+  /// - `CAN_NOT_DELETE_INVITE_CODE`: This invite code cannot be deleted
+  /// - `ACCESS_DENIED`: Not the creator or a moderator
   Future<void> delete({required String inviteId}) => http.send<Object?>(
         '/invite/delete',
         body: <String, dynamic>{'inviteId': inviteId},
       );
 
-  /// 残りの招待可能数を取得する（`/api/invite/limit`）
+  /// Retrieves the remaining invite quota (`/api/invite/limit`).
   ///
-  /// 制限なしの場合は `null` を返す。
+  /// Returns `null` if there is no limit.
   Future<int?> limit() async {
     final res = await http.send<Map<String, dynamic>>(
       '/invite/limit',
@@ -50,11 +52,11 @@ class InviteApi {
     return res['remaining'] as int?;
   }
 
-  /// 自分が作成した招待コード一覧を取得する（`/api/invite/list`）
+  /// Lists invite codes created by the authenticated user (`/api/invite/list`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Use [limit] to cap the number of results (1–100, default 30).
+  /// Pass [sinceId] or [untilId] for cursor-based pagination by ID,
+  /// or [sinceDate] / [untilDate] for pagination by Unix timestamp (ms).
   Future<List<MisskeyInviteCode>> list({
     int? limit,
     String? sinceId,

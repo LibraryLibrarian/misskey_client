@@ -6,34 +6,29 @@ import '../models/federation/misskey_federation_stats.dart';
 import '../models/misskey_following.dart';
 import '../models/misskey_user.dart';
 
-/// 連合（フェデレーション）関連API（`/api/federation/*`）
+/// Provides federation-related operations (`/api/federation/*`).
 ///
-/// 連合インスタンスの一覧・詳細・フォロー関係・統計情報の取得を提供する。
+/// Handles retrieval of federated instance lists, details, follow
+/// relationships, and statistics.
 class FederationApi {
   const FederationApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// 連合インスタンス一覧を取得する（`/api/federation/instances`）
+  /// Retrieves a list of federated instances (`/api/federation/instances`).
   ///
-  /// 認証不要。レスポンスは3600秒間キャッシュされる。
+  /// No authentication required. Responses are cached for 3600 seconds.
   ///
-  /// - [host]: ホスト名でフィルタ（`null`でフィルタなし）
-  /// - [blocked]: ブロック状態でフィルタ
-  /// - [notResponding]: 応答なし状態でフィルタ
-  /// - [suspended]: 停止状態でフィルタ
-  /// - [silenced]: サイレンス状態でフィルタ
-  /// - [federating]: 連合中かどうかでフィルタ
-  /// - [subscribing]: 購読中かどうかでフィルタ
-  /// - [publishing]: 配信中かどうかでフィルタ
-  /// - [limit]: 取得件数 1〜100（デフォルト: 30）
-  /// - [offset]: スキップ件数（デフォルト: 0）
-  /// - [sort]: ソート順。以下のいずれかを指定:
-  ///   `+pubSub` / `-pubSub` / `+notes` / `-notes` /
-  ///   `+users` / `-users` / `+following` / `-following` /
-  ///   `+followers` / `-followers` /
-  ///   `+firstRetrievedAt` / `-firstRetrievedAt` /
-  ///   `+latestRequestReceivedAt` / `-latestRequestReceivedAt`
+  /// Pass [host] to filter by host name, or omit it to return all instances.
+  /// Use [blocked], [notResponding], [suspended], [silenced], [federating],
+  /// [subscribing], and [publishing] to filter by instance status flags.
+  /// Use [limit] to cap the number of results (1-100, default: 30) and
+  /// [offset] to skip entries (default: 0). Pass [sort] to control the order;
+  /// accepted values are `+pubSub` / `-pubSub` / `+notes` / `-notes` /
+  /// `+users` / `-users` / `+following` / `-following` /
+  /// `+followers` / `-followers` /
+  /// `+firstRetrievedAt` / `-firstRetrievedAt` /
+  /// `+latestRequestReceivedAt` / `-latestRequestReceivedAt`.
   Future<List<MisskeyFederationInstance>> instances({
     String? host,
     bool? blocked,
@@ -74,11 +69,11 @@ class FederationApi {
         .toList();
   }
 
-  /// 連合インスタンスの詳細情報を取得する（`/api/federation/show-instance`）
+  /// Retrieves detailed information about a federated instance
+  /// (`/api/federation/show-instance`).
   ///
-  /// 認証不要。インスタンスが未知の場合は `null` を返す。
-  ///
-  /// - [host]: ホスト名（必須）
+  /// No authentication required. Returns `null` if the instance is unknown.
+  /// Pass [host] as the host name to look up.
   Future<MisskeyFederationInstance?> showInstance({
     required String host,
   }) async {
@@ -94,14 +89,13 @@ class FederationApi {
     return MisskeyFederationInstance.fromJson(res);
   }
 
-  /// 指定インスタンスからのフォロワー一覧を取得する（`/api/federation/followers`）
+  /// Retrieves the list of followers from a specified instance
+  /// (`/api/federation/followers`).
   ///
-  /// 認証不要。
-  ///
-  /// - [host]: ホスト名（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// No authentication required. Pass [host] as the host name to query.
+  /// Use [limit] to cap the number of results (1-100, default: 10).
+  /// Pass [sinceId] or [untilId] to paginate by ID, or pass [sinceDate]
+  /// or [untilDate] to paginate by Unix timestamp (ms).
   Future<List<MisskeyFollowing>> followers({
     required String host,
     int? limit,
@@ -132,14 +126,13 @@ class FederationApi {
         .toList();
   }
 
-  /// 指定インスタンスへのフォロー一覧を取得する（`/api/federation/following`）
+  /// Retrieves the list of accounts followed on a specified instance
+  /// (`/api/federation/following`).
   ///
-  /// 認証不要。
-  ///
-  /// - [host]: ホスト名（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// No authentication required. Pass [host] as the host name to query.
+  /// Use [limit] to cap the number of results (1-100, default: 10).
+  /// Pass [sinceId] or [untilId] to paginate by ID, or pass [sinceDate]
+  /// or [untilDate] to paginate by Unix timestamp (ms).
   Future<List<MisskeyFollowing>> following({
     required String host,
     int? limit,
@@ -170,14 +163,13 @@ class FederationApi {
         .toList();
   }
 
-  /// 指定インスタンスのユーザー一覧を取得する（`/api/federation/users`）
+  /// Retrieves the list of users on a specified instance
+  /// (`/api/federation/users`).
   ///
-  /// 認証不要。
-  ///
-  /// - [host]: ホスト名（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト: 10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// No authentication required. Pass [host] as the host name to query.
+  /// Use [limit] to cap the number of results (1-100, default: 10).
+  /// Pass [sinceId] or [untilId] to paginate by ID, or pass [sinceDate]
+  /// or [untilDate] to paginate by Unix timestamp (ms).
   Future<List<MisskeyUser>> users({
     required String host,
     int? limit,
@@ -208,11 +200,11 @@ class FederationApi {
         .toList();
   }
 
-  /// 連合の統計情報を取得する（`/api/federation/stats`）
+  /// Retrieves federation statistics (`/api/federation/stats`).
   ///
-  /// フォロワー数/フォロー数上位のインスタンスとその合計を返す。認証不要。
-  ///
-  /// - [limit]: 上位インスタンスの取得件数 1〜100（デフォルト: 10）
+  /// Returns the top instances by follower/following count along with totals.
+  /// No authentication required. Use [limit] to cap the number of top
+  /// instances returned (1-100, default: 10).
   Future<MisskeyFederationStats> stats({int? limit}) async {
     final body = <String, dynamic>{
       if (limit != null) 'limit': limit,
@@ -228,11 +220,11 @@ class FederationApi {
     return MisskeyFederationStats.fromJson(res);
   }
 
-  /// リモートユーザーの情報を再取得する（`/api/federation/update-remote-user`）
+  /// Re-fetches a remote user's information
+  /// (`/api/federation/update-remote-user`).
   ///
-  /// 指定したリモートユーザーのActivityPub情報を再フェッチする。認証必須。
-  ///
-  /// - [userId]: 更新対象のユーザーID（必須）
+  /// Re-fetches the ActivityPub information for the specified remote user.
+  /// Authentication required. Pass [userId] as the ID of the user to update.
   Future<void> updateRemoteUser({required String userId}) => http.send<Object?>(
         '/federation/update-remote-user',
         body: <String, dynamic>{'userId': userId},

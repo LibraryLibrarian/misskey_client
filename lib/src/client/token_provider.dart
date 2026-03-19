@@ -1,6 +1,7 @@
 import 'dart:async';
 
-/// 認可トークンを提供するための型
+/// A function type that provides an authorization token.
 ///
-/// 同期/非同期のいずれにも対応できるように `FutureOr<String?>` を返す関数型を利用する想定
+/// Returns `FutureOr<String?>` to support both synchronous and asynchronous
+/// token retrieval.
 typedef TokenProvider = FutureOr<String?> Function();

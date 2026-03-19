@@ -6,7 +6,7 @@ import '../misskey_user.dart';
 
 part 'misskey_page.g.dart';
 
-/// Misskeyページ（`/api/users/pages` のレスポンス要素）
+/// A Misskey Page from the `/api/users/pages` response.
 @JsonSerializable()
 class MisskeyPage {
   const MisskeyPage({
@@ -36,59 +36,65 @@ class MisskeyPage {
 
   Map<String, dynamic> toJson() => _$MisskeyPageToJson(this);
 
+  /// The page ID.
   final String id;
 
+  /// The creation date and time.
   @SafeDateTimeConverter()
   final DateTime? createdAt;
 
+  /// The last update date and time.
   @SafeDateTimeConverter()
   final DateTime? updatedAt;
 
+  /// The ID of the user who created this page.
   final String userId;
+
+  /// The user who created this page.
   final MisskeyUser? user;
 
-  /// ページタイトル
+  /// The page title.
   final String title;
 
-  /// ページのURLパス名
+  /// The URL path name of the page.
   final String name;
 
-  /// 概要
+  /// The summary.
   final String? summary;
 
-  /// ページコンテンツ（ブロック配列）
+  /// The page content as an array of blocks.
   final List<dynamic>? content;
 
-  /// ページ変数
+  /// The page variables.
   final List<dynamic>? variables;
 
-  /// 中央揃えか
+  /// Whether the content is center-aligned.
   @JsonKey(defaultValue: false)
   final bool alignCenter;
 
-  /// ピン留め時にタイトルを隠すか
+  /// Whether to hide the title when pinned.
   @JsonKey(defaultValue: false)
   final bool hideTitleWhenPinned;
 
-  /// フォント設定
+  /// The font setting.
   final String? font;
 
-  /// スクリプト
+  /// The page script.
   final String? script;
 
-  /// アイキャッチ画像のファイルID
+  /// The file ID of the eye-catching image.
   final String? eyeCatchingImageId;
 
-  /// アイキャッチ画像オブジェクト
+  /// The eye-catching image.
   final MisskeyDriveFile? eyeCatchingImage;
 
-  /// コンテンツ内の画像ブロックから自動収集されたファイル一覧
+  /// Files automatically collected from image blocks in the content.
   final List<MisskeyDriveFile> attachedFiles;
 
-  /// いいね数
+  /// The number of likes.
   @JsonKey(defaultValue: 0)
   final int likedCount;
 
-  /// 認証ユーザーがいいね済みか
+  /// Whether the authenticated user has liked this page.
   final bool? isLiked;
 }

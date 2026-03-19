@@ -1,28 +1,27 @@
 import '../client/misskey_http.dart';
 import '../models/ap_show_result.dart';
 
-/// ActivityPub関連API（`/api/ap/*`）
+/// Provides ActivityPub APIs (`/api/ap/*`).
 ///
-/// リモートサーバーのActivityPubオブジェクトを解決する。
+/// Resolves ActivityPub objects from remote servers.
 class ApApi {
   const ApApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// ActivityPub URIからユーザーまたはノートを解決する（`/api/ap/show`）
+  /// Resolves a user or note from an ActivityPub URI (`/api/ap/show`).
   ///
-  /// URIに対応するオブジェクトがユーザーの場合は [ApShowUser]、
-  /// ノートの場合は [ApShowNote] を返す。
-  /// 認証必須。レート制限: 30回/時。
+  /// Returns [ApShowUser] if the URI corresponds to a user, or [ApShowNote]
+  /// if it corresponds to a note. Pass the ActivityPub URI to resolve as
+  /// [uri]. Requires authentication. Rate limit: 30 per hour.
   ///
-  /// - [uri]: 解決するActivityPub URI（必須）
-  ///
-  /// 主なエラー:
-  /// - `FEDERATION_NOT_ALLOWED`: 対象ホストとのフェデレーションが許可されていない
-  /// - `URI_INVALID`: URIが無効
-  /// - `REQUEST_FAILED`: リモートサーバーへのリクエスト失敗
-  /// - `RESPONSE_INVALID`: リモートサーバーからのレスポンスが無効
-  /// - `NO_SUCH_OBJECT`: オブジェクトが見つからない
+  /// Common errors:
+  /// - `FEDERATION_NOT_ALLOWED`: Federation with the target host is not
+  ///   allowed
+  /// - `URI_INVALID`: The URI is invalid
+  /// - `REQUEST_FAILED`: Request to the remote server failed
+  /// - `RESPONSE_INVALID`: Response from the remote server is invalid
+  /// - `NO_SUCH_OBJECT`: The object was not found
   Future<ApShowResult> show({required String uri}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/ap/show',
@@ -31,14 +30,11 @@ class ApApi {
     return ApShowResult.fromJson(res);
   }
 
-  /// ActivityPub URIからリモートオブジェクトを直接取得する（`/api/ap/get`）
+  /// Fetches a remote ActivityPub object directly (`/api/ap/get`).
   ///
-  /// 管理者専用エンドポイント。認証必須。
-  /// レート制限: 30回/時。
-  ///
-  /// - [uri]: 取得するActivityPub URI（必須）
-  ///
-  /// ActivityPubオブジェクトの生データ（Map）を返す。
+  /// Admin-only endpoint. Requires authentication. Rate limit: 30 per hour.
+  /// Pass the ActivityPub URI to fetch as [uri]. Returns the raw ActivityPub
+  /// object data as a Map.
   Future<Map<String, dynamic>> get({required String uri}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/ap/get',

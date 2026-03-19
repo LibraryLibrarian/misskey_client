@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-/// MisskeyAPIクライアント設定
+/// Configuration for the Misskey API client.
 @immutable
 class MisskeyClientConfig {
   const MisskeyClientConfig({
@@ -12,25 +12,26 @@ class MisskeyClientConfig {
     this.enableLog = false,
   });
 
-  /// サーバーのベースURL
+  /// The base URL of the Misskey server.
   ///
-  /// 例: `https://misskey.example.com`
+  /// Example: `https://misskey.example.com`
   final Uri baseUrl;
 
-  /// 接続/送受信を包括するタイムアウト
+  /// The timeout covering connection, send, and receive phases.
   final Duration timeout;
 
-  /// User-Agentを上書きしたい場合に指定
+  /// A custom User-Agent string override.
   final String? userAgent;
 
-  /// 既定ヘッダ
+  /// Default headers appended to every request.
   ///
-  /// UAやAcceptはクライアント側で付与されるため、通常は追加分のみを指定
+  /// The client already sets `User-Agent` and `Accept`, so typically only
+  /// additional headers need to be specified here.
   final Map<String, String> defaultHeaders;
 
-  /// リトライ最大試行回数（1 = リトライ無し）
+  /// Maximum number of retry attempts (1 means no retries).
   final int maxRetries;
 
-  /// ログ出力を有効にするか
+  /// Whether to enable debug logging.
   final bool enableLog;
 }

@@ -4,7 +4,7 @@ import 'misskey_user.dart';
 
 part 'misskey_note_reaction.g.dart';
 
-/// ノートへのリアクション（`/api/notes/reactions` のレスポンス要素）
+/// A reaction to a note (element of `/api/notes/reactions` response).
 @JsonSerializable()
 class MisskeyNoteReaction {
   const MisskeyNoteReaction({
@@ -19,11 +19,15 @@ class MisskeyNoteReaction {
 
   Map<String, dynamic> toJson() => _$MisskeyNoteReactionToJson(this);
 
+  /// The unique identifier of this reaction.
   final String id;
+
+  /// The date and time when this reaction was created.
   final DateTime createdAt;
 
-  /// リアクション文字列（Unicode絵文字またはカスタム絵文字ショートコード）
+  /// The reaction string (Unicode emoji or custom emoji shortcode).
   final String type;
 
+  /// The user who reacted.
   final MisskeyUser user;
 }

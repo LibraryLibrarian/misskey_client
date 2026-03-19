@@ -4,7 +4,7 @@ import 'misskey_user.dart';
 
 part 'misskey_role_user.g.dart';
 
-/// ロール所属ユーザー（`/api/roles/users` のレスポンス要素）
+/// A user assigned to a role (element of `/api/roles/users` response).
 @JsonSerializable()
 class MisskeyRoleUser {
   const MisskeyRoleUser({
@@ -17,9 +17,9 @@ class MisskeyRoleUser {
 
   Map<String, dynamic> toJson() => _$MisskeyRoleUserToJson(this);
 
-  /// ロール割り当てID
+  /// The role assignment ID.
   final String id;
 
-  /// ユーザー情報
+  /// The assigned user.
   final MisskeyUser user;
 }

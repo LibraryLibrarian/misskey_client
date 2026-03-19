@@ -4,7 +4,8 @@ import 'misskey_user.dart';
 
 part 'misskey_following.g.dart';
 
-/// フォロー関係（`/api/users/followers` / `/api/users/following` のレスポンス要素）
+/// A follow relationship (element of `/api/users/followers` and
+/// `/api/users/following` responses).
 @JsonSerializable()
 class MisskeyFollowing {
   const MisskeyFollowing({
@@ -21,10 +22,21 @@ class MisskeyFollowing {
 
   Map<String, dynamic> toJson() => _$MisskeyFollowingToJson(this);
 
+  /// The follow record ID.
   final String id;
+
+  /// The creation timestamp.
   final DateTime createdAt;
+
+  /// The followed user's ID.
   final String followeeId;
+
+  /// The follower user's ID.
   final String followerId;
+
+  /// The followed user.
   final MisskeyUser? followee;
+
+  /// The follower user.
   final MisskeyUser? follower;
 }

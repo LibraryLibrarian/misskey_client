@@ -3,24 +3,24 @@ import '../client/request_options.dart';
 import '../models/misskey_clip.dart';
 import '../models/misskey_note.dart';
 
-/// クリップ関連API（`/api/clips/*`）
+/// Provides clip operations (`/api/clips/*`).
 ///
-/// ノートのブックマーク機能（クリップ）の
-/// 作成・更新・削除・ノート追加/削除・お気に入りを提供する。
-/// 全エンドポイントで認証必須。
+/// Handles creating, updating, deleting clips (note bookmarks),
+/// adding/removing notes, and managing favorites.
+/// All endpoints require authentication.
 class ClipsApi {
   const ClipsApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// クリップを作成する（`/api/clips/create`）
+  /// Creates a clip (`/api/clips/create`).
   ///
-  /// - [name]: クリップ名（1〜100文字、必須）
-  /// - [isPublic]: 公開するか（デフォルト: false）
-  /// - [description]: 説明文（最大2048文字）
+  /// Pass [name] as the clip name (1-100 characters, required).
+  /// Set [isPublic] to make the clip visible to others (default: false).
+  /// Pass [description] to add a description (up to 2048 characters).
   ///
-  /// 主なエラー:
-  /// - `TOO_MANY_CLIPS`: クリップ上限に達している
+  /// Notable errors:
+  /// - `TOO_MANY_CLIPS`: The clip limit has been reached.
   Future<MisskeyClip> create({
     required String name,
     bool? isPublic,
@@ -37,15 +37,14 @@ class ClipsApi {
     return MisskeyClip.fromJson(res);
   }
 
-  /// クリップを更新する（`/api/clips/update`）
+  /// Updates a clip (`/api/clips/update`).
   ///
-  /// - [clipId]: 更新対象のクリップID（必須）
-  /// - [name]: クリップ名（1〜100文字）
-  /// - [isPublic]: 公開するか
-  /// - [description]: 説明文（最大2048文字）
+  /// Pass [clipId] to identify the clip to update.
+  /// Optionally supply [name] (1-100 characters), [isPublic], or
+  /// [description] (up to 2048 characters) to change those fields.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_CLIP`: クリップが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_CLIP`: The clip does not exist.
   Future<MisskeyClip> update({
     required String clipId,
     String? name,
@@ -65,23 +64,23 @@ class ClipsApi {
     return MisskeyClip.fromJson(res);
   }
 
-  /// クリップを削除する（`/api/clips/delete`）
+  /// Deletes a clip (`/api/clips/delete`).
   ///
-  /// - [clipId]: 削除対象のクリップID（必須）
+  /// Pass [clipId] to identify the clip to delete.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_CLIP`: クリップが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_CLIP`: The clip does not exist.
   Future<void> delete({required String clipId}) => http.send<Object?>(
         '/clips/delete',
         body: <String, dynamic>{'clipId': clipId},
       );
 
-  /// クリップの詳細を取得する（`/api/clips/show`）
+  /// Retrieves the details of a clip (`/api/clips/show`).
   ///
-  /// - [clipId]: 対象のクリップID（必須）
+  /// Pass [clipId] to identify the clip to retrieve.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_CLIP`: クリップが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_CLIP`: The clip does not exist.
   Future<MisskeyClip> show({required String clipId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/clips/show',
@@ -91,11 +90,11 @@ class ClipsApi {
     return MisskeyClip.fromJson(res);
   }
 
-  /// 自分のクリップ一覧を取得する（`/api/clips/list`）
+  /// Retrieves the authenticated user's clips (`/api/clips/list`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Use [limit] to cap the number of results (1-100, default 10).
+  /// Pass [sinceId] or [untilId] to paginate by ID, or pass [sinceDate]
+  /// or [untilDate] to paginate by Unix timestamp (ms).
   Future<List<MisskeyClip>> list({
     int? limit,
     String? sinceId,
@@ -121,16 +120,16 @@ class ClipsApi {
         .toList();
   }
 
-  /// クリップにノートを追加する（`/api/clips/add-note`）
+  /// Adds a note to a clip (`/api/clips/add-note`).
   ///
-  /// - [clipId]: クリップID（必須）
-  /// - [noteId]: 追加するノートID（必須）
+  /// Pass [clipId] to identify the clip and [noteId] to identify the note
+  /// to add.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_CLIP`: クリップが存在しない
-  /// - `NO_SUCH_NOTE`: ノートが存在しない
-  /// - `ALREADY_CLIPPED`: 既にクリップ済み
-  /// - `TOO_MANY_CLIP_NOTES`: クリップのノート上限に達している
+  /// Notable errors:
+  /// - `NO_SUCH_CLIP`: The clip does not exist.
+  /// - `NO_SUCH_NOTE`: The note does not exist.
+  /// - `ALREADY_CLIPPED`: The note is already clipped.
+  /// - `TOO_MANY_CLIP_NOTES`: The clip's note limit has been reached.
   Future<void> addNote({
     required String clipId,
     required String noteId,
@@ -140,14 +139,14 @@ class ClipsApi {
         body: <String, dynamic>{'clipId': clipId, 'noteId': noteId},
       );
 
-  /// クリップからノートを削除する（`/api/clips/remove-note`）
+  /// Removes a note from a clip (`/api/clips/remove-note`).
   ///
-  /// - [clipId]: クリップID（必須）
-  /// - [noteId]: 削除するノートID（必須）
+  /// Pass [clipId] to identify the clip and [noteId] to identify the note
+  /// to remove.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_CLIP`: クリップが存在しない
-  /// - `NO_SUCH_NOTE`: ノートが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_CLIP`: The clip does not exist.
+  /// - `NO_SUCH_NOTE`: The note does not exist.
   Future<void> removeNote({
     required String clipId,
     required String noteId,
@@ -157,16 +156,16 @@ class ClipsApi {
         body: <String, dynamic>{'clipId': clipId, 'noteId': noteId},
       );
 
-  /// クリップ内のノート一覧を取得する（`/api/clips/notes`）
+  /// Retrieves the notes in a clip (`/api/clips/notes`).
   ///
-  /// - [clipId]: 対象のクリップID（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  /// - [search]: ノート本文をスペース区切りAND検索（1〜100文字）
+  /// Pass [clipId] to identify the clip. Use [limit] to cap the number of
+  /// results (1-100, default 10). Pass [sinceId] or [untilId] to paginate
+  /// by ID, or pass [sinceDate] or [untilDate] to paginate by Unix timestamp
+  /// (ms). Pass [search] for space-separated AND search on note body
+  /// (1-100 characters).
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_CLIP`: クリップが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_CLIP`: The clip does not exist.
   Future<List<MisskeyNote>> notes({
     required String clipId,
     int? limit,
@@ -196,31 +195,32 @@ class ClipsApi {
         .toList();
   }
 
-  /// クリップをお気に入りに追加する（`/api/clips/favorite`）
+  /// Adds a clip to favorites (`/api/clips/favorite`).
   ///
-  /// - [clipId]: クリップID（必須）
+  /// Pass [clipId] to identify the clip to favorite.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_CLIP`: クリップが存在しない
-  /// - `ALREADY_FAVORITED`: 既にお気に入り済み
+  /// Notable errors:
+  /// - `NO_SUCH_CLIP`: The clip does not exist.
+  /// - `ALREADY_FAVORITED`: The clip is already favorited.
   Future<void> favorite({required String clipId}) => http.send<Object?>(
         '/clips/favorite',
         body: <String, dynamic>{'clipId': clipId},
       );
 
-  /// クリップのお気に入りを解除する（`/api/clips/unfavorite`）
+  /// Removes a clip from favorites (`/api/clips/unfavorite`).
   ///
-  /// - [clipId]: クリップID（必須）
+  /// Pass [clipId] to identify the clip to unfavorite.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_CLIP`: クリップが存在しない
-  /// - `NOT_FAVORITED`: お気に入りしていない
+  /// Notable errors:
+  /// - `NO_SUCH_CLIP`: The clip does not exist.
+  /// - `NOT_FAVORITED`: The clip is not favorited.
   Future<void> unfavorite({required String clipId}) => http.send<Object?>(
         '/clips/unfavorite',
         body: <String, dynamic>{'clipId': clipId},
       );
 
-  /// お気に入り登録したクリップ一覧を取得する（`/api/clips/my-favorites`）
+  /// Retrieves the authenticated user's favorited clips
+  /// (`/api/clips/my-favorites`).
   Future<List<MisskeyClip>> myFavorites() async {
     final res = await http.send<List<dynamic>>(
       '/clips/my-favorites',

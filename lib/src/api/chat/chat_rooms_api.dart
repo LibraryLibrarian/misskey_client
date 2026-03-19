@@ -4,20 +4,20 @@ import '../../models/chat/misskey_chat_room.dart';
 import '../../models/chat/misskey_chat_room_invitation.dart';
 import '../../models/chat/misskey_chat_room_member.dart';
 
-/// チャットルーム関連API（`/api/chat/rooms/*`）
+/// Provides chat room operations (`/api/chat/rooms/*`).
 ///
-/// ルームの作成・更新・削除・参加/退出・ミュート・メンバー取得、
-/// および招待（invitations）操作を提供する。
-/// 全エンドポイントで認証必須。
+/// Handles room creation, updating, deletion, joining/leaving, muting,
+/// member retrieval, and invitation management.
+/// All endpoints require authentication.
 class ChatRoomsApi {
   const ChatRoomsApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// ルームを作成する（`/api/chat/rooms/create`）
+  /// Creates a chat room (`/api/chat/rooms/create`).
   ///
-  /// - [name]: ルーム名（最大256文字、必須）
-  /// - [description]: 説明文（最大1024文字）
+  /// [name] is the room name (up to 256 characters). [description] is an
+  /// optional room description (up to 1024 characters).
   Future<MisskeyChatRoom> create({
     required String name,
     String? description,
@@ -32,14 +32,11 @@ class ChatRoomsApi {
     return MisskeyChatRoom.fromJson(res);
   }
 
-  /// ルームを更新する（`/api/chat/rooms/update`）
+  /// Updates a chat room (`/api/chat/rooms/update`).
   ///
-  /// - [roomId]: 更新対象のルームID（必須）
-  /// - [name]: ルーム名（最大256文字）
-  /// - [description]: 説明文（最大1024文字）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] identifies the room to update. [name] sets a new room name (up
+  /// to 256 characters) and [description] sets a new description (up to 1024
+  /// characters). Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<MisskeyChatRoom> update({
     required String roomId,
     String? name,
@@ -57,23 +54,19 @@ class ChatRoomsApi {
     return MisskeyChatRoom.fromJson(res);
   }
 
-  /// ルームを削除する（`/api/chat/rooms/delete`）
+  /// Deletes a chat room (`/api/chat/rooms/delete`).
   ///
-  /// - [roomId]: 削除対象のルームID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the ID of the room to delete.
+  /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<void> delete({required String roomId}) => http.send<Object?>(
         '/chat/rooms/delete',
         body: <String, dynamic>{'roomId': roomId},
       );
 
-  /// ルームの詳細を取得する（`/api/chat/rooms/show`）
+  /// Retrieves the details of a chat room (`/api/chat/rooms/show`).
   ///
-  /// - [roomId]: 対象のルームID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the target room ID.
+  /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<MisskeyChatRoom> show({required String roomId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/chat/rooms/show',
@@ -83,35 +76,29 @@ class ChatRoomsApi {
     return MisskeyChatRoom.fromJson(res);
   }
 
-  /// ルームに参加する（`/api/chat/rooms/join`）
+  /// Joins a chat room (`/api/chat/rooms/join`).
   ///
-  /// - [roomId]: 参加するルームID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the ID of the room to join.
+  /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<void> join({required String roomId}) => http.send<Object?>(
         '/chat/rooms/join',
         body: <String, dynamic>{'roomId': roomId},
       );
 
-  /// ルームから退出する（`/api/chat/rooms/leave`）
+  /// Leaves a chat room (`/api/chat/rooms/leave`).
   ///
-  /// - [roomId]: 退出するルームID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the ID of the room to leave.
+  /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<void> leave({required String roomId}) => http.send<Object?>(
         '/chat/rooms/leave',
         body: <String, dynamic>{'roomId': roomId},
       );
 
-  /// ルームのミュート設定を変更する（`/api/chat/rooms/mute`）
+  /// Updates the mute setting for a chat room (`/api/chat/rooms/mute`).
   ///
-  /// - [roomId]: 対象のルームID（必須）
-  /// - [mute]: `true`でミュート、`false`で解除（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the target room ID. Pass `true` for [mute] to mute the room
+  /// or `false` to unmute it. Throws `NO_SUCH_ROOM` if the room does not
+  /// exist.
   Future<void> setMute({
     required String roomId,
     required bool mute,
@@ -121,15 +108,12 @@ class ChatRoomsApi {
         body: <String, dynamic>{'roomId': roomId, 'mute': mute},
       );
 
-  /// ルームのメンバー一覧を取得する（`/api/chat/rooms/members`）
+  /// Retrieves the member list of a chat room (`/api/chat/rooms/members`).
   ///
-  /// - [roomId]: 対象のルームID（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the target room ID. [limit] caps the number of results
+  /// (1-100, default 30). Use [sinceId] and [untilId] to paginate by ID, or
+  /// [sinceDate] and [untilDate] to paginate by Unix timestamp in milliseconds.
+  /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<List<MisskeyChatRoomMember>> members({
     required String roomId,
     int? limit,
@@ -157,11 +141,12 @@ class ChatRoomsApi {
         .toList();
   }
 
-  /// 自分が所有するルーム一覧を取得する（`/api/chat/rooms/owned`）
+  /// Retrieves a list of rooms owned by the authenticated user
+  /// (`/api/chat/rooms/owned`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// [limit] caps the number of results (1-100, default 30). Use [sinceId]
+  /// and [untilId] to paginate by ID, or [sinceDate] and [untilDate] to
+  /// paginate by Unix timestamp in milliseconds.
   Future<List<MisskeyChatRoom>> owned({
     int? limit,
     String? sinceId,
@@ -187,13 +172,14 @@ class ChatRoomsApi {
         .toList();
   }
 
-  /// 参加中のルーム一覧を取得する（`/api/chat/rooms/joining`）
+  /// Retrieves a list of rooms the authenticated user has joined
+  /// (`/api/chat/rooms/joining`).
   ///
-  /// レスポンスはメンバーシップ情報（ルーム情報を含む）のリスト。
+  /// Returns a list of membership records (including room information).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// [limit] caps the number of results (1-100, default 30). Use [sinceId]
+  /// and [untilId] to paginate by ID, or [sinceDate] and [untilDate] to
+  /// paginate by Unix timestamp in milliseconds.
   Future<List<MisskeyChatRoomMember>> joining({
     int? limit,
     String? sinceId,
@@ -219,13 +205,10 @@ class ChatRoomsApi {
         .toList();
   }
 
-  /// ルームにユーザーを招待する（`/api/chat/rooms/invitations/create`）
+  /// Invites a user to a room (`/api/chat/rooms/invitations/create`).
   ///
-  /// - [roomId]: 招待するルームID（必須）
-  /// - [userId]: 招待するユーザーID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the room to invite to and [userId] is the user to invite.
+  /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<MisskeyChatRoomInvitation> invitationsCreate({
     required String roomId,
     required String userId,
@@ -237,11 +220,11 @@ class ChatRoomsApi {
     return MisskeyChatRoomInvitation.fromJson(res);
   }
 
-  /// 受信した招待一覧を取得する（`/api/chat/rooms/invitations/inbox`）
+  /// Retrieves received invitations (`/api/chat/rooms/invitations/inbox`).
   ///
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// [limit] caps the number of results (1-100, default 30). Use [sinceId]
+  /// and [untilId] to paginate by ID, or [sinceDate] and [untilDate] to
+  /// paginate by Unix timestamp in milliseconds.
   Future<List<MisskeyChatRoomInvitation>> invitationsInbox({
     int? limit,
     String? sinceId,
@@ -267,15 +250,12 @@ class ChatRoomsApi {
         .toList();
   }
 
-  /// 送信した招待一覧を取得する（`/api/chat/rooms/invitations/outbox`）
+  /// Retrieves sent invitations (`/api/chat/rooms/invitations/outbox`).
   ///
-  /// - [roomId]: 対象のルームID（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト30）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the target room ID. [limit] caps the number of results
+  /// (1-100, default 30). Use [sinceId] and [untilId] to paginate by ID, or
+  /// [sinceDate] and [untilDate] to paginate by Unix timestamp in milliseconds.
+  /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<List<MisskeyChatRoomInvitation>> invitationsOutbox({
     required String roomId,
     int? limit,
@@ -303,12 +283,10 @@ class ChatRoomsApi {
         .toList();
   }
 
-  /// 受信した招待を無視する（`/api/chat/rooms/invitations/ignore`）
+  /// Ignores a received invitation (`/api/chat/rooms/invitations/ignore`).
   ///
-  /// - [roomId]: 対象のルームID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: ルームが存在しない
+  /// [roomId] is the target room ID.
+  /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<void> invitationsIgnore({required String roomId}) =>
       http.send<Object?>(
         '/chat/rooms/invitations/ignore',

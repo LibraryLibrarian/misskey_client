@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_user_relation.g.dart';
 
-/// ユーザー間の関係情報（`/api/users/relation` のレスポンス）
+/// The relationship between users, returned by `/api/users/relation`.
 @JsonSerializable()
 class MisskeyUserRelation {
   const MisskeyUserRelation({
@@ -22,38 +22,38 @@ class MisskeyUserRelation {
 
   Map<String, dynamic> toJson() => _$MisskeyUserRelationToJson(this);
 
-  /// 対象ユーザーのID
+  /// The target user's ID.
   final String id;
 
-  /// フォローしているか
+  /// Whether you are following this user.
   @JsonKey(defaultValue: false)
   final bool isFollowing;
 
-  /// こちらからフォローリクエストを送信中か
+  /// Whether you have a pending follow request to this user.
   @JsonKey(defaultValue: false)
   final bool hasPendingFollowRequestFromYou;
 
-  /// 相手からフォローリクエストを受信中か
+  /// Whether this user has a pending follow request to you.
   @JsonKey(defaultValue: false)
   final bool hasPendingFollowRequestToYou;
 
-  /// フォローされているか
+  /// Whether this user is following you.
   @JsonKey(defaultValue: false)
   final bool isFollowed;
 
-  /// ブロックしているか
+  /// Whether you are blocking this user.
   @JsonKey(defaultValue: false)
   final bool isBlocking;
 
-  /// ブロックされているか
+  /// Whether this user is blocking you.
   @JsonKey(defaultValue: false)
   final bool isBlocked;
 
-  /// ミュートしているか
+  /// Whether you are muting this user.
   @JsonKey(defaultValue: false)
   final bool isMuted;
 
-  /// リノートをミュートしているか
+  /// Whether you are muting renotes from this user.
   @JsonKey(defaultValue: false)
   final bool isRenoteMuted;
 }

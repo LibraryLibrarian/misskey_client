@@ -3,23 +3,22 @@ import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_announcement.dart';
 
-/// お知らせ関連API（`/api/announcements`）
+/// Provides announcement APIs (`/api/announcements`).
 ///
-/// サーバーのお知らせ一覧を取得する。
-/// 既読処理は `AccountApi.readAnnouncement` を使用する。
+/// Retrieves server announcements.
+/// Use `AccountApi.readAnnouncement` to mark announcements as read.
 class AnnouncementsApi {
   const AnnouncementsApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// お知らせ一覧を取得する（`/api/announcements`）
+  /// Retrieves the list of announcements (`/api/announcements`).
   ///
-  /// 認証不要だが、認証時は `isRead` フィールドが含まれる。
-  ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  /// - [isActive]: アクティブなお知らせのみ取得するか（デフォルト: true）
+  /// Authentication is optional. When authenticated, the `isRead` field is
+  /// included in the response. Use [limit] to cap the number of items
+  /// (1-100, default 10). Paginate by ID with [sinceId] and [untilId], or by
+  /// Unix timestamp (ms) with [sinceDate] and [untilDate]. Set [isActive] to
+  /// `false` to include inactive announcements (default: true).
   Future<List<MisskeyAnnouncement>> list({
     int? limit,
     String? sinceId,
@@ -50,14 +49,13 @@ class AnnouncementsApi {
         .toList();
   }
 
-  /// お知らせの詳細を取得する（`/api/announcements/show`）
+  /// Retrieves the details of an announcement (`/api/announcements/show`).
   ///
-  /// 認証不要。
+  /// Authentication is optional. Pass the target announcement's ID as
+  /// [announcementId].
   ///
-  /// - [announcementId]: 対象のお知らせID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ANNOUNCEMENT`: 指定したお知らせが存在しない
+  /// Common errors:
+  /// - `NO_SUCH_ANNOUNCEMENT`: The specified announcement does not exist
   Future<MisskeyAnnouncement> show({
     required String announcementId,
   }) async {

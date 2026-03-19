@@ -5,7 +5,7 @@ import 'misskey_poll.dart';
 
 part 'misskey_note_draft.g.dart';
 
-/// ノート下書き（`/api/notes/drafts/*`）
+/// A note draft (`/api/notes/drafts/*`).
 @JsonSerializable()
 class MisskeyNoteDraft {
   const MisskeyNoteDraft({
@@ -34,57 +34,62 @@ class MisskeyNoteDraft {
 
   Map<String, dynamic> toJson() => _$MisskeyNoteDraftToJson(this);
 
+  /// The unique identifier of this draft.
   final String id;
+
+  /// The date and time when this draft was created.
   final DateTime createdAt;
 
+  /// The date and time when this draft was last updated.
   @SafeDateTimeConverter()
   final DateTime? updatedAt;
 
+  /// The ID of the user who owns this draft.
   final String userId;
 
-  /// 公開範囲（`public` / `home` / `followers` / `specified`）
+  /// The visibility scope (`public` / `home` / `followers` / `specified`).
   final String? visibility;
 
-  /// 指定可視性の対象ユーザーIDリスト
+  /// The list of user IDs for specified visibility.
   @JsonKey(defaultValue: <String>[])
   final List<String>? visibleUserIds;
 
-  /// コンテンツ警告テキスト
+  /// The content warning text.
   final String? cw;
 
-  /// ハッシュタグ
+  /// The hashtag.
   final String? hashtag;
 
-  /// ローカルのみ
+  /// Whether this draft is local-only.
   @JsonKey(defaultValue: false)
   final bool? localOnly;
 
-  /// リアクション受入設定
+  /// The reaction acceptance setting.
   final String? reactionAcceptance;
 
-  /// 返信先ノートID
+  /// The ID of the note this is replying to.
   final String? replyId;
 
-  /// リノート元ノートID
+  /// The ID of the note this is renoting.
   final String? renoteId;
 
-  /// チャンネルID
+  /// The channel ID this draft belongs to.
   final String? channelId;
 
-  /// 本文
+  /// The body text.
   final String? text;
 
-  /// 添付ファイルIDリスト
+  /// The list of attached file IDs.
   @JsonKey(defaultValue: <String>[])
   final List<String>? fileIds;
 
-  /// 投票
+  /// The poll attached to this draft.
   final MisskeyPoll? poll;
 
-  /// 予約投稿日時（Unixタイムスタンプms）
+  /// The scheduled post time as a Unix timestamp in milliseconds.
   final int? scheduledAt;
 
-  /// 予約投稿が有効かどうか
+  /// Whether the scheduled posting is active.
   @JsonKey(defaultValue: false)
   final bool? isActuallyScheduled;
 }

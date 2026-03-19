@@ -1,24 +1,25 @@
 import '../../client/misskey_http.dart';
 import '../../models/account/misskey_totp_registration.dart';
 
-/// 二要素認証（2FA）関連API（`/api/i/2fa/*`）
+/// Provides two-factor authentication (2FA) APIs (`/api/i/2fa/*`).
 ///
-/// TOTP登録・解除やセキュリティキーの管理、
-/// パスワードレスログインの切り替えを提供する。
-/// 全エンドポイントで認証必須かつセキュア通信が求められる。
+/// Offers TOTP registration/removal, security key management, and
+/// passwordless login toggle. All endpoints require authentication
+/// and secure communication.
 class TwoFactorApi {
   const TwoFactorApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// TOTP二要素認証の登録を開始する（`/api/i/2fa/register`）
+  /// Initiates TOTP two-factor authentication registration
+  /// (`/api/i/2fa/register`).
   ///
-  /// パスワード検証後、TOTPシークレットを生成して
-  /// QRコード等の登録情報を返す。
-  /// 既に2FAが有効な場合は [token] が必要。
+  /// Generates a TOTP secret after password verification and returns
+  /// registration information including a QR code.
+  /// Requires [token] if 2FA is already enabled.
   ///
-  /// - [password]: 現在のパスワード（必須）
-  /// - [token]: 既存のTOTPトークン（2FA有効時に必要）
+  /// [password] is the current account password. [token] is an existing TOTP
+  /// token and is required when 2FA is already enabled.
   Future<MisskeyTotpRegistration> register({
     required String password,
     String? token,
@@ -33,13 +34,10 @@ class TwoFactorApi {
     return MisskeyTotpRegistration.fromJson(res);
   }
 
-  /// TOTP二要素認証の設定を完了する（`/api/i/2fa/done`）
+  /// Completes TOTP two-factor authentication setup (`/api/i/2fa/done`).
   ///
-  /// [register] で取得したシークレットを基に生成したTOTPトークンで
-  /// 検証を行い、2FAを有効化する。
-  /// 成功するとバックアップコードの一覧を返す。
-  ///
-  /// - [token]: TOTPトークン（必須）
+  /// Verifies the TOTP [token] generated from the secret obtained via
+  /// [register] and enables 2FA. Returns a list of backup codes on success.
   Future<List<String>> done({required String token}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/i/2fa/done',
@@ -52,10 +50,10 @@ class TwoFactorApi {
     return <String>[];
   }
 
-  /// TOTP二要素認証を解除する（`/api/i/2fa/unregister`）
+  /// Removes TOTP two-factor authentication (`/api/i/2fa/unregister`).
   ///
-  /// - [password]: 現在のパスワード（必須）
-  /// - [token]: TOTPトークン（2FA有効時に必要）
+  /// [password] is the current account password. [token] is the TOTP token
+  /// and is required when 2FA is enabled.
   Future<void> unregister({
     required String password,
     String? token,
@@ -68,16 +66,18 @@ class TwoFactorApi {
         },
       );
 
-  /// セキュリティキーの登録を開始する（`/api/i/2fa/register-key`）
+  /// Initiates security key registration (`/api/i/2fa/register-key`).
   ///
-  /// WebAuthn登録チャレンジ（`PublicKeyCredentialCreationOptions`相当）
-  /// を生成して返す。2FAが有効であることが前提。
+  /// Generates a WebAuthn registration challenge
+  /// (`PublicKeyCredentialCreationOptions` equivalent). Requires 2FA to be
+  /// enabled.
   ///
-  /// - [password]: 現在のパスワード（必須）
-  /// - [token]: TOTPトークン（2FA有効時に必要）
+  /// [password] is the current account password. [token] is the TOTP token
+  /// and is required when 2FA is enabled.
   ///
-  /// 返り値はWebAuthnの`PublicKeyCredentialCreationOptions`相当のMapで、
-  /// `rp`, `user`, `challenge`, `pubKeyCredParams` 等を含む。
+  /// Returns a Map equivalent to WebAuthn's
+  /// `PublicKeyCredentialCreationOptions`, containing `rp`, `user`,
+  /// `challenge`, `pubKeyCredParams`, etc.
   Future<Map<String, dynamic>> registerKey({
     required String password,
     String? token,
@@ -92,17 +92,16 @@ class TwoFactorApi {
     return res;
   }
 
-  /// セキュリティキーの登録を完了する（`/api/i/2fa/key-done`）
+  /// Completes security key registration (`/api/i/2fa/key-done`).
   ///
-  /// [registerKey] で得たチャレンジに対するクライアント応答を検証し、
-  /// セキュリティキーを登録する。
+  /// Verifies the client response to the challenge obtained via [registerKey]
+  /// and registers the security key.
   ///
-  /// - [password]: 現在のパスワード（必須）
-  /// - [name]: キーの名前（必須、1〜30文字）
-  /// - [credential]: WebAuthn応答オブジェクト（必須）
-  /// - [token]: TOTPトークン（2FA有効時に必要）
+  /// [password] is the current account password. [name] is the key name
+  /// (1-30 characters). [credential] is the WebAuthn response object.
+  /// [token] is the TOTP token and is required when 2FA is enabled.
   ///
-  /// 返り値は登録されたキーの `id` と `name` を含むMap。
+  /// Returns a Map containing the registered key's `id` and `name`.
   Future<Map<String, dynamic>> keyDone({
     required String password,
     required String name,
@@ -121,11 +120,11 @@ class TwoFactorApi {
     return res;
   }
 
-  /// セキュリティキーを削除する（`/api/i/2fa/remove-key`）
+  /// Removes a security key (`/api/i/2fa/remove-key`).
   ///
-  /// - [password]: 現在のパスワード（必須）
-  /// - [credentialId]: 削除対象キーのID（必須）
-  /// - [token]: TOTPトークン（2FA有効時に必要）
+  /// [password] is the current account password. [credentialId] is the ID of
+  /// the key to remove. [token] is the TOTP token and is required when 2FA is
+  /// enabled.
   Future<void> removeKey({
     required String password,
     required String credentialId,
@@ -140,10 +139,10 @@ class TwoFactorApi {
         },
       );
 
-  /// セキュリティキーの名前を更新する（`/api/i/2fa/update-key`）
+  /// Updates the name of a security key (`/api/i/2fa/update-key`).
   ///
-  /// - [credentialId]: 対象キーのID（必須）
-  /// - [name]: 新しいキー名（1〜30文字）
+  /// [credentialId] identifies the target key. [name] is the new key name
+  /// (1-30 characters).
   Future<void> updateKey({
     required String credentialId,
     String? name,
@@ -156,11 +155,10 @@ class TwoFactorApi {
         },
       );
 
-  /// パスワードレスログインの有効/無効を切り替える（`/api/i/2fa/password-less`）
+  /// Toggles passwordless login (`/api/i/2fa/password-less`).
   ///
-  /// セキュリティキーが登録済みであることが前提。
-  ///
-  /// - [value]: `true`で有効化、`false`で無効化
+  /// Requires a security key to be registered. Pass `true` for [value] to
+  /// enable passwordless login, or `false` to disable it.
   Future<void> passwordLess({required bool value}) => http.send<Object?>(
         '/i/2fa/password-less',
         body: <String, dynamic>{'value': value},

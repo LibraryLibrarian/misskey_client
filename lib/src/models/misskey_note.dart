@@ -7,7 +7,7 @@ import 'misskey_user.dart';
 
 part 'misskey_note.g.dart';
 
-/// ノートの公開範囲
+/// The visibility scope of a note.
 @JsonEnum()
 enum MisskeyNoteVisibility {
   public,
@@ -16,7 +16,7 @@ enum MisskeyNoteVisibility {
   specified,
 }
 
-/// リアクション受入設定
+/// The reaction acceptance setting for a note.
 @JsonEnum()
 enum MisskeyReactionAcceptance {
   /// null means accept all (we represent this as a default)
@@ -26,7 +26,7 @@ enum MisskeyReactionAcceptance {
   likeOnly,
 }
 
-/// Misskey のノート（投稿）
+/// A Misskey note (post).
 @JsonSerializable()
 class MisskeyNote {
   const MisskeyNote({
@@ -71,108 +71,123 @@ class MisskeyNote {
 
   Map<String, dynamic> toJson() => _$MisskeyNoteToJson(this);
 
+  /// The unique identifier of this note.
   final String id;
+
+  /// The date and time when this note was created.
   final DateTime createdAt;
+
+  /// The ID of the user who created this note.
   final String userId;
+
+  /// The user who created this note.
   final MisskeyUser user;
 
-  /// 本文（MFM形式）。リノートのみの場合は null
+  /// The body text in MFM format. Null for pure renotes.
   final String? text;
 
-  /// コンテンツ警告（CW）テキスト
+  /// The content warning (CW) text.
   final String? cw;
 
+  /// The visibility scope of this note.
   @JsonKey(unknownEnumValue: MisskeyNoteVisibility.public)
   final MisskeyNoteVisibility? visibility;
 
+  /// Whether this note is local-only.
   @JsonKey(defaultValue: false)
   final bool? localOnly;
 
+  /// The reaction acceptance setting.
   final MisskeyReactionAcceptance? reactionAcceptance;
 
+  /// The number of renotes.
   @JsonKey(defaultValue: 0)
   final int? renoteCount;
 
+  /// The number of replies.
   @JsonKey(defaultValue: 0)
   final int? repliesCount;
 
+  /// The total number of reactions.
   @JsonKey(defaultValue: 0)
   final int? reactionCount;
 
-  /// リアクションのマップ {emoji: count}
+  /// A map of reactions where keys are emoji strings and values are counts.
   @JsonKey(defaultValue: <String, int>{})
   final Map<String, int>? reactions;
 
-  /// ノートで使われているカスタム絵文字 {shortcode: url}
+  /// Custom emoji map where keys are shortcodes and values are URLs.
   @JsonKey(defaultValue: <String, String>{})
   final Map<String, String>? emojis;
 
+  /// The IDs of attached files.
   @JsonKey(defaultValue: <String>[])
   final List<String>? fileIds;
 
+  /// The attached drive files.
   @JsonKey(defaultValue: <MisskeyDriveFile>[])
   final List<MisskeyDriveFile>? files;
 
-  /// 返信先ノートID
+  /// The ID of the note this is replying to.
   final String? replyId;
 
-  /// リノート元ノートID
+  /// The ID of the note this is renoting.
   final String? renoteId;
 
-  /// 返信先ノート
+  /// The note this is replying to.
   final MisskeyNote? reply;
 
-  /// リノート元ノート
+  /// The note this is renoting.
   final MisskeyNote? renote;
 
-  /// ActivityPub URI
+  /// The ActivityPub URI.
   final String? uri;
 
-  /// ノートのURL
+  /// The URL of the note.
   final String? url;
 
-  /// チャンネルID
+  /// The channel ID this note belongs to.
   final String? channelId;
 
-  /// チャンネル情報
+  /// The channel information.
   final MisskeyNoteChannel? channel;
 
-  /// メンション先ユーザーIDリスト
+  /// The list of mentioned user IDs.
   final List<String>? mentions;
 
-  /// 指定可視性の対象ユーザーIDリスト
+  /// The list of user IDs who can see this specified-visibility note.
   final List<String>? visibleUserIds;
 
-  /// ハッシュタグリスト
+  /// The list of hashtags.
   final List<String>? tags;
 
-  /// 投票
+  /// The poll attached to this note.
   final MisskeyPoll? poll;
 
-  /// 自分のリアクション（認証時のみ）
+  /// The authenticated user's reaction to this note.
   final String? myReaction;
 
-  /// クリップ数
+  /// The number of clips containing this note.
   @JsonKey(defaultValue: 0)
   final int? clippedCount;
 
-  /// 削除日時
+  /// The date and time when this note was deleted.
   @SafeDateTimeConverter()
   final DateTime? deletedAt;
 
-  /// 非表示フラグ
+  /// Whether this note is hidden.
   @JsonKey(defaultValue: false)
   final bool? isHidden;
 
-  /// リアクション絵文字マップ {shortcode: url}
+  /// Reaction emoji map where keys are shortcodes and values are URLs.
   @JsonKey(defaultValue: <String, String>{})
   final Map<String, String>? reactionEmojis;
 
-  /// リアクションとユーザーのペアキャッシュ
+  /// Cached pairs of reactions and user identifiers.
   final List<String>? reactionAndUserPairCache;
 }
 
-/// ノートに含まれるチャンネル情報（軽量版）
+/// Lightweight channel information embedded in a note.
 @JsonSerializable()
 class MisskeyNoteChannel {
   const MisskeyNoteChannel({
@@ -189,10 +204,21 @@ class MisskeyNoteChannel {
 
   Map<String, dynamic> toJson() => _$MisskeyNoteChannelToJson(this);
 
+  /// The unique identifier of this channel.
   final String id;
+
+  /// The name of the channel.
   final String? name;
+
+  /// The theme color of the channel.
   final String? color;
+
+  /// Whether the channel is marked as sensitive.
   final bool? isSensitive;
+
+  /// Whether renotes to external channels are allowed.
   final bool? allowRenoteToExternal;
+
+  /// The ID of the user who owns this channel.
   final String? userId;
 }

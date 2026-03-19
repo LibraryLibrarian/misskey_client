@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_sw_registration.g.dart';
 
-/// プッシュ通知の登録結果
+/// The result of a push notification registration.
 @JsonSerializable()
 class MisskeySwRegistration {
   const MisskeySwRegistration({
@@ -18,24 +18,24 @@ class MisskeySwRegistration {
 
   Map<String, dynamic> toJson() => _$MisskeySwRegistrationToJson(this);
 
-  /// 登録状態（`'subscribed'` または `'already-subscribed'`）
+  /// The registration state (`'subscribed'` or `'already-subscribed'`).
   final String state;
 
-  /// サーバーのVAPID公開鍵
+  /// The server's VAPID public key.
   final String? key;
 
-  /// サブスクリプションに紐づくユーザーID
+  /// The user ID associated with the subscription.
   final String userId;
 
-  /// プッシュ通知の送信先エンドポイントURL
+  /// The push notification endpoint URL.
   final String endpoint;
 
-  /// 既読メッセージの通知を送信するか
+  /// Whether to send notifications for read messages.
   final bool sendReadMessage;
 
-  /// 新規登録されたかどうか
+  /// Whether this is a newly created subscription.
   bool get isNewSubscription => state == 'subscribed';
 
-  /// 既に登録済みだったかどうか
+  /// Whether the subscription already existed.
   bool get isAlreadySubscribed => state == 'already-subscribed';
 }

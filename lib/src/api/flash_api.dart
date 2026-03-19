@@ -4,27 +4,26 @@ import '../client/request_options.dart';
 import '../models/users/misskey_flash.dart';
 import '../models/users/misskey_flash_like.dart';
 
-/// Flash（Play）関連API（`/api/flash/*`）
+/// Provides Flash (Play) operations (`/api/flash/*`).
 ///
-/// Flashの作成・更新・削除・閲覧・いいね操作を提供する。
-/// 自分のFlash一覧は [my]、他ユーザーのFlashは `UsersApi.flashs` を使用する。
+/// Handles creating, updating, deleting, viewing, and liking Flashes.
+/// Use [my] for the authenticated user's Flashes, or `UsersApi.flashs`
+/// for another user's Flashes.
 class FlashApi {
   const FlashApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// Flashを作成する（`/api/flash/create`）
+  /// Creates a Flash (`/api/flash/create`).
   ///
-  /// 認証必須。レート制限: 10回/時。
+  /// Authentication required. Rate limit: 10 requests/hour.
   ///
-  /// - [title]: タイトル（必須）
-  /// - [summary]: 概要（必須）
-  /// - [script]: AiScriptコード（必須）
-  /// - [permissions]: 要求するパーミッション（必須）
-  /// - [visibility]: 公開範囲（`public`/`private`、デフォルト: `public`）
+  /// Provide [title], [summary], [script] (AiScript code), and [permissions]
+  /// as required fields. Optionally pass [visibility] to set the visibility
+  /// (`public`/`private`, default: `public`).
   ///
-  /// 主なエラー:
-  /// - `TOO_MANY_FLASHES`: Flash上限に達している
+  /// Notable errors:
+  /// - `TOO_MANY_FLASHES`: The Flash limit has been reached.
   Future<MisskeyFlash> create({
     required String title,
     required String summary,
@@ -45,14 +44,15 @@ class FlashApi {
     return MisskeyFlash.fromJson(res);
   }
 
-  /// Flashを更新する（`/api/flash/update`）
+  /// Updates a Flash (`/api/flash/update`).
   ///
-  /// 認証必須。レート制限: 300回/時。
-  /// [flashId] のみ必須。他のパラメータは指定した項目のみ更新される。
+  /// Authentication required. Rate limit: 300 requests/hour.
+  /// Only [flashId] is required; other parameters update only the
+  /// specified fields.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_FLASH`: Flashが存在しない
-  /// - `ACCESS_DENIED`: 権限がない
+  /// Notable errors:
+  /// - `NO_SUCH_FLASH`: The Flash does not exist.
+  /// - `ACCESS_DENIED`: Insufficient permissions.
   Future<void> update({
     required String flashId,
     String? title,
@@ -75,28 +75,26 @@ class FlashApi {
     );
   }
 
-  /// Flashを削除する（`/api/flash/delete`）
+  /// Deletes a Flash (`/api/flash/delete`).
   ///
-  /// 認証必須。本人またはモデレーターのみ削除可能。
+  /// Authentication required. Only the owner or a moderator can delete.
+  /// Pass [flashId] to identify the Flash to delete.
   ///
-  /// - [flashId]: 削除対象のFlash ID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_FLASH`: Flashが存在しない
-  /// - `ACCESS_DENIED`: 権限がない
+  /// Notable errors:
+  /// - `NO_SUCH_FLASH`: The Flash does not exist.
+  /// - `ACCESS_DENIED`: Insufficient permissions.
   Future<void> delete({required String flashId}) => http.send<Object?>(
         '/flash/delete',
         body: <String, dynamic>{'flashId': flashId},
       );
 
-  /// Flashの詳細を取得する（`/api/flash/show`）
+  /// Retrieves the details of a Flash (`/api/flash/show`).
   ///
-  /// 認証不要。
+  /// No authentication required. Pass [flashId] to identify the Flash
+  /// to retrieve.
   ///
-  /// - [flashId]: 対象のFlash ID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_FLASH`: Flashが存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_FLASH`: The Flash does not exist.
   Future<MisskeyFlash> show({required String flashId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/flash/show',
@@ -109,13 +107,11 @@ class FlashApi {
     return MisskeyFlash.fromJson(res);
   }
 
-  /// 自分のFlash一覧を取得する（`/api/flash/my`）
+  /// Retrieves the authenticated user's Flashes (`/api/flash/my`).
   ///
-  /// 認証必須。
-  ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Authentication required. Use [limit] to cap the number of results
+  /// (1-100, default 10). Pass [sinceId] or [untilId] to paginate by ID,
+  /// or pass [sinceDate] or [untilDate] to paginate by Unix timestamp (ms).
   Future<List<MisskeyFlash>> my({
     int? limit,
     String? sinceId,
@@ -141,12 +137,11 @@ class FlashApi {
         .toList();
   }
 
-  /// 注目Flash一覧を取得する（`/api/flash/featured`）
+  /// Retrieves featured Flashes (`/api/flash/featured`).
   ///
-  /// 認証不要。offsetベースのページネーション。
-  ///
-  /// - [offset]: スキップ件数（デフォルト: 0）
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
+  /// No authentication required. Uses offset-based pagination.
+  /// Pass [offset] to skip entries (default: 0) and use [limit] to cap
+  /// the number of results (1-100, default 10).
   Future<List<MisskeyFlash>> featured({
     int? offset,
     int? limit,
@@ -169,39 +164,39 @@ class FlashApi {
         .toList();
   }
 
-  /// Flashにいいねする（`/api/flash/like`）
+  /// Likes a Flash (`/api/flash/like`).
   ///
-  /// 認証必須。
+  /// Authentication required.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_FLASH`: Flashが存在しない
-  /// - `YOUR_FLASH`: 自分のFlashにはいいねできない
-  /// - `ALREADY_LIKED`: 既にいいね済み
+  /// Notable errors:
+  /// - `NO_SUCH_FLASH`: The Flash does not exist.
+  /// - `YOUR_FLASH`: Cannot like your own Flash.
+  /// - `ALREADY_LIKED`: Already liked.
   Future<void> like({required String flashId}) => http.send<Object?>(
         '/flash/like',
         body: <String, dynamic>{'flashId': flashId},
       );
 
-  /// Flashのいいねを解除する（`/api/flash/unlike`）
+  /// Removes a like from a Flash (`/api/flash/unlike`).
   ///
-  /// 認証必須。
+  /// Authentication required.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_FLASH`: Flashが存在しない
-  /// - `NOT_LIKED`: いいねしていない
+  /// Notable errors:
+  /// - `NO_SUCH_FLASH`: The Flash does not exist.
+  /// - `NOT_LIKED`: Not liked.
   Future<void> unlike({required String flashId}) => http.send<Object?>(
         '/flash/unlike',
         body: <String, dynamic>{'flashId': flashId},
       );
 
-  /// 自分がいいねしたFlash一覧を取得する（`/api/flash/my-likes`）
+  /// Retrieves the authenticated user's liked Flashes
+  /// (`/api/flash/my-likes`).
   ///
-  /// 認証必須。
-  ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  /// - [search]: ノート本文をスペース区切りAND検索（1〜100文字）
+  /// Authentication required. Use [limit] to cap the number of results
+  /// (1-100, default 10). Pass [sinceId] or [untilId] to paginate by ID,
+  /// or pass [sinceDate] or [untilDate] to paginate by Unix timestamp (ms).
+  /// Pass [search] for space-separated AND search on note body
+  /// (1-100 characters).
   Future<List<MisskeyFlashLike>> myLikes({
     int? limit,
     String? sinceId,
@@ -229,14 +224,12 @@ class FlashApi {
         .toList();
   }
 
-  /// Flashを検索する（`/api/flash/search`）
+  /// Searches for Flashes (`/api/flash/search`).
   ///
-  /// 認証不要。
-  ///
-  /// - [query]: 検索文字列（1〜100文字、必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト5）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// No authentication required. Pass [query] as the search string
+  /// (1-100 characters). Use [limit] to cap the number of results
+  /// (1-100, default 5). Pass [sinceId] or [untilId] to paginate by ID,
+  /// or pass [sinceDate] or [untilDate] to paginate by Unix timestamp (ms).
   Future<List<MisskeyFlash>> search({
     required String query,
     int? limit,

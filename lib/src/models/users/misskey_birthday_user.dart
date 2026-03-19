@@ -4,7 +4,7 @@ import '../misskey_user.dart';
 
 part 'misskey_birthday_user.g.dart';
 
-/// 誕生日ユーザー情報（`/api/users/get-following-users-by-birthday` のレスポンス要素）
+/// A birthday user entry from `/api/users/get-following-users-by-birthday`.
 @JsonSerializable()
 class MisskeyBirthdayUser {
   const MisskeyBirthdayUser({
@@ -18,12 +18,12 @@ class MisskeyBirthdayUser {
 
   Map<String, dynamic> toJson() => _$MisskeyBirthdayUserToJson(this);
 
-  /// ユーザーID
+  /// The user ID.
   final String id;
 
-  /// 誕生日（YYYY-MM-DD形式）
+  /// The birthday in `YYYY-MM-DD` format.
   final String birthday;
 
-  /// ユーザー情報
+  /// The user information.
   final MisskeyUser? user;
 }

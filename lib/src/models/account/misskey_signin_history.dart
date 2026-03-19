@@ -4,7 +4,7 @@ import '../json_converters.dart';
 
 part 'misskey_signin_history.g.dart';
 
-/// サインイン履歴
+/// A sign-in history entry.
 @JsonSerializable()
 class MisskeySigninHistory {
   const MisskeySigninHistory({
@@ -20,17 +20,19 @@ class MisskeySigninHistory {
 
   Map<String, dynamic> toJson() => _$MisskeySigninHistoryToJson(this);
 
+  /// The unique identifier of this sign-in record.
   final String id;
 
+  /// The date and time when the sign-in occurred.
   @SafeDateTimeConverter()
   final DateTime createdAt;
 
-  /// 接続元IPアドレス
+  /// The source IP address.
   final String? ip;
 
-  /// リクエストヘッダ
+  /// The request headers.
   final Map<String, dynamic>? headers;
 
-  /// サインイン成功フラグ
+  /// Whether the sign-in was successful.
   final bool? success;
 }

@@ -1,14 +1,15 @@
 import 'misskey_note.dart';
 import 'misskey_user.dart';
 
-/// `ap/show` のレスポンス（`User` または `Note` を返す）
+/// Result of `ap/show`, which returns either a [MisskeyUser] or a
+/// [MisskeyNote].
 sealed class ApShowResult {
   const ApShowResult();
 
-  /// JSONレスポンスから適切なサブタイプを生成する
+  /// Creates the appropriate subtype from a JSON response.
   ///
-  /// `type` フィールドが `"User"` なら [ApShowUser]、
-  /// `"Note"` なら [ApShowNote] を返す。
+  /// Returns [ApShowUser] when the `type` field is `"User"`, or
+  /// [ApShowNote] when it is `"Note"`.
   factory ApShowResult.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String;
     final object = json['object'] as Map<String, dynamic>;
@@ -20,16 +21,18 @@ sealed class ApShowResult {
   }
 }
 
-/// `ap/show` がユーザーを返した場合
+/// An `ap/show` result containing a user.
 class ApShowUser extends ApShowResult {
   const ApShowUser({required this.object});
 
+  /// The resolved user.
   final MisskeyUser object;
 }
 
-/// `ap/show` がノートを返した場合
+/// An `ap/show` result containing a note.
 class ApShowNote extends ApShowResult {
   const ApShowNote({required this.object});
 
+  /// The resolved note.
   final MisskeyNote object;
 }

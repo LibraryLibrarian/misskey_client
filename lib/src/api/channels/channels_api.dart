@@ -5,10 +5,10 @@ import '../../models/misskey_channel.dart';
 import '../../models/misskey_note.dart';
 import 'channel_mute_api.dart';
 
-/// チャンネル関連API
+/// Provides channel APIs.
 ///
-/// `channels/*` の各エンドポイントを提供する。
-/// ミュート操作は [mute] サブAPIを使用する。
+/// Offers endpoints under `channels/*`.
+/// Use the [mute] sub-API for mute operations.
 class ChannelsApi {
   ChannelsApi({required MisskeyHttp http})
       : _http = http,
@@ -16,17 +16,18 @@ class ChannelsApi {
 
   final MisskeyHttp _http;
 
-  /// チャンネルミュート関連API
+  /// Provides channel mute APIs.
   final ChannelMuteApi mute;
 
-  /// チャンネルを作成
+  /// Creates a channel.
   ///
-  /// [name] はチャンネル名（1〜128文字、必須）。
-  /// [description] はチャンネルの説明文（最大2048文字）。
-  /// [bannerId] はバナー画像のドライブファイルID。
-  /// [color] はチャンネルのテーマカラー（1〜16文字）。
-  /// [isSensitive] はセンシティブチャンネルかどうか。
-  /// [allowRenoteToExternal] はチャンネル外へのリノートを許可するか。
+  /// [name] is the channel name (1-128 characters, required).
+  /// [description] is the channel description (up to 2048 characters).
+  /// [bannerId] is the drive file ID for the banner image.
+  /// [color] is the channel theme color (1-16 characters).
+  /// [isSensitive] indicates whether the channel is sensitive.
+  /// [allowRenoteToExternal] indicates whether renotes outside the channel
+  /// are allowed.
   Future<MisskeyChannel> create({
     required String name,
     String? description,
@@ -50,17 +51,18 @@ class ChannelsApi {
     return MisskeyChannel.fromJson(res);
   }
 
-  /// チャンネルを更新
+  /// Updates a channel.
   ///
-  /// [channelId] で対象チャンネルを指定する（必須）。
-  /// [name] はチャンネル名（1〜128文字）。
-  /// [description] はチャンネルの説明文（最大2048文字）。
-  /// [bannerId] はバナー画像のドライブファイルID。
-  /// [isArchived] はアーカイブ状態にするかどうか。
-  /// [pinnedNoteIds] はピン留めするノートIDのリスト。
-  /// [color] はチャンネルのテーマカラー（1〜16文字）。
-  /// [isSensitive] はセンシティブチャンネルかどうか。
-  /// [allowRenoteToExternal] はチャンネル外へのリノートを許可するか。
+  /// Specify the target channel with [channelId] (required).
+  /// [name] is the channel name (1-128 characters).
+  /// [description] is the channel description (up to 2048 characters).
+  /// [bannerId] is the drive file ID for the banner image.
+  /// [isArchived] indicates whether to archive the channel.
+  /// [pinnedNoteIds] is the list of note IDs to pin.
+  /// [color] is the channel theme color (1-16 characters).
+  /// [isSensitive] indicates whether the channel is sensitive.
+  /// [allowRenoteToExternal] indicates whether renotes outside the channel
+  /// are allowed.
   Future<MisskeyChannel> update({
     required String channelId,
     String? name,
@@ -90,10 +92,10 @@ class ChannelsApi {
     return MisskeyChannel.fromJson(res);
   }
 
-  /// お気に入り登録済みのチャンネル一覧を取得
+  /// Retrieves the list of favorited channels.
   ///
-  /// 認証ユーザーがお気に入り登録したチャンネルをすべて返す。
-  /// スキーマに入力パラメータはない。
+  /// Returns all channels favorited by the authenticated user.
+  /// No input parameters.
   Future<List<MisskeyChannel>> myFavorites() async {
     final res = await _http.send<List<dynamic>>(
       '/channels/my-favorites',
@@ -106,10 +108,10 @@ class ChannelsApi {
         .toList();
   }
 
-  /// 指定チャンネルの詳細情報を取得
+  /// Retrieves the details of a channel.
   ///
-  /// [channelId] で対象チャンネルを指定する。
-  /// チャンネルが存在しない場合はエラーになる。
+  /// Specify the target channel with [channelId].
+  /// Throws an error if the channel does not exist.
   Future<MisskeyChannel> show({required String channelId}) async {
     final res = await _http.send<Map<String, dynamic>>(
       '/channels/show',
@@ -122,12 +124,12 @@ class ChannelsApi {
     return MisskeyChannel.fromJson(res);
   }
 
-  /// 指定チャンネルのタイムラインを取得
+  /// Retrieves the timeline of a channel.
   ///
-  /// [channelId] で対象チャンネルを指定する。
-  /// [sinceId] / [untilId] はIDによるページング、
-  /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
-  /// [allowPartial] を`true`にすると部分的な結果を許容する。
+  /// Specify the target channel with [channelId].
+  /// [sinceId] / [untilId] provide pagination by ID.
+  /// [sinceDate] / [untilDate] provide pagination by Unix timestamp (ms).
+  /// Set [allowPartial] to `true` to allow partial results.
   Future<List<MisskeyNote>> timeline({
     required String channelId,
     int? limit,
@@ -160,10 +162,10 @@ class ChannelsApi {
         .toList();
   }
 
-  /// 注目（フィーチャー）チャンネル一覧を取得
+  /// Retrieves the list of featured channels.
   ///
-  /// スキーマに入力パラメータはない。
-  /// 最近投稿があったチャンネルを最大10件返す。
+  /// No input parameters.
+  /// Returns up to 10 channels with recent posts.
   Future<List<MisskeyChannel>> featured() async {
     final res = await _http.send<List<dynamic>>(
       '/channels/featured',
@@ -179,10 +181,10 @@ class ChannelsApi {
         .toList();
   }
 
-  /// フォロー中のチャンネル一覧を取得
+  /// Retrieves the list of followed channels.
   ///
-  /// [sinceId] / [untilId] はIDによるページング、
-  /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
+  /// [sinceId] / [untilId] provide pagination by ID.
+  /// [sinceDate] / [untilDate] provide pagination by Unix timestamp (ms).
   Future<List<MisskeyChannel>> followed({
     int? limit,
     String? sinceId,
@@ -208,10 +210,10 @@ class ChannelsApi {
         .toList();
   }
 
-  /// 自分が所有するチャンネル一覧を取得
+  /// Retrieves the list of owned channels.
   ///
-  /// [sinceId] / [untilId] はIDによるページング、
-  /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
+  /// [sinceId] / [untilId] provide pagination by ID.
+  /// [sinceDate] / [untilDate] provide pagination by Unix timestamp (ms).
   Future<List<MisskeyChannel>> owned({
     int? limit,
     String? sinceId,
@@ -237,13 +239,13 @@ class ChannelsApi {
         .toList();
   }
 
-  /// キーワードでチャンネルを検索
+  /// Searches channels by keyword.
   ///
-  /// [query] に検索語を指定する（必須）。
-  /// [type] で検索対象を`'nameAndDescription'`（デフォルト）か
-  /// `'nameOnly'`のいずれかに指定できる。
-  /// [sinceId] / [untilId] はIDによるページング、
-  /// [sinceDate] / [untilDate] はUnixタイムスタンプ（ms）によるページング。
+  /// Specify the search term with [query] (required).
+  /// [type] sets the search target to `'nameAndDescription'` (default) or
+  /// `'nameOnly'`.
+  /// [sinceId] / [untilId] provide pagination by ID.
+  /// [sinceDate] / [untilDate] provide pagination by Unix timestamp (ms).
   Future<List<MisskeyChannel>> search({
     required String query,
     int? limit,
@@ -276,33 +278,33 @@ class ChannelsApi {
         .toList();
   }
 
-  /// チャンネルをフォロー
+  /// Follows a channel.
   ///
-  /// [channelId] で対象チャンネルを指定
+  /// Specify the target channel with [channelId].
   Future<void> follow({required String channelId}) => _http.send<Object?>(
         '/channels/follow',
         body: <String, dynamic>{'channelId': channelId},
       );
 
-  /// チャンネルのフォローを解除
+  /// Unfollows a channel.
   ///
-  /// [channelId] で対象チャンネルを指定
+  /// Specify the target channel with [channelId].
   Future<void> unfollow({required String channelId}) => _http.send<Object?>(
         '/channels/unfollow',
         body: <String, dynamic>{'channelId': channelId},
       );
 
-  /// チャンネルをお気に入り登録
+  /// Favorites a channel.
   ///
-  /// [channelId] で対象チャンネルを指定
+  /// Specify the target channel with [channelId].
   Future<void> favorite({required String channelId}) => _http.send<Object?>(
         '/channels/favorite',
         body: <String, dynamic>{'channelId': channelId},
       );
 
-  /// チャンネルのお気に入りを解除
+  /// Unfavorites a channel.
   ///
-  /// [channelId] で対象チャンネルを指定
+  /// Specify the target channel with [channelId].
   Future<void> unfavorite({required String channelId}) => _http.send<Object?>(
         '/channels/unfavorite',
         body: <String, dynamic>{'channelId': channelId},

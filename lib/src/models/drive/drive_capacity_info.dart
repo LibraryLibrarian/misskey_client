@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'drive_capacity_info.g.dart';
 
-/// ユーザーのドライブ容量情報
+/// Drive storage capacity information for a user.
 @JsonSerializable()
 class DriveCapacityInfo {
   const DriveCapacityInfo({
@@ -15,19 +15,19 @@ class DriveCapacityInfo {
 
   Map<String, dynamic> toJson() => _$DriveCapacityInfoToJson(this);
 
-  /// ユーザーに割り当てられた最大ストレージ容量（バイト）
+  /// The maximum storage capacity allocated to the user, in bytes.
   final int capacity;
 
-  /// 現在のドライブ使用量（バイト）
+  /// The current drive usage, in bytes.
   final int usage;
 
-  /// 利用可能な容量（バイト）
+  /// The available capacity, in bytes.
   int get availableCapacity => capacity - usage;
 
-  /// 使用率（0.0〜1.0）
+  /// The usage ratio (0.0 to 1.0).
   double get usageRatio => capacity > 0 ? usage / capacity : 0.0;
 
-  /// 使用率（パーセンテージ、0〜100）
+  /// The usage as a percentage (0 to 100).
   double get usagePercentage => usageRatio * 100;
 
   /// バイト数を可読形式にフォーマット
@@ -44,7 +44,7 @@ class DriveCapacityInfo {
     return '${size.toStringAsFixed(2)} ${suffixes[suffixIndex]}';
   }
 
-  /// 容量情報の整形済み文字列表現
+  /// A formatted string representation of the capacity information.
   String get formatted =>
       'Usage: ${_formatBytes(usage)} / ${_formatBytes(capacity)} '
       '(${usagePercentage.toStringAsFixed(1)}%)';

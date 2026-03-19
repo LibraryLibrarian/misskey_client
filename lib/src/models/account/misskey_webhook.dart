@@ -4,7 +4,7 @@ import '../json_converters.dart';
 
 part 'misskey_webhook.g.dart';
 
-/// ユーザーWebhook
+/// A user-defined webhook.
 @JsonSerializable()
 class MisskeyWebhook {
   const MisskeyWebhook({
@@ -24,34 +24,34 @@ class MisskeyWebhook {
 
   Map<String, dynamic> toJson() => _$MisskeyWebhookToJson(this);
 
-  /// Webhook ID
+  /// The webhook ID.
   final String id;
 
-  /// 所有者のユーザーID
+  /// The user ID of the webhook owner.
   final String userId;
 
-  /// Webhook名
+  /// The webhook name.
   final String name;
 
-  /// 購読するイベントタイプ
+  /// The event types to subscribe to.
   ///
-  /// 有効な値: `mention`, `unfollow`, `follow`, `followed`,
-  /// `note`, `reply`, `renote`, `reaction`
+  /// Valid values: `mention`, `unfollow`, `follow`, `followed`,
+  /// `note`, `reply`, `renote`, `reaction`.
   final List<String> on;
 
-  /// 送信先URL
+  /// The destination URL.
   final String url;
 
-  /// シークレット
+  /// The secret used for request signing.
   final String secret;
 
-  /// 有効/無効
+  /// Whether the webhook is active.
   final bool active;
 
-  /// 最終送信日時
+  /// The date and time of the last delivery.
   @SafeDateTimeConverter()
   final DateTime? latestSentAt;
 
-  /// 最終送信時のHTTPステータスコード
+  /// The HTTP status code from the last delivery.
   final int? latestStatus;
 }

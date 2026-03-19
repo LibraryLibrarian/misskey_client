@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'misskey_federation_instance.g.dart';
 
-/// 連合インスタンス情報（`/api/federation/instances` 等のレスポンス）
+/// A federated instance (response from `/api/federation/instances`, etc.).
 @JsonSerializable()
 class MisskeyFederationInstance {
   const MisskeyFederationInstance({
@@ -36,71 +36,72 @@ class MisskeyFederationInstance {
 
   Map<String, dynamic> toJson() => _$MisskeyFederationInstanceToJson(this);
 
+  /// The instance ID.
   final String id;
 
-  /// 初回取得日時
+  /// The date and time when this instance was first retrieved.
   final DateTime firstRetrievedAt;
 
-  /// ホスト名
+  /// The hostname of the instance.
   final String host;
 
-  /// ユーザー数
+  /// The number of users on the instance.
   final int? usersCount;
 
-  /// ノート数
+  /// The number of notes on the instance.
   final int? notesCount;
 
-  /// フォロー中の数
+  /// The number of users being followed from this instance.
   final int? followingCount;
 
-  /// フォロワー数
+  /// The number of followers from this instance.
   final int? followersCount;
 
-  /// 応答なし状態か
+  /// Whether the instance is not responding.
   final bool? isNotResponding;
 
-  /// 停止中か
+  /// Whether the instance is suspended.
   final bool? isSuspended;
 
-  /// ブロック中か
+  /// Whether the instance is blocked.
   final bool? isBlocked;
 
-  /// サイレンス中か
+  /// Whether the instance is silenced.
   final bool? isSilenced;
 
-  /// ソフトウェア名（例: `misskey`, `mastodon`）
+  /// The software name (e.g., `misskey`, `mastodon`).
   final String? softwareName;
 
-  /// ソフトウェアバージョン
+  /// The software version.
   final String? softwareVersion;
 
-  /// ユーザー登録が開放されているか
+  /// Whether user registration is open.
   final bool? openRegistrations;
 
-  /// インスタンス名
+  /// The instance name.
   final String? name;
 
-  /// インスタンスの説明
+  /// The instance description.
   final String? description;
 
-  /// 管理者名
+  /// The maintainer name.
   final String? maintainerName;
 
-  /// 管理者メールアドレス
+  /// The maintainer email address.
   final String? maintainerEmail;
 
-  /// アイコンURL
+  /// The icon URL.
   final String? iconUrl;
 
-  /// ファビコンURL
+  /// The favicon URL.
   final String? faviconUrl;
 
-  /// テーマカラー
+  /// The theme color.
   final String? themeColor;
 
-  /// 情報最終更新日時
+  /// The date and time when instance information was last updated.
   final DateTime? infoUpdatedAt;
 
-  /// 最終リクエスト受信日時
+  /// The date and time of the last received request.
   final DateTime? latestRequestReceivedAt;
 }

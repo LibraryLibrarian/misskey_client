@@ -3,22 +3,21 @@ import '../../client/request_options.dart';
 import '../../models/account/misskey_registry_detail.dart';
 import '../../models/account/misskey_registry_scope.dart';
 
-/// レジストリ関連API（`/api/i/registry/*`）
+/// Provides registry APIs (`/api/i/registry/*`).
 ///
-/// クライアント設定等のキー・バリューストアを操作する。
-/// 全エンドポイントで認証必須。
+/// Operates a key-value store for client settings and similar data.
+/// All endpoints require authentication.
 class RegistryApi {
   const RegistryApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// 特定キーの値を取得する（`/api/i/registry/get`）
+  /// Retrieves the value of a specific key (`/api/i/registry/get`).
   ///
-  /// - [key]: レジストリキー名（必須）
-  /// - [scope]: スコープ配列（デフォルト空配列）
-  /// - [domain]: ドメイン（省略時はアクセストークンに紐づく）
+  /// [key] specifies the registry key name. [scope] is the scope array and
+  /// defaults to empty. [domain] defaults to the access token's domain.
   ///
-  /// キーが存在しない場合はサーバーが `NO_SUCH_KEY` エラーを返す。
+  /// Throws a `NO_SUCH_KEY` error from the server if the key does not exist.
   Future<dynamic> get({
     required String key,
     List<String> scope = const <String>[],
@@ -34,12 +33,13 @@ class RegistryApi {
         options: const RequestOptions(idempotent: true),
       );
 
-  /// スコープ内の全キー・値を取得する（`/api/i/registry/get-all`）
+  /// Retrieves all key-value pairs within a scope
+  /// (`/api/i/registry/get-all`).
   ///
-  /// - [scope]: スコープ配列（デフォルト空配列）
-  /// - [domain]: ドメイン（省略時はアクセストークンに紐づく）
+  /// [scope] is the scope array and defaults to empty. [domain] defaults to
+  /// the access token's domain.
   ///
-  /// キー名をキー、レジストリ値をバリューとする Map を返す。
+  /// Returns a Map with key names as keys and registry values as values.
   Future<Map<String, dynamic>> getAll({
     List<String> scope = const <String>[],
     String? domain,
@@ -55,15 +55,15 @@ class RegistryApi {
     return res;
   }
 
-  /// 特定キーの詳細情報を取得する（`/api/i/registry/get-detail`）
+  /// Retrieves detailed information for a specific key
+  /// (`/api/i/registry/get-detail`).
   ///
-  /// 値に加えて最終更新日時も返す。
+  /// Returns the value along with the last updated timestamp.
   ///
-  /// - [key]: レジストリキー名（必須）
-  /// - [scope]: スコープ配列（デフォルト空配列）
-  /// - [domain]: ドメイン（省略時はアクセストークンに紐づく）
+  /// [key] specifies the registry key name. [scope] is the scope array and
+  /// defaults to empty. [domain] defaults to the access token's domain.
   ///
-  /// キーが存在しない場合はサーバーが `NO_SUCH_KEY` エラーを返す。
+  /// Throws a `NO_SUCH_KEY` error from the server if the key does not exist.
   Future<MisskeyRegistryDetail> getDetail({
     required String key,
     List<String> scope = const <String>[],
@@ -81,10 +81,11 @@ class RegistryApi {
     return MisskeyRegistryDetail.fromJson(res);
   }
 
-  /// スコープ内のキー名一覧を取得する（`/api/i/registry/keys`）
+  /// Retrieves the list of key names within a scope
+  /// (`/api/i/registry/keys`).
   ///
-  /// - [scope]: スコープ配列（デフォルト空配列）
-  /// - [domain]: ドメイン（省略時はアクセストークンに紐づく）
+  /// [scope] is the scope array and defaults to empty. [domain] defaults to
+  /// the access token's domain.
   Future<List<String>> keys({
     List<String> scope = const <String>[],
     String? domain,
@@ -100,13 +101,14 @@ class RegistryApi {
     return res.cast<String>();
   }
 
-  /// スコープ内のキー名一覧を型情報付きで取得する（`/api/i/registry/keys-with-type`）
+  /// Retrieves the list of key names with type information
+  /// (`/api/i/registry/keys-with-type`).
   ///
-  /// 返り値の Map はキー名をキー、型名（`'null'`/`'array'`/`'number'`/
-  /// `'string'`/`'boolean'`/`'object'`）をバリューとする。
+  /// Returns a Map with key names as keys and type names (`'null'`/`'array'`/
+  /// `'number'`/`'string'`/`'boolean'`/`'object'`) as values.
   ///
-  /// - [scope]: スコープ配列（デフォルト空配列）
-  /// - [domain]: ドメイン（省略時はアクセストークンに紐づく）
+  /// [scope] is the scope array and defaults to empty. [domain] defaults to
+  /// the access token's domain.
   Future<Map<String, String>> keysWithType({
     List<String> scope = const <String>[],
     String? domain,
@@ -122,14 +124,14 @@ class RegistryApi {
     return res.map((k, v) => MapEntry(k, v.toString()));
   }
 
-  /// キー・値を設定する（`/api/i/registry/set`）
+  /// Sets a key-value pair (`/api/i/registry/set`).
   ///
-  /// キーが存在しない場合は新規作成、存在する場合は上書きする。
+  /// Creates a new entry if the key does not exist, or overwrites it if it
+  /// does.
   ///
-  /// - [key]: レジストリキー名（必須、1文字以上）
-  /// - [value]: 格納する値（必須、任意の型）
-  /// - [scope]: スコープ配列（デフォルト空配列）
-  /// - [domain]: ドメイン（省略時はアクセストークンに紐づく）
+  /// [key] is the registry key name (at least 1 character) and [value] is the
+  /// value to store (any type). [scope] is the scope array and defaults to
+  /// empty. [domain] defaults to the access token's domain.
   Future<void> set({
     required String key,
     required dynamic value,
@@ -146,13 +148,12 @@ class RegistryApi {
         },
       );
 
-  /// キーを削除する（`/api/i/registry/remove`）
+  /// Removes a key (`/api/i/registry/remove`).
   ///
-  /// - [key]: 削除対象のレジストリキー名（必須）
-  /// - [scope]: スコープ配列（デフォルト空配列）
-  /// - [domain]: ドメイン（省略時はアクセストークンに紐づく）
+  /// [key] is the registry key name to remove. [scope] is the scope array and
+  /// defaults to empty. [domain] defaults to the access token's domain.
   ///
-  /// キーが存在しない場合はサーバーが `NO_SUCH_KEY` エラーを返す。
+  /// Throws a `NO_SUCH_KEY` error from the server if the key does not exist.
   Future<void> remove({
     required String key,
     List<String> scope = const <String>[],
@@ -167,10 +168,11 @@ class RegistryApi {
         },
       );
 
-  /// 全スコープ・ドメイン一覧を取得する（`/api/i/registry/scopes-with-domain`）
+  /// Retrieves all scopes and domains
+  /// (`/api/i/registry/scopes-with-domain`).
   ///
-  /// パラメータなし。ユーザーが保持する全レジストリのスコープと
-  /// ドメインの組み合わせを返す。
+  /// Takes no parameters. Returns all scope-domain combinations held by the
+  /// user's registry.
   Future<List<MisskeyRegistryScope>> scopesWithDomain() async {
     final res = await http.send<List<dynamic>>(
       '/i/registry/scopes-with-domain',

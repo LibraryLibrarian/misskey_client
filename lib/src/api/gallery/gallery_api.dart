@@ -3,22 +3,21 @@ import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/gallery/misskey_gallery_post.dart';
 
-/// ギャラリー関連API（`/api/gallery/*`）
+/// Provides gallery operations (`/api/gallery/*`).
 ///
-/// ギャラリー投稿の閲覧・作成・更新・削除・いいね操作を提供する。
-/// 自分のギャラリー投稿一覧は `AccountApi.galleryPosts`、
-/// 他ユーザーのギャラリーは `UsersApi.galleryPosts` を使用する。
+/// Handles viewing, creating, updating, deleting, and liking gallery posts.
+/// Use `AccountApi.galleryPosts` for the authenticated user's posts,
+/// or `UsersApi.galleryPosts` for another user's posts.
 class GalleryApi {
   const GalleryApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// フィーチャードギャラリー投稿一覧を取得する（`/api/gallery/featured`）
+  /// Retrieves featured gallery posts (`/api/gallery/featured`).
   ///
-  /// ランキングキャッシュ（30分TTL）に基づく注目投稿を返す。認証不要。
-  ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [untilId]: IDによるページング
+  /// Returns popular posts based on a ranking cache (30-minute TTL).
+  /// No authentication required. Use [limit] to cap the number of results
+  /// (1-100, default 10) and [untilId] to paginate by ID.
   Future<List<MisskeyGalleryPost>> featured({
     int? limit,
     String? untilId,
@@ -41,9 +40,10 @@ class GalleryApi {
         .toList();
   }
 
-  /// 人気ギャラリー投稿一覧を取得する（`/api/gallery/popular`）
+  /// Retrieves popular gallery posts (`/api/gallery/popular`).
   ///
-  /// いいね数が1以上の投稿をいいね数降順で最大10件返す。認証不要。
+  /// Returns up to 10 posts with at least one like, sorted by like count
+  /// in descending order. No authentication required.
   Future<List<MisskeyGalleryPost>> popular() async {
     final res = await http.send<List<dynamic>>(
       '/gallery/popular',
@@ -59,13 +59,12 @@ class GalleryApi {
         .toList();
   }
 
-  /// ギャラリー投稿一覧（タイムライン）を取得する（`/api/gallery/posts`）
+  /// Retrieves gallery posts as a timeline (`/api/gallery/posts`).
   ///
-  /// 全ユーザーの投稿を新着順で返す。認証不要。
-  ///
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// Returns all users' posts in reverse chronological order.
+  /// No authentication required. Use [limit] to cap the number of results
+  /// (1-100, default 10). Paginate by ID with [sinceId] and [untilId], or by
+  /// Unix timestamp (ms) with [sinceDate] and [untilDate].
   Future<List<MisskeyGalleryPost>> posts({
     int? limit,
     String? sinceId,
@@ -94,12 +93,12 @@ class GalleryApi {
         .toList();
   }
 
-  /// ギャラリー投稿の詳細を取得する（`/api/gallery/posts/show`）
+  /// Retrieves the details of a gallery post (`/api/gallery/posts/show`).
   ///
-  /// 認証不要。
+  /// No authentication required.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_POST`: 投稿が存在しない
+  /// Notable errors:
+  /// - `NO_SUCH_POST`: The post does not exist.
   Future<MisskeyGalleryPost> postsShow({required String postId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/gallery/posts/show',
@@ -112,14 +111,12 @@ class GalleryApi {
     return MisskeyGalleryPost.fromJson(res);
   }
 
-  /// ギャラリー投稿を作成する（`/api/gallery/posts/create`）
+  /// Creates a gallery post (`/api/gallery/posts/create`).
   ///
-  /// 認証必須。レート制限: 20回/時。
-  ///
-  /// - [title]: タイトル（必須）
-  /// - [fileIds]: 添付ファイルIDリスト（必須、1〜32件、重複不可）
-  /// - [description]: 説明文
-  /// - [isSensitive]: センシティブコンテンツか（デフォルト: false）
+  /// Authentication required. Rate limit: 20 requests/hour.
+  /// [title] and [fileIds] are required; [fileIds] accepts 1-32 unique IDs.
+  /// Optionally provide [description] and set [isSensitive] to `true` if the
+  /// content is sensitive (default: false).
   Future<MisskeyGalleryPost> postsCreate({
     required String title,
     required List<String> fileIds,
@@ -139,15 +136,11 @@ class GalleryApi {
     return MisskeyGalleryPost.fromJson(res);
   }
 
-  /// ギャラリー投稿を更新する（`/api/gallery/posts/update`）
+  /// Updates a gallery post (`/api/gallery/posts/update`).
   ///
-  /// 認証必須。レート制限: 300回/時。
-  ///
-  /// - [postId]: 更新対象の投稿ID（必須）
-  /// - [title]: タイトル
-  /// - [fileIds]: 添付ファイルIDリスト（1〜32件、重複不可）
-  /// - [description]: 説明文
-  /// - [isSensitive]: センシティブコンテンツか
+  /// Authentication required. Rate limit: 300 requests/hour.
+  /// [postId] is required. Optionally provide [title], [fileIds] (1-32 unique
+  /// IDs), [description], and [isSensitive] to update those fields.
   Future<MisskeyGalleryPost> postsUpdate({
     required String postId,
     String? title,
@@ -169,38 +162,38 @@ class GalleryApi {
     return MisskeyGalleryPost.fromJson(res);
   }
 
-  /// ギャラリー投稿を削除する（`/api/gallery/posts/delete`）
+  /// Deletes a gallery post (`/api/gallery/posts/delete`).
   ///
-  /// 認証必須。本人またはモデレーターのみ削除可能。
+  /// Authentication required. Only the owner or a moderator can delete.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_POST`: 投稿が存在しない
-  /// - `ACCESS_DENIED`: 権限がない
+  /// Notable errors:
+  /// - `NO_SUCH_POST`: The post does not exist.
+  /// - `ACCESS_DENIED`: Insufficient permissions.
   Future<void> postsDelete({required String postId}) => http.send<Object?>(
         '/gallery/posts/delete',
         body: <String, dynamic>{'postId': postId},
       );
 
-  /// ギャラリー投稿にいいねする（`/api/gallery/posts/like`）
+  /// Likes a gallery post (`/api/gallery/posts/like`).
   ///
-  /// 認証必須。
+  /// Authentication required.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_POST`: 投稿が存在しない
-  /// - `YOUR_POST`: 自分の投稿にはいいねできない
-  /// - `ALREADY_LIKED`: 既にいいね済み
+  /// Notable errors:
+  /// - `NO_SUCH_POST`: The post does not exist.
+  /// - `YOUR_POST`: Cannot like your own post.
+  /// - `ALREADY_LIKED`: Already liked.
   Future<void> postsLike({required String postId}) => http.send<Object?>(
         '/gallery/posts/like',
         body: <String, dynamic>{'postId': postId},
       );
 
-  /// ギャラリー投稿のいいねを解除する（`/api/gallery/posts/unlike`）
+  /// Removes a like from a gallery post (`/api/gallery/posts/unlike`).
   ///
-  /// 認証必須。
+  /// Authentication required.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_POST`: 投稿が存在しない
-  /// - `NOT_LIKED`: いいねしていない
+  /// Notable errors:
+  /// - `NO_SUCH_POST`: The post does not exist.
+  /// - `NOT_LIKED`: Not liked.
   Future<void> postsUnlike({required String postId}) => http.send<Object?>(
         '/gallery/posts/unlike',
         body: <String, dynamic>{'postId': postId},

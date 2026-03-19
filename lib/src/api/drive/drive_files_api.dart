@@ -6,26 +6,25 @@ import '../../models/chat/misskey_chat_message.dart';
 import '../../models/misskey_drive_file.dart';
 import '../../models/misskey_note.dart';
 
-/// Driveファイル関連API（`/api/drive/files/*`）
+/// Provides Drive file operations (`/api/drive/files/*`).
 ///
-/// `/api/drive/files` 系エンドポイントを [MisskeyHttp] に委譲して呼び出す。
-/// 認証はすべて [MisskeyHttp] のインターセプタに委ねる。
+/// Delegates `/api/drive/files` endpoint calls to [MisskeyHttp].
+/// Authentication is handled by [MisskeyHttp]'s interceptor.
 class DriveFilesApi {
-  /// コンストラクタ
+  /// Creates a [DriveFilesApi] instance.
   const DriveFilesApi({required this.http});
 
-  /// HTTPクライアント
+  /// The HTTP client used for requests.
   final MisskeyHttp http;
 
-  /// ドライブファイルの一覧を取得する（`/api/drive/files`）
+  /// Retrieves a list of Drive files (`/api/drive/files`).
   ///
-  /// - [limit]: 取得件数（1〜100）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
-  /// - [folderId]: フォルダーIDで絞り込む（`null`でルート）
-  /// - [type]: MIMEタイプパターンで絞り込む（例: `"image/*"`）
-  /// - [sort]: ソート順（`+createdAt` / `-createdAt` / `+name` / `-name` /
-  ///   `+size` / `-size`）
+  /// [limit] caps the number of results (1-100). Use [sinceId] and [untilId]
+  /// to paginate by ID, or [sinceDate] and [untilDate] to paginate by Unix
+  /// timestamp in milliseconds. Pass [folderId] to filter by folder (`null`
+  /// for root) and [type] to filter by MIME type pattern (e.g., `"image/*"`).
+  /// [sort] controls the sort order and accepts `+createdAt`, `-createdAt`,
+  /// `+name`, `-name`, `+size`, or `-size`.
   Future<List<MisskeyDriveFile>> list({
     int? limit,
     String? sinceId,
@@ -57,8 +56,8 @@ class DriveFilesApi {
         .toList();
   }
 
-  /// ファイルIDを指定してドライブファイルの詳細を取得する
-  /// （`/api/drive/files/show`）
+  /// Retrieves Drive file details by file ID
+  /// (`/api/drive/files/show`).
   Future<MisskeyDriveFile> showByFileId(String fileId) async {
     final res = await http.send<Map<String, dynamic>>(
       '/drive/files/show',
@@ -68,8 +67,8 @@ class DriveFilesApi {
     return MisskeyDriveFile.fromJson(res);
   }
 
-  /// URLを指定してドライブファイルの詳細を取得する
-  /// （`/api/drive/files/show`）
+  /// Retrieves Drive file details by URL
+  /// (`/api/drive/files/show`).
   Future<MisskeyDriveFile> showByUrl(String url) async {
     final res = await http.send<Map<String, dynamic>>(
       '/drive/files/show',
@@ -79,19 +78,17 @@ class DriveFilesApi {
     return MisskeyDriveFile.fromJson(res);
   }
 
-  /// ファイルをアップロードする（`/api/drive/files/create`）
+  /// Uploads a file to Drive (`/api/drive/files/create`).
   ///
-  /// ファイル本体は [bytes] と [filename] で指定する。
-  /// 認証トークンは [MisskeyHttp] のインターセプタが `FormData` に注入する。
+  /// The file content is specified via [bytes] and [filename]. The auth token
+  /// is injected into the `FormData` by [MisskeyHttp]'s interceptor.
   ///
-  /// - [bytes]: アップロードするバイト列
-  /// - [filename]: ファイル名
-  /// - [name]: サーバー側で保存するファイル名（省略時は[filename]が使用される）
-  /// - [folderId]: 保存先フォルダーID
-  /// - [comment]: コメント（`DB_MAX_IMAGE_COMMENT_LENGTH` 以内）
-  /// - [isSensitive]: センシティブコンテンツとしてマークするか
-  /// - [force]: 同名ファイルが存在しても強制アップロードするか
-  /// - [onSendProgress]: アップロード進捗コールバック
+  /// [name] sets the name to store on the server and defaults to [filename].
+  /// [folderId] specifies the destination folder. [comment] is an optional
+  /// comment (subject to `DB_MAX_IMAGE_COMMENT_LENGTH`). Set [isSensitive] to
+  /// mark the file as sensitive content. Set [force] to upload even if a file
+  /// with the same name already exists. [onSendProgress] is an optional
+  /// callback for upload progress.
   Future<MisskeyDriveFile> create({
     required List<int> bytes,
     required String filename,
@@ -124,15 +121,13 @@ class DriveFilesApi {
     return MisskeyDriveFile.fromJson(res);
   }
 
-  /// ドライブファイルのメタ情報を更新する（`/api/drive/files/update`）
+  /// Updates the metadata of a Drive file (`/api/drive/files/update`).
   ///
-  /// - [fileId]: 更新対象のファイルID（必須）
-  /// - [name]: 新しいファイル名
-  /// - [folderId]: 移動先フォルダーID
-  /// - [moveToRoot]: `true` にするとルートフォルダへ移動する
-  ///   （`folderId: null` を明示送信する）
-  /// - [comment]: コメント（最大512文字）
-  /// - [isSensitive]: センシティブコンテンツとしてマークするか
+  /// [fileId] identifies the file to update. [name] sets a new file name.
+  /// [folderId] moves the file to the specified folder. Set [moveToRoot] to
+  /// `true` to move the file to the root folder (sends `folderId: null`
+  /// explicitly). [comment] is an optional comment (up to 512 characters).
+  /// Set [isSensitive] to mark the file as sensitive content.
   Future<MisskeyDriveFile> update({
     required String fileId,
     String? name,
@@ -158,18 +153,18 @@ class DriveFilesApi {
     return MisskeyDriveFile.fromJson(res);
   }
 
-  /// ドライブファイルを削除する（`/api/drive/files/delete`）
+  /// Deletes a Drive file (`/api/drive/files/delete`).
   ///
-  /// - [fileId]: 削除対象のファイルID（必須）
+  /// [fileId] is the ID of the file to delete.
   Future<void> delete({required String fileId}) => http.send<Object?>(
         '/drive/files/delete',
         body: <String, dynamic>{'fileId': fileId},
       );
 
-  /// ファイル名でドライブ内を検索する（`/api/drive/files/find`）
+  /// Searches the Drive by file name (`/api/drive/files/find`).
   ///
-  /// - [name]: 検索するファイル名（必須）
-  /// - [folderId]: 検索対象フォルダーID（`null`でルート）
+  /// [name] is the file name to search for. Pass [folderId] to restrict the
+  /// search to a specific folder (`null` searches the root).
   Future<List<MisskeyDriveFile>> find({
     required String name,
     String? folderId,
@@ -189,28 +184,29 @@ class DriveFilesApi {
         .toList();
   }
 
-  /// 指定したMD5ハッシュを持つファイルがドライブに存在するか確認する
-  /// （`/api/drive/files/check-existence`）
+  /// Checks whether a file with the specified MD5 hash exists in the Drive
+  /// (`/api/drive/files/check-existence`).
   ///
-  /// - [md5]: 確認対象ファイルのMD5ハッシュ（必須）
+  /// [md5] is the MD5 hash to check.
   Future<bool> checkExistence({required String md5}) => http.send<bool>(
         '/drive/files/check-existence',
         body: <String, dynamic>{'md5': md5},
         options: const RequestOptions(idempotent: true),
       );
 
-  /// URLを指定してドライブにファイルをアップロードする
-  /// （`/api/drive/files/upload-from-url`）
+  /// Uploads a file to Drive from a URL
+  /// (`/api/drive/files/upload-from-url`).
   ///
-  /// このエンドポイントはリクエスト完了後、非同期でアップロードを実行し
-  /// ストリームイベント（`urlUploadFinished`）で結果を通知する。
+  /// This endpoint initiates an asynchronous upload after the request
+  /// completes, and notifies the result via a stream event
+  /// (`urlUploadFinished`).
   ///
-  /// - [url]: ダウンロード元URL（必須）
-  /// - [folderId]: 保存先フォルダーID
-  /// - [isSensitive]: センシティブコンテンツとしてマークするか
-  /// - [comment]: コメント（最大512文字）
-  /// - [marker]: 追跡用マーカー文字列（ストリームイベントに付与される）
-  /// - [force]: 同名ファイルが存在しても強制アップロードするか
+  /// [url] is the source URL to download from. [folderId] specifies the
+  /// destination folder. Set [isSensitive] to mark the file as sensitive
+  /// content. [comment] is an optional comment (up to 512 characters).
+  /// [marker] is an optional tracking string that is included in the stream
+  /// event. Set [force] to upload even if a file with the same name already
+  /// exists.
   Future<void> uploadFromUrl({
     required String url,
     String? folderId,
@@ -231,13 +227,13 @@ class DriveFilesApi {
         },
       );
 
-  /// MD5ハッシュでドライブファイルを検索する
-  /// （`/api/drive/files/find-by-hash`）
+  /// Searches Drive files by MD5 hash
+  /// (`/api/drive/files/find-by-hash`).
   ///
-  /// [checkExistence] とは異なり、ファイル情報のリストを返す。
-  /// 自分が所有するファイルのみが検索対象。
+  /// Unlike [checkExistence], this returns a list of file details.
+  /// Only files owned by the authenticated user are searched.
   ///
-  /// - [md5]: 検索対象ファイルのMD5ハッシュ（必須）
+  /// [md5] is the MD5 hash to search for.
   Future<List<MisskeyDriveFile>> findByHash({required String md5}) async {
     final res = await http.send<List<dynamic>>(
       '/drive/files/find-by-hash',
@@ -250,11 +246,12 @@ class DriveFilesApi {
         .toList();
   }
 
-  /// 複数ファイルを一括でフォルダ移動する
-  /// （`/api/drive/files/move-bulk`）
+  /// Moves multiple files to a folder in bulk
+  /// (`/api/drive/files/move-bulk`).
   ///
-  /// - [fileIds]: 移動対象のファイルIDリスト（必須、1〜100件、重複不可）
-  /// - [folderId]: 移動先フォルダーID（`null`でルートフォルダへ移動）
+  /// [fileIds] is the list of file IDs to move (1-100 entries, no duplicates).
+  /// [folderId] is the destination folder ID; pass `null` to move to the
+  /// root.
   Future<void> moveBulk({
     required List<String> fileIds,
     String? folderId,
@@ -267,13 +264,13 @@ class DriveFilesApi {
         },
       );
 
-  /// 指定ファイルが添付されているチャットメッセージ一覧を取得する
-  /// （`/api/drive/files/attached-chat-messages`）
+  /// Retrieves chat messages that have the specified file attached
+  /// (`/api/drive/files/attached-chat-messages`).
   ///
-  /// - [fileId]: 対象ファイルID（必須）
-  /// - [limit]: 取得件数（1〜100、デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// [fileId] is the target file ID. [limit] caps the number of results
+  /// (1-100, default 10). Use [sinceId] and [untilId] to paginate by ID, or
+  /// [sinceDate] and [untilDate] to paginate by Unix timestamp in
+  /// milliseconds.
   Future<List<MisskeyChatMessage>> attachedChatMessages({
     required String fileId,
     int? limit,
@@ -301,13 +298,12 @@ class DriveFilesApi {
         .toList();
   }
 
-  /// 指定ファイルが添付されているノート一覧を取得する
-  /// （`/api/drive/files/attached-notes`）
+  /// Retrieves notes that have the specified file attached
+  /// (`/api/drive/files/attached-notes`).
   ///
-  /// - [fileId]: 対象ファイルID（必須）
-  /// - [limit]: 取得件数（1〜100）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// [fileId] is the target file ID. [limit] caps the number of results
+  /// (1-100). Use [sinceId] and [untilId] to paginate by ID, or [sinceDate]
+  /// and [untilDate] to paginate by Unix timestamp in milliseconds.
   Future<List<MisskeyNote>> attachedNotes({
     required String fileId,
     int? limit,

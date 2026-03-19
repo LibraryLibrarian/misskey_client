@@ -3,20 +3,21 @@ import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/drive/drive_capacity_info.dart';
 
-/// Driveの統計情報関連API
+/// Provides Drive statistics operations.
 ///
-/// `/api/drive`、`/api/charts/drive`、`/api/charts/user/drive`
-/// エンドポイントを [MisskeyHttp] に委譲して呼び出す
+/// Delegates to `/api/drive`, `/api/charts/drive`, and
+/// `/api/charts/user/drive` endpoints via [MisskeyHttp].
 class DriveStatsApi {
-  /// コンストラクタ
+  /// Creates a [DriveStatsApi] instance.
   const DriveStatsApi({required this.http});
 
-  /// HTTPクライアント
+  /// The HTTP client used for requests.
   final MisskeyHttp http;
 
-  /// ユーザーのドライブ容量情報を取得する（`/api/drive`）
+  /// Retrieves the Drive capacity information for the authenticated user
+  /// (`/api/drive`).
   ///
-  /// 現在認証中のユーザーのドライブ容量（上限と使用量）を返す。
+  /// Returns the Drive capacity limit and current usage.
   Future<DriveCapacityInfo> getCapacity() async {
     final res = await http.send<Map<String, dynamic>>(
       '/drive',
@@ -26,14 +27,13 @@ class DriveStatsApi {
     return DriveCapacityInfo.fromJson(res);
   }
 
-  /// インスタンス全体のドライブ統計情報を取得する
-  /// （`/api/charts/drive`）
+  /// Retrieves the instance-wide Drive statistics chart
+  /// (`/api/charts/drive`).
   ///
-  /// ローカル・リモートファイルの増減に関する時系列データを返す
-  ///
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Returns time-series data on local/remote file changes. Use [span] to
+  /// set the aggregation period (`'day'` or `'hour'`), [limit] to cap the
+  /// number of data points (1-500, default 30), and [offset] to shift the
+  /// retrieval start position.
   Future<Map<String, dynamic>> getInstanceDriveChart({
     required String span,
     int? limit,
@@ -55,15 +55,13 @@ class DriveStatsApi {
     return res;
   }
 
-  /// 指定ユーザーのドライブ統計情報を取得する
-  /// （`/api/charts/user/drive`）
+  /// Retrieves Drive statistics for a specific user
+  /// (`/api/charts/user/drive`).
   ///
-  /// 指定したユーザーが所有するファイルの統計情報を返す
-  ///
-  /// - [userId]: 対象ユーザーのID
-  /// - [span]: 集計期間（`'day'` または `'hour'`）
-  /// - [limit]: 取得するデータ点数（1〜500、デフォルト30）
-  /// - [offset]: データ取得開始位置のオフセット
+  /// Returns statistics about files owned by the user identified by [userId].
+  /// Use [span] to set the aggregation period (`'day'` or `'hour'`), [limit]
+  /// to cap the number of data points (1-500, default 30), and [offset] to
+  /// shift the retrieval start position.
   Future<Map<String, dynamic>> getUserDriveChart({
     required String userId,
     required String span,

@@ -2,28 +2,25 @@ import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/chat/misskey_chat_message.dart';
 
-/// チャットメッセージ関連API（`/api/chat/messages/*`）
+/// Provides chat message operations (`/api/chat/messages/*`).
 ///
-/// 1対1メッセージおよびルームメッセージの
-/// 送信・削除・リアクション・タイムライン取得を提供する。
-/// 全エンドポイントで認証必須。
+/// Handles sending, deleting, reacting, and retrieving timelines for
+/// both direct (1-on-1) and room messages.
+/// All endpoints require authentication.
 class ChatMessagesApi {
   const ChatMessagesApi({required this.http});
 
   final MisskeyHttp http;
 
-  /// ユーザーにメッセージを送信する（`/api/chat/messages/create-to-user`）
+  /// Sends a message to a user (`/api/chat/messages/create-to-user`).
   ///
-  /// - [toUserId]: 送信先ユーザーID（必須）
-  /// - [text]: メッセージ本文（最大2000文字）
-  /// - [fileId]: 添付ファイルのドライブファイルID
+  /// [toUserId] is the recipient user ID. [text] is the message body (up to
+  /// 2000 characters) and [fileId] is an optional Drive file ID to attach.
+  /// At least one of [text] or [fileId] is required.
   ///
-  /// [text] と [fileId] の少なくとも一方が必要。
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
-  /// - `RECIPIENT_IS_YOURSELF`: 自分自身に送信しようとした
-  /// - `CHAT_REJECTED`: チャット受信設定により拒否された
+  /// Throws `NO_SUCH_USER` if the target user does not exist,
+  /// `RECIPIENT_IS_YOURSELF` if attempting to message yourself, or
+  /// `CHAT_REJECTED` if rejected by the recipient's chat settings.
   Future<MisskeyChatMessage> createToUser({
     required String toUserId,
     String? text,
@@ -40,17 +37,14 @@ class ChatMessagesApi {
     return MisskeyChatMessage.fromJson(res);
   }
 
-  /// ルームにメッセージを送信する（`/api/chat/messages/create-to-room`）
+  /// Sends a message to a room (`/api/chat/messages/create-to-room`).
   ///
-  /// - [toRoomId]: 送信先ルームID（必須）
-  /// - [text]: メッセージ本文（最大2000文字）
-  /// - [fileId]: 添付ファイルのドライブファイルID
+  /// [toRoomId] is the target room ID. [text] is the message body (up to
+  /// 2000 characters) and [fileId] is an optional Drive file ID to attach.
+  /// At least one of [text] or [fileId] is required.
   ///
-  /// [text] と [fileId] の少なくとも一方が必要。
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: 対象ルームが存在しない
-  /// - `NOT_A_MEMBER`: ルームのメンバーでない
+  /// Throws `NO_SUCH_ROOM` if the target room does not exist, or
+  /// `NOT_A_MEMBER` if the user is not a member of the room.
   Future<MisskeyChatMessage> createToRoom({
     required String toRoomId,
     String? text,
@@ -67,23 +61,19 @@ class ChatMessagesApi {
     return MisskeyChatMessage.fromJson(res);
   }
 
-  /// メッセージを削除する（`/api/chat/messages/delete`）
+  /// Deletes a message (`/api/chat/messages/delete`).
   ///
-  /// - [messageId]: 削除対象のメッセージID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_MESSAGE`: メッセージが存在しない
+  /// [messageId] is the ID of the message to delete.
+  /// Throws `NO_SUCH_MESSAGE` if the message does not exist.
   Future<void> delete({required String messageId}) => http.send<Object?>(
         '/chat/messages/delete',
         body: <String, dynamic>{'messageId': messageId},
       );
 
-  /// メッセージの詳細を取得する（`/api/chat/messages/show`）
+  /// Retrieves the details of a message (`/api/chat/messages/show`).
   ///
-  /// - [messageId]: 対象のメッセージID（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_MESSAGE`: メッセージが存在しない
+  /// [messageId] is the target message ID.
+  /// Throws `NO_SUCH_MESSAGE` if the message does not exist.
   Future<MisskeyChatMessage> show({required String messageId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/chat/messages/show',
@@ -93,13 +83,10 @@ class ChatMessagesApi {
     return MisskeyChatMessage.fromJson(res);
   }
 
-  /// メッセージにリアクションする（`/api/chat/messages/react`）
+  /// Adds a reaction to a message (`/api/chat/messages/react`).
   ///
-  /// - [messageId]: 対象メッセージID（必須）
-  /// - [reaction]: リアクション文字列（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_MESSAGE`: メッセージが存在しない
+  /// [messageId] is the target message ID and [reaction] is the reaction
+  /// string to add. Throws `NO_SUCH_MESSAGE` if the message does not exist.
   Future<void> react({
     required String messageId,
     required String reaction,
@@ -112,13 +99,11 @@ class ChatMessagesApi {
         },
       );
 
-  /// メッセージのリアクションを解除する（`/api/chat/messages/unreact`）
+  /// Removes a reaction from a message (`/api/chat/messages/unreact`).
   ///
-  /// - [messageId]: 対象メッセージID（必須）
-  /// - [reaction]: 解除するリアクション文字列（必須）
-  ///
-  /// 主なエラー:
-  /// - `NO_SUCH_MESSAGE`: メッセージが存在しない
+  /// [messageId] is the target message ID and [reaction] is the reaction
+  /// string to remove. Throws `NO_SUCH_MESSAGE` if the message does not
+  /// exist.
   Future<void> unreact({
     required String messageId,
     required String reaction,
@@ -131,12 +116,11 @@ class ChatMessagesApi {
         },
       );
 
-  /// チャットメッセージを検索する（`/api/chat/messages/search`）
+  /// Searches chat messages (`/api/chat/messages/search`).
   ///
-  /// - [query]: 検索文字列（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [userId]: 特定ユーザーとのチャットに絞る
-  /// - [roomId]: 特定ルームのチャットに絞る
+  /// [query] is the search string. [limit] caps the number of results
+  /// (1-100, default 10). Pass [userId] to filter to chats with a specific
+  /// user, or [roomId] to filter to chats in a specific room.
   Future<List<MisskeyChatMessage>> search({
     required String query,
     int? limit,
@@ -160,16 +144,14 @@ class ChatMessagesApi {
         .toList();
   }
 
-  /// ユーザーとの1対1チャットタイムラインを取得する
-  /// （`/api/chat/messages/user-timeline`）
+  /// Retrieves the direct chat timeline with a user
+  /// (`/api/chat/messages/user-timeline`).
   ///
-  /// - [userId]: 対象ユーザーID（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// [userId] is the target user ID. [limit] caps the number of results
+  /// (1-100, default 10). Use [sinceId] and [untilId] to paginate by ID, or
+  /// [sinceDate] and [untilDate] to paginate by Unix timestamp in milliseconds.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_USER`: 対象ユーザーが存在しない
+  /// Throws `NO_SUCH_USER` if the target user does not exist.
   Future<List<MisskeyChatMessage>> userTimeline({
     required String userId,
     int? limit,
@@ -197,16 +179,14 @@ class ChatMessagesApi {
         .toList();
   }
 
-  /// ルームチャットタイムラインを取得する
-  /// （`/api/chat/messages/room-timeline`）
+  /// Retrieves the chat timeline for a room
+  /// (`/api/chat/messages/room-timeline`).
   ///
-  /// - [roomId]: 対象ルームID（必須）
-  /// - [limit]: 取得件数 1〜100（デフォルト10）
-  /// - [sinceId] / [untilId]: IDによるページング
-  /// - [sinceDate] / [untilDate]: Unixタイムスタンプ（ms）によるページング
+  /// [roomId] is the target room ID. [limit] caps the number of results
+  /// (1-100, default 10). Use [sinceId] and [untilId] to paginate by ID, or
+  /// [sinceDate] and [untilDate] to paginate by Unix timestamp in milliseconds.
   ///
-  /// 主なエラー:
-  /// - `NO_SUCH_ROOM`: 対象ルームが存在しない
+  /// Throws `NO_SUCH_ROOM` if the target room does not exist.
   Future<List<MisskeyChatMessage>> roomTimeline({
     required String roomId,
     int? limit,

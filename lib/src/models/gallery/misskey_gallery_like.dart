@@ -4,7 +4,7 @@ import 'misskey_gallery_post.dart';
 
 part 'misskey_gallery_like.g.dart';
 
-/// ギャラリー投稿へのいいね情報
+/// A like on a gallery post.
 @JsonSerializable()
 class MisskeyGalleryLike {
   const MisskeyGalleryLike({
@@ -17,9 +17,9 @@ class MisskeyGalleryLike {
 
   Map<String, dynamic> toJson() => _$MisskeyGalleryLikeToJson(this);
 
-  /// いいねのID
+  /// The like ID.
   final String id;
 
-  /// いいねしたギャラリー投稿
+  /// The gallery post that was liked.
   final MisskeyGalleryPost post;
 }
