@@ -1,0 +1,41 @@
+[
+  {
+    "id": "ak3qfimsrt4w000d",
+    "createdAt": "2026-03-21T10:11:20.212Z",
+    "name": "test_emoji.png",
+    "type": "image/png",
+    "md5": "3c599a9944128b1539343151a92b15f3",
+    "size": 67,
+    "isSensitive": false,
+    "blurhash": null,
+    "properties": {
+      "width": 1,
+      "height": 1
+    },
+    "url": "http://localhost:3000/files/b218ec80-89be-4914-9ebb-14eb2ea99220",
+    "thumbnailUrl": "http://localhost:3000/files/thumbnail-b4c47b5a-965f-4cea-bc80-bcf8aa953346",
+    "comment": null,
+    "folderId": null,
+    "folder": null,
+    "userId": "ak3po4qort4w0001",
+    "user": null
+  },
+  {
+    "id": "ak3qfejnrt4w000c",
+    "createdAt": "2026-03-21T10:11:14.915Z",
+    "name": "test_file.txt",
+    "type": "text/plain",
+    "md5": "a0c2fa5fab93a1b415878e2632a7c4fc",
+    "size": 18,
+    "isSensitive": false,
+    "blurhash": null,
+    "properties": {},
+    "url": "http://localhost:3000/files/6f504afc-56b0-4ae3-ab8c-094b8a762ebe",
+    "thumbnailUrl": null,
+    "comment": null,
+    "folderId": null,
+    "folder": null,
+    "userId": "ak3po4qort4w0001",
+    "user": null
+  }
+]

@@ -1,0 +1,136 @@
+[
+  {
+    "id": "ak3qfzxlrt4w000o",
+    "createdAt": "2026-03-21T10:11:42.633Z",
+    "type": "mention",
+    "userId": "ak3qbtu5rt4w0009",
+    "user": {
+      "id": "ak3qbtu5rt4w0009",
+      "name": null,
+      "username": "testuser2",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testuser2@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "ak3qfzvirt4w000n",
+      "createdAt": "2026-03-21T10:11:42.558Z",
+      "userId": "ak3qbtu5rt4w0009",
+      "user": {
+        "id": "ak3qbtu5rt4w0009",
+        "name": null,
+        "username": "testuser2",
+        "host": null,
+        "avatarUrl": "http://localhost:3000/identicon/testuser2@localhost:3000",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": "@testadmin Hello from testuser2!",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 0,
+      "reactions": {},
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "mentions": [
+        "ak3po4qort4w0001"
+      ],
+      "clippedCount": 0
+    }
+  },
+  {
+    "id": "ak3qfqj2rt4w000k",
+    "createdAt": "2026-03-21T10:11:30.446Z",
+    "type": "reaction",
+    "userId": "ak3qbtu5rt4w0009",
+    "user": {
+      "id": "ak3qbtu5rt4w0009",
+      "name": null,
+      "username": "testuser2",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testuser2@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "ak3pobcjrt4w0002",
+      "createdAt": "2026-03-21T09:50:11.059Z",
+      "userId": "ak3po4qort4w0001",
+      "user": {
+        "id": "ak3po4qort4w0001",
+        "name": null,
+        "username": "testadmin",
+        "host": null,
+        "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": "Hello, this is a test note for API testing!",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 1,
+      "reactionCount": 1,
+      "reactions": {
+        "👍": 1
+      },
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 1
+    },
+    "reaction": "👍"
+  },
+  {
+    "id": "ak3qfq3mrt4w000h",
+    "createdAt": "2026-03-21T10:11:29.890Z",
+    "type": "follow",
+    "userId": "ak3qbtu5rt4w0009",
+    "user": {
+      "id": "ak3qbtu5rt4w0009",
+      "name": null,
+      "username": "testuser2",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testuser2@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    }
+  }
+]

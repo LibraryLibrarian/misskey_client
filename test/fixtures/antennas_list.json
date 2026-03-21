@@ -1,0 +1,27 @@
+[
+  {
+    "id": "ak3qg0ibrt4w000p",
+    "createdAt": "2026-03-21T10:11:43.379Z",
+    "name": "Test Antenna",
+    "keywords": [
+      [
+        "test"
+      ]
+    ],
+    "excludeKeywords": [
+      []
+    ],
+    "src": "all",
+    "userListId": null,
+    "users": [],
+    "caseSensitive": false,
+    "localOnly": false,
+    "excludeBots": false,
+    "withReplies": true,
+    "withFile": false,
+    "excludeNotesInSensitiveChannel": false,
+    "isActive": true,
+    "hasUnreadNote": false,
+    "notify": false
+  }
+]

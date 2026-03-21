@@ -1,0 +1,36 @@
+[
+  {
+    "id": "ak3pobcjrt4w0002",
+    "createdAt": "2026-03-21T09:50:11.059Z",
+    "userId": "ak3po4qort4w0001",
+    "user": {
+      "id": "ak3po4qort4w0001",
+      "name": null,
+      "username": "testadmin",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "text": "Hello, this is a test note for API testing!",
+    "cw": null,
+    "visibility": "public",
+    "localOnly": false,
+    "reactionAcceptance": null,
+    "renoteCount": 0,
+    "repliesCount": 0,
+    "reactionCount": 0,
+    "reactions": {},
+    "reactionEmojis": {},
+    "fileIds": [],
+    "files": [],
+    "replyId": null,
+    "renoteId": null,
+    "clippedCount": 0
+  }
+]
