@@ -100,5 +100,110 @@ void main() {
       expect(user.followersCount, 0);
       expect(user.notesCount, 0);
     });
+
+    test('parses admin and moderator flags from users/show', () {
+      final file = File('test/fixtures/users_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.isAdmin, true);
+      expect(user.isModerator, true);
+    });
+
+    test('parses privacy settings from users/show', () {
+      final file = File('test/fixtures/users_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.noCrawle, false);
+      expect(user.preventAiLearning, true);
+      expect(user.isExplorable, true);
+      expect(user.isDeleted, false);
+      expect(user.hideOnlineStatus, false);
+    });
+
+    test('parses nullable account id fields from users/show', () {
+      final file = File('test/fixtures/users_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.pinnedPageId, isNull);
+      expect(user.avatarId, isNull);
+      expect(user.bannerId, isNull);
+    });
+
+    test('parses notification settings from users/show', () {
+      final file = File('test/fixtures/users_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.autoAcceptFollowed, true);
+      expect(user.carefulBot, false);
+      expect(user.alwaysMarkNsfw, false);
+    });
+
+    test('parses chat fields from users/show', () {
+      final file = File('test/fixtures/users_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.chatScope, 'mutual');
+      expect(user.canChat, true);
+    });
+
+    test('parses policies map from users/show', () {
+      final file = File('test/fixtures/users_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.policies, isNotNull);
+      expect(user.policies, isA<Map<String, dynamic>>());
+    });
+
+    test('parses email fields from i', () {
+      final file = File('test/fixtures/i.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.email, isNull);
+      expect(user.emailVerified, false);
+      expect(user.loggedInDays, greaterThanOrEqualTo(0));
+    });
+
+    test('parses unread states from i', () {
+      final file = File('test/fixtures/i.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.hasUnreadAnnouncement, false);
+      expect(user.hasUnreadNotification, false);
+      expect(user.hasUnreadMentions, false);
+      expect(user.hasUnreadSpecifiedNotes, false);
+      expect(user.hasUnreadAntenna, false);
+      expect(user.hasUnreadChannel, false);
+      expect(user.hasPendingReceivedFollowRequest, false);
+    });
+
+    test('parses muting config from i', () {
+      final file = File('test/fixtures/i.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.mutedWords, isEmpty);
+      expect(user.mutedInstances, isEmpty);
+    });
+
+    test('UserLite fields absent in notes/show default correctly', () {
+      final file = File('test/fixtures/notes_show.json');
+      final noteJson =
+          jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final userJson = noteJson['user'] as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(userJson);
+
+      // UserLite には admin/mod フラグや policies が含まれないのでデフォルト値になる
+      expect(user.isAdmin, false);
+      expect(user.isModerator, false);
+      expect(user.policies, isNull);
+    });
   });
 }
