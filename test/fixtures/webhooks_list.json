@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ak6ot3ezrt4w001m",
+    "userId": "ak3po4qort4w0001",
+    "name": "Test Webhook",
+    "on": [
+      "mention",
+      "reply"
+    ],
+    "url": "https://example.com/webhook",
+    "secret": "testsecret",
+    "active": true,
+    "latestSentAt": null,
+    "latestStatus": null
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "params": [
+    {
+      "name": "visibility",
+      "type": "String"
+    },
+    {
+      "name": "visibleUserIds",
+      "type": "Array"
+    },
+    {
+      "name": "cw",
+      "type": "String"
+    },
+    {
+      "name": "localOnly",
+      "type": "Boolean"
+    },
+    {
+      "name": "reactionAcceptance",
+      "type": "String"
+    },
+    {
+      "name": "noExtractMentions",
+      "type": "Boolean"
+    },
+    {
+      "name": "noExtractHashtags",
+      "type": "Boolean"
+    },
+    {
+      "name": "noExtractEmojis",
+      "type": "Boolean"
+    },
+    {
+      "name": "replyId",
+      "type": "String"
+    },
+    {
+      "name": "renoteId",
+      "type": "String"
+    },
+    {
+      "name": "channelId",
+      "type": "String"
+    },
+    {
+      "name": "text",
+      "type": "String"
+    },
+    {
+      "name": "fileIds",
+      "type": "Array"
+    },
+    {
+      "name": "mediaIds",
+      "type": "Array"
+    },
+    {
+      "name": "poll",
+      "type": "Object"
+    }
+  ]
+}

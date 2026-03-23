@@ -1,0 +1,11 @@
+[
+  {
+    "domain": null,
+    "scopes": [
+      [
+        "client",
+        "test"
+      ]
+    ]
+  }
+]
