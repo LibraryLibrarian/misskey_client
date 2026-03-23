@@ -218,6 +218,46 @@ void main() {
     });
   });
 
+  group('MisskeyUser remote user (users_show_remote)', () {
+    late MisskeyUser user;
+
+    setUp(() {
+      final file = File('test/fixtures/users_show_remote.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      user = MisskeyUser.fromJson(json);
+    });
+
+    test('deserializes without error', () {
+      expect(user, isNotNull);
+    });
+
+    test('host is not null for remote user', () {
+      expect(user.host, isNotNull);
+      expect(user.host, 'misskey.io');
+    });
+
+    test('instance is not null', () {
+      expect(user.instance, isNotNull);
+    });
+
+    test('instance has expected softwareName', () {
+      expect(user.instance!.softwareName, 'misskey');
+    });
+
+    test('instance has expected name', () {
+      expect(user.instance!.name, 'Misskey.io');
+    });
+
+    test('instance has iconUrl', () {
+      expect(user.instance!.iconUrl, isNotNull);
+      expect(user.instance!.iconUrl, startsWith('https://'));
+    });
+
+    test('instance has themeColor', () {
+      expect(user.instance!.themeColor, '#86b300');
+    });
+  });
+
   group('MisskeyBadgeRole and MisskeyRoleLite (users_show_with_role)', () {
     late MisskeyUser user;
 
