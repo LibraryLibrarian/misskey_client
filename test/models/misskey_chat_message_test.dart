@@ -74,5 +74,17 @@ void main() {
         expect(msg.fromUserId, 'ak3qbtu5rt4w0009');
       }
     });
+
+    test('first message has non-empty reactions', () {
+      expect(list[0].reactions, isNotEmpty);
+    });
+
+    test('first message reaction has reaction field "👍"', () {
+      expect(list[0].reactions[0].reaction, '👍');
+    });
+
+    test('second message has empty reactions', () {
+      expect(list[1].reactions, isEmpty);
+    });
   });
 }

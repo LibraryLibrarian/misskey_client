@@ -52,9 +52,9 @@ void main() {
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       final user = MisskeyUser.fromJson(json);
 
-      expect(user.followersCount, 0);
-      expect(user.followingCount, 0);
-      expect(user.notesCount, 1);
+      expect(user.followersCount, 1);
+      expect(user.followingCount, 1);
+      expect(user.notesCount, 5);
     });
 
     test('parses boolean flags correctly', () {
@@ -69,14 +69,25 @@ void main() {
       expect(user.isSuspended, false);
     });
 
-    test('parses empty collections correctly', () {
+    test('parses collections correctly', () {
       final file = File('test/fixtures/users_show.json');
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       final user = MisskeyUser.fromJson(json);
 
-      expect(user.fields, isEmpty);
+      expect(user.fields, hasLength(2));
       expect(user.pinnedNotes, isEmpty);
       expect(user.avatarDecorations, isEmpty);
+    });
+
+    test('fields has correct values', () {
+      final file = File('test/fixtures/users_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.fields![0].name, 'Website');
+      expect(user.fields![0].value, 'https://example.com');
+      expect(user.fields![1].name, 'GitHub');
+      expect(user.fields![1].value, contains('github.com'));
     });
 
     test('parses avatarUrl correctly', () {
@@ -147,7 +158,7 @@ void main() {
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       final user = MisskeyUser.fromJson(json);
 
-      expect(user.chatScope, 'mutual');
+      expect(user.chatScope, 'everyone');
       expect(user.canChat, true);
     });
 
@@ -204,6 +215,38 @@ void main() {
       expect(user.isAdmin, false);
       expect(user.isModerator, false);
       expect(user.policies, isNull);
+    });
+  });
+
+  group('MisskeyBadgeRole and MisskeyRoleLite (users_show_with_role)', () {
+    late MisskeyUser user;
+
+    setUp(() {
+      final file = File('test/fixtures/users_show_with_role.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      user = MisskeyUser.fromJson(json);
+    });
+
+    test('deserializes without error', () {
+      expect(user, isNotNull);
+      expect(user.username, 'testuser2');
+    });
+
+    test('badgeRoles is not empty', () {
+      expect(user.badgeRoles, isNotEmpty);
+    });
+
+    test('first badgeRole has name "Test Role"', () {
+      expect(user.badgeRoles![0].name, 'Test Role');
+    });
+
+    test('roles is not empty', () {
+      expect(user.roles, isNotEmpty);
+    });
+
+    test('first role has name "Test Role" and a non-empty id', () {
+      expect(user.roles![0].name, 'Test Role');
+      expect(user.roles![0].id, isNotEmpty);
     });
   });
 }

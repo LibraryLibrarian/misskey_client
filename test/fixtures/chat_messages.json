@@ -7,7 +7,11 @@
     "toUserId": "ak3po4qort4w0001",
     "fileId": null,
     "file": null,
-    "reactions": []
+    "reactions": [
+      {
+        "reaction": "👍"
+      }
+    ]
   },
   {
     "id": "ak6od3f6rt4w001j",

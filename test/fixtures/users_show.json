@@ -16,7 +16,7 @@
   "movedTo": null,
   "alsoKnownAs": null,
   "createdAt": "2026-03-21T09:50:02.496Z",
-  "updatedAt": "2026-03-21T09:50:11.089Z",
+  "updatedAt": "2026-03-23T12:04:13.701Z",
   "lastFetchedAt": null,
   "bannerUrl": null,
   "bannerBlurhash": null,
@@ -27,11 +27,20 @@
   "location": null,
   "birthday": null,
   "lang": null,
-  "fields": [],
+  "fields": [
+    {
+      "name": "Website",
+      "value": "https://example.com"
+    },
+    {
+      "name": "GitHub",
+      "value": "https://github.com/test"
+    }
+  ],
   "verifiedLinks": [],
-  "followersCount": 0,
-  "followingCount": 0,
-  "notesCount": 1,
+  "followersCount": 1,
+  "followingCount": 1,
+  "notesCount": 5,
   "pinnedNoteIds": [],
   "pinnedNotes": [],
   "pinnedPageId": null,
@@ -39,7 +48,7 @@
   "publicReactions": true,
   "followersVisibility": "public",
   "followingVisibility": "public",
-  "chatScope": "mutual",
+  "chatScope": "everyone",
   "canChat": true,
   "roles": [],
   "memo": null,
@@ -67,13 +76,29 @@
   "hasUnreadSpecifiedNotes": false,
   "hasUnreadMentions": false,
   "hasUnreadChatMessages": false,
-  "hasUnreadAnnouncement": false,
-  "unreadAnnouncements": [],
+  "hasUnreadAnnouncement": true,
+  "unreadAnnouncements": [
+    {
+      "createdAt": "2026-03-21T10:08:57.969Z",
+      "id": "ak3qcgvlrt4w000a",
+      "updatedAt": null,
+      "text": "This is a test announcement for API testing.",
+      "title": "Test Announcement",
+      "imageUrl": null,
+      "icon": "info",
+      "display": "normal",
+      "needConfirmationToRead": false,
+      "isActive": true,
+      "forExistingUsers": false,
+      "silence": false,
+      "userId": null
+    }
+  ],
   "hasUnreadAntenna": false,
   "hasUnreadChannel": false,
-  "hasUnreadNotification": false,
+  "hasUnreadNotification": true,
   "hasPendingReceivedFollowRequest": false,
-  "unreadNotificationsCount": 0,
+  "unreadNotificationsCount": 3,
   "mutedWords": [],
   "hardMutedWords": [],
   "mutedInstances": [],
@@ -84,7 +109,7 @@
     "receiveFollowRequest"
   ],
   "achievements": [],
-  "loggedInDays": 1,
+  "loggedInDays": 2,
   "policies": {
     "gtlAvailable": true,
     "ltlAvailable": true,
