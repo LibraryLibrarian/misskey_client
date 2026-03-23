@@ -1,0 +1,14 @@
+{
+  "id": "ak3qfn18rt4w000e",
+  "aliases": [
+    "testemoji"
+  ],
+  "name": "test_emoji",
+  "category": "test",
+  "host": null,
+  "url": "http://localhost:3000/files/b218ec80-89be-4914-9ebb-14eb2ea99220",
+  "license": null,
+  "isSensitive": false,
+  "localOnly": false,
+  "roleIdsThatCanBeUsedThisEmojiAsReaction": []
+}

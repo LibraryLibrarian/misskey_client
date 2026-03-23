@@ -1,0 +1,40 @@
+[
+  {
+    "id": "ak6nei91rt4w000t",
+    "createdAt": "2026-03-23T11:09:52.741Z",
+    "user": {
+      "id": "ak3po4qort4w0001",
+      "name": null,
+      "username": "testadmin",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "type": "❤"
+  },
+  {
+    "id": "ak3qfqirrt4w000j",
+    "createdAt": "2026-03-21T10:11:30.435Z",
+    "user": {
+      "id": "ak3qbtu5rt4w0009",
+      "name": null,
+      "username": "testuser2",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testuser2@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "type": "👍"
+  }
+]
