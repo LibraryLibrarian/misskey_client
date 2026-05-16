@@ -54,6 +54,11 @@ void main() {
       test('isSensitive is false', () {
         expect(png.isSensitive, isFalse);
       });
+
+      // フィクスチャにisAiGeneratedフィールドがないのでデフォルト値falseになる
+      test('isAiGenerated defaults to false when field is absent', () {
+        expect(png.isAiGenerated, false);
+      });
     });
 
     group('TXT file', () {

@@ -60,5 +60,19 @@ void main() {
     test('isRead is false', () {
       expect(announcement.isRead, isFalse);
     });
+
+    // フィクスチャにisActiveフィールドがないのでデフォルト値trueになる
+    test('isActive defaults to true when field is absent', () {
+      expect(announcement.isActive, true);
+    });
+
+    // フィクスチャにforExistingUsersフィールドがないのでデフォルト値falseになる
+    test('forExistingUsers defaults to false when field is absent', () {
+      expect(announcement.forExistingUsers, false);
+    });
+
+    test('userId is null', () {
+      expect(announcement.userId, isNull);
+    });
   });
 }

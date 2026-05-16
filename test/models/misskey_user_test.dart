@@ -256,6 +256,15 @@ void main() {
     test('instance has themeColor', () {
       expect(user.instance!.themeColor, '#86b300');
     });
+
+    test('isLimited is false', () {
+      expect(user.isLimited, false);
+    });
+
+    test('mutualLinkSections is not null and is empty', () {
+      expect(user.mutualLinkSections, isNotNull);
+      expect(user.mutualLinkSections, isEmpty);
+    });
   });
 
   group('MisskeyBadgeRole and MisskeyRoleLite (users_show_with_role)', () {

@@ -21,6 +21,12 @@ MisskeyRole _$MisskeyRoleFromJson(Map<String, dynamic> json) => MisskeyRole(
       canEditMembersByModerator: json['canEditMembersByModerator'] as bool,
       displayOrder: (json['displayOrder'] as num).toInt(),
       usersCount: (json['usersCount'] as num).toInt(),
+      isAdministrator: json['isAdministrator'] as bool? ?? false,
+      isModerator: json['isModerator'] as bool? ?? false,
+      policies: json['policies'] as Map<String, dynamic>?,
+      condFormula: json['condFormula'] as Map<String, dynamic>?,
+      preserveAssignmentOnMoveAccount:
+          json['preserveAssignmentOnMoveAccount'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$MisskeyRoleToJson(MisskeyRole instance) =>
@@ -39,4 +45,10 @@ Map<String, dynamic> _$MisskeyRoleToJson(MisskeyRole instance) =>
       'canEditMembersByModerator': instance.canEditMembersByModerator,
       'displayOrder': instance.displayOrder,
       'usersCount': instance.usersCount,
+      'isAdministrator': instance.isAdministrator,
+      'isModerator': instance.isModerator,
+      'policies': instance.policies,
+      'condFormula': instance.condFormula,
+      'preserveAssignmentOnMoveAccount':
+          instance.preserveAssignmentOnMoveAccount,
     };

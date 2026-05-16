@@ -31,6 +31,7 @@ MisskeyDriveFile _$MisskeyDriveFileFromJson(Map<String, dynamic> json) =>
           ? null
           : MisskeyDriveFileProperties.fromJson(
               json['properties'] as Map<String, dynamic>),
+      isAiGenerated: json['isAiGenerated'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$MisskeyDriveFileToJson(MisskeyDriveFile instance) =>
@@ -51,6 +52,7 @@ Map<String, dynamic> _$MisskeyDriveFileToJson(MisskeyDriveFile instance) =>
       'isSensitive': instance.isSensitive,
       'blurhash': instance.blurhash,
       'properties': instance.properties?.toJson(),
+      'isAiGenerated': instance.isAiGenerated,
     };
 
 MisskeyDriveFileProperties _$MisskeyDriveFilePropertiesFromJson(

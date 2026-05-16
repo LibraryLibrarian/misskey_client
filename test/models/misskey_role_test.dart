@@ -48,5 +48,26 @@ void main() {
     test('displayOrder is 0', () {
       expect(role.displayOrder, 0);
     });
+
+    test('isAdministrator is false', () {
+      expect(role.isAdministrator, false);
+    });
+
+    test('isModerator is false', () {
+      expect(role.isModerator, false);
+    });
+
+    test('policies is not null and is a Map', () {
+      expect(role.policies, isNotNull);
+      expect(role.policies, isA<Map<String, dynamic>>());
+    });
+
+    test('condFormula is not null', () {
+      expect(role.condFormula, isNotNull);
+    });
+
+    test('preserveAssignmentOnMoveAccount is false', () {
+      expect(role.preserveAssignmentOnMoveAccount, false);
+    });
   });
 }

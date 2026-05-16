@@ -33,6 +33,7 @@ MisskeyChannel _$MisskeyChannelFromJson(Map<String, dynamic> json) =>
           .toList(),
       bannerId: json['bannerId'] as String?,
       isMuting: json['isMuting'] as bool?,
+      hasUnreadNote: json['hasUnreadNote'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$MisskeyChannelToJson(MisskeyChannel instance) =>
@@ -56,4 +57,5 @@ Map<String, dynamic> _$MisskeyChannelToJson(MisskeyChannel instance) =>
       'pinnedNotes': instance.pinnedNotes?.map((e) => e.toJson()).toList(),
       'bannerId': instance.bannerId,
       'isMuting': instance.isMuting,
+      'hasUnreadNote': instance.hasUnreadNote,
     };

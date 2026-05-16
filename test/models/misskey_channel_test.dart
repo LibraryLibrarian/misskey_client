@@ -51,5 +51,9 @@ void main() {
     test('isMuting is false', () {
       expect(channel.isMuting, isFalse);
     });
+
+    test('hasUnreadNote is false', () {
+      expect(channel.hasUnreadNote, false);
+    });
   });
 }

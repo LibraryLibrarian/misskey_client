@@ -156,6 +156,11 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
       email: json['email'] as String?,
       emailVerified: json['emailVerified'] as bool? ?? false,
       moderationNote: json['moderationNote'] as String?,
+      isLimited: json['isLimited'] as bool? ?? false,
+      mutualLinkSections: (json['mutualLinkSections'] as List<dynamic>?)
+          ?.map((e) => e as Map<String, dynamic>)
+          .toList(),
+      pinnedPage: json['pinnedPage'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$MisskeyUserToJson(MisskeyUser instance) =>
@@ -261,6 +266,9 @@ Map<String, dynamic> _$MisskeyUserToJson(MisskeyUser instance) =>
       'email': instance.email,
       'emailVerified': instance.emailVerified,
       'moderationNote': instance.moderationNote,
+      'isLimited': instance.isLimited,
+      'mutualLinkSections': instance.mutualLinkSections,
+      'pinnedPage': instance.pinnedPage,
     };
 
 const _$MisskeyOnlineStatusEnumMap = {

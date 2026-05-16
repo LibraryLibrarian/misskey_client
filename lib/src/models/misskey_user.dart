@@ -116,6 +116,9 @@ class MisskeyUser {
     this.email,
     this.emailVerified,
     this.moderationNote,
+    this.isLimited,
+    this.mutualLinkSections,
+    this.pinnedPage,
   });
 
   factory MisskeyUser.fromJson(Map<String, dynamic> json) =>
@@ -474,6 +477,16 @@ class MisskeyUser {
 
   /// The moderation note attached to this user (visible to moderators only).
   final String? moderationNote;
+
+  /// Whether this remote user is rate-limited.
+  @JsonKey(defaultValue: false)
+  final bool? isLimited;
+
+  /// The mutual link sections defined on this user's profile.
+  final List<Map<String, dynamic>>? mutualLinkSections;
+
+  /// The pinned page object embedded in the user profile.
+  final Map<String, dynamic>? pinnedPage;
 }
 
 /// A custom profile field.

@@ -18,8 +18,11 @@ MisskeyFederationInstance _$MisskeyFederationInstanceFromJson(
       followersCount: (json['followersCount'] as num?)?.toInt(),
       isNotResponding: json['isNotResponding'] as bool?,
       isSuspended: json['isSuspended'] as bool?,
+      suspensionState: json['suspensionState'] as String?,
       isBlocked: json['isBlocked'] as bool?,
       isSilenced: json['isSilenced'] as bool?,
+      isSensitiveMedia: json['isSensitiveMedia'] as bool? ?? false,
+      isMediaSilenced: json['isMediaSilenced'] as bool? ?? false,
       softwareName: json['softwareName'] as String?,
       softwareVersion: json['softwareVersion'] as String?,
       openRegistrations: json['openRegistrations'] as bool?,
@@ -36,6 +39,7 @@ MisskeyFederationInstance _$MisskeyFederationInstanceFromJson(
       latestRequestReceivedAt: json['latestRequestReceivedAt'] == null
           ? null
           : DateTime.parse(json['latestRequestReceivedAt'] as String),
+      moderationNote: json['moderationNote'] as String?,
     );
 
 Map<String, dynamic> _$MisskeyFederationInstanceToJson(
@@ -50,8 +54,11 @@ Map<String, dynamic> _$MisskeyFederationInstanceToJson(
       'followersCount': instance.followersCount,
       'isNotResponding': instance.isNotResponding,
       'isSuspended': instance.isSuspended,
+      'suspensionState': instance.suspensionState,
       'isBlocked': instance.isBlocked,
       'isSilenced': instance.isSilenced,
+      'isSensitiveMedia': instance.isSensitiveMedia,
+      'isMediaSilenced': instance.isMediaSilenced,
       'softwareName': instance.softwareName,
       'softwareVersion': instance.softwareVersion,
       'openRegistrations': instance.openRegistrations,
@@ -65,4 +72,5 @@ Map<String, dynamic> _$MisskeyFederationInstanceToJson(
       'infoUpdatedAt': instance.infoUpdatedAt?.toIso8601String(),
       'latestRequestReceivedAt':
           instance.latestRequestReceivedAt?.toIso8601String(),
+      'moderationNote': instance.moderationNote,
     };

@@ -51,6 +51,26 @@ void main() {
     test('firstRetrievedAt is parsed as DateTime', () {
       expect(instances[0].firstRetrievedAt, isA<DateTime>());
     });
+
+    test('isSensitiveMedia is not null and is false', () {
+      expect(instances[0].isSensitiveMedia, isNotNull);
+      expect(instances[0].isSensitiveMedia, false);
+    });
+
+    // v1フィクスチャにはisMediaSilencedフィールドがないのでデフォルト値falseになる
+    test('isMediaSilenced defaults to false when field is absent', () {
+      expect(instances[0].isMediaSilenced, false);
+    });
+
+    test('suspensionState is not null and is "none"', () {
+      expect(instances[0].suspensionState, isNotNull);
+      expect(instances[0].suspensionState, 'none');
+    });
+
+    test('moderationNote is present (may be null)', () {
+      // フィクスチャではnullだが、フィールド自体は存在する
+      expect(instances[0].moderationNote, isNull);
+    });
   });
 
   group('MisskeyFederationInstance.fromJson (v2: isMediaSilenced)', () {
@@ -84,9 +104,25 @@ void main() {
       expect(instances[0].isSilenced, false);
     });
 
-    // v2フィクスチャにはisMediaSilencedフィールドがあるが、モデルにはこのフィールドがないため無視される
-    test('unknown field isMediaSilenced is ignored gracefully', () {
-      expect(instances[0], isNotNull);
+    // v2フィクスチャにはisMediaSilencedフィールドがある
+    test('isMediaSilenced is not null and is false', () {
+      expect(instances[0].isMediaSilenced, isNotNull);
+      expect(instances[0].isMediaSilenced, false);
+    });
+
+    // v2フィクスチャにはisSensitiveMediaフィールドがないのでデフォルト値falseになる
+    test('isSensitiveMedia defaults to false when field is absent', () {
+      expect(instances[0].isSensitiveMedia, false);
+    });
+
+    test('suspensionState is not null and is "none"', () {
+      expect(instances[0].suspensionState, isNotNull);
+      expect(instances[0].suspensionState, 'none');
+    });
+
+    test('moderationNote is present (may be null)', () {
+      // フィクスチャではnullだが、フィールド自体は存在する
+      expect(instances[0].moderationNote, isNull);
     });
 
     test('infoUpdatedAt and latestRequestReceivedAt parse as DateTime', () {
