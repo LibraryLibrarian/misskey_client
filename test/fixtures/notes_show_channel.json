@@ -1,0 +1,43 @@
+{
+  "id": "ak6pceedrt4w001w",
+  "createdAt": "2026-03-23T12:04:13.669Z",
+  "userId": "ak3po4qort4w0001",
+  "user": {
+    "id": "ak3po4qort4w0001",
+    "name": null,
+    "username": "testadmin",
+    "host": null,
+    "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+    "avatarBlurhash": null,
+    "avatarDecorations": [],
+    "isBot": false,
+    "isCat": false,
+    "emojis": {},
+    "onlineStatus": "unknown",
+    "badgeRoles": []
+  },
+  "text": "A note posted to Test Channel",
+  "cw": null,
+  "visibility": "public",
+  "localOnly": true,
+  "reactionAcceptance": null,
+  "renoteCount": 0,
+  "repliesCount": 0,
+  "reactionCount": 0,
+  "reactions": {},
+  "reactionEmojis": {},
+  "fileIds": [],
+  "files": [],
+  "replyId": null,
+  "renoteId": null,
+  "channelId": "ak6ng5n1rt4w000u",
+  "channel": {
+    "id": "ak6ng5n1rt4w000u",
+    "name": "Test Channel",
+    "color": "#86b300",
+    "isSensitive": false,
+    "allowRenoteToExternal": true,
+    "userId": "ak3po4qort4w0001"
+  },
+  "clippedCount": 0
+}

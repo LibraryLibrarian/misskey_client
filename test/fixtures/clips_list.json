@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ak3px5fqrt4w0007",
+    "createdAt": "2026-03-21T09:57:03.302Z",
+    "lastClippedAt": "2026-03-21T09:57:05.815Z",
+    "userId": "ak3po4qort4w0001",
+    "user": {
+      "id": "ak3po4qort4w0001",
+      "name": null,
+      "username": "testadmin",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "name": "Test Clip",
+    "description": null,
+    "isPublic": false,
+    "favoritedCount": 0,
+    "isFavorited": false,
+    "notesCount": 1
+  }
+]

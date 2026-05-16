@@ -1,0 +1,22 @@
+{
+  "id": "ak6ng5n1rt4w000u",
+  "createdAt": "2026-03-23T11:11:09.709Z",
+  "lastNotedAt": null,
+  "name": "Test Channel",
+  "description": "A test channel for API testing",
+  "userId": "ak3po4qort4w0001",
+  "bannerUrl": null,
+  "bannerId": null,
+  "pinnedNoteIds": [],
+  "color": "#86b300",
+  "isArchived": false,
+  "usersCount": 0,
+  "notesCount": 0,
+  "isSensitive": false,
+  "allowRenoteToExternal": true,
+  "isFollowing": false,
+  "isFavorited": false,
+  "isMuting": false,
+  "hasUnreadNote": false,
+  "pinnedNotes": []
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ak6nhbx9rt4w000y",
+    "createdAt": "2026-03-23T11:12:04.509Z",
+    "userId": "ak3qbtu5rt4w0009",
+    "user": {
+      "id": "ak3qbtu5rt4w0009",
+      "name": null,
+      "username": "testuser2",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testuser2@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": [
+        {
+          "name": "Test Role",
+          "iconUrl": null,
+          "displayOrder": 0
+        }
+      ]
+    },
+    "withReplies": false
+  }
+]

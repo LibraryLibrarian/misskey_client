@@ -28,6 +28,7 @@ class MisskeyChannel {
     this.pinnedNotes,
     this.bannerId,
     this.isMuting,
+    this.hasUnreadNote,
   });
 
   factory MisskeyChannel.fromJson(Map<String, dynamic> json) =>
@@ -98,4 +99,8 @@ class MisskeyChannel {
 
   /// Whether the current user is muting this channel.
   final bool? isMuting;
+
+  /// Whether there are unread notes in this channel for the current user.
+  @JsonKey(defaultValue: false)
+  final bool? hasUnreadNote;
 }

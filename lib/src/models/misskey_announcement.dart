@@ -20,6 +20,9 @@ class MisskeyAnnouncement {
     this.silence = false,
     this.forYou = false,
     this.isRead,
+    this.isActive,
+    this.forExistingUsers,
+    this.userId,
   });
 
   factory MisskeyAnnouncement.fromJson(Map<String, dynamic> json) =>
@@ -67,4 +70,16 @@ class MisskeyAnnouncement {
 
   /// Whether the announcement has been read (only present when authenticated).
   final bool? isRead;
+
+  /// Whether this announcement is currently active.
+  @JsonKey(defaultValue: true)
+  final bool? isActive;
+
+  /// Whether this announcement is shown only to existing users at the time
+  /// of creation.
+  @JsonKey(defaultValue: false)
+  final bool? forExistingUsers;
+
+  /// The user ID this announcement is targeted at, or null for all users.
+  final String? userId;
 }

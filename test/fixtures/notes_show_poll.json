@@ -1,0 +1,56 @@
+{
+  "id": "ak6nbdj6rt4w000r",
+  "createdAt": "2026-03-23T11:07:26.658Z",
+  "userId": "ak3po4qort4w0001",
+  "user": {
+    "id": "ak3po4qort4w0001",
+    "name": null,
+    "username": "testadmin",
+    "host": null,
+    "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+    "avatarBlurhash": null,
+    "avatarDecorations": [],
+    "isBot": false,
+    "isCat": false,
+    "emojis": {},
+    "onlineStatus": "unknown",
+    "badgeRoles": []
+  },
+  "text": "What is your favorite language?",
+  "cw": null,
+  "visibility": "public",
+  "localOnly": false,
+  "reactionAcceptance": null,
+  "renoteCount": 0,
+  "repliesCount": 0,
+  "reactionCount": 0,
+  "reactions": {},
+  "reactionEmojis": {},
+  "fileIds": [],
+  "files": [],
+  "replyId": null,
+  "renoteId": null,
+  "hasPoll": true,
+  "clippedCount": 0,
+  "poll": {
+    "multiple": false,
+    "expiresAt": "2026-03-24T11:07:26.658Z",
+    "choices": [
+      {
+        "text": "Dart",
+        "votes": 1,
+        "isVoted": false
+      },
+      {
+        "text": "Kotlin",
+        "votes": 0,
+        "isVoted": false
+      },
+      {
+        "text": "Swift",
+        "votes": 0,
+        "isVoted": false
+      }
+    ]
+  }
+}

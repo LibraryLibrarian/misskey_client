@@ -1,0 +1,40 @@
+[
+  {
+    "id": "ak6oumrprt4w001r",
+    "createdAt": "2026-03-23T11:50:24.709Z",
+    "updatedAt": "2026-03-23T11:50:24.710Z",
+    "userId": "ak3po4qort4w0001",
+    "user": {
+      "id": "ak3po4qort4w0001",
+      "name": null,
+      "username": "testadmin",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "content": [
+      {
+        "text": "This is a test page.",
+        "type": "text"
+      }
+    ],
+    "variables": [],
+    "title": "Test Page",
+    "name": "test-page",
+    "summary": "A test page summary",
+    "hideTitleWhenPinned": false,
+    "alignCenter": false,
+    "font": "sans-serif",
+    "script": "",
+    "eyeCatchingImageId": null,
+    "eyeCatchingImage": null,
+    "attachedFiles": [],
+    "likedCount": 0
+  }
+]

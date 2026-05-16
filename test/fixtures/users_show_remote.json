@@ -1,0 +1,272 @@
+{
+  "id": "01GSWXZMCPFQW3VW7P96FFD369",
+  "name": "司書",
+  "username": "Librarian",
+  "host": "misskey.io",
+  "avatarUrl": "https://proxy.misskeyusercontent.com/avatar/media.misskeyusercontent.com%2Fio%2Fd0940613-fb33-4ad1-9ff7-5885e0f32839.png?avatar=1",
+  "avatarBlurhash": "eJMtHN~W00RP?aIRNF8~WAIU01WDN2xHV]9OM|D$Io-.02sA?Zt6t5",
+  "avatarDecorations": [],
+  "isBot": false,
+  "isCat": true,
+  "instance": {
+    "name": "Misskey.io",
+    "softwareName": "misskey",
+    "softwareVersion": "2025.4.1-io.12b-fb6fbea074",
+    "iconUrl": "https://misskey.io/static-assets/icons/192.png",
+    "faviconUrl": "https://media.misskeyusercontent.jp/io/c975a67f-dde4-4e49-9dbc-2bc3a8e34e25.png",
+    "themeColor": "#86b300"
+  },
+  "emojis": {},
+  "onlineStatus": "unknown",
+  "badgeRoles": [],
+  "url": "https://misskey.io/@Librarian",
+  "uri": "https://misskey.io/users/9arsrr3d8x",
+  "movedTo": null,
+  "alsoKnownAs": null,
+  "createdAt": "2023-02-22T16:05:56.758Z",
+  "updatedAt": "2026-03-21T09:31:02.925Z",
+  "lastFetchedAt": "2026-03-23T13:36:04.605Z",
+  "bannerUrl": "https://proxy.misskeyusercontent.com/image/media.misskeyusercontent.com%2Fio%2Fwebpublic-3c070a12-bb98-4b07-bcad-8ef94b8b6ccb.webp?",
+  "bannerBlurhash": "ekFr;PRjxuRjM{~qWBofWBRjxuofRjofofaykBWBofj[a}WBofj[WB",
+  "isLocked": false,
+  "isSilenced": false,
+  "isLimited": false,
+  "isSuspended": false,
+  "description": "<center>$[spin だれかこれをリアクションで通知に出して欲しい]</center>",
+  "location": "35°39'29.2\"N 139°44'28.9\"E",
+  "birthday": "2018-06-24",
+  "lang": null,
+  "fields": [
+    {
+      "name": "Twitter",
+      "value": "https://twitter.com/unakiritan"
+    },
+    {
+      "name": "blog",
+      "value": "https://librarylibrarian.com/"
+    },
+    {
+      "name": "乞食",
+      "value": "https://www.amazon.jp/hz/wishlist/ls/1P326BVGGHAJR?ref_=wl_share"
+    },
+    {
+      "name": "寄付（ko-fi）",
+      "value": "https://ko-fi.com/librarian_donate"
+    }
+  ],
+  "verifiedLinks": [],
+  "mutualLinkSections": [],
+  "followersCount": 0,
+  "followingCount": 0,
+  "notesCount": 257,
+  "pinnedNoteIds": [
+    "01JAZ3EXTZ6ZZVJ55Z4B7B7AA8",
+    "01J12TGT60VZF3NZA5MKQCT10K"
+  ],
+  "pinnedNotes": [
+    {
+      "id": "01JAZ3EXTZ6ZZVJ55Z4B7B7AA8",
+      "createdAt": "2024-10-24T11:09:19.071Z",
+      "userId": "01GSWXZMCPFQW3VW7P96FFD369",
+      "user": {
+        "id": "01GSWXZMCPFQW3VW7P96FFD369",
+        "name": "司書",
+        "username": "Librarian",
+        "host": "misskey.io",
+        "avatarUrl": "https://proxy.misskeyusercontent.com/avatar/media.misskeyusercontent.com%2Fio%2Fd0940613-fb33-4ad1-9ff7-5885e0f32839.png?avatar=1",
+        "avatarBlurhash": "eJMtHN~W00RP?aIRNF8~WAIU01WDN2xHV]9OM|D$Io-.02sA?Zt6t5",
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": true,
+        "instance": {
+          "name": "Misskey.io",
+          "softwareName": "misskey",
+          "softwareVersion": "2025.4.1-io.12b-fb6fbea074",
+          "iconUrl": "https://misskey.io/static-assets/icons/192.png",
+          "faviconUrl": "https://media.misskeyusercontent.jp/io/c975a67f-dde4-4e49-9dbc-2bc3a8e34e25.png",
+          "themeColor": "#86b300"
+        },
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": "コメダの肉バーガー…\nなにこれは………www",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 39,
+      "repliesCount": 0,
+      "reactionCount": 137,
+      "reactions": {
+        ":iizo@misskey.io:": 1,
+        ":ippai@misskey.io:": 5,
+        ":kuruu@misskey.io:": 1,
+        ":niku2@misskey.io:": 28,
+        ":moreta@misskey.io:": 1,
+        ":daisuki@misskey.io:": 1,
+        ":sonnani@misskey.io:": 3,
+        ":uwa_xtu@misskey.io:": 35,
+        ":kusodeka@misskey.io:": 14,
+        ":meow_yikes@misskey.io:": 18,
+        ":meowsurprised@misskey.io:": 2,
+        ":saikou_sugiru@misskey.io:": 1,
+        ":blobcatdroolreach@misskey.io:": 4,
+        ":blobcatsweatflips@misskey.io:": 1,
+        ":doecchi@social.pseudo-whiskey.bar:": 1,
+        ":konnnano_zettai_oisii_yo@misskey.io:": 2,
+        ":moreba_moru_hodo_otoku__i@misskey.io:": 19
+      },
+      "reactionEmojis": {
+        "iizo@misskey.io": "https://media.misskeyusercontent.com/emoji/iizo.png",
+        "ippai@misskey.io": "https://media.misskeyusercontent.com/io/f5ba8eb1-3cb0-4bcc-8061-d67ec58ee696.png",
+        "kuruu@misskey.io": "https://media.misskeyusercontent.com/misskey/500fbea4-376e-4b0e-8b25-bd2a29fbf722.png",
+        "niku2@misskey.io": "https://media.misskeyusercontent.com/io/65b87f1a-b46b-48a2-a73b-dc1d7831c7f5.png",
+        "moreta@misskey.io": "https://media.misskeyusercontent.com/io/bbd8ccb1-7eb4-4bfc-8aa0-5b4a2646b11e.png",
+        "daisuki@misskey.io": "https://media.misskeyusercontent.com/emoji/daisuki.png",
+        "sonnani@misskey.io": "https://media.misskeyusercontent.com/emoji/sonnani.png",
+        "uwa_xtu@misskey.io": "https://media.misskeyusercontent.com/misskey/5ecd0f74-707a-4d8f-a753-da2689c6ac57.png",
+        "kusodeka@misskey.io": "https://media.misskeyusercontent.com/misskey/9d93e0f2-29df-4343-b95b-8029f72e1be3.png",
+        "meow_yikes@misskey.io": "https://media.misskeyusercontent.com/misskey/116c28cf-dc06-464d-977c-17e3c50139df.png",
+        "meowsurprised@misskey.io": "https://media.misskeyusercontent.com/emoji/meowSurprised.png",
+        "saikou_sugiru@misskey.io": "https://media.misskeyusercontent.com/misskey/webpublic-4cace5bd-766f-4b15-96c2-4fd1e27443a2.png",
+        "blobcatdroolreach@misskey.io": "https://media.misskeyusercontent.com/emoji/blobcatdroolreach.png",
+        "blobcatsweatflips@misskey.io": "https://media.misskeyusercontent.com/emoji/blobcatsweatflips.apng",
+        "doecchi@social.pseudo-whiskey.bar": "https://misskey-media.pseudo-whiskey.bar/media/a878df8d-7316-4396-85f2-70ce74fef0bb.png",
+        "konnnano_zettai_oisii_yo@misskey.io": "https://media.misskeyusercontent.com/io/838c10e1-0d6c-48ab-bc99-842590184b45.png",
+        "moreba_moru_hodo_otoku__i@misskey.io": "https://media.misskeyusercontent.com/io/716b4a87-0982-4ac4-97d3-434d9782ed74.png"
+      },
+      "emojis": {},
+      "fileIds": [
+        "01JAZ3G3BVPSWBTBYKJ6773SV5"
+      ],
+      "files": [
+        {
+          "id": "01JAZ3G3BVPSWBTBYKJ6773SV5",
+          "createdAt": "2024-10-24T11:09:57.499Z",
+          "name": "PXL_20241024_110803981.MP.jpg.webp",
+          "type": "image/webp",
+          "md5": "6667cd93c83fadc64005ce1c68fae5d2",
+          "size": 0,
+          "isSensitive": false,
+          "isAiGenerated": false,
+          "blurhash": "eSJ78Xo~xuxat70hNxtQWBe.~9ofIUs:RkjZWBoJV@ad9|o0a#a#t7",
+          "properties": {
+            "width": 1152,
+            "height": 2048
+          },
+          "url": "https://proxy.misskeyusercontent.com/image/media.misskeyusercontent.com%2Fio%2Fa985f5f3-7deb-458a-bccd-bd456a2aaab6.webp?",
+          "thumbnailUrl": "https://proxy.misskeyusercontent.com/static/media.misskeyusercontent.com%2Fio%2Fa985f5f3-7deb-458a-bccd-bd456a2aaab6.webp?static=1",
+          "comment": null,
+          "folderId": null,
+          "folder": null,
+          "userId": "01GSWXZMCPFQW3VW7P96FFD369",
+          "user": null
+        }
+      ],
+      "replyId": null,
+      "renoteId": null,
+      "uri": "https://misskey.io/notes/9zqrm2xr8tls0fr3",
+      "clippedCount": 0
+    },
+    {
+      "id": "01J12TGT60VZF3NZA5MKQCT10K",
+      "createdAt": "2024-06-23T15:13:03.168Z",
+      "userId": "01GSWXZMCPFQW3VW7P96FFD369",
+      "user": {
+        "id": "01GSWXZMCPFQW3VW7P96FFD369",
+        "name": "司書",
+        "username": "Librarian",
+        "host": "misskey.io",
+        "avatarUrl": "https://proxy.misskeyusercontent.com/avatar/media.misskeyusercontent.com%2Fio%2Fd0940613-fb33-4ad1-9ff7-5885e0f32839.png?avatar=1",
+        "avatarBlurhash": "eJMtHN~W00RP?aIRNF8~WAIU01WDN2xHV]9OM|D$Io-.02sA?Zt6t5",
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": true,
+        "instance": {
+          "name": "Misskey.io",
+          "softwareName": "misskey",
+          "softwareVersion": "2025.4.1-io.12b-fb6fbea074",
+          "iconUrl": "https://misskey.io/static-assets/icons/192.png",
+          "faviconUrl": "https://media.misskeyusercontent.jp/io/c975a67f-dde4-4e49-9dbc-2bc3a8e34e25.png",
+          "themeColor": "#86b300"
+        },
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": "誕生日！\n自分への誕生日にELIMINATOR納車した！！！\nおめでとう自分！！！！！",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 18,
+      "repliesCount": 0,
+      "reactionCount": 84,
+      "reactions": {
+        "🎉": 1,
+        ":igyo@misskey.io:": 3,
+        ":omedetou2@misskey.io:": 59,
+        ":supertada@misskey.io:": 1,
+        ":kumapu_ome@misskey.io:": 1,
+        ":ultra_igyo@misskey.io:": 2,
+        ":congratu_ration@misskey.io:": 1,
+        ":happy_birth_day__i@misskey.io:": 14,
+        ":happy_birth_day__i@enola.space:": 1,
+        ":blobcat_yaysuperfast@misskey.io:": 1
+      },
+      "reactionEmojis": {
+        "igyo@misskey.io": "https://media.misskeyusercontent.com/io/44d3d3d7-aa41-4f37-b963-59e7745fec78.png",
+        "omedetou2@misskey.io": "https://media.misskeyusercontent.com/io/cb9d3553-d741-42a6-a381-766dc1ff424d.gif",
+        "supertada@misskey.io": "https://media.misskeyusercontent.com/misskey/4bfcd2e4-9bff-453d-98bd-c0a5970b98f1.gif",
+        "kumapu_ome@misskey.io": "https://media.misskeyusercontent.com/io/3eb8671c-1e6d-4791-965f-3cd10fe27fc6.png",
+        "ultra_igyo@misskey.io": "https://media.misskeyusercontent.com/misskey/7c3fa41b-7025-4f5c-8d9a-ec8927a3eda3.gif",
+        "congratu_ration@misskey.io": "https://media.misskeyusercontent.com/misskey/d72a7282-5ae8-4142-a7e3-5ce3c8f9aba6.gif",
+        "happy_birth_day__i@misskey.io": "https://media.misskeyusercontent.com/io/fff3e7a6-a9f6-4950-bae5-caa91a6cf49c.gif",
+        "happy_birth_day__i@enola.space": "https://enola.space/files/baf6fc86-6283-4c8f-8e75-4ebf70dc87d9",
+        "blobcat_yaysuperfast@misskey.io": "https://media.misskeyusercontent.com/io/b2a96c6c-d603-4dd4-85a6-f7f67af31bdc.apng"
+      },
+      "emojis": {},
+      "fileIds": [
+        "01J13JCQ8YQNW3V8JGGC5XBS3R"
+      ],
+      "files": [
+        {
+          "id": "01J13JCQ8YQNW3V8JGGC5XBS3R",
+          "createdAt": "2024-06-23T22:10:14.942Z",
+          "name": "2024-06-24 00-11-42 1.png",
+          "type": "image/png",
+          "md5": "69cdb0dea7dace843c4ec8c493b617ab",
+          "size": 0,
+          "isSensitive": false,
+          "isAiGenerated": false,
+          "blurhash": "e7FrR=5t%2-pt702=qIpT0D%~BNI9G^%^*?vIonMSjNLI;-oxvIpD%",
+          "properties": {
+            "width": 2048,
+            "height": 1152
+          },
+          "url": "https://proxy.misskeyusercontent.com/image/media.misskeyusercontent.com%2Fio%2Fwebpublic-6a41551f-a3e2-4b9e-84ec-ecc19f7e5274.png?",
+          "thumbnailUrl": "https://proxy.misskeyusercontent.com/static/media.misskeyusercontent.com%2Fio%2Fwebpublic-6a41551f-a3e2-4b9e-84ec-ecc19f7e5274.png?static=1",
+          "comment": null,
+          "folderId": null,
+          "folder": null,
+          "userId": "01GSWXZMCPFQW3VW7P96FFD369",
+          "user": null
+        }
+      ],
+      "replyId": null,
+      "renoteId": null,
+      "uri": "https://misskey.io/notes/9uv95qyojuos02yl",
+      "clippedCount": 0
+    }
+  ],
+  "pinnedPageId": null,
+  "pinnedPage": null,
+  "publicReactions": false,
+  "followersVisibility": "public",
+  "followingVisibility": "public",
+  "chatScope": "mutual",
+  "canChat": false,
+  "roles": [],
+  "memo": null
+}

@@ -20,6 +20,11 @@ class MisskeyRole {
     required this.canEditMembersByModerator,
     required this.displayOrder,
     required this.usersCount,
+    this.isAdministrator,
+    this.isModerator,
+    this.policies,
+    this.condFormula,
+    this.preserveAssignmentOnMoveAccount,
   });
 
   factory MisskeyRole.fromJson(Map<String, dynamic> json) =>
@@ -68,4 +73,23 @@ class MisskeyRole {
 
   /// The number of users assigned to this role.
   final int usersCount;
+
+  /// Whether this role grants administrator privileges.
+  @JsonKey(defaultValue: false)
+  final bool? isAdministrator;
+
+  /// Whether this role grants moderator privileges.
+  @JsonKey(defaultValue: false)
+  final bool? isModerator;
+
+  /// The policy overrides applied by this role.
+  final Map<String, dynamic>? policies;
+
+  /// The conditional assignment formula (used when [target] is `conditional`).
+  final Map<String, dynamic>? condFormula;
+
+  /// Whether the role assignment is preserved when the user moves their
+  /// account.
+  @JsonKey(defaultValue: false)
+  final bool? preserveAssignmentOnMoveAccount;
 }

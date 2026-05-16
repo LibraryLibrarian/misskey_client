@@ -15,8 +15,11 @@ class MisskeyFederationInstance {
     this.followersCount,
     this.isNotResponding,
     this.isSuspended,
+    this.suspensionState,
     this.isBlocked,
     this.isSilenced,
+    this.isSensitiveMedia,
+    this.isMediaSilenced,
     this.softwareName,
     this.softwareVersion,
     this.openRegistrations,
@@ -29,6 +32,7 @@ class MisskeyFederationInstance {
     this.themeColor,
     this.infoUpdatedAt,
     this.latestRequestReceivedAt,
+    this.moderationNote,
   });
 
   factory MisskeyFederationInstance.fromJson(Map<String, dynamic> json) =>
@@ -63,11 +67,24 @@ class MisskeyFederationInstance {
   /// Whether the instance is suspended.
   final bool? isSuspended;
 
+  /// The granular suspension state (e.g. `none`, `manuallySuspended`).
+  final String? suspensionState;
+
   /// Whether the instance is blocked.
   final bool? isBlocked;
 
   /// Whether the instance is silenced.
   final bool? isSilenced;
+
+  /// Whether the instance is marked as serving sensitive media
+  /// (older API versions).
+  @JsonKey(defaultValue: false)
+  final bool? isSensitiveMedia;
+
+  /// Whether the instance's media is silenced (newer API versions,
+  /// replaces [isSensitiveMedia]).
+  @JsonKey(defaultValue: false)
+  final bool? isMediaSilenced;
 
   /// The software name (e.g., `misskey`, `mastodon`).
   final String? softwareName;
@@ -104,4 +121,8 @@ class MisskeyFederationInstance {
 
   /// The date and time of the last received request.
   final DateTime? latestRequestReceivedAt;
+
+  /// The moderation note attached to this instance
+  /// (visible to moderators only).
+  final String? moderationNote;
 }

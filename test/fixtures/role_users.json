@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ak6o87lcrt4w0019",
+    "user": {
+      "id": "ak3qbtu5rt4w0009",
+      "name": null,
+      "username": "testuser2",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testuser2@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": [
+        {
+          "name": "Test Role",
+          "iconUrl": null,
+          "displayOrder": 0
+        }
+      ],
+      "url": null,
+      "uri": null,
+      "movedTo": null,
+      "alsoKnownAs": null,
+      "createdAt": "2026-03-21T10:08:28.109Z",
+      "updatedAt": "2026-03-21T10:11:42.597Z",
+      "lastFetchedAt": null,
+      "bannerUrl": null,
+      "bannerBlurhash": null,
+      "isLocked": false,
+      "isSilenced": false,
+      "isSuspended": false,
+      "description": null,
+      "location": null,
+      "birthday": null,
+      "lang": null,
+      "fields": [],
+      "verifiedLinks": [],
+      "followersCount": 0,
+      "followingCount": 0,
+      "notesCount": 1,
+      "pinnedNoteIds": [],
+      "pinnedNotes": [],
+      "pinnedPageId": null,
+      "pinnedPage": null,
+      "publicReactions": true,
+      "followersVisibility": "public",
+      "followingVisibility": "public",
+      "chatScope": "mutual",
+      "canChat": true,
+      "roles": [
+        {
+          "id": "ak3qfuxmrt4w000l",
+          "name": "Test Role",
+          "color": "#ff0000",
+          "iconUrl": null,
+          "description": "A test role",
+          "isModerator": false,
+          "isAdministrator": false,
+          "displayOrder": 0
+        }
+      ],
+      "memo": null
+    }
+  }
+]

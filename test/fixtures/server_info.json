@@ -1,0 +1,14 @@
+{
+  "machine": "?",
+  "cpu": {
+    "model": "?",
+    "cores": 0
+  },
+  "mem": {
+    "total": 0
+  },
+  "fs": {
+    "total": 0,
+    "used": 0
+  }
+}

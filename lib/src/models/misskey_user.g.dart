@@ -97,6 +97,70 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
       twoFactorEnabled: json['twoFactorEnabled'] as bool? ?? false,
       usePasswordLessLogin: json['usePasswordLessLogin'] as bool? ?? false,
       securityKeys: json['securityKeys'] as bool? ?? false,
+      isAdmin: json['isAdmin'] as bool? ?? false,
+      isModerator: json['isModerator'] as bool? ?? false,
+      pinnedPageId: json['pinnedPageId'] as String?,
+      avatarId: json['avatarId'] as String?,
+      bannerId: json['bannerId'] as String?,
+      followedMessage: json['followedMessage'] as String?,
+      noCrawle: json['noCrawle'] as bool? ?? false,
+      preventAiLearning: json['preventAiLearning'] as bool? ?? false,
+      hideOnlineStatus: json['hideOnlineStatus'] as bool? ?? false,
+      isExplorable: json['isExplorable'] as bool? ?? false,
+      isDeleted: json['isDeleted'] as bool? ?? false,
+      injectFeaturedNote: json['injectFeaturedNote'] as bool? ?? false,
+      receiveAnnouncementEmail:
+          json['receiveAnnouncementEmail'] as bool? ?? false,
+      alwaysMarkNsfw: json['alwaysMarkNsfw'] as bool? ?? false,
+      autoSensitive: json['autoSensitive'] as bool? ?? false,
+      carefulBot: json['carefulBot'] as bool? ?? false,
+      autoAcceptFollowed: json['autoAcceptFollowed'] as bool? ?? false,
+      chatScope: json['chatScope'] as String?,
+      canChat: json['canChat'] as bool? ?? false,
+      hasUnreadSpecifiedNotes:
+          json['hasUnreadSpecifiedNotes'] as bool? ?? false,
+      hasUnreadMentions: json['hasUnreadMentions'] as bool? ?? false,
+      hasUnreadChatMessages: json['hasUnreadChatMessages'] as bool? ?? false,
+      hasUnreadAnnouncement: json['hasUnreadAnnouncement'] as bool? ?? false,
+      hasUnreadAntenna: json['hasUnreadAntenna'] as bool? ?? false,
+      hasUnreadChannel: json['hasUnreadChannel'] as bool? ?? false,
+      hasUnreadNotification: json['hasUnreadNotification'] as bool? ?? false,
+      hasPendingReceivedFollowRequest:
+          json['hasPendingReceivedFollowRequest'] as bool? ?? false,
+      unreadNotificationsCount:
+          (json['unreadNotificationsCount'] as num?)?.toInt() ?? 0,
+      mutedWords: (json['mutedWords'] as List<dynamic>?)
+          ?.map((e) => (e as List<dynamic>).map((e) => e as String).toList())
+          .toList(),
+      hardMutedWords: (json['hardMutedWords'] as List<dynamic>?)
+          ?.map((e) => (e as List<dynamic>).map((e) => e as String).toList())
+          .toList(),
+      mutedInstances: (json['mutedInstances'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      mutingNotificationTypes:
+          (json['mutingNotificationTypes'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
+      notificationRecieveConfig:
+          json['notificationRecieveConfig'] as Map<String, dynamic>?,
+      emailNotificationTypes: (json['emailNotificationTypes'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      achievements: (json['achievements'] as List<dynamic>?)
+          ?.map((e) => e as Map<String, dynamic>)
+          .toList(),
+      loggedInDays: (json['loggedInDays'] as num?)?.toInt() ?? 0,
+      policies: json['policies'] as Map<String, dynamic>?,
+      twoFactorBackupCodesStock: json['twoFactorBackupCodesStock'] as String?,
+      email: json['email'] as String?,
+      emailVerified: json['emailVerified'] as bool? ?? false,
+      moderationNote: json['moderationNote'] as String?,
+      isLimited: json['isLimited'] as bool? ?? false,
+      mutualLinkSections: (json['mutualLinkSections'] as List<dynamic>?)
+          ?.map((e) => e as Map<String, dynamic>)
+          .toList(),
+      pinnedPage: json['pinnedPage'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$MisskeyUserToJson(MisskeyUser instance) =>
@@ -160,6 +224,51 @@ Map<String, dynamic> _$MisskeyUserToJson(MisskeyUser instance) =>
       'twoFactorEnabled': instance.twoFactorEnabled,
       'usePasswordLessLogin': instance.usePasswordLessLogin,
       'securityKeys': instance.securityKeys,
+      'isAdmin': instance.isAdmin,
+      'isModerator': instance.isModerator,
+      'pinnedPageId': instance.pinnedPageId,
+      'avatarId': instance.avatarId,
+      'bannerId': instance.bannerId,
+      'followedMessage': instance.followedMessage,
+      'noCrawle': instance.noCrawle,
+      'preventAiLearning': instance.preventAiLearning,
+      'hideOnlineStatus': instance.hideOnlineStatus,
+      'isExplorable': instance.isExplorable,
+      'isDeleted': instance.isDeleted,
+      'injectFeaturedNote': instance.injectFeaturedNote,
+      'receiveAnnouncementEmail': instance.receiveAnnouncementEmail,
+      'alwaysMarkNsfw': instance.alwaysMarkNsfw,
+      'autoSensitive': instance.autoSensitive,
+      'carefulBot': instance.carefulBot,
+      'autoAcceptFollowed': instance.autoAcceptFollowed,
+      'chatScope': instance.chatScope,
+      'canChat': instance.canChat,
+      'hasUnreadSpecifiedNotes': instance.hasUnreadSpecifiedNotes,
+      'hasUnreadMentions': instance.hasUnreadMentions,
+      'hasUnreadChatMessages': instance.hasUnreadChatMessages,
+      'hasUnreadAnnouncement': instance.hasUnreadAnnouncement,
+      'hasUnreadAntenna': instance.hasUnreadAntenna,
+      'hasUnreadChannel': instance.hasUnreadChannel,
+      'hasUnreadNotification': instance.hasUnreadNotification,
+      'hasPendingReceivedFollowRequest':
+          instance.hasPendingReceivedFollowRequest,
+      'unreadNotificationsCount': instance.unreadNotificationsCount,
+      'mutedWords': instance.mutedWords,
+      'hardMutedWords': instance.hardMutedWords,
+      'mutedInstances': instance.mutedInstances,
+      'mutingNotificationTypes': instance.mutingNotificationTypes,
+      'notificationRecieveConfig': instance.notificationRecieveConfig,
+      'emailNotificationTypes': instance.emailNotificationTypes,
+      'achievements': instance.achievements,
+      'loggedInDays': instance.loggedInDays,
+      'policies': instance.policies,
+      'twoFactorBackupCodesStock': instance.twoFactorBackupCodesStock,
+      'email': instance.email,
+      'emailVerified': instance.emailVerified,
+      'moderationNote': instance.moderationNote,
+      'isLimited': instance.isLimited,
+      'mutualLinkSections': instance.mutualLinkSections,
+      'pinnedPage': instance.pinnedPage,
     };
 
 const _$MisskeyOnlineStatusEnumMap = {

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ak3qbtu5rt4w0009",
+    "birthday": "2026-03-23",
+    "user": {
+      "id": "ak3qbtu5rt4w0009",
+      "name": null,
+      "username": "testuser2",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testuser2@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": [
+        {
+          "name": "Test Role",
+          "iconUrl": null,
+          "displayOrder": 0
+        }
+      ]
+    }
+  }
+]

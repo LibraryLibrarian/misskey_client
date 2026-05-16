@@ -21,6 +21,9 @@ MisskeyAnnouncement _$MisskeyAnnouncementFromJson(Map<String, dynamic> json) =>
       silence: json['silence'] as bool? ?? false,
       forYou: json['forYou'] as bool? ?? false,
       isRead: json['isRead'] as bool?,
+      isActive: json['isActive'] as bool? ?? true,
+      forExistingUsers: json['forExistingUsers'] as bool? ?? false,
+      userId: json['userId'] as String?,
     );
 
 Map<String, dynamic> _$MisskeyAnnouncementToJson(
@@ -38,4 +41,7 @@ Map<String, dynamic> _$MisskeyAnnouncementToJson(
       'silence': instance.silence,
       'forYou': instance.forYou,
       'isRead': instance.isRead,
+      'isActive': instance.isActive,
+      'forExistingUsers': instance.forExistingUsers,
+      'userId': instance.userId,
     };
