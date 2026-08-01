@@ -1,0 +1,5 @@
+# E2Eテスト(test/e2e/)は fediverse_e2e 環境が必要。
+# 実行: RUN_E2E=1 dart test test/e2e (環境が無い場合は自動スキップ)
+tags:
+  e2e:
+    timeout: 3m
