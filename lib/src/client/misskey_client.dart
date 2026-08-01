@@ -1,4 +1,10 @@
+import 'package:dio/dio.dart';
+
 import '../api/account/account_api.dart';
+import '../api/admin/admin_accounts_api.dart';
+import '../api/admin/admin_api.dart';
+import '../api/admin/admin_invite_api.dart';
+import '../api/admin/admin_roles_api.dart';
 import '../api/announcements_api.dart';
 import '../api/antennas_api.dart';
 import '../api/ap_api.dart';
@@ -30,16 +36,26 @@ import 'token_provider.dart';
 
 /// The main entry point for accessing all Misskey API domains.
 class MisskeyClient {
+  /// Creates a [MisskeyClient].
+  ///
+  /// Pass [httpClientAdapter] to customize the underlying HTTP transport
+  /// (e.g. trusting a private CA in test environments, or proxying).
   MisskeyClient({
     required MisskeyClientConfig config,
     TokenProvider? tokenProvider,
     Logger? logger,
+    HttpClientAdapter? httpClientAdapter,
   }) : http = MisskeyHttp(
           config: config,
           tokenProvider: tokenProvider,
           logger: logger,
+          httpClientAdapter: httpClientAdapter,
         ) {
     account = AccountApi(http: http);
+    admin = AdminApi(http: http);
+    adminAccounts = AdminAccountsApi(http: http);
+    adminInvite = AdminInviteApi(http: http);
+    adminRoles = AdminRolesApi(http: http);
     announcements = AnnouncementsApi(http: http);
     antennas = AntennasApi(http: http);
     ap = ApApi(http: http);
@@ -71,6 +87,18 @@ class MisskeyClient {
 
   /// Account and profile management API.
   late final AccountApi account;
+
+  /// Core admin API (instance settings, user moderation).
+  late final AdminApi admin;
+
+  /// Admin account management API.
+  late final AdminAccountsApi adminAccounts;
+
+  /// Admin invite code management API.
+  late final AdminInviteApi adminInvite;
+
+  /// Admin role management API.
+  late final AdminRolesApi adminRoles;
 
   /// Announcements API.
   late final AnnouncementsApi announcements;

@@ -1,0 +1,21 @@
+{
+  "machine": "88a5ad6ab74b",
+  "os": "linux",
+  "node": "v22.22.2",
+  "psql": "17.10",
+  "redis": "7.4.10",
+  "cpu": {
+    "model": "unknown",
+    "cores": 14
+  },
+  "mem": {
+    "total": 8320954368
+  },
+  "fs": {
+    "total": 1081100128256,
+    "used": 77993771008
+  },
+  "net": {
+    "interface": "eth0"
+  }
+}
