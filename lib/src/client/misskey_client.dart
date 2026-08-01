@@ -1,9 +1,14 @@
 import 'package:dio/dio.dart';
 
 import '../api/account/account_api.dart';
+import '../api/admin/admin_abuse_reports_api.dart';
 import '../api/admin/admin_accounts_api.dart';
+import '../api/admin/admin_announcements_api.dart';
 import '../api/admin/admin_api.dart';
+import '../api/admin/admin_emoji_api.dart';
+import '../api/admin/admin_federation_api.dart';
 import '../api/admin/admin_invite_api.dart';
+import '../api/admin/admin_relays_api.dart';
 import '../api/admin/admin_roles_api.dart';
 import '../api/announcements_api.dart';
 import '../api/antennas_api.dart';
@@ -53,8 +58,13 @@ class MisskeyClient {
         ) {
     account = AccountApi(http: http);
     admin = AdminApi(http: http);
+    adminAbuseReports = AdminAbuseReportsApi(http: http);
     adminAccounts = AdminAccountsApi(http: http);
+    adminAnnouncements = AdminAnnouncementsApi(http: http);
+    adminEmoji = AdminEmojiApi(http: http);
+    adminFederation = AdminFederationApi(http: http);
     adminInvite = AdminInviteApi(http: http);
+    adminRelays = AdminRelaysApi(http: http);
     adminRoles = AdminRolesApi(http: http);
     announcements = AnnouncementsApi(http: http);
     antennas = AntennasApi(http: http);
@@ -91,11 +101,26 @@ class MisskeyClient {
   /// Core admin API (instance settings, user moderation).
   late final AdminApi admin;
 
+  /// Admin abuse report management API.
+  late final AdminAbuseReportsApi adminAbuseReports;
+
   /// Admin account management API.
   late final AdminAccountsApi adminAccounts;
 
+  /// Admin announcement management API.
+  late final AdminAnnouncementsApi adminAnnouncements;
+
+  /// Admin custom emoji management API.
+  late final AdminEmojiApi adminEmoji;
+
+  /// Admin federation management API.
+  late final AdminFederationApi adminFederation;
+
   /// Admin invite code management API.
   late final AdminInviteApi adminInvite;
+
+  /// Admin relay management API.
+  late final AdminRelaysApi adminRelays;
 
   /// Admin role management API.
   late final AdminRolesApi adminRoles;

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Admin API (P2): custom emoji management (`AdminEmojiApi`: add, update, delete, delete-bulk, list, list-remote, copy, import-zip, add/remove/set-aliases-bulk, set-category-bulk, set-license-bulk), federation management (`AdminFederationApi`: delete-all-files, refresh-remote-instance-metadata, remove-all-following, update-instance), relay management (`AdminRelaysApi`: add, list, remove), abuse report management (`AdminAbuseReportsApi`: list, resolve, forward, update, notification-recipient list/show/create/update/delete), announcement management (`AdminAnnouncementsApi`: create, list, update, delete)
+- Admin models: `MisskeyAbuseUserReport`, `MisskeyAbuseReportNotificationRecipient`, `MisskeyRelay`, `MisskeyAdminAnnouncement`
 - Admin API (P1): core admin (`AdminApi`: meta, update-meta, server-info, show-user, show-users, suspend-user, unsuspend-user, reset-password, update-user-note), account management (`AdminAccountsApi`: create, delete, find-by-email), role management (`AdminRolesApi`: list, show, create, update, delete, assign, unassign, update-default-policies, users), invite management (`AdminInviteApi`: create, list)
 - Admin models: `MisskeyAdminMeta` (typed subset + raw), `MisskeyAdminServerInfo`, `MisskeyAdminUserDetail` (with `MisskeySignin` / `MisskeyRoleAssign`), `MisskeyAdminCreatedAccount`
 - `httpClientAdapter` parameter on `MisskeyClient` to customize the HTTP transport (private CA trust, proxying)
