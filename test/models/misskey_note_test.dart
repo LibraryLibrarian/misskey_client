@@ -84,5 +84,27 @@ void main() {
       expect(note.repliesCount, 0);
       expect(note.reactionCount, 0);
     });
+
+    test('reactionAcceptance falls back to unknown for a value not yet '
+        'known to this client', () {
+      final file = File('test/fixtures/notes_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      json['reactionAcceptance'] = 'someFutureValueNotInEnum';
+
+      final note = MisskeyNote.fromJson(json);
+
+      expect(note.reactionAcceptance, MisskeyReactionAcceptance.unknown);
+    });
+
+    test('reactionAcceptance is null when the field is absent', () {
+      final file = File('test/fixtures/notes_show.json');
+      final json =
+          (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
+            ..remove('reactionAcceptance');
+
+      final note = MisskeyNote.fromJson(json);
+
+      expect(note.reactionAcceptance, isNull);
+    });
   });
 }

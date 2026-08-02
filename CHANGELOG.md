@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `MisskeyNote.reactionAcceptance` threw when the server returned a value not yet known to this client (no `unknownEnumValue` was configured), which would fail the deserialization of the entire note. Added a `MisskeyReactionAcceptance.unknown` fallback
+
 ### Changed
 
 - Refreshed fixtures against a live, federated world (multi-account, cross-server posts/reactions/follows) via the fixture collection tool in `fediverse_e2e`, replacing the single-server March snapshot. Corresponding model tests were updated to assert on structural properties rather than hardcoded IDs/counts where the underlying data is inherently dynamic (timestamps, counters, federated content)

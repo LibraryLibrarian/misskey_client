@@ -24,6 +24,10 @@ enum MisskeyReactionAcceptance {
   nonSensitiveOnly,
   nonSensitiveOnlyForLocalLikeOnlyForRemote,
   likeOnly,
+
+  /// Fallback for a value not yet known to this client (forward
+  /// compatibility with server-side additions).
+  unknown,
 }
 
 /// A Misskey note (post).
@@ -98,6 +102,7 @@ class MisskeyNote {
   final bool? localOnly;
 
   /// The reaction acceptance setting.
+  @JsonKey(unknownEnumValue: MisskeyReactionAcceptance.unknown)
   final MisskeyReactionAcceptance? reactionAcceptance;
 
   /// The number of renotes.
