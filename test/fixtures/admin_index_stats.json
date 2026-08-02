@@ -1,0 +1,23 @@
+[
+  {
+    "schemaname": "pg_catalog",
+    "tablename": "pg_proc",
+    "indexname": "pg_proc_proname_args_nsp_index",
+    "tablespace": null,
+    "indexdef": "CREATE UNIQUE INDEX pg_proc_proname_args_nsp_index ON pg_catalog.pg_proc USING btree (proname, proargtypes, pronamespace)"
+  },
+  {
+    "schemaname": "pg_catalog",
+    "tablename": "pg_type",
+    "indexname": "pg_type_typname_nsp_index",
+    "tablespace": null,
+    "indexdef": "CREATE UNIQUE INDEX pg_type_typname_nsp_index ON pg_catalog.pg_type USING btree (typname, typnamespace)"
+  },
+  {
+    "schemaname": "pg_catalog",
+    "tablename": "pg_attribute",
+    "indexname": "pg_attribute_relid_attnam_index",
+    "tablespace": null,
+    "indexdef": "CREATE UNIQUE INDEX pg_attribute_relid_attnam_index ON pg_catalog.pg_attribute USING btree (attrelid, attname)"
+  }
+]

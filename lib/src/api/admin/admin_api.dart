@@ -4,6 +4,7 @@ import '../../internal/optional.dart';
 import '../../models/admin/misskey_admin_meta.dart';
 import '../../models/admin/misskey_admin_server_info.dart';
 import '../../models/admin/misskey_admin_user_detail.dart';
+import '../../models/admin/misskey_moderation_log.dart';
 import '../../models/misskey_user.dart';
 
 /// Provides core admin API endpoints (`/api/admin/*`).
@@ -211,6 +212,172 @@ class AdminApi {
         '/admin/update-user-note',
         body: <String, dynamic>{'userId': userId, 'text': text},
       );
+
+  /// Deletes a user account (`/api/admin/delete-account`).
+  ///
+  /// Requires administrator privileges. The deletion is processed
+  /// asynchronously on the server.
+  Future<void> deleteAccount({required String userId}) => http.send<Object?>(
+        '/admin/delete-account',
+        body: <String, dynamic>{'userId': userId},
+      );
+
+  /// Deletes every drive file owned by a user
+  /// (`/api/admin/delete-all-files-of-a-user`).
+  ///
+  /// Requires moderator privileges.
+  Future<void> deleteAllFilesOfAUser({required String userId}) =>
+      http.send<Object?>(
+        '/admin/delete-all-files-of-a-user',
+        body: <String, dynamic>{'userId': userId},
+      );
+
+  /// Removes a user's avatar image (`/api/admin/unset-user-avatar`).
+  ///
+  /// Requires moderator privileges.
+  Future<void> unsetUserAvatar({required String userId}) =>
+      http.send<Object?>(
+        '/admin/unset-user-avatar',
+        body: <String, dynamic>{'userId': userId},
+      );
+
+  /// Removes a user's banner image (`/api/admin/unset-user-banner`).
+  ///
+  /// Requires moderator privileges.
+  Future<void> unsetUserBanner({required String userId}) =>
+      http.send<Object?>(
+        '/admin/unset-user-banner',
+        body: <String, dynamic>{'userId': userId},
+      );
+
+  /// Fetches the IP addresses recorded for a user
+  /// (`/api/admin/get-user-ips`).
+  ///
+  /// Requires moderator privileges. Returns an empty list when IP
+  /// logging is disabled (`enableIpLogging`).
+  Future<List<MisskeyUserIp>> getUserIps({required String userId}) async {
+    final res = await http.send<List<dynamic>>(
+      '/admin/get-user-ips',
+      body: <String, dynamic>{'userId': userId},
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyUserIp.fromJson)
+        .toList();
+  }
+
+  /// Fetches moderation logs (`/api/admin/show-moderation-logs`).
+  ///
+  /// Requires moderator privileges. Use [limit] (1-100, default 10) to
+  /// cap the number of results and [sinceId] / [untilId] for
+  /// cursor-based pagination. [type] filters by action type, [userId] by
+  /// the moderator who performed the action, and [search] by keyword.
+  Future<List<MisskeyModerationLog>> showModerationLogs({
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    String? type,
+    String? userId,
+    String? search,
+  }) async {
+    final res = await http.send<List<dynamic>>(
+      '/admin/show-moderation-logs',
+      body: <String, dynamic>{
+        if (limit != null) 'limit': limit,
+        if (sinceId != null) 'sinceId': sinceId,
+        if (untilId != null) 'untilId': untilId,
+        if (type != null) 'type': type,
+        if (userId != null) 'userId': userId,
+        if (search != null) 'search': search,
+      },
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyModerationLog.fromJson)
+        .toList();
+  }
+
+  /// Sends an email (`/api/admin/send-email`).
+  ///
+  /// Requires administrator privileges and a configured SMTP server.
+  Future<void> sendEmail({
+    required String to,
+    required String subject,
+    required String text,
+  }) =>
+      http.send<Object?>(
+        '/admin/send-email',
+        body: <String, dynamic>{'to': to, 'subject': subject, 'text': text},
+      );
+
+  /// Updates the proxy account's profile
+  /// (`/api/admin/update-proxy-account`).
+  ///
+  /// Requires administrator privileges. Returns the updated proxy
+  /// account.
+  Future<MisskeyUser> updateProxyAccount({String? description}) async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/admin/update-proxy-account',
+      body: <String, dynamic>{
+        if (description != null) 'description': description,
+      },
+    );
+    return MisskeyUser.fromJson(res);
+  }
+
+  /// Pins a note as a promotion (`/api/admin/promo/create`).
+  ///
+  /// Requires moderator privileges. [expiresAt] is an epoch timestamp in
+  /// milliseconds.
+  ///
+  /// Common errors:
+  /// - `NO_SUCH_NOTE`: The specified note does not exist
+  /// - `ALREADY_PROMOTED`: The note is already promoted
+  Future<void> createPromo({
+    required String noteId,
+    required int expiresAt,
+  }) =>
+      http.send<Object?>(
+        '/admin/promo/create',
+        body: <String, dynamic>{'noteId': noteId, 'expiresAt': expiresAt},
+      );
+
+  /// Fetches PostgreSQL index statistics
+  /// (`/api/admin/get-index-stats`).
+  ///
+  /// Requires administrator privileges.
+  Future<List<MisskeyIndexStat>> getIndexStats() async {
+    final res = await http.send<List<dynamic>>(
+      '/admin/get-index-stats',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyIndexStat.fromJson)
+        .toList();
+  }
+
+  /// Fetches PostgreSQL table statistics
+  /// (`/api/admin/get-table-stats`).
+  ///
+  /// Requires administrator privileges. The result maps each table name
+  /// to its row count and size in bytes.
+  Future<Map<String, MisskeyTableStat>> getTableStats() async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/admin/get-table-stats',
+      body: const <String, dynamic>{},
+      options: const RequestOptions(idempotent: true),
+    );
+    return res.map(
+      (key, value) => MapEntry(
+        key,
+        MisskeyTableStat.fromJson(value as Map<String, dynamic>),
+      ),
+    );
+  }
 }
 
 /// Adds an [Optional]-wrapped value to the request body.

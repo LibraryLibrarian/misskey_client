@@ -1,0 +1,22 @@
+{
+  "migrations_id_seq": {
+    "count": 1,
+    "size": 8192
+  },
+  "migrations": {
+    "count": 342,
+    "size": 81920
+  },
+  "hashtag": {
+    "count": -1,
+    "size": 73728
+  },
+  "__chart__active_users_id_seq": {
+    "count": 1,
+    "size": 8192
+  },
+  "__chart__drive_id_seq": {
+    "count": 1,
+    "size": 8192
+  }
+}

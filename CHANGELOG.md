@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Admin API (P3): completes coverage of all 99 `/api/admin/*` endpoints — job queue management (`AdminQueueApi`: stats, queues, queue-stats, jobs, show-job, show-job-logs, retry-job, remove-job, promote-jobs, clear, deliver-delayed, inbox-delayed), drive management (`AdminDriveApi`: files, show-file, clean-remote-files, cleanup), advertisement management (`AdminAdApi`), avatar decoration management (`AdminAvatarDecorationsApi`), system webhook management (`AdminSystemWebhookApi`), CAPTCHA configuration (`AdminCaptchaApi`), plus `AdminApi` additions (delete-account, delete-all-files-of-a-user, unset-user-avatar, unset-user-banner, get-user-ips, show-moderation-logs, send-email, update-proxy-account, promo/create, get-index-stats, get-table-stats)
+- Admin models: `MisskeyQueueStats`, `MisskeyQueueCount`, `MisskeyQueueInfo`, `MisskeyQueueMetrics`, `MisskeyQueueJob`, `MisskeyDelayedQueueEntry`, `MisskeyAd`, `MisskeyAdminAvatarDecoration`, `MisskeySystemWebhook`, `MisskeyCaptchaSettings`, `MisskeyModerationLog`, `MisskeyUserIp`, `MisskeyIndexStat`, `MisskeyTableStat`
+
+### Fixed
+
+- Model fields that the API documentation omits or mistypes, verified against a live Misskey 2026.5.1 server: queue counts include `paused` / `prioritized` / `waiting-children`; `QueueJob.failedReason` is absent for successful jobs; `QueueJob.progress` and `returnValue` are not objects; index stats include `schemaname` / `tablespace` / `indexdef`
+
 - Admin API (P2): custom emoji management (`AdminEmojiApi`: add, update, delete, delete-bulk, list, list-remote, copy, import-zip, add/remove/set-aliases-bulk, set-category-bulk, set-license-bulk), federation management (`AdminFederationApi`: delete-all-files, refresh-remote-instance-metadata, remove-all-following, update-instance), relay management (`AdminRelaysApi`: add, list, remove), abuse report management (`AdminAbuseReportsApi`: list, resolve, forward, update, notification-recipient list/show/create/update/delete), announcement management (`AdminAnnouncementsApi`: create, list, update, delete)
 - Admin models: `MisskeyAbuseUserReport`, `MisskeyAbuseReportNotificationRecipient`, `MisskeyRelay`, `MisskeyAdminAnnouncement`
 - Admin API (P1): core admin (`AdminApi`: meta, update-meta, server-info, show-user, show-users, suspend-user, unsuspend-user, reset-password, update-user-note), account management (`AdminAccountsApi`: create, delete, find-by-email), role management (`AdminRolesApi`: list, show, create, update, delete, assign, unassign, update-default-policies, users), invite management (`AdminInviteApi`: create, list)
