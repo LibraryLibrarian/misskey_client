@@ -20,12 +20,12 @@ void main() {
 
     test('parses version correctly', () {
       final meta = Meta.fromJson(json);
-      expect(meta.version, '2026.3.1');
+      expect(meta.version, '2026.5.1');
     });
 
     test('parses uri correctly', () {
       final meta = Meta.fromJson(json);
-      expect(meta.uri, 'http://localhost:3000');
+      expect(meta.uri, 'https://misskey.test');
     });
 
     test('parses maxNoteTextLength correctly', () {
@@ -55,7 +55,7 @@ void main() {
 
     test('parses mediaProxy correctly', () {
       final meta = Meta.fromJson(json);
-      expect(meta.mediaProxy, 'http://localhost:3000/proxy');
+      expect(meta.mediaProxy, 'https://misskey.test/proxy');
     });
   });
 }

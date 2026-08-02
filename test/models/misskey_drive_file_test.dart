@@ -16,17 +16,17 @@ void main() {
           .toList();
     });
 
-    test('deserializes both files without error', () {
-      expect(files, hasLength(2));
+    test('deserializes all files without error', () {
+      expect(files, hasLength(3));
     });
 
     group('PNG file', () {
       late MisskeyDriveFile png;
 
-      setUp(() => png = files[0]);
+      setUp(() => png = files.firstWhere((f) => f.type == 'image/png'));
 
       test('name and type are correct', () {
-        expect(png.name, 'test_emoji.png');
+        expect(png.name, endsWith('.png'));
         expect(png.type, 'image/png');
       });
 
@@ -64,15 +64,15 @@ void main() {
     group('TXT file', () {
       late MisskeyDriveFile txt;
 
-      setUp(() => txt = files[1]);
+      setUp(() => txt = files.firstWhere((f) => f.type == 'text/plain'));
 
       test('name and type are correct', () {
-        expect(txt.name, 'test_file.txt');
+        expect(txt.name, 'world_note.txt');
         expect(txt.type, 'text/plain');
       });
 
       test('size is correct', () {
-        expect(txt.size, 18);
+        expect(txt.size, 25);
       });
 
       test('has id, createdAt, md5, and url', () {

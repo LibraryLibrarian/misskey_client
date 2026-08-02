@@ -1,13 +1,14 @@
 {
-  "id": "ak3qfn18rt4w000e",
+  "id": "apf9jgfrd3wy001z",
   "aliases": [
+    "world",
     "testemoji"
   ],
-  "name": "test_emoji",
-  "category": "test",
+  "name": "e2e_world",
+  "category": "e2e",
   "host": null,
-  "url": "http://localhost:3000/files/b218ec80-89be-4914-9ebb-14eb2ea99220",
-  "license": null,
+  "url": "https://misskey.test/files/b2ba3c19-7699-43c4-b71b-66348b8dbdf4",
+  "license": "CC0",
   "isSensitive": false,
   "localOnly": false,
   "roleIdsThatCanBeUsedThisEmojiAsReaction": []

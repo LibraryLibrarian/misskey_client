@@ -1,14 +1,16 @@
 [
   {
-    "id": "ak3qfuxmrt4w000l",
-    "createdAt": "2026-03-21T10:11:36.154Z",
-    "updatedAt": "2026-03-21T10:11:36.154Z",
-    "name": "Test Role",
-    "description": "A test role",
-    "color": "#ff0000",
+    "id": "apfct0hnd3wy00a9",
+    "createdAt": "2026-08-02T12:41:41.051Z",
+    "updatedAt": "2026-08-02T12:41:41.051Z",
+    "name": "E2E World Role",
+    "description": "role created by the world-building phase",
+    "color": "#86b300",
     "iconUrl": null,
     "target": "manual",
-    "condFormula": {},
+    "condFormula": {
+      "type": "isLocal"
+    },
     "isPublic": true,
     "isAdministrator": false,
     "isModerator": false,
@@ -87,6 +89,11 @@
         "useDefault": true,
         "priority": 0,
         "value": false
+      },
+      "canCreateChannel": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
       },
       "driveCapacityMb": {
         "useDefault": true,
@@ -215,6 +222,6 @@
         "value": true
       }
     },
-    "usersCount": 0
+    "usersCount": 1
   }
 ]

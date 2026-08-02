@@ -46,7 +46,10 @@
   "translatorAvailable": false,
   "cacheRemoteFiles": false,
   "cacheRemoteSensitiveFiles": true,
-  "pinnedUsers": [],
+  "pinnedUsers": [
+    "@mk_ann",
+    "@mk_ben"
+  ],
   "hiddenTags": [],
   "blockedHosts": [],
   "silencedHosts": [],

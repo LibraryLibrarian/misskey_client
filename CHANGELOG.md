@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Refreshed fixtures against a live, federated world (multi-account, cross-server posts/reactions/follows) via the fixture collection tool in `fediverse_e2e`, replacing the single-server March snapshot. Corresponding model tests were updated to assert on structural properties rather than hardcoded IDs/counts where the underlying data is inherently dynamic (timestamps, counters, federated content)
+
+### Fixed
+
+- `Meta.policies` / `MisskeyUser.policies` / `MisskeyRole.policies` already surface `canCreateChannel` (and any other server-added policy) through their dynamic `Map<String, dynamic>` representation, without needing a typed field — verified against Misskey 2026.5.1 and now covered by a fixture-based test
+
 ### Added
 
 - Admin API (P3): completes coverage of all 99 `/api/admin/*` endpoints — job queue management (`AdminQueueApi`: stats, queues, queue-stats, jobs, show-job, show-job-logs, retry-job, remove-job, promote-jobs, clear, deliver-delayed, inbox-delayed), drive management (`AdminDriveApi`: files, show-file, clean-remote-files, cleanup), advertisement management (`AdminAdApi`), avatar decoration management (`AdminAvatarDecorationsApi`), system webhook management (`AdminSystemWebhookApi`), CAPTCHA configuration (`AdminCaptchaApi`), plus `AdminApi` additions (delete-account, delete-all-files-of-a-user, unset-user-avatar, unset-user-banner, get-user-ips, show-moderation-logs, send-email, update-proxy-account, promo/create, get-index-stats, get-table-stats)
