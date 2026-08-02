@@ -105,4 +105,17 @@ void main() {
       });
     });
   });
+
+  group('MisskeyNotification.fromJson - unknown type', () {
+    test('type falls back to unknown for a value not yet known to this '
+        'client', () {
+      final notification = MisskeyNotification.fromJson({
+        'id': 'abc123',
+        'createdAt': '2026-01-01T00:00:00.000Z',
+        'type': 'someFutureNotificationTypeNotInEnum',
+      });
+
+      expect(notification.type, MisskeyNotificationType.unknown);
+    });
+  });
 }

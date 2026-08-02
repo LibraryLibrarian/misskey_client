@@ -220,6 +220,18 @@ void main() {
       expect(user.isModerator, false);
       expect(user.policies, isNull);
     });
+
+    test('onlineStatus falls back to unknown for a value not yet known '
+        'to this client', () {
+      final file = File('test/fixtures/users_show.json');
+      final json =
+          (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
+            ..['onlineStatus'] = 'someFutureStatusNotInEnum';
+
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.onlineStatus, MisskeyOnlineStatus.unknown);
+    });
   });
 
   group('MisskeyUser remote user (users_show_remote)', () {

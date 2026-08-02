@@ -85,6 +85,20 @@ void main() {
       expect(note.reactionCount, 0);
     });
 
+    test('visibility falls back to public for a value not yet known to '
+        'this client', () {
+      final file = File('test/fixtures/notes_show.json');
+      final json =
+          (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
+            ..['visibility'] = 'someFutureVisibilityNotInEnum';
+
+      final note = MisskeyNote.fromJson(json);
+
+      // MisskeyNoteVisibility には専用のunknown値が無く、
+      // 実装上はpublicへフォールバックする
+      expect(note.visibility, MisskeyNoteVisibility.public);
+    });
+
     test('reactionAcceptance falls back to unknown for a value not yet '
         'known to this client', () {
       final file = File('test/fixtures/notes_show.json');

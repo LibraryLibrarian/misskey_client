@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Tests covering the `unknownEnumValue` fallback for `MisskeyNoteVisibility`, `MisskeyOnlineStatus`, and `MisskeyNotificationType` when the server returns a value not yet known to this client
+
 ### Fixed
 
 - `MisskeyNote.reactionAcceptance` threw when the server returned a value not yet known to this client (no `unknownEnumValue` was configured), which would fail the deserialization of the entire note. Added a `MisskeyReactionAcceptance.unknown` fallback
