@@ -9,8 +9,7 @@ void main() {
     test('deserializes clip from list', () {
       final file = File('test/fixtures/clips_list.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      final clip =
-          MisskeyClip.fromJson(jsonList.first as Map<String, dynamic>);
+      final clip = MisskeyClip.fromJson(jsonList.first as Map<String, dynamic>);
 
       expect(clip.id, 'ak3px5fqrt4w0007');
       expect(clip.name, 'Test Clip');
@@ -23,8 +22,7 @@ void main() {
     test('parses nullable description', () {
       final file = File('test/fixtures/clips_list.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      final clip =
-          MisskeyClip.fromJson(jsonList.first as Map<String, dynamic>);
+      final clip = MisskeyClip.fromJson(jsonList.first as Map<String, dynamic>);
 
       expect(clip.description, isNull);
     });
@@ -32,8 +30,7 @@ void main() {
     test('includes embedded user', () {
       final file = File('test/fixtures/clips_list.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      final clip =
-          MisskeyClip.fromJson(jsonList.first as Map<String, dynamic>);
+      final clip = MisskeyClip.fromJson(jsonList.first as Map<String, dynamic>);
 
       expect(clip.user, isNotNull);
       expect(clip.user?.username, 'testadmin');

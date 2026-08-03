@@ -11,8 +11,7 @@ void main() {
     setUp(() {
       final file = File('test/fixtures/antennas_list.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      antenna =
-          MisskeyAntenna.fromJson(jsonList.first as Map<String, dynamic>);
+      antenna = MisskeyAntenna.fromJson(jsonList.first as Map<String, dynamic>);
     });
 
     test('deserializes without error', () {

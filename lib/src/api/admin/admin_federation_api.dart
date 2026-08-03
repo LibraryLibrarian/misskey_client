@@ -28,8 +28,7 @@ class AdminFederationApi {
   ///
   /// This is a destructive moderation action; follow relationships
   /// cannot be restored automatically afterwards.
-  Future<void> removeAllFollowing({required String host}) =>
-      http.send<Object?>(
+  Future<void> removeAllFollowing({required String host}) => http.send<Object?>(
         '/admin/federation/remove-all-following',
         body: <String, dynamic>{'host': host},
       );

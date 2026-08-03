@@ -1,6 +1,7 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/misskey_role.dart';
 import '../../models/misskey_role_user.dart';
 
@@ -137,8 +138,8 @@ class AdminRolesApi {
       if (displayOrder != null) 'displayOrder': displayOrder,
       if (policies != null) 'policies': policies,
     };
-    _putOptional(body, 'color', color);
-    _putOptional(body, 'iconUrl', iconUrl);
+    putOptional(body, 'color', color);
+    putOptional(body, 'iconUrl', iconUrl);
     await http.send<Object?>('/admin/roles/update', body: body);
   }
 
@@ -241,20 +242,5 @@ class AdminRolesApi {
         .whereType<Map<String, dynamic>>()
         .map(MisskeyRoleUser.fromJson)
         .toList();
-  }
-}
-
-/// Adds an [Optional]-wrapped value to the request body.
-///
-/// When [opt] is `null` (unspecified) the function does nothing. When [opt]
-/// is a [Some] instance, `body[key]` is set to the wrapped value, which is
-/// `null` for `Some.null_()`.
-void _putOptional<T>(
-  Map<String, dynamic> body,
-  String key,
-  Optional<T>? opt,
-) {
-  if (opt case Some<T>(:final value)) {
-    body[key] = value;
   }
 }

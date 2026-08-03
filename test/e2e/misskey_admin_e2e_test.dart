@@ -76,6 +76,36 @@ void main() {
       await admin.adminAccounts.delete(userId: userId);
     });
 
+    test('findByEmail reports USER_NOT_FOUND for an unused address', () async {
+      // 閉域環境のアカウントはメールアドレス未設定のため、正常系は作れない。
+      // エンドポイントの疎通とエラーコードのマッピングを固定する
+      await expectLater(
+        admin.adminAccounts.findByEmail(email: 'nobody@example.test'),
+        throwsA(
+          isA<MisskeyApiException>().having(
+            (e) => e.code,
+            'code',
+            'USER_NOT_FOUND',
+          ),
+        ),
+      );
+    });
+
+    test('deleteAccount and deleteAllFilesOfAUser work on a throwaway user',
+        () async {
+      final username = 'e2e_del${DateTime.now().millisecondsSinceEpoch}';
+      final created = await admin.adminAccounts.create(
+        username: username,
+        password: 'e2e-temp-pass',
+      );
+
+      // 使い捨てアカウントに対してのみ実行する。世界のデータには触れない。
+      // 実削除はジョブキュー経由で非同期に進むため、ここでは呼び出しが
+      // 成功すること自体が検証内容
+      await admin.admin.deleteAllFilesOfAUser(userId: created.user.id);
+      await admin.admin.deleteAccount(userId: created.user.id);
+    });
+
     test('showUsers filters local users', () async {
       final users = await admin.admin.showUsers(origin: 'local', limit: 100);
       expect(
@@ -117,8 +147,7 @@ void main() {
   });
 
   group('admin roles', () {
-    test('create -> show -> update -> assign -> unassign -> delete',
-        () async {
+    test('create -> show -> update -> assign -> unassign -> delete', () async {
       final name = 'e2e-role-${DateTime.now().millisecondsSinceEpoch}';
       final role = await admin.adminRoles.create(
         name: name,

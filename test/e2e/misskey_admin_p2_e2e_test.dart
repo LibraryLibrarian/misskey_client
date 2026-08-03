@@ -74,10 +74,18 @@ void main() {
       expect(afterBulk.single.aliases, contains('bulk_alias'));
       expect(afterBulk.single.license, 'CC0');
 
+      // set-aliases-bulk は add と違い、エイリアスを置き換える
+      await admin.adminEmoji.setAliasesBulk(
+        ids: [emoji.id],
+        aliases: ['replaced_alias'],
+      );
+      final afterSetAliases = await admin.adminEmoji.list(query: name);
+      expect(afterSetAliases.single.aliases, ['replaced_alias']);
+
       await admin.adminEmoji.setCategoryBulk(ids: [emoji.id]);
       await admin.adminEmoji.removeAliasesBulk(
         ids: [emoji.id],
-        aliases: ['bulk_alias'],
+        aliases: ['replaced_alias'],
       );
 
       await admin.adminEmoji.delete(id: emoji.id);
@@ -86,8 +94,9 @@ void main() {
     });
 
     test('listRemote is callable', () async {
+      // 連合先の絵文字はキャッシュ状況に依存するため limit の遵守のみ固定する
       final remote = await admin.adminEmoji.listRemote(limit: 10);
-      expect(remote, isA<List<EmojiDetailed>>());
+      expect(remote.length, lessThanOrEqualTo(10));
     });
   });
 
@@ -156,17 +165,9 @@ void main() {
       expect(after.moderationNote, 'checked by e2e');
     });
 
-    test('notification recipient list and create validation', () async {
-      final listed =
-          await admin.adminAbuseReports.listNotificationRecipients();
-      expect(
-        listed,
-        isA<List<MisskeyAbuseReportNotificationRecipient>>(),
-      );
-
+    test('notification recipient email method requires an address', () async {
       // emailメソッドは対象ユーザーにメールアドレスが必要。
       // E2E環境のadminは未設定のため、サーバーがエラーを返すことを検証する
-      // (フルCRUDの検証はメール設定 or system-webhook実装(P3)後に拡充する)
       final me = await admin.account.i();
       await expectLater(
         admin.adminAbuseReports.createNotificationRecipient(
@@ -183,6 +184,55 @@ void main() {
           ),
         ),
       );
+    });
+
+    test('notification recipient create -> show -> list -> update -> delete',
+        () async {
+      // webhookメソッドならメールアドレス設定なしでCRUDを一巡できる
+      final hookName = 'e2e-rcpt-hook-${DateTime.now().millisecondsSinceEpoch}';
+      final webhook = await admin.adminSystemWebhook.create(
+        isActive: true,
+        name: hookName,
+        on: ['abuseReport'],
+        url: 'https://example.test/abuse-hook',
+      );
+      addTearDown(() => admin.adminSystemWebhook.delete(id: webhook.id));
+
+      final name = 'e2e-rcpt-${DateTime.now().millisecondsSinceEpoch}';
+      final created = await admin.adminAbuseReports.createNotificationRecipient(
+        isActive: true,
+        name: name,
+        method: 'webhook',
+        systemWebhookId: webhook.id,
+      );
+      expect(created.name, name);
+      expect(created.method, 'webhook');
+
+      final shown = await admin.adminAbuseReports.showNotificationRecipient(
+        id: created.id,
+      );
+      expect(shown.id, created.id);
+      expect(shown.systemWebhookId, webhook.id);
+
+      final listed = await admin.adminAbuseReports.listNotificationRecipients();
+      expect(listed.map((r) => r.id), contains(created.id));
+
+      final updated = await admin.adminAbuseReports.updateNotificationRecipient(
+        id: created.id,
+        isActive: false,
+        name: '$name updated',
+        method: 'webhook',
+        systemWebhookId: webhook.id,
+      );
+      expect(updated.isActive, isFalse);
+      expect(updated.name, '$name updated');
+
+      await admin.adminAbuseReports.deleteNotificationRecipient(
+        id: created.id,
+      );
+      final afterDelete =
+          await admin.adminAbuseReports.listNotificationRecipients();
+      expect(afterDelete.map((r) => r.id), isNot(contains(created.id)));
     });
   });
 

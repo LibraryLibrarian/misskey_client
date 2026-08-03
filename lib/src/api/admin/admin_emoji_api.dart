@@ -1,6 +1,7 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/server/emoji_detailed.dart';
 
 /// Provides custom emoji management admin APIs (`/api/admin/emoji/*`).
@@ -83,8 +84,8 @@ class AdminEmojiApi {
         'roleIdsThatCanBeUsedThisEmojiAsReaction':
             roleIdsThatCanBeUsedThisEmojiAsReaction,
     };
-    _putOptional(body, 'category', category);
-    _putOptional(body, 'license', license);
+    putOptional(body, 'category', category);
+    putOptional(body, 'license', license);
     await http.send<Object?>('/admin/emoji/update', body: body);
   }
 
@@ -241,19 +242,4 @@ class AdminEmojiApi {
         '/admin/emoji/set-license-bulk',
         body: <String, dynamic>{'ids': ids, 'license': license},
       );
-}
-
-/// Adds an [Optional]-wrapped value to the request body.
-///
-/// When [opt] is `null` (unspecified) the function does nothing. When [opt]
-/// is a [Some] instance, `body[key]` is set to the wrapped value, which is
-/// `null` for `Some.null_()`.
-void _putOptional<T>(
-  Map<String, dynamic> body,
-  String key,
-  Optional<T>? opt,
-) {
-  if (opt case Some<T>(:final value)) {
-    body[key] = value;
-  }
 }

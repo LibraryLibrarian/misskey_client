@@ -126,8 +126,7 @@ class AdminAbuseReportsApi {
   ///
   /// [method] is `email` (requires [userId]) or `webhook` (requires
   /// [systemWebhookId]).
-  Future<MisskeyAbuseReportNotificationRecipient>
-      createNotificationRecipient({
+  Future<MisskeyAbuseReportNotificationRecipient> createNotificationRecipient({
     required bool isActive,
     required String name,
     required String method,
@@ -149,8 +148,7 @@ class AdminAbuseReportsApi {
 
   /// Updates an abuse report notification recipient
   /// (`/api/admin/abuse-report/notification-recipient/update`).
-  Future<MisskeyAbuseReportNotificationRecipient>
-      updateNotificationRecipient({
+  Future<MisskeyAbuseReportNotificationRecipient> updateNotificationRecipient({
     required String id,
     required bool isActive,
     required String name,

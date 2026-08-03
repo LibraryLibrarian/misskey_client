@@ -85,12 +85,12 @@ void main() {
       expect(note.reactionCount, 0);
     });
 
-    test('visibility falls back to public for a value not yet known to '
+    test(
+        'visibility falls back to public for a value not yet known to '
         'this client', () {
       final file = File('test/fixtures/notes_show.json');
-      final json =
-          (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
-            ..['visibility'] = 'someFutureVisibilityNotInEnum';
+      final json = (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
+        ..['visibility'] = 'someFutureVisibilityNotInEnum';
 
       final note = MisskeyNote.fromJson(json);
 
@@ -99,7 +99,8 @@ void main() {
       expect(note.visibility, MisskeyNoteVisibility.public);
     });
 
-    test('reactionAcceptance falls back to unknown for a value not yet '
+    test(
+        'reactionAcceptance falls back to unknown for a value not yet '
         'known to this client', () {
       final file = File('test/fixtures/notes_show.json');
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -112,9 +113,8 @@ void main() {
 
     test('reactionAcceptance is null when the field is absent', () {
       final file = File('test/fixtures/notes_show.json');
-      final json =
-          (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
-            ..remove('reactionAcceptance');
+      final json = (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
+        ..remove('reactionAcceptance');
 
       final note = MisskeyNote.fromJson(json);
 

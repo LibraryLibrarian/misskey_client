@@ -41,8 +41,8 @@ class E2eEnv {
   static E2eEnv? tryLoad() {
     if (Platform.environment['RUN_E2E'] != '1') return null;
 
-    final envPath = Platform.environment['E2E_ENV_FILE'] ??
-        '../fediverse_e2e/.env.e2e';
+    final envPath =
+        Platform.environment['E2E_ENV_FILE'] ?? '../fediverse_e2e/.env.e2e';
     final file = File(envPath);
     if (!file.existsSync()) return null;
 

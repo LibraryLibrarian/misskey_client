@@ -11,8 +11,8 @@ void main() {
     setUp(() {
       final file = File('test/fixtures/gallery_posts.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      post = MisskeyGalleryPost.fromJson(
-          jsonList.first as Map<String, dynamic>);
+      post =
+          MisskeyGalleryPost.fromJson(jsonList.first as Map<String, dynamic>);
     });
 
     test('deserializes without error', () {

@@ -1,6 +1,7 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/account/misskey_signin_history.dart';
 import '../../models/gallery/misskey_gallery_like.dart';
 import '../../models/gallery/misskey_gallery_post.dart';
@@ -141,16 +142,16 @@ class AccountApi {
     Optional<String>? followedMessage,
   }) async {
     final body = <String, dynamic>{};
-    _putOptional(body, 'name', name);
-    _putOptional(body, 'description', description);
-    _putOptional(body, 'location', location);
-    _putOptional(body, 'birthday', birthday);
-    _putOptional(body, 'lang', lang);
-    _putOptional(body, 'avatarId', avatarId);
+    putOptional(body, 'name', name);
+    putOptional(body, 'description', description);
+    putOptional(body, 'location', location);
+    putOptional(body, 'birthday', birthday);
+    putOptional(body, 'lang', lang);
+    putOptional(body, 'avatarId', avatarId);
     if (avatarDecorations != null) {
       body['avatarDecorations'] = avatarDecorations;
     }
-    _putOptional(body, 'bannerId', bannerId);
+    putOptional(body, 'bannerId', bannerId);
     if (fields != null) body['fields'] = fields;
     if (isLocked != null) body['isLocked'] = isLocked;
     if (isExplorable != null) body['isExplorable'] = isExplorable;
@@ -184,10 +185,10 @@ class AccountApi {
     if (requireSigninToViewContents != null) {
       body['requireSigninToViewContents'] = requireSigninToViewContents;
     }
-    _putOptional(
+    putOptional(
         body, 'makeNotesFollowersOnlyBefore', makeNotesFollowersOnlyBefore);
-    _putOptional(body, 'makeNotesHiddenBefore', makeNotesHiddenBefore);
-    _putOptional(body, 'pinnedPageId', pinnedPageId);
+    putOptional(body, 'makeNotesHiddenBefore', makeNotesHiddenBefore);
+    putOptional(body, 'pinnedPageId', pinnedPageId);
     if (mutedWords != null) body['mutedWords'] = mutedWords;
     if (hardMutedWords != null) body['hardMutedWords'] = hardMutedWords;
     if (mutedInstances != null) body['mutedInstances'] = mutedInstances;
@@ -198,7 +199,7 @@ class AccountApi {
       body['emailNotificationTypes'] = emailNotificationTypes;
     }
     if (alsoKnownAs != null) body['alsoKnownAs'] = alsoKnownAs;
-    _putOptional(body, 'followedMessage', followedMessage);
+    putOptional(body, 'followedMessage', followedMessage);
     final res = await http.send<Map<String, dynamic>>(
       '/i/update',
       body: body,
@@ -367,7 +368,7 @@ class AccountApi {
       'password': password,
       if (token != null) 'token': token,
     };
-    _putOptional(body, 'email', email);
+    putOptional(body, 'email', email);
     final res = await http.send<Map<String, dynamic>>(
       '/i/update-email',
       body: body,
@@ -666,20 +667,5 @@ class AccountApi {
         .whereType<Map<String, dynamic>>()
         .map(MisskeyGalleryLike.fromJson)
         .toList();
-  }
-}
-
-/// Adds an [Optional]-wrapped value to the request body.
-///
-/// When [opt] is `null` (unspecified) the function does nothing. When [opt]
-/// is a [Some] instance, `body[key]` is set to the wrapped value, which is
-/// `null` for `Some.null_()`.
-void _putOptional<T>(
-  Map<String, dynamic> body,
-  String key,
-  Optional<T>? opt,
-) {
-  if (opt case Some<T>(:final value)) {
-    body[key] = value;
   }
 }

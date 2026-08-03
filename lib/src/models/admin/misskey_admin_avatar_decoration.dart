@@ -25,8 +25,7 @@ class MisskeyAdminAvatarDecoration {
   factory MisskeyAdminAvatarDecoration.fromJson(Map<String, dynamic> json) =>
       _$MisskeyAdminAvatarDecorationFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$MisskeyAdminAvatarDecorationToJson(this);
+  Map<String, dynamic> toJson() => _$MisskeyAdminAvatarDecorationToJson(this);
 
   /// The decoration ID.
   final String id;

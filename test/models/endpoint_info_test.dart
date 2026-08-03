@@ -36,8 +36,7 @@ void main() {
     });
 
     test('contains visibleUserIds param of type Array', () {
-      final param =
-          info.params.firstWhere((p) => p.name == 'visibleUserIds');
+      final param = info.params.firstWhere((p) => p.name == 'visibleUserIds');
       expect(param.type, 'Array');
     });
 

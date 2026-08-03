@@ -48,7 +48,14 @@ void main() {
 
     test('home timeline returns notes', () async {
       final notes = await client.notes.timelineHome(limit: 5);
-      expect(notes, isA<List<MisskeyNote>>());
+
+      // 世界構築で e2e_alice のホームTLには投稿が存在する
+      expect(notes, isNotEmpty);
+      expect(notes.length, lessThanOrEqualTo(5));
+      for (final note in notes) {
+        expect(note.id, isNotEmpty);
+        expect(note.user.username, isNotEmpty);
+      }
     });
   });
 

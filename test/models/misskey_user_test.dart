@@ -111,12 +111,39 @@ void main() {
       expect(user.notesCount, 0);
     });
 
-    // 一般ユーザーの users/show では isAdmin/isModerator は false になる。
-    // true になるケースの検証は MisskeyAdminUserDetail 側で担保している
-    test('parses admin and moderator flags from users/show', () {
+    // isAdmin/isModerator は MeDetailed(自分自身を見た時)にしか含まれない。
+    // 他人を admin 権限で覗いてもキーごと返らないため、true 側の検証には
+    // admin トークンで admin 自身を引いた fixture が必要になる
+    test('parses admin and moderator flags from users/show (general user)', () {
       final file = File('test/fixtures/users_show.json');
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+
+      // どちらも defaultValue: false を持つため、キーの存在を確かめないと
+      // 「パースできた false」と「省略された結果の false」が区別できない
+      expect(json['isAdmin'], isFalse);
+      expect(json['isModerator'], isFalse);
+
       final user = MisskeyUser.fromJson(json);
+      expect(user.isAdmin, false);
+      expect(user.isModerator, false);
+    });
+
+    test('parses admin and moderator flags from users/show (admin)', () {
+      final file = File('test/fixtures/users_show_admin.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.username, 'e2e_admin');
+      expect(user.isAdmin, true);
+      expect(user.isModerator, true);
+    });
+
+    test('admin flags default to false when the server omits them', () {
+      // 他人の users/show ではこれらのキーが返らない
+      final user = MisskeyUser.fromJson(const {
+        'id': 'a1',
+        'username': 'someone',
+      });
 
       expect(user.isAdmin, false);
       expect(user.isModerator, false);
@@ -221,12 +248,12 @@ void main() {
       expect(user.policies, isNull);
     });
 
-    test('onlineStatus falls back to unknown for a value not yet known '
+    test(
+        'onlineStatus falls back to unknown for a value not yet known '
         'to this client', () {
       final file = File('test/fixtures/users_show.json');
-      final json =
-          (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
-            ..['onlineStatus'] = 'someFutureStatusNotInEnum';
+      final json = (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
+        ..['onlineStatus'] = 'someFutureStatusNotInEnum';
 
       final user = MisskeyUser.fromJson(json);
 

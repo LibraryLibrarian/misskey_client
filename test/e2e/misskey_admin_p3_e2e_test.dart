@@ -79,23 +79,22 @@ void main() {
       );
       expect(shown.id, job.id);
 
-      final logs = await admin.adminQueue.showJobLogs(
-        queue: 'deliver',
-        jobId: job.id,
-      );
-      expect(logs, isA<List<String>>());
+      // 成功したdeliverジョブはログを残さないため、件数ではなく
+      // 呼び出しがデシリアライズまで通ることを検証する
+      await admin.adminQueue.showJobLogs(queue: 'deliver', jobId: job.id);
     });
 
-    test('deliverDelayed and inboxDelayed return host/count tuples',
-        () async {
-      final delayed = await admin.adminQueue.deliverDelayed();
-      expect(delayed, isA<List<MisskeyDelayedQueueEntry>>());
-      for (final entry in delayed) {
+    test('deliverDelayed and inboxDelayed return host/count tuples', () async {
+      // 遅延キューは連合の状態次第で空になりうる。中身がある場合の
+      // [host, count] タプル構造のみを固定する
+      for (final entry in await admin.adminQueue.deliverDelayed()) {
         expect(entry.host, isNotEmpty);
-        expect(entry.count, isA<num>());
+        expect(entry.count, isNonNegative);
       }
-      final inbox = await admin.adminQueue.inboxDelayed();
-      expect(inbox, isA<List<MisskeyDelayedQueueEntry>>());
+      for (final entry in await admin.adminQueue.inboxDelayed()) {
+        expect(entry.host, isNotEmpty);
+        expect(entry.count, isNonNegative);
+      }
     });
   });
 
@@ -130,8 +129,7 @@ void main() {
         priority: 'middle',
         ratio: 1,
         startsAt: now.millisecondsSinceEpoch,
-        expiresAt:
-            now.add(const Duration(days: 1)).millisecondsSinceEpoch,
+        expiresAt: now.add(const Duration(days: 1)).millisecondsSinceEpoch,
         imageUrl: 'https://example.test/ad.png',
         dayOfWeek: 0,
       );
@@ -241,15 +239,14 @@ void main() {
       expect(log.createdAt, isA<DateTime>());
     });
 
-    test('getUserIps returns records (empty when IP logging is off)',
-        () async {
+    test('getUserIps returns records (empty when IP logging is off)', () async {
       final users = await admin.admin.showUsers(
         origin: 'local',
         username: 'e2e_alice',
       );
       final alice = users.singleWhere((u) => u.username == 'e2e_alice');
-      final ips = await admin.admin.getUserIps(userId: alice.id);
-      expect(ips, isA<List<MisskeyUserIp>>());
+      // seedはenableIpLoggingを有効にしていないため常に空になる
+      expect(await admin.admin.getUserIps(userId: alice.id), isEmpty);
     });
 
     test('getIndexStats returns full index definitions', () async {

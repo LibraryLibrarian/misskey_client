@@ -1,6 +1,7 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/admin/misskey_admin_meta.dart';
 import '../../models/admin/misskey_admin_server_info.dart';
 import '../../models/admin/misskey_admin_user_detail.dart';
@@ -84,23 +85,21 @@ class AdminApi {
       if (federationHosts != null) 'federationHosts': federationHosts,
       if (blockedHosts != null) 'blockedHosts': blockedHosts,
       if (silencedHosts != null) 'silencedHosts': silencedHosts,
-      if (mediaSilencedHosts != null)
-        'mediaSilencedHosts': mediaSilencedHosts,
+      if (mediaSilencedHosts != null) 'mediaSilencedHosts': mediaSilencedHosts,
       if (sensitiveWords != null) 'sensitiveWords': sensitiveWords,
       if (prohibitedWords != null) 'prohibitedWords': prohibitedWords,
       if (hiddenTags != null) 'hiddenTags': hiddenTags,
-      if (preservedUsernames != null)
-        'preservedUsernames': preservedUsernames,
+      if (preservedUsernames != null) 'preservedUsernames': preservedUsernames,
     };
-    _putOptional(body, 'name', name);
-    _putOptional(body, 'description', description);
-    _putOptional(body, 'maintainerName', maintainerName);
-    _putOptional(body, 'maintainerEmail', maintainerEmail);
-    _putOptional(body, 'tosUrl', tosUrl);
-    _putOptional(body, 'privacyPolicyUrl', privacyPolicyUrl);
-    _putOptional(body, 'impressumUrl', impressumUrl);
-    _putOptional(body, 'inquiryUrl', inquiryUrl);
-    _putOptional(body, 'proxyAccountId', proxyAccountId);
+    putOptional(body, 'name', name);
+    putOptional(body, 'description', description);
+    putOptional(body, 'maintainerName', maintainerName);
+    putOptional(body, 'maintainerEmail', maintainerEmail);
+    putOptional(body, 'tosUrl', tosUrl);
+    putOptional(body, 'privacyPolicyUrl', privacyPolicyUrl);
+    putOptional(body, 'impressumUrl', impressumUrl);
+    putOptional(body, 'inquiryUrl', inquiryUrl);
+    putOptional(body, 'proxyAccountId', proxyAccountId);
     await http.send<Object?>('/admin/update-meta', body: body);
   }
 
@@ -235,8 +234,7 @@ class AdminApi {
   /// Removes a user's avatar image (`/api/admin/unset-user-avatar`).
   ///
   /// Requires moderator privileges.
-  Future<void> unsetUserAvatar({required String userId}) =>
-      http.send<Object?>(
+  Future<void> unsetUserAvatar({required String userId}) => http.send<Object?>(
         '/admin/unset-user-avatar',
         body: <String, dynamic>{'userId': userId},
       );
@@ -244,8 +242,7 @@ class AdminApi {
   /// Removes a user's banner image (`/api/admin/unset-user-banner`).
   ///
   /// Requires moderator privileges.
-  Future<void> unsetUserBanner({required String userId}) =>
-      http.send<Object?>(
+  Future<void> unsetUserBanner({required String userId}) => http.send<Object?>(
         '/admin/unset-user-banner',
         body: <String, dynamic>{'userId': userId},
       );
@@ -377,20 +374,5 @@ class AdminApi {
         MisskeyTableStat.fromJson(value as Map<String, dynamic>),
       ),
     );
-  }
-}
-
-/// Adds an [Optional]-wrapped value to the request body.
-///
-/// When [opt] is `null` (unspecified) the function does nothing. When [opt]
-/// is a [Some] instance, `body[key]` is set to the wrapped value, which is
-/// `null` for `Some.null_()`.
-void _putOptional<T>(
-  Map<String, dynamic> body,
-  String key,
-  Optional<T>? opt,
-) {
-  if (opt case Some<T>(:final value)) {
-    body[key] = value;
   }
 }
