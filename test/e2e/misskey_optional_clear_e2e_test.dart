@@ -620,4 +620,58 @@ void main() {
       expect(reset.isSensitive, isFalse);
     });
   });
+
+  group('admin/avatar-decorations/update', () {
+    late String decorationId;
+
+    Future<MisskeyAdminAvatarDecoration> fetch() async {
+      final list = await admin.adminAvatarDecorations.list(limit: 100);
+      return list.firstWhere((d) => d.id == decorationId);
+    }
+
+    setUp(() async {
+      final created = await admin.adminAvatarDecorations.create(
+        name: 'e2e optional clear',
+        description: 'e2e',
+        url: 'https://misskey.test/static-assets/icons/192.png',
+        category: 'initial category',
+      );
+      decorationId = created.id;
+    });
+
+    tearDown(() async {
+      await admin.adminAvatarDecorations.delete(id: decorationId);
+    });
+
+    test('omitting category keeps the current value', () async {
+      await admin.adminAvatarDecorations.update(
+        id: decorationId,
+        name: 'renamed only',
+      );
+
+      final shown = await fetch();
+      expect(shown.name, 'renamed only');
+      expect(shown.category, 'initial category');
+    });
+
+    test('Optional(value) sets the category', () async {
+      await admin.adminAvatarDecorations.update(
+        id: decorationId,
+        category: const Optional('updated category'),
+      );
+
+      final shown = await fetch();
+      expect(shown.category, 'updated category');
+    });
+
+    test('Optional.null_() clears the category', () async {
+      await admin.adminAvatarDecorations.update(
+        id: decorationId,
+        category: const Optional.null_(),
+      );
+
+      final shown = await fetch();
+      expect(shown.category, isNull);
+    });
+  });
 }
