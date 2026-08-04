@@ -23,7 +23,7 @@ Add the dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.1
+  misskey_client: ^1.0.0-beta.2
 ```
 
 Then fetch it:

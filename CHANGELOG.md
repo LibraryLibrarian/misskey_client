@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.2] - 2026-08-05
+
 ### Added
 
 - Admin API: complete coverage of all 99 `/api/admin/*` endpoints
@@ -99,4 +101,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `i/2fa/update-key` name parameter changed to optional
 
+[1.0.0-beta.2]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.2
 [1.0.0-beta.1]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.1

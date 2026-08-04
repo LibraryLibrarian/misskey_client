@@ -21,7 +21,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.1
+  misskey_client: ^1.0.0-beta.2
 ```
 
 その後、以下を実行します：
