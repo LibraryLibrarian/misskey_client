@@ -30,18 +30,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking:** parameters changed to `Optional<T>` by the null-clearing fix below no longer accept a bare value. Wrap it: `description: 'text'` becomes `description: Optional('text')`. Affected so far: `ClipsApi.update()`
+- **Breaking:** parameters changed to `Optional<T>` by the null-clearing fix below no longer accept a bare value. Wrap it: `description: 'text'` becomes `description: Optional('text')`. Affected so far: `ClipsApi.update()`, `ChannelsApi.update()`
 - **Breaking:** `MisskeyReactionAcceptance` gained an `unknown` member. Exhaustive `switch` statements over this enum in downstream code will no longer compile until the new member is handled
 - Refreshed fixtures against a live, federated world (multi-account, cross-server posts/reactions/follows) via the fixture collection tool in `fediverse_e2e`, replacing the single-server March snapshot. Corresponding model tests were updated to assert on structural properties rather than hardcoded IDs/counts where the underlying data is inherently dynamic (timestamps, counters, federated content)
 
 ### Fixed
 
-- Nullable fields could not be cleared by passing `null` to `update`-style methods (issue #12). Dart cannot distinguish an omitted optional parameter from an explicit `null`, so the naive `if (x != null)` guards these methods used dropped the field from the request body and the server treated the call as "no change". The affected parameters are now typed as `Optional<T>`, matching the methods that already used it. Fixed so far: `ClipsApi.update()` (`description`)
+- Nullable fields could not be cleared by passing `null` to `update`-style methods (issue #12). Dart cannot distinguish an omitted optional parameter from an explicit `null`, so the naive `if (x != null)` guards these methods used dropped the field from the request body and the server treated the call as "no change". The affected parameters are now typed as `Optional<T>`, matching the methods that already used it. Fixed so far: `ClipsApi.update()` (`description`), `ChannelsApi.update()` (`description`, `bannerId`)
 - `MisskeyNote.reactionAcceptance` threw when the server returned a value not yet known to this client (no `unknownEnumValue` was configured), which would fail the deserialization of the entire note. Added a `MisskeyReactionAcceptance.unknown` fallback
 - Model fields that the API documentation omits or mistypes, verified against a live Misskey 2026.5.1 server: queue counts include `paused` / `prioritized` / `waiting-children`; `QueueJob.failedReason` is absent for successful jobs; `QueueJob.progress` and `returnValue` are not objects; index stats include `schemaname` / `tablespace` / `indexdef`
 
 ### Notes
 
+- `/channels/update` cannot clear `bannerId` on Misskey 2026.5.1. The server assembles its update object with `banner ? { bannerId: banner.id } : {}`, dropping an explicit `null`; sent alone the update object ends up empty and the server returns a 500 (`UpdateValuesMissingError`), sent alongside another parameter the call succeeds but the banner remains. `description` clears correctly. Documented on `ChannelsApi.update()` and pinned by E2E tests
 - `/clips/update` always overwrites `description`: the server evaluates it as `description || null`, so omitting the parameter clears the existing value and an empty string is stored as `null`. This is server-side behaviour that the client cannot work around; pass the current value explicitly to preserve it. Documented on `ClipsApi.update()` and pinned by an E2E test
 - `Meta.policies` / `MisskeyUser.policies` / `MisskeyRole.policies` already surface `canCreateChannel` (and any other server-added policy) through their dynamic `Map<String, dynamic>` representation, without needing a typed field — verified against Misskey 2026.5.1 and now covered by a fixture-based test
 
