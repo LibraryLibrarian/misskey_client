@@ -30,13 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking:** parameters changed to `Optional<T>` by the null-clearing fix below no longer accept a bare value. Wrap it: `description: 'text'` becomes `description: Optional('text')`. Affected so far: `ClipsApi.update()`, `ChannelsApi.update()`
+- **Breaking:** parameters changed to `Optional<T>` by the null-clearing fix below no longer accept a bare value. Wrap it: `description: 'text'` becomes `description: Optional('text')`. Affected so far: `ClipsApi.update()`, `ChannelsApi.update()`, `PagesApi.update()`
 - **Breaking:** `MisskeyReactionAcceptance` gained an `unknown` member. Exhaustive `switch` statements over this enum in downstream code will no longer compile until the new member is handled
 - Refreshed fixtures against a live, federated world (multi-account, cross-server posts/reactions/follows) via the fixture collection tool in `fediverse_e2e`, replacing the single-server March snapshot. Corresponding model tests were updated to assert on structural properties rather than hardcoded IDs/counts where the underlying data is inherently dynamic (timestamps, counters, federated content)
 
 ### Fixed
 
-- Nullable fields could not be cleared by passing `null` to `update`-style methods (issue #12). Dart cannot distinguish an omitted optional parameter from an explicit `null`, so the naive `if (x != null)` guards these methods used dropped the field from the request body and the server treated the call as "no change". The affected parameters are now typed as `Optional<T>`, matching the methods that already used it. Fixed so far: `ClipsApi.update()` (`description`), `ChannelsApi.update()` (`description`, `bannerId`)
+- Nullable fields could not be cleared by passing `null` to `update`-style methods (issue #12). Dart cannot distinguish an omitted optional parameter from an explicit `null`, so the naive `if (x != null)` guards these methods used dropped the field from the request body and the server treated the call as "no change". The affected parameters are now typed as `Optional<T>`, matching the methods that already used it. Fixed so far: `ClipsApi.update()` (`description`), `ChannelsApi.update()` (`description`, `bannerId`), `PagesApi.update()` (`summary`, `eyeCatchingImageId`)
 - `MisskeyNote.reactionAcceptance` threw when the server returned a value not yet known to this client (no `unknownEnumValue` was configured), which would fail the deserialization of the entire note. Added a `MisskeyReactionAcceptance.unknown` fallback
 - Model fields that the API documentation omits or mistypes, verified against a live Misskey 2026.5.1 server: queue counts include `paused` / `prioritized` / `waiting-children`; `QueueJob.failedReason` is absent for successful jobs; `QueueJob.progress` and `returnValue` are not objects; index stats include `schemaname` / `tablespace` / `indexdef`
 

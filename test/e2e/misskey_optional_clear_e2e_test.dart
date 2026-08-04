@@ -228,4 +228,90 @@ void main() {
       await client.drive.files.delete(fileId: file.id);
     });
   });
+
+  group('pages/update', () {
+    late String pageId;
+
+    // /pages/create も1時間に10件までのため、専用ページを使い回す
+    const pageName = 'e2e-optional-clear';
+
+    setUpAll(() async {
+      final me = await client.account.i();
+      try {
+        final existing = await client.pages.showByName(
+          name: pageName,
+          username: me.username,
+        );
+        pageId = existing.id;
+      } on MisskeyApiException catch (e) {
+        if (e.code != 'NO_SUCH_PAGE') rethrow;
+        final created = await client.pages.create(
+          title: 'e2e optional clear',
+          name: pageName,
+          content: const <Map<String, dynamic>>[],
+          variables: const <Map<String, dynamic>>[],
+          script: '',
+          summary: 'initial summary',
+        );
+        pageId = created.id;
+      }
+    });
+
+    setUp(() async {
+      await client.pages.update(
+        pageId: pageId,
+        summary: const Optional('initial summary'),
+      );
+    });
+
+    test('omitting summary keeps the current value', () async {
+      await client.pages.update(pageId: pageId, title: 'renamed only');
+
+      final shown = await client.pages.showById(pageId: pageId);
+      expect(shown.title, 'renamed only');
+      expect(shown.summary, 'initial summary');
+    });
+
+    test('Optional(value) sets the summary', () async {
+      await client.pages.update(
+        pageId: pageId,
+        summary: const Optional('updated summary'),
+      );
+
+      final shown = await client.pages.showById(pageId: pageId);
+      expect(shown.summary, 'updated summary');
+    });
+
+    test('Optional.null_() clears the summary', () async {
+      await client.pages.update(
+        pageId: pageId,
+        summary: const Optional.null_(),
+      );
+
+      final shown = await client.pages.showById(pageId: pageId);
+      expect(shown.summary, isNull);
+    });
+
+    test('Optional.null_() clears the eye-catching image', () async {
+      final file = await client.drive.files.create(
+        bytes: pngBytes,
+        filename: 'e2e-page-eyecatch.png',
+      );
+      await client.pages.update(
+        pageId: pageId,
+        eyeCatchingImageId: Optional(file.id),
+      );
+      final withImage = await client.pages.showById(pageId: pageId);
+      expect(withImage.eyeCatchingImageId, file.id);
+
+      await client.pages.update(
+        pageId: pageId,
+        eyeCatchingImageId: const Optional.null_(),
+      );
+      final cleared = await client.pages.showById(pageId: pageId);
+      expect(cleared.eyeCatchingImageId, isNull);
+
+      await client.drive.files.delete(fileId: file.id);
+    });
+  });
 }

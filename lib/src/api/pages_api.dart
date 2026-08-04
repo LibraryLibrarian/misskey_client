@@ -1,6 +1,8 @@
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/optional.dart';
+import '../internal/request_body.dart';
 import '../models/users/misskey_page.dart';
 
 /// Provides page-related API endpoints (`/api/pages/*`).
@@ -132,6 +134,9 @@ class PagesApi {
   /// [script], [summary], [eyeCatchingImageId], [font] (`serif` /
   /// `sans-serif`), [alignCenter], and [hideTitleWhenPinned].
   ///
+  /// For [summary] and [eyeCatchingImageId], use the [Optional] type: pass
+  /// `Optional('value')` to set and `Optional.null_()` to clear.
+  ///
   /// Common errors:
   /// - `NO_SUCH_PAGE`: The page does not exist
   /// - `ACCESS_DENIED`: Insufficient permissions
@@ -144,8 +149,8 @@ class PagesApi {
     List<Map<String, dynamic>>? content,
     List<Map<String, dynamic>>? variables,
     String? script,
-    String? summary,
-    String? eyeCatchingImageId,
+    Optional<String>? summary,
+    Optional<String>? eyeCatchingImageId,
     String? font,
     bool? alignCenter,
     bool? hideTitleWhenPinned,
@@ -157,13 +162,13 @@ class PagesApi {
       if (content != null) 'content': content,
       if (variables != null) 'variables': variables,
       if (script != null) 'script': script,
-      if (summary != null) 'summary': summary,
-      if (eyeCatchingImageId != null) 'eyeCatchingImageId': eyeCatchingImageId,
       if (font != null) 'font': font,
       if (alignCenter != null) 'alignCenter': alignCenter,
       if (hideTitleWhenPinned != null)
         'hideTitleWhenPinned': hideTitleWhenPinned,
     };
+    putOptional(body, 'summary', summary);
+    putOptional(body, 'eyeCatchingImageId', eyeCatchingImageId);
     return http.send<Object?>(
       '/pages/update',
       body: body,
