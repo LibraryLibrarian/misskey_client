@@ -1,0 +1,27 @@
+[
+  {
+    "id": "ak3qbtu5rt4w0009",
+    "following": {
+      "id": "ak6ovudhrt4w001t",
+      "followeeId": "ak3qbtu5rt4w0009",
+      "followerId": "ak3po4qort4w0001",
+      "isFollowerHibernated": false,
+      "withReplies": false,
+      "notify": null,
+      "followerHost": null,
+      "followerInbox": null,
+      "followerSharedInbox": null,
+      "followeeHost": null,
+      "followeeInbox": null,
+      "followeeSharedInbox": null
+    },
+    "isFollowing": true,
+    "isFollowed": false,
+    "hasPendingFollowRequestFromYou": false,
+    "hasPendingFollowRequestToYou": false,
+    "isBlocking": false,
+    "isBlocked": false,
+    "isMuted": false,
+    "isRenoteMuted": false
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "id": "47",
+  "name": "mastodon.test",
+  "data": {
+    "redacted": true
+  },
+  "opts": {
+    "attempts": 12,
+    "removeOnFail": {
+      "age": 604800,
+      "count": 100
+    },
+    "removeOnComplete": {
+      "age": 604800,
+      "count": 30
+    },
+    "backoff": {
+      "type": "custom"
+    }
+  },
+  "timestamp": 1785590247357,
+  "processedOn": 1785590247357,
+  "finishedOn": 1785590247370,
+  "progress": 0,
+  "attempts": 1,
+  "delay": 0,
+  "stacktrace": [],
+  "returnValue": "Success",
+  "isFailed": false
+}

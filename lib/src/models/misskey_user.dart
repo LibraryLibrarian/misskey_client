@@ -75,6 +75,50 @@ class MisskeyUser {
     this.twoFactorEnabled,
     this.usePasswordLessLogin,
     this.securityKeys,
+    this.isAdmin,
+    this.isModerator,
+    this.pinnedPageId,
+    this.avatarId,
+    this.bannerId,
+    this.followedMessage,
+    this.noCrawle,
+    this.preventAiLearning,
+    this.hideOnlineStatus,
+    this.isExplorable,
+    this.isDeleted,
+    this.injectFeaturedNote,
+    this.receiveAnnouncementEmail,
+    this.alwaysMarkNsfw,
+    this.autoSensitive,
+    this.carefulBot,
+    this.autoAcceptFollowed,
+    this.chatScope,
+    this.canChat,
+    this.hasUnreadSpecifiedNotes,
+    this.hasUnreadMentions,
+    this.hasUnreadChatMessages,
+    this.hasUnreadAnnouncement,
+    this.hasUnreadAntenna,
+    this.hasUnreadChannel,
+    this.hasUnreadNotification,
+    this.hasPendingReceivedFollowRequest,
+    this.unreadNotificationsCount,
+    this.mutedWords,
+    this.hardMutedWords,
+    this.mutedInstances,
+    this.mutingNotificationTypes,
+    this.notificationRecieveConfig,
+    this.emailNotificationTypes,
+    this.achievements,
+    this.loggedInDays,
+    this.policies,
+    this.twoFactorBackupCodesStock,
+    this.email,
+    this.emailVerified,
+    this.moderationNote,
+    this.isLimited,
+    this.mutualLinkSections,
+    this.pinnedPage,
   });
 
   factory MisskeyUser.fromJson(Map<String, dynamic> json) =>
@@ -281,6 +325,168 @@ class MisskeyUser {
   /// Whether security keys are registered.
   @JsonKey(defaultValue: false)
   final bool? securityKeys;
+
+  /// Whether this user has admin privileges.
+  @JsonKey(defaultValue: false)
+  final bool? isAdmin;
+
+  /// Whether this user has moderator privileges.
+  @JsonKey(defaultValue: false)
+  final bool? isModerator;
+
+  /// The ID of the pinned page.
+  final String? pinnedPageId;
+
+  /// The ID of the avatar drive file.
+  final String? avatarId;
+
+  /// The ID of the banner drive file.
+  final String? bannerId;
+
+  /// The message shown to users who follow this account.
+  final String? followedMessage;
+
+  /// Whether this user has opted out of web crawling.
+  @JsonKey(defaultValue: false)
+  final bool? noCrawle;
+
+  /// Whether this user has opted out of AI training data collection.
+  @JsonKey(defaultValue: false)
+  final bool? preventAiLearning;
+
+  /// Whether this user's online status is hidden.
+  @JsonKey(defaultValue: false)
+  final bool? hideOnlineStatus;
+
+  /// Whether this user is discoverable in explore pages.
+  @JsonKey(defaultValue: false)
+  final bool? isExplorable;
+
+  /// Whether this account is deleted.
+  @JsonKey(defaultValue: false)
+  final bool? isDeleted;
+
+  /// Whether featured notes are injected into this user's timeline.
+  @JsonKey(defaultValue: false)
+  final bool? injectFeaturedNote;
+
+  /// Whether announcement emails are sent to this user.
+  @JsonKey(defaultValue: false)
+  final bool? receiveAnnouncementEmail;
+
+  /// Whether all posts from this user are always marked as NSFW.
+  @JsonKey(defaultValue: false)
+  final bool? alwaysMarkNsfw;
+
+  /// Whether sensitive media detection is applied automatically.
+  @JsonKey(defaultValue: false)
+  final bool? autoSensitive;
+
+  /// Whether this user is cautious of bots following them.
+  @JsonKey(defaultValue: false)
+  final bool? carefulBot;
+
+  /// Whether this user automatically accepts follows back from followed users.
+  @JsonKey(defaultValue: false)
+  final bool? autoAcceptFollowed;
+
+  /// The scope of who can initiate a chat with this user.
+  final String? chatScope;
+
+  /// Whether this user can use the chat feature.
+  @JsonKey(defaultValue: false)
+  final bool? canChat;
+
+  /// Whether there are unread specified notes for the authenticated user.
+  @JsonKey(defaultValue: false)
+  final bool? hasUnreadSpecifiedNotes;
+
+  /// Whether there are unread mentions for the authenticated user.
+  @JsonKey(defaultValue: false)
+  final bool? hasUnreadMentions;
+
+  /// Whether there are unread chat messages for the authenticated user.
+  @JsonKey(defaultValue: false)
+  final bool? hasUnreadChatMessages;
+
+  /// Whether there are unread announcements for the authenticated user.
+  @JsonKey(defaultValue: false)
+  final bool? hasUnreadAnnouncement;
+
+  /// Whether there are unread antenna notes for the authenticated user.
+  @JsonKey(defaultValue: false)
+  final bool? hasUnreadAntenna;
+
+  /// Whether there are unread channel notes for the authenticated user.
+  @JsonKey(defaultValue: false)
+  final bool? hasUnreadChannel;
+
+  /// Whether there are unread notifications for the authenticated user.
+  @JsonKey(defaultValue: false)
+  final bool? hasUnreadNotification;
+
+  /// Whether there is a pending received follow request for the authenticated
+  /// user.
+  @JsonKey(defaultValue: false)
+  final bool? hasPendingReceivedFollowRequest;
+
+  /// The count of unread notifications.
+  @JsonKey(defaultValue: 0)
+  final int? unreadNotificationsCount;
+
+  /// The list of muted word groups. Each group is a list of keywords
+  /// (AND condition).
+  final List<List<String>>? mutedWords;
+
+  /// The list of hard-muted word groups. Each group is a list of keywords
+  /// (AND condition).
+  final List<List<String>>? hardMutedWords;
+
+  /// The list of muted instance hostnames.
+  final List<String>? mutedInstances;
+
+  /// The list of notification types that are muted.
+  final List<String>? mutingNotificationTypes;
+
+  /// The per-type notification receive configuration.
+  // Note: フィールド名の typo "Recieve" は Misskey API に合わせている
+  final Map<String, dynamic>? notificationRecieveConfig;
+
+  /// The list of notification types delivered via email.
+  final List<String>? emailNotificationTypes;
+
+  /// The list of achievements unlocked by this user.
+  final List<Map<String, dynamic>>? achievements;
+
+  /// The number of days this user has logged in.
+  @JsonKey(defaultValue: 0)
+  final int? loggedInDays;
+
+  /// The policy map applied to this user.
+  final Map<String, dynamic>? policies;
+
+  /// The stock status of two-factor backup codes.
+  final String? twoFactorBackupCodesStock;
+
+  /// The email address of the authenticated user.
+  final String? email;
+
+  /// Whether the email address has been verified.
+  @JsonKey(defaultValue: false)
+  final bool? emailVerified;
+
+  /// The moderation note attached to this user (visible to moderators only).
+  final String? moderationNote;
+
+  /// Whether this remote user is rate-limited.
+  @JsonKey(defaultValue: false)
+  final bool? isLimited;
+
+  /// The mutual link sections defined on this user's profile.
+  final List<Map<String, dynamic>>? mutualLinkSections;
+
+  /// The pinned page object embedded in the user profile.
+  final Map<String, dynamic>? pinnedPage;
 }
 
 /// A custom profile field.

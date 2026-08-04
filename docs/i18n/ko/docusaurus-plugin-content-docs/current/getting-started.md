@@ -23,7 +23,7 @@ Flutter, 서버 사이드 Dart, CLI 도구 등 Dart가 실행되는 모든 환�
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.1
+  misskey_client: ^1.0.0-beta.2
 ```
 
 그 다음 패키지를 가져옵니다:

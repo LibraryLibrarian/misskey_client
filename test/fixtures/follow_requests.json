@@ -1,0 +1,33 @@
+[
+  {
+    "id": "ak6o74fert4w0016",
+    "follower": {
+      "id": "ak6o6rqkrt4w0015",
+      "name": null,
+      "username": "testuser3",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testuser3@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "followee": {
+      "id": "ak3po4qort4w0001",
+      "name": null,
+      "username": "testadmin",
+      "host": null,
+      "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    }
+  }
+]

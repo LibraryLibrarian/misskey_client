@@ -1,0 +1,31 @@
+[
+  {
+    "id": "ak6pcjiort4w001x",
+    "flash": {
+      "id": "ak6otxe0rt4w001o",
+      "createdAt": "2026-03-23T11:49:51.816Z",
+      "updatedAt": "2026-03-23T11:49:51.816Z",
+      "userId": "ak3po4qort4w0001",
+      "user": {
+        "id": "ak3po4qort4w0001",
+        "name": null,
+        "username": "testadmin",
+        "host": null,
+        "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "title": "Test Flash",
+      "summary": "A test flash",
+      "script": "Ui:render([Ui:C:text({text: \"Hello\"})])",
+      "visibility": "public",
+      "likedCount": 1,
+      "isLiked": true
+    }
+  }
+]

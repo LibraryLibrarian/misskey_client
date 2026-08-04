@@ -1,0 +1,40 @@
+[
+  {
+    "id": "apf9ud48d3wy005q",
+    "createdAt": "2026-08-02T11:18:45.224Z",
+    "user": {
+      "id": "apf9dsoyd3wy0006",
+      "name": "Mk Ann",
+      "username": "mk_ann",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "type": "🎉"
+  },
+  {
+    "id": "apf9txmgd3wy005m",
+    "createdAt": "2026-08-02T11:18:25.144Z",
+    "user": {
+      "id": "apf9dstyd3wy0007",
+      "name": "Mk Ben",
+      "username": "mk_ben",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "type": ":e2e_world@.:"
+  }
+]

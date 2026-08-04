@@ -1,0 +1,555 @@
+[
+  {
+    "id": "01HQB67090AX5HRJAVSXKKJT0Z",
+    "name": "三段重ねホットケーキ",
+    "description": "copyright: @fmo_otk@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/48c147e1-a30e-4acf-bc4d-f32b48f24caf.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HP1MGFEYX9SKD33JMJYAD7PZ",
+    "name": "紐ごと自我を持ったコイン(喜)",
+    "description": "copyright: @ntea_ng@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/b4d7bdd1-45a1-4346-b4b5-71c5afba2224.gif",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HPW2GQ2H5X8HTZPQE6JZ1W7N",
+    "name": "受賞",
+    "description": "copyright: @midasuma@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/592cb0fc-c843-4373-807a-bfd142e8e5fd.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMHC7FFVJYC7HTBD4M97KJ7V",
+    "name": "推し",
+    "description": "copyright: @nasoct@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/ceefb641-2bbb-4a23-ad10-1bd89fbf1627.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMHE2ZTPDHEA7ZH8DWGVDYVP",
+    "name": "ヘッドドレス",
+    "description": "copyright: @uwu@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/9737256f-0a27-4429-aa1a-60ebb4a923ce.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMHE3T8JRPD546Z25TBHEP0M",
+    "name": "うねうねつの",
+    "description": "copyright: @uwu@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/6321c770-d08c-40e9-9199-34a86bd3974a.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMHE4JPFQNA8CFZHPSHNAVC5",
+    "name": "くるくるつの",
+    "description": "copyright: @uwu@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/8bb8188d-3718-4434-bade-224d07f3d186.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMJ5NQV6DPRQDDAGXBEQY60Y",
+    "name": "黄&桃色液だれ輪っか",
+    "description": "copyright: @komaru_tasu@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/b769f506-8d0b-4fc6-b81b-3b14936bf5ab.gif",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMJYV6GZFMDDDZV99NE6NEKY",
+    "name": "blobcat大中小B",
+    "description": "copyright: @midasuma@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/1fb3fe8d-d300-4616-b80a-4b4e0d5d1785.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMJYTECPR8TFP1SSCC4SXA27",
+    "name": "blobcat大中小A",
+    "description": "copyright: @midasuma@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/658da8f7-41ba-4e79-a383-751bbaaf6159.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMK5NQ8VJ4FT5V6DSX13FPJC",
+    "name": "ふさふさblobfox",
+    "description": "@amphibianplane@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/3ba18f59-fd1a-48c7-8088-72049448bb7b.gif",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMNH46YE98A1TQEH2B8NXHXM",
+    "name": "猫の手(灰色)",
+    "description": "copyright: @GAtturi_@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/0441acc0-3d3a-49a7-b07b-e737cace0118.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMNH5B1RABTYMNPVXF97TG7M",
+    "name": "猫のしっぽ(灰色)",
+    "description": "copyright: @GAtturi_@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/82c7c8cc-e96a-4a1f-a11c-35438b1e7f1a.gif",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMNKPXNAF9A3S78YH1BKWW91",
+    "name": "おしゃぶり",
+    "description": "copyright: @sobatea0843@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/591ceb5d-94a5-4cc9-81bc-73dc863675ec.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMNPYKY4XX0J3MRV8TS55D3H",
+    "name": "電球",
+    "description": "copyright: @haoukarura@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/b0577626-dc25-43bf-85ff-0012b8f09ad3.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMP9NPZ34106MJ0T2W5KDDT5",
+    "name": "本日の偉業リボン",
+    "description": "copyright: @OrangeMint@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/2b09afad-fb64-4e25-ab35-db3efdf53af9.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMP9RSHS42VD4MVD6M8Z2EMY",
+    "name": "ゆるっとblobcat",
+    "description": "copyright: @OrangeMint@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/c8a2814e-0c82-41ed-b90f-ab3b9e70e46b.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMP9SWKECYQSGRG0BVNNWG71",
+    "name": "ケセランパサラン_集合",
+    "description": "copyright: @OrangeMint@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/2b383304-c748-4da2-9c03-0f078ad39315.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMP9VKRBBN9G9Y81WDXCHV50",
+    "name": "ケセランパサラン",
+    "description": "copyright: @OrangeMint@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/2c5a05c4-7083-42b3-aa12-b4d756d3b33b.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRRZAF7PNMY2JXPYVH8G368",
+    "name": "blobwaniいるよ",
+    "description": "copyright: @m_at_ty@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/afa4d3de-85f3-46cf-ba0a-6ade5461f691.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRS0AP58SVG514D4YR1HGT4",
+    "name": "花輪(赤)",
+    "description": "copyright: @noc_turn@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/6ff1ee9e-015f-4a33-9b70-e11cc48a5030.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRS0X5GX9PJ10PCH0Y4QBGT",
+    "name": "花輪(青)",
+    "description": "copyright: @noc_turn@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/e7f76e6c-b390-4d3f-9000-da410b9b693f.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRS3BRBH2ZVN3P7NTNE8PRP",
+    "name": "猫ドラゴンの赤ちゃん(口に咥えて運ぶ)",
+    "description": "copyright: @komad@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/0ddd7d12-a90b-4f0b-874f-f7a89dd38382.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRS49EEWFN4MPXPHZ5B5M47",
+    "name": "猫ドラゴンの赤ちゃん(頭に載せて運ぶ)",
+    "description": "copyright: @komad@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/d94827ba-649a-4012-8dcc-cd6f85176f30.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRS4ZQAZPNQ4BNCKB8ADRW6",
+    "name": "ちょこんとアデリー",
+    "description": "copyright: @Endless_sleep@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/c8efa2e6-a4bc-4943-bfe0-4d99dd45ef99.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRS7VNXYTNCTGCXN238RQVV",
+    "name": "のびのびBun",
+    "description": "copyright: @yotoiko@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/867da03b-f51c-4600-939f-f617a5c57d54.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRS8QTC6A5C9DVQ4TR3ZV5M",
+    "name": "猫の手(白色)",
+    "description": "copyright: @GAtturi_@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/5b0070d9-97fc-408c-b78d-6b310d4b05f5.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HN85BKG3MN831RGKC9RWVDYN",
+    "name": "半額",
+    "description": "copyright: @nasoct@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/4d462e47-c991-40c5-a734-2db0df02f779.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMJYW522NFJM523YT8ENM588",
+    "name": "blobcat大中小C",
+    "description": "copyright: @midasuma@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/7c535717-d73a-4422-8af2-113c2add0072.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMHD0H4AFJA82TK26QY6ZK8E",
+    "name": "たれたみみっそり",
+    "description": "copyright: @yuunozi@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/811f599b-f306-490f-b07b-73f72a445f90.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMJ5R16SRFABXCTWMB9RJXHK",
+    "name": "コインゆらゆら右",
+    "description": "copyright: @ntea_ng@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/5b76195d-1d1b-45b4-86e8-166710929365.gif",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMJYRZKJEZT3C4TC3TVF7SBZ",
+    "name": "ベイクドモチョチョザウルスb",
+    "description": "copyright: @tte@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/c45ff7ba-d345-42cd-997f-fceb9d4ddcae.gif",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HMRS99XBASZMJ414Z1RC96QM",
+    "name": "猫の手(黄色)",
+    "description": "copyright: @komad@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/1f667676-19ea-4468-a855-86ba35c329ec.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HQB6811GFPEGR6FTWYD5SNEP",
+    "name": "うお座",
+    "description": "copyright: @ns_64_ggg@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/eec13f46-0b83-4aaf-98e1-8ae41b5978e1.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HQB692W7HBG2MC43JJWBE2T0",
+    "name": "提供",
+    "description": "copyright: @yuunozi@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/58fac82d-028c-4bcc-9296-fed5abf1851d.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HQB69Z1VMPZYRWEXE93VTWH4",
+    "name": "blobikaゆらゆら",
+    "description": "copyright: @toya@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/302df887-a49b-4f01-9f85-6d4591b483d9.gif",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HQB6ARNAYQ907AYFA1G9CSGD",
+    "name": "blobikaといっしょ",
+    "description": "copyright: @toya@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/2b6bc16d-ffdb-4dbd-92ac-10083fc8d78b.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HRSJ1WY8WA0HHC66Y6QXJW2W",
+    "name": "blobcat原稿中",
+    "description": "copyright: @midasuma@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/b2a425cf-39e3-470c-8f7c-3d34920c6634.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HRSJ2NA7S0NGJD983C9JBZVJ",
+    "name": "blobcat脱稿",
+    "description": "copyright: @midasuma@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/d79d8f57-a1f4-4998-a7d1-f3207d911605.webp",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HY4M7PW2SG67R1QG8TJHEBXX",
+    "name": "narikiri_cream_soda",
+    "description": "Request by 01H49JSNZ7K3Z4WCBM2C0TAFT1 \nLicense: @midasuma@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/7f17ce3c-b381-4d94-b2cb-c5dc80f084ec.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HY4M7SSG42J0ERJ5S5SB9T70",
+    "name": "chobitto_soda",
+    "description": "Request by 01H49JSNZ7K3Z4WCBM2C0TAFT1 \nLicense: @midasuma@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/99cba796-859f-49da-971d-68a61ebedf97.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HYQ3BCXAP6A51QZ91EH2J330",
+    "name": "happydog",
+    "description": "Request by 01GTBQ7CSENB55B3CC6D7TSFAQ \nLicense: @tte@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/d940b41c-b836-465c-ad65-12995d5158de.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HZ8J8TCNRQTS288SH8GH3KCQ",
+    "name": "knife_fork",
+    "description": "Request by 01GV09J8CQ19F0Z3T0D3PNDRRN \nLicense: @GAtturi_@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/94669792-b2f1-4ca8-9ec2-ec8987c707a2.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HZ8J972YHXYGE9DC493TEMGS",
+    "name": "spoon",
+    "description": "Request by 01GV09J8CQ19F0Z3T0D3PNDRRN \nLicense: @GAtturi_@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/2593e51e-eb9e-40af-af47-9c92fe0142c1.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HZW1JR1180Y1D3S6PR76J6JB",
+    "name": "strawberry_hana",
+    "description": "Request by 01H49STHYATAR5HFMEBT3GHJ0B \nLicense: @DDGseakerberos@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/df8f60af-b4e6-4325-a995-9e043e0c44c6.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HZW1K4N3ANY47HMZ6WGCQQJP",
+    "name": "kuromesen",
+    "description": "Request by 01GTB813XNEYDE00R1TP705PCS \nLicense: None\n",
+    "url": "https://media.nijimissusercontent.app/null/c030fe4a-4f95-4d3e-be62-796024858221.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01HZW1KCANQ3BMACVDQCQ5S048",
+    "name": "kawaii_icon",
+    "description": "Request by 01GTB813XNEYDE00R1TP705PCS \nLicense: 使用フォント「AB Jグー」\n",
+    "url": "https://media.nijimissusercontent.app/null/d79207f5-dfe5-4dee-b112-95ec1fadfdcd.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J0TWFAKJRNXKMANJBQWN1CRY",
+    "name": "daikon",
+    "description": "Request by 01H49STHYATAR5HFMEBT3GHJ0B \nLicense: @DDGseakerberos@nijimiss@moe\n",
+    "url": "https://media.nijimissusercontent.app/null/14ca99a7-6d5a-4a61-b3b5-eccd55de26f6.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J0TWGQ8JQKJKKS63JRKENHS4",
+    "name": "tabako_cigar_brown",
+    "description": "Request by 01GX66GR94HKT1D41B2261SJBQ \nLicense: 作成者：@Yjmsdd@nijimiss.moe 説明：「tabako_cigar_brown」この絵文字は手書きで作成されているためフォント使用はありません。このデコレーションを配布する場合、「現状のまま」配布することに同意したものとみなします。\n",
+    "url": "https://media.nijimissusercontent.app/null/78770097-263b-4d84-a519-3f56eca4eee1.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J0TWH1K6GBG4A0FX7EK6DZNF",
+    "name": "tabako_cigar_white",
+    "description": "Request by 01GX66GR94HKT1D41B2261SJBQ \nLicense: 作成者：@Yjmsdd@nijimiss.moe 説明：「tabako_cigar_white」この絵文字は手書きで作成されているためフォント使用はありません。このデコレーションを配布する場合、「現状のまま」配布することに同意したものとみなします。\n",
+    "url": "https://media.nijimissusercontent.app/null/788ce870-04a7-481e-92ab-75ef0a8ff5d4.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J3VPSVETW379N425TCG325K5",
+    "name": "musclebunny",
+    "description": "Request by 01GTBQ7CSENB55B3CC6D7TSFAQ \nLicense: @tte@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/7f97753f-07a5-442c-8ae5-0ffa732f63d2.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KSSFRV9YRBYZ4QSV3EV71C",
+    "name": "初カキコ…ども…",
+    "description": "copyright: @nasoct@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/5b00d446-a16d-414c-ab31-cd0773d6f054.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KT0NEQJRFK7FDC1FGB41H9",
+    "name": "入れもの",
+    "description": "copyright: @atori@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/e0e1741a-1480-47dc-99bc-d42372480ac1.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KT976V2B7Y1BHPK9ZJBTSC",
+    "name": "daikon_haeteru",
+    "description": "Request by 01H49STHYATAR5HFMEBT3GHJ0B \nLicense: @DDGseakerberos@nijimiss@moe",
+    "url": "https://media.nijimissusercontent.app/null/23b3679a-6c44-46a3-ba6a-80322d3a79ec.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KTKJ2X30G4MESXZAQNCH17",
+    "name": "がじがじ猫ドラゴン",
+    "description": "copyright: @komad@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/6593f2e3-72d8-4716-9fc2-d777a0445d8b.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KTWERG2C3MHC93CZ7XTZDS",
+    "name": "さとうきびくんに絡まれるデコ",
+    "description": "copyright: @sugar_cane_310@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/0bd1ae22-5dcc-4a22-9c94-cdae5dc3099e.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KVHJET8TDB3DAGE8GNNAPR",
+    "name": "溶けたチョコミントアイスちゃんたち",
+    "description": "copyright: @hagane0034@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/6008b03e-64cd-4f3a-8785-ba145a5f94b0.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KVT6KFVCHMPB3Y4S2G8VNA",
+    "name": "ストロベリーアイスクリーム（頭上）",
+    "description": "copyright: @hagane0034@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/db2c670f-e414-4aa5-9fdd-e346cdc1d6b2.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KVYKB7NE6HH3GN9FJ0707H",
+    "name": "チョコミントアイスクリーム（頭上）",
+    "description": "copyright: @hagane0034@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/c0c2cd85-cb31-42ed-997b-152a7da47a73.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J69T9YY5SVNQG9MXV5R7XH8A",
+    "name": "blokame_nori",
+    "description": "Request by 01H49JSNZ7K3Z4WCBM2C0TAFT1 \nLicense: @midasuma@nijimiss.moe　他サーバーへのインポート不可\n",
+    "url": "https://media.nijimissusercontent.app/null/85eeb74f-7817-41b4-98c6-9e08ac51c2ea.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J69TA2TZYRSKATDZ9GBJV3YP",
+    "name": "astronaut",
+    "description": "Request by 01H49JSNZ7K3Z4WCBM2C0TAFT1 \nLicense: @midasuma@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/9e22f093-9d5b-48cb-ac77-772197545eee.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J69TA5RRTVJFGYAPW9SMQ4VY",
+    "name": "stars_many",
+    "description": "Request by 01H49JSNZ7K3Z4WCBM2C0TAFT1 \nLicense: @midasuma@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/b6dc50eb-282b-497b-b71b-ebfc6bcfca9d.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J6NF084TRJF3ZCN8DM14MA13",
+    "name": "dog_black_long",
+    "description": "Request by 01GX66GR94HKT1D41B2261SJBQ \nLicense: 作成者：@Yjmsdd@nijimiss.moe このデコレーションは手描きで作成されています。この絵文字を配布する場合、「現状のまま」配布することに同意したものとみなします。\n",
+    "url": "https://media.nijimissusercontent.app/null/866558e7-7916-45f8-be6e-27860406d491.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KVB181GBBYYPM7DRS7HFSN",
+    "name": "メンダコちゃん2",
+    "description": "copyright: @wdkmrnt@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/10d10bf7-6501-4cb1-b9ee-2086d1d42df2.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01KB2KGAMVRSVM7Y9E7HHSSR8F",
+    "name": "life_bar_arch_red",
+    "description": "手描きのイラストです。可能であれば表示名：HPアーチバー　ピンチ　でお願いします。",
+    "url": "https://media.nijimissusercontent.app/null/160cb535-61a5-4308-85e6-f1722e7aad7b.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J6NF0DY7DWMRRATBJW303V02",
+    "name": "dog_black_tare",
+    "description": "Request by 01GX66GR94HKT1D41B2261SJBQ \nLicense: 作成者：@Yjmsdd@nijimiss.moe このデコレーションは手描きで作成されています。この絵文字を配布する場合、「現状のまま」配布することに同意したものとみなします。\n",
+    "url": "https://media.nijimissusercontent.app/null/4e837635-1011-410f-90af-0510f4d7a01a.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J6NF0NR95G2TA6XSK44J0CRS",
+    "name": "dog_blown_long",
+    "description": "Request by 01GX66GR94HKT1D41B2261SJBQ \nLicense: 作成者：@Yjmsdd@nijimiss.moe このデコレーションは手描きで作成されています。この絵文字を配布する場合、「現状のまま」配布することに同意したものとみなします。\n",
+    "url": "https://media.nijimissusercontent.app/null/08ac0814-7d2f-44a9-8d7e-a26c30b743ac.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J6NF0RNYWFCWN9FG0QWA9B2X",
+    "name": "dog_blown_tare",
+    "description": "Request by 01GX66GR94HKT1D41B2261SJBQ \nLicense: 作成者：@Yjmsdd@nijimiss.moe このデコレーションは手描きで作成されています。この絵文字を配布する場合、「現状のまま」配布することに同意したものとみなします。\n",
+    "url": "https://media.nijimissusercontent.app/null/7d8f8195-bace-4a5e-9b16-76f66f9730da.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J6NF0YHF37BD47B6CJS1A241",
+    "name": "dog_white_long",
+    "description": "Request by 01GX66GR94HKT1D41B2261SJBQ \nLicense: 作成者：@Yjmsdd@nijimiss.moe このデコレーションは手描きで作成されています。この絵文字を配布する場合、「現状のまま」配布することに同意したものとみなします。\n",
+    "url": "https://media.nijimissusercontent.app/null/0cc22fa4-d30d-4eec-8826-76ac8d7b5260.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J6NF11F7ZYG4MJVPNBKME0A7",
+    "name": "dog_white_tare",
+    "description": "Request by 01GX66GR94HKT1D41B2261SJBQ \nLicense: 作成者：@Yjmsdd@nijimiss.moe このデコレーションは手描きで作成されています。この絵文字を配布する場合、「現状のまま」配布することに同意したものとみなします。\n",
+    "url": "https://media.nijimissusercontent.app/null/dcc01a7c-6935-47b3-be4e-37fada964cd5.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J80199J6VEWYY3BNXTWHJHA6",
+    "name": "blobseal_head",
+    "description": "Request by 01H4E038V3F8AE91B3213F6ME0 \nLicense: mamonochan@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/cb37d596-9e06-403c-a07f-46c708bb6b10.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01JBKZWB12PB64M3CCES1ZDQWZ",
+    "name": "blobseal_mini_head",
+    "description": "Request by 01H4E038V3F8AE91B3213F6ME0 \nLicense: @mamonochan@nijimiss.moe\n",
+    "url": "https://media.nijimissusercontent.app/null/ba8a719b-4341-45ab-b045-1e906dba9dc2.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01J4KV7G0QB9G20JN68E0W4GCX",
+    "name": "メンダコちゃん",
+    "description": "copyright: @wdkmrnt@nijimiss.moe",
+    "url": "https://media.nijimissusercontent.app/null/3aa7332c-693e-4e26-a320-fa7fa8250587.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01JQ3CQYDV1BA475GPZM67JHH3",
+    "name": "ぷりんちゃん",
+    "description": "Request by 01GXN9PXHBT07TT7BK156JQW54 \nLicense: <@1006499278216237076>@nijimiss.moe　https://nijimiss.moe/@hihaku_/pages/1687090371635\n",
+    "url": "https://media.nijimissusercontent.app/null/3812a145-3163-4ede-88be-efc856bae05b.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01JR4X4MFAQ4DE9HARC06RDY94",
+    "name": "ぷりんちゃんたべちゃお",
+    "description": "Request by 01GXN9PXHBT07TT7BK156JQW54 \nLicense: @hihaku_@nijimiss.moe　https://nijimiss.moe/@hihaku_/pages/1687090371635\n",
+    "url": "https://media.nijimissusercontent.app/null/320b4cea-8304-469e-9508-c8cbf03e53e8.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01JR4X4T7GAXEYHQY04343BQY9",
+    "name": "ぷるぷるぷりんちゃん",
+    "description": "Request by 01GXN9PXHBT07TT7BK156JQW54 \nLicense:@hihaku_@nijimiss.moe 　https://nijimiss.moe/@hihaku_/pages/1687090371635\n",
+    "url": "https://media.nijimissusercontent.app/null/d69279b9-ae6b-4670-88bf-f23c6e4e6dee.gif",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01KB2KGQHHT7MQ2ENGQ3HVVSZ1",
+    "name": "life_bar_arch_yellow",
+    "description": "手描きのイラストです。可能であれば表示名：HPアーチバー　ハーフ　でお願いします。",
+    "url": "https://media.nijimissusercontent.app/null/58dafe05-a449-47a5-bdba-d415f2da7b96.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01KB2KGSN63RECJ3Z7J34XWQG7",
+    "name": "life_bar_arch_green",
+    "description": "手描きのイラストです。可能であれば表示名：HPアーチバー　フル　でお願いします。",
+    "url": "https://media.nijimissusercontent.app/null/db21482f-414d-4ca3-87e8-8ec52067810d.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  },
+  {
+    "id": "01KB2KGXFC4A141EG76VMV4T7K",
+    "name": "life_gauge_pinch_a",
+    "description": "手描きのイラストです。 可能であれば表示名：ハートゲージ　ピンチA　でお願いします。",
+    "url": "https://media.nijimissusercontent.app/null/ed3c5802-f4de-41e4-a2da-1d5a4cafc225.png",
+    "roleIdsThatCanBeUsedThisDecoration": []
+  }
+]

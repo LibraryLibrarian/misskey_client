@@ -1,0 +1,15 @@
+{
+  "id": "apf9jgfrd3wy001z",
+  "aliases": [
+    "world",
+    "testemoji"
+  ],
+  "name": "e2e_world",
+  "category": "e2e",
+  "host": null,
+  "url": "https://misskey.test/files/b2ba3c19-7699-43c4-b71b-66348b8dbdf4",
+  "license": "CC0",
+  "isSensitive": false,
+  "localOnly": false,
+  "roleIdsThatCanBeUsedThisEmojiAsReaction": []
+}

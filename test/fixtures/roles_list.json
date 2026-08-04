@@ -1,0 +1,227 @@
+[
+  {
+    "id": "apfct0hnd3wy00a9",
+    "createdAt": "2026-08-02T12:41:41.051Z",
+    "updatedAt": "2026-08-02T12:41:41.051Z",
+    "name": "E2E World Role",
+    "description": "role created by the world-building phase",
+    "color": "#86b300",
+    "iconUrl": null,
+    "target": "manual",
+    "condFormula": {
+      "type": "isLocal"
+    },
+    "isPublic": true,
+    "isAdministrator": false,
+    "isModerator": false,
+    "isExplorable": true,
+    "asBadge": true,
+    "preserveAssignmentOnMoveAccount": false,
+    "canEditMembersByModerator": false,
+    "displayOrder": 0,
+    "policies": {
+      "gtlAvailable": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
+      },
+      "ltlAvailable": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
+      },
+      "canPublicNote": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
+      },
+      "mentionLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 20
+      },
+      "canInvite": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "inviteLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 0
+      },
+      "inviteLimitCycle": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 10080
+      },
+      "inviteExpirationTime": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 0
+      },
+      "canManageCustomEmojis": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canManageAvatarDecorations": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canSearchNotes": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canSearchUsers": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
+      },
+      "canUseTranslator": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
+      },
+      "canHideAds": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canCreateChannel": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
+      },
+      "driveCapacityMb": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 100
+      },
+      "maxFileSizeMb": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 30
+      },
+      "alwaysMarkNsfw": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canUpdateBioMedia": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
+      },
+      "pinLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 5
+      },
+      "antennaLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 5
+      },
+      "wordMuteLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 200
+      },
+      "webhookLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 3
+      },
+      "clipLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 10
+      },
+      "noteEachClipsLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 200
+      },
+      "userListLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 10
+      },
+      "userEachUserListsLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 50
+      },
+      "rateLimitFactor": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 1
+      },
+      "avatarDecorationLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 1
+      },
+      "canImportAntennas": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canImportBlocking": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canImportFollowing": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canImportMuting": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "canImportUserLists": {
+        "useDefault": true,
+        "priority": 0,
+        "value": false
+      },
+      "chatAvailability": {
+        "useDefault": true,
+        "priority": 0,
+        "value": "available"
+      },
+      "uploadableFileTypes": {
+        "useDefault": true,
+        "priority": 0,
+        "value": [
+          "text/*",
+          "application/json",
+          "image/*",
+          "video/*",
+          "audio/*"
+        ]
+      },
+      "noteDraftLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 10
+      },
+      "scheduledNoteLimit": {
+        "useDefault": true,
+        "priority": 0,
+        "value": 1
+      },
+      "watermarkAvailable": {
+        "useDefault": true,
+        "priority": 0,
+        "value": true
+      }
+    },
+    "usersCount": 1
+  }
+]

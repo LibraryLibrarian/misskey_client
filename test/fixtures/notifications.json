@@ -1,0 +1,1822 @@
+[
+  {
+    "id": "apfdgz7on6k0005l",
+    "createdAt": "2026-08-02T13:00:19.140Z",
+    "type": "reaction",
+    "userId": "apf9i2kun6k0000g",
+    "user": {
+      "id": "apf9i2kun6k0000g",
+      "name": "Fb Ito",
+      "username": "fb_ito",
+      "host": "fedibird.test",
+      "avatarUrl": "https://misskey.test/identicon/fb_ito@fedibird.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "instance": {
+        "name": "Mastodon",
+        "softwareName": "mastodon",
+        "softwareVersion": "3.4.1",
+        "iconUrl": "https://fedibird.test/android-chrome-192x192.png",
+        "faviconUrl": "https://fedibird.test/favicon.ico",
+        "themeColor": "#282c37"
+      },
+      "emojis": {},
+      "onlineStatus": "unknown"
+    },
+    "note": {
+      "id": "apfddjepd3wy00an",
+      "createdAt": "2026-08-02T12:57:38.689Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "本文は隠れています",
+      "cw": "注意書きつき",
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 1,
+      "reactions": {
+        "❤": 1
+      },
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  },
+  {
+    "id": "apfd4zijn6k00053",
+    "createdAt": "2026-08-02T12:50:59.659Z",
+    "type": "reaction",
+    "userId": "apf9i320n6k0000j",
+    "user": {
+      "id": "apf9i320n6k0000j",
+      "name": "Fb Jun",
+      "username": "fb_jun",
+      "host": "fedibird.test",
+      "avatarUrl": "https://misskey.test/identicon/fb_jun@fedibird.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "instance": {
+        "name": "Mastodon",
+        "softwareName": "mastodon",
+        "softwareVersion": "3.4.1",
+        "iconUrl": "https://fedibird.test/android-chrome-192x192.png",
+        "faviconUrl": "https://fedibird.test/favicon.ico",
+        "themeColor": "#282c37"
+      },
+      "emojis": {},
+      "onlineStatus": "unknown"
+    },
+    "note": {
+      "id": "apfcnya1d3wy008z",
+      "createdAt": "2026-08-02T12:37:44.905Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "ローカル連合テストの様子を記録しています #e2elife",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 1,
+      "repliesCount": 0,
+      "reactionCount": 2,
+      "reactions": {
+        "❤": 2
+      },
+      "reactionEmojis": {},
+      "tags": [
+        "e2elife"
+      ],
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  },
+  {
+    "id": "apfctl5dd3wy00af",
+    "createdAt": "2026-08-02T12:42:07.825Z",
+    "type": "roleAssigned",
+    "role": {
+      "id": "apfct0hnd3wy00a9",
+      "createdAt": "2026-08-02T12:41:41.051Z",
+      "updatedAt": "2026-08-02T12:41:41.051Z",
+      "name": "E2E World Role",
+      "description": "role created by the world-building phase",
+      "color": "#86b300",
+      "iconUrl": null,
+      "target": "manual",
+      "condFormula": {
+        "type": "isLocal"
+      },
+      "isPublic": true,
+      "isAdministrator": false,
+      "isModerator": false,
+      "isExplorable": true,
+      "asBadge": true,
+      "preserveAssignmentOnMoveAccount": false,
+      "canEditMembersByModerator": false,
+      "displayOrder": 0,
+      "policies": {
+        "gtlAvailable": {
+          "useDefault": true,
+          "priority": 0,
+          "value": true
+        },
+        "ltlAvailable": {
+          "useDefault": true,
+          "priority": 0,
+          "value": true
+        },
+        "canPublicNote": {
+          "useDefault": true,
+          "priority": 0,
+          "value": true
+        },
+        "mentionLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 20
+        },
+        "canInvite": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "inviteLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 0
+        },
+        "inviteLimitCycle": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 10080
+        },
+        "inviteExpirationTime": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 0
+        },
+        "canManageCustomEmojis": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canManageAvatarDecorations": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canSearchNotes": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canSearchUsers": {
+          "useDefault": true,
+          "priority": 0,
+          "value": true
+        },
+        "canUseTranslator": {
+          "useDefault": true,
+          "priority": 0,
+          "value": true
+        },
+        "canHideAds": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canCreateChannel": {
+          "useDefault": true,
+          "priority": 0,
+          "value": true
+        },
+        "driveCapacityMb": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 100
+        },
+        "maxFileSizeMb": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 30
+        },
+        "alwaysMarkNsfw": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canUpdateBioMedia": {
+          "useDefault": true,
+          "priority": 0,
+          "value": true
+        },
+        "pinLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 5
+        },
+        "antennaLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 5
+        },
+        "wordMuteLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 200
+        },
+        "webhookLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 3
+        },
+        "clipLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 10
+        },
+        "noteEachClipsLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 200
+        },
+        "userListLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 10
+        },
+        "userEachUserListsLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 50
+        },
+        "rateLimitFactor": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 1
+        },
+        "avatarDecorationLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 1
+        },
+        "canImportAntennas": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canImportBlocking": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canImportFollowing": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canImportMuting": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "canImportUserLists": {
+          "useDefault": true,
+          "priority": 0,
+          "value": false
+        },
+        "chatAvailability": {
+          "useDefault": true,
+          "priority": 0,
+          "value": "available"
+        },
+        "uploadableFileTypes": {
+          "useDefault": true,
+          "priority": 0,
+          "value": [
+            "text/*",
+            "application/json",
+            "image/*",
+            "video/*",
+            "audio/*"
+          ]
+        },
+        "noteDraftLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 10
+        },
+        "scheduledNoteLimit": {
+          "useDefault": true,
+          "priority": 0,
+          "value": 1
+        },
+        "watermarkAvailable": {
+          "useDefault": true,
+          "priority": 0,
+          "value": true
+        }
+      },
+      "usersCount": 1
+    }
+  },
+  {
+    "id": "apfcotood3wy00a3",
+    "createdAt": "2026-08-02T12:38:25.608Z",
+    "type": "mention",
+    "userId": "apf9dstyd3wy0007",
+    "user": {
+      "id": "apf9dstyd3wy0007",
+      "name": "Mk Ben",
+      "username": "mk_ben",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcoto5d3wy00a2",
+      "createdAt": "2026-08-02T12:38:25.589Z",
+      "userId": "apf9dstyd3wy0007",
+      "user": {
+        "id": "apf9dstyd3wy0007",
+        "name": "Mk Ben",
+        "username": "mk_ben",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": "@mk_ann 世界からのメンションです",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 0,
+      "reactions": {},
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "mentions": [
+        "apf9dsoyd3wy0006"
+      ],
+      "clippedCount": 0
+    }
+  },
+  {
+    "id": "apfcoq3bd3wy009r",
+    "createdAt": "2026-08-02T12:38:20.951Z",
+    "type": "renote",
+    "userId": "apf9dszmd3wy0009",
+    "user": {
+      "id": "apf9dszmd3wy0009",
+      "name": "Mk Dan",
+      "username": "mk_dan",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcoq2vd3wy009q",
+      "createdAt": "2026-08-02T12:38:20.935Z",
+      "userId": "apf9dszmd3wy0009",
+      "user": {
+        "id": "apf9dszmd3wy0009",
+        "name": "Mk Dan",
+        "username": "mk_dan",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": null,
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 0,
+      "reactions": {},
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": "apfcnzwtd3wy0092",
+      "clippedCount": 0,
+      "renote": {
+        "id": "apfcnzwtd3wy0092",
+        "createdAt": "2026-08-02T12:37:47.021Z",
+        "userId": "apf9dsoyd3wy0006",
+        "user": {
+          "id": "apf9dsoyd3wy0006",
+          "name": "Mk Ann",
+          "username": "mk_ann",
+          "host": null,
+          "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+          "avatarBlurhash": null,
+          "avatarDecorations": [],
+          "isBot": false,
+          "isCat": false,
+          "emojis": {},
+          "onlineStatus": "unknown",
+          "badgeRoles": [
+            {
+              "name": "E2E World Role",
+              "iconUrl": null,
+              "displayOrder": 0
+            }
+          ]
+        },
+        "text": "本文は隠れています",
+        "cw": "注意書きつき",
+        "visibility": "public",
+        "localOnly": false,
+        "reactionAcceptance": null,
+        "renoteCount": 1,
+        "repliesCount": 0,
+        "reactionCount": 1,
+        "reactions": {
+          "❤": 1
+        },
+        "reactionEmojis": {},
+        "fileIds": [],
+        "files": [],
+        "replyId": null,
+        "renoteId": null,
+        "clippedCount": 0
+      }
+    }
+  },
+  {
+    "id": "apfcopopd3wy009p",
+    "createdAt": "2026-08-02T12:38:20.425Z",
+    "type": "reaction",
+    "userId": "apf9dszmd3wy0009",
+    "user": {
+      "id": "apf9dszmd3wy0009",
+      "name": "Mk Dan",
+      "username": "mk_dan",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcnzwtd3wy0092",
+      "createdAt": "2026-08-02T12:37:47.021Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "本文は隠れています",
+      "cw": "注意書きつき",
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 1,
+      "repliesCount": 0,
+      "reactionCount": 1,
+      "reactions": {
+        "❤": 1
+      },
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  },
+  {
+    "id": "apfcoowad3wy009n",
+    "createdAt": "2026-08-02T12:38:19.402Z",
+    "type": "reply",
+    "userId": "apf9dswld3wy0008",
+    "user": {
+      "id": "apf9dswld3wy0008",
+      "name": "Mk Cho",
+      "username": "mk_cho",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_cho@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcoovtd3wy009m",
+      "createdAt": "2026-08-02T12:38:19.385Z",
+      "userId": "apf9dswld3wy0008",
+      "user": {
+        "id": "apf9dswld3wy0008",
+        "name": "Mk Cho",
+        "username": "mk_cho",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_cho@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": "なるほど、参考になります",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 0,
+      "reactions": {},
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": "apfcnz3jd3wy0091",
+      "renoteId": null,
+      "mentions": [
+        "apf9dsoyd3wy0006"
+      ],
+      "clippedCount": 0,
+      "reply": {
+        "id": "apfcnz3jd3wy0091",
+        "createdAt": "2026-08-02T12:37:45.967Z",
+        "userId": "apf9dsoyd3wy0006",
+        "user": {
+          "id": "apf9dsoyd3wy0006",
+          "name": "Mk Ann",
+          "username": "mk_ann",
+          "host": null,
+          "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+          "avatarBlurhash": null,
+          "avatarDecorations": [],
+          "isBot": false,
+          "isCat": false,
+          "emojis": {},
+          "onlineStatus": "unknown",
+          "badgeRoles": [
+            {
+              "name": "E2E World Role",
+              "iconUrl": null,
+              "displayOrder": 0
+            }
+          ]
+        },
+        "text": "添付つきの投稿 #e2elife",
+        "cw": null,
+        "visibility": "public",
+        "localOnly": false,
+        "reactionAcceptance": null,
+        "renoteCount": 0,
+        "repliesCount": 1,
+        "reactionCount": 1,
+        "reactions": {
+          "❤": 1
+        },
+        "reactionEmojis": {},
+        "tags": [
+          "e2elife"
+        ],
+        "fileIds": [
+          "apfcnz37d3wy0090"
+        ],
+        "files": [
+          {
+            "id": "apfcnz37d3wy0090",
+            "createdAt": "2026-08-02T12:37:45.955Z",
+            "name": "world_mk_ann.png",
+            "type": "image/png",
+            "md5": "2b666b5f086f96785b4a68a3d7560eb6",
+            "size": 67,
+            "isSensitive": false,
+            "blurhash": "e00J5NoMkCt5a$t7ofoft5fSt6j]oft6j]t6ofogofj]ofoeogogof",
+            "properties": {
+              "width": 1,
+              "height": 1
+            },
+            "url": "https://misskey.test/files/7871de42-b375-4956-b7d4-6eb21b9a1f56",
+            "thumbnailUrl": "https://misskey.test/files/thumbnail-4fd4d2a4-5650-4df5-846b-69ea8f040539",
+            "comment": null,
+            "folderId": null,
+            "folder": null,
+            "userId": "apf9dsoyd3wy0006",
+            "user": null
+          }
+        ],
+        "replyId": null,
+        "renoteId": null
+      }
+    }
+  },
+  {
+    "id": "apfcoohjd3wy009l",
+    "createdAt": "2026-08-02T12:38:18.871Z",
+    "type": "reaction",
+    "userId": "apf9dswld3wy0008",
+    "user": {
+      "id": "apf9dswld3wy0008",
+      "name": "Mk Cho",
+      "username": "mk_cho",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_cho@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcnz3jd3wy0091",
+      "createdAt": "2026-08-02T12:37:45.967Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "添付つきの投稿 #e2elife",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 1,
+      "reactionCount": 1,
+      "reactions": {
+        "❤": 1
+      },
+      "reactionEmojis": {},
+      "tags": [
+        "e2elife"
+      ],
+      "fileIds": [
+        "apfcnz37d3wy0090"
+      ],
+      "files": [
+        {
+          "id": "apfcnz37d3wy0090",
+          "createdAt": "2026-08-02T12:37:45.955Z",
+          "name": "world_mk_ann.png",
+          "type": "image/png",
+          "md5": "2b666b5f086f96785b4a68a3d7560eb6",
+          "size": 67,
+          "isSensitive": false,
+          "blurhash": "e00J5NoMkCt5a$t7ofoft5fSt6j]oft6j]t6ofogofj]ofoeogogof",
+          "properties": {
+            "width": 1,
+            "height": 1
+          },
+          "url": "https://misskey.test/files/7871de42-b375-4956-b7d4-6eb21b9a1f56",
+          "thumbnailUrl": "https://misskey.test/files/thumbnail-4fd4d2a4-5650-4df5-846b-69ea8f040539",
+          "comment": null,
+          "folderId": null,
+          "folder": null,
+          "userId": "apf9dsoyd3wy0006",
+          "user": null
+        }
+      ],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  },
+  {
+    "id": "apfcoo3ed3wy009j",
+    "createdAt": "2026-08-02T12:38:18.362Z",
+    "type": "renote",
+    "userId": "apf9dstyd3wy0007",
+    "user": {
+      "id": "apf9dstyd3wy0007",
+      "name": "Mk Ben",
+      "username": "mk_ben",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcoo2qd3wy009i",
+      "createdAt": "2026-08-02T12:38:18.338Z",
+      "userId": "apf9dstyd3wy0007",
+      "user": {
+        "id": "apf9dstyd3wy0007",
+        "name": "Mk Ben",
+        "username": "mk_ben",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": null,
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 0,
+      "reactions": {},
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": "apfcnya1d3wy008z",
+      "clippedCount": 0,
+      "renote": {
+        "id": "apfcnya1d3wy008z",
+        "createdAt": "2026-08-02T12:37:44.905Z",
+        "userId": "apf9dsoyd3wy0006",
+        "user": {
+          "id": "apf9dsoyd3wy0006",
+          "name": "Mk Ann",
+          "username": "mk_ann",
+          "host": null,
+          "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+          "avatarBlurhash": null,
+          "avatarDecorations": [],
+          "isBot": false,
+          "isCat": false,
+          "emojis": {},
+          "onlineStatus": "unknown",
+          "badgeRoles": [
+            {
+              "name": "E2E World Role",
+              "iconUrl": null,
+              "displayOrder": 0
+            }
+          ]
+        },
+        "text": "ローカル連合テストの様子を記録しています #e2elife",
+        "cw": null,
+        "visibility": "public",
+        "localOnly": false,
+        "reactionAcceptance": null,
+        "renoteCount": 1,
+        "repliesCount": 0,
+        "reactionCount": 2,
+        "reactions": {
+          "❤": 2
+        },
+        "reactionEmojis": {},
+        "tags": [
+          "e2elife"
+        ],
+        "fileIds": [],
+        "files": [],
+        "replyId": null,
+        "renoteId": null,
+        "clippedCount": 0
+      }
+    }
+  },
+  {
+    "id": "apfconond3wy009h",
+    "createdAt": "2026-08-02T12:38:17.831Z",
+    "type": "reaction",
+    "userId": "apf9dstyd3wy0007",
+    "user": {
+      "id": "apf9dstyd3wy0007",
+      "name": "Mk Ben",
+      "username": "mk_ben",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcnya1d3wy008z",
+      "createdAt": "2026-08-02T12:37:44.905Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "ローカル連合テストの様子を記録しています #e2elife",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 1,
+      "repliesCount": 0,
+      "reactionCount": 2,
+      "reactions": {
+        "❤": 2
+      },
+      "reactionEmojis": {},
+      "tags": [
+        "e2elife"
+      ],
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  },
+  {
+    "id": "apfcn1fyd3wy008y",
+    "createdAt": "2026-08-02T12:37:02.350Z",
+    "type": "reaction",
+    "userId": "apf9dszmd3wy0009",
+    "user": {
+      "id": "apf9dszmd3wy0009",
+      "name": "Mk Dan",
+      "username": "mk_dan",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfabblad3wy0060",
+      "createdAt": "2026-08-02T11:31:56.398Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "絵文字リアクションを試しています",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 1,
+      "reactions": {
+        "👍": 1
+      },
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "👍"
+  },
+  {
+    "id": "apfcmvsjd3wy008j",
+    "createdAt": "2026-08-02T12:36:55.027Z",
+    "type": "renote",
+    "userId": "apf9dszmd3wy0009",
+    "user": {
+      "id": "apf9dszmd3wy0009",
+      "name": "Mk Dan",
+      "username": "mk_dan",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcmvscd3wy008i",
+      "createdAt": "2026-08-02T12:36:55.020Z",
+      "userId": "apf9dszmd3wy0009",
+      "user": {
+        "id": "apf9dszmd3wy0009",
+        "name": "Mk Dan",
+        "username": "mk_dan",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": null,
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 0,
+      "reactions": {},
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": "apfcm6fnd3wy007u",
+      "clippedCount": 0,
+      "renote": {
+        "id": "apfcm6fnd3wy007u",
+        "createdAt": "2026-08-02T12:36:22.163Z",
+        "userId": "apf9dsoyd3wy0006",
+        "user": {
+          "id": "apf9dsoyd3wy0006",
+          "name": "Mk Ann",
+          "username": "mk_ann",
+          "host": null,
+          "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+          "avatarBlurhash": null,
+          "avatarDecorations": [],
+          "isBot": false,
+          "isCat": false,
+          "emojis": {},
+          "onlineStatus": "unknown",
+          "badgeRoles": [
+            {
+              "name": "E2E World Role",
+              "iconUrl": null,
+              "displayOrder": 0
+            }
+          ]
+        },
+        "text": "本文は隠れています",
+        "cw": "注意書きつき",
+        "visibility": "public",
+        "localOnly": false,
+        "reactionAcceptance": null,
+        "renoteCount": 1,
+        "repliesCount": 0,
+        "reactionCount": 1,
+        "reactions": {
+          "❤": 1
+        },
+        "reactionEmojis": {},
+        "fileIds": [],
+        "files": [],
+        "replyId": null,
+        "renoteId": null,
+        "clippedCount": 0
+      }
+    }
+  },
+  {
+    "id": "apfcmve6d3wy008h",
+    "createdAt": "2026-08-02T12:36:54.510Z",
+    "type": "reaction",
+    "userId": "apf9dszmd3wy0009",
+    "user": {
+      "id": "apf9dszmd3wy0009",
+      "name": "Mk Dan",
+      "username": "mk_dan",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcm6fnd3wy007u",
+      "createdAt": "2026-08-02T12:36:22.163Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "本文は隠れています",
+      "cw": "注意書きつき",
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 1,
+      "repliesCount": 0,
+      "reactionCount": 1,
+      "reactions": {
+        "❤": 1
+      },
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  },
+  {
+    "id": "apfcmum0d3wy008f",
+    "createdAt": "2026-08-02T12:36:53.496Z",
+    "type": "reply",
+    "userId": "apf9dswld3wy0008",
+    "user": {
+      "id": "apf9dswld3wy0008",
+      "name": "Mk Cho",
+      "username": "mk_cho",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_cho@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcmulod3wy008e",
+      "createdAt": "2026-08-02T12:36:53.484Z",
+      "userId": "apf9dswld3wy0008",
+      "user": {
+        "id": "apf9dswld3wy0008",
+        "name": "Mk Cho",
+        "username": "mk_cho",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_cho@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": "なるほど、参考になります",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 0,
+      "reactions": {},
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": "apfcm5nkd3wy007t",
+      "renoteId": null,
+      "mentions": [
+        "apf9dsoyd3wy0006"
+      ],
+      "clippedCount": 0,
+      "reply": {
+        "id": "apfcm5nkd3wy007t",
+        "createdAt": "2026-08-02T12:36:21.152Z",
+        "userId": "apf9dsoyd3wy0006",
+        "user": {
+          "id": "apf9dsoyd3wy0006",
+          "name": "Mk Ann",
+          "username": "mk_ann",
+          "host": null,
+          "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+          "avatarBlurhash": null,
+          "avatarDecorations": [],
+          "isBot": false,
+          "isCat": false,
+          "emojis": {},
+          "onlineStatus": "unknown",
+          "badgeRoles": [
+            {
+              "name": "E2E World Role",
+              "iconUrl": null,
+              "displayOrder": 0
+            }
+          ]
+        },
+        "text": "添付つきの投稿 #e2elife",
+        "cw": null,
+        "visibility": "public",
+        "localOnly": false,
+        "reactionAcceptance": null,
+        "renoteCount": 0,
+        "repliesCount": 1,
+        "reactionCount": 1,
+        "reactions": {
+          "❤": 1
+        },
+        "reactionEmojis": {},
+        "tags": [
+          "e2elife"
+        ],
+        "fileIds": [
+          "apfcm5n7d3wy007s"
+        ],
+        "files": [
+          {
+            "id": "apfcm5n7d3wy007s",
+            "createdAt": "2026-08-02T12:36:21.139Z",
+            "name": "world_mk_ann.png",
+            "type": "image/png",
+            "md5": "2b666b5f086f96785b4a68a3d7560eb6",
+            "size": 67,
+            "isSensitive": false,
+            "blurhash": "e009goj]a%WGa$axaxj=j=j=a#a#j[j[j[ofj]a$WFa$axaxj=j=j=",
+            "properties": {
+              "width": 1,
+              "height": 1
+            },
+            "url": "https://misskey.test/files/6e9276b8-7ef0-4524-9e3f-30c7e28972d2",
+            "thumbnailUrl": "https://misskey.test/files/thumbnail-b5a47d97-15d8-4832-b65b-cc202312af30",
+            "comment": null,
+            "folderId": null,
+            "folder": null,
+            "userId": "apf9dsoyd3wy0006",
+            "user": null
+          }
+        ],
+        "replyId": null,
+        "renoteId": null
+      }
+    }
+  },
+  {
+    "id": "apfcmu7kd3wy008d",
+    "createdAt": "2026-08-02T12:36:52.976Z",
+    "type": "reaction",
+    "userId": "apf9dswld3wy0008",
+    "user": {
+      "id": "apf9dswld3wy0008",
+      "name": "Mk Cho",
+      "username": "mk_cho",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_cho@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcm5nkd3wy007t",
+      "createdAt": "2026-08-02T12:36:21.152Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "添付つきの投稿 #e2elife",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 1,
+      "reactionCount": 1,
+      "reactions": {
+        "❤": 1
+      },
+      "reactionEmojis": {},
+      "tags": [
+        "e2elife"
+      ],
+      "fileIds": [
+        "apfcm5n7d3wy007s"
+      ],
+      "files": [
+        {
+          "id": "apfcm5n7d3wy007s",
+          "createdAt": "2026-08-02T12:36:21.139Z",
+          "name": "world_mk_ann.png",
+          "type": "image/png",
+          "md5": "2b666b5f086f96785b4a68a3d7560eb6",
+          "size": 67,
+          "isSensitive": false,
+          "blurhash": "e009goj]a%WGa$axaxj=j=j=a#a#j[j[j[ofj]a$WFa$axaxj=j=j=",
+          "properties": {
+            "width": 1,
+            "height": 1
+          },
+          "url": "https://misskey.test/files/6e9276b8-7ef0-4524-9e3f-30c7e28972d2",
+          "thumbnailUrl": "https://misskey.test/files/thumbnail-b5a47d97-15d8-4832-b65b-cc202312af30",
+          "comment": null,
+          "folderId": null,
+          "folder": null,
+          "userId": "apf9dsoyd3wy0006",
+          "user": null
+        }
+      ],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  },
+  {
+    "id": "apfcmttid3wy008b",
+    "createdAt": "2026-08-02T12:36:52.470Z",
+    "type": "renote",
+    "userId": "apf9dstyd3wy0007",
+    "user": {
+      "id": "apf9dstyd3wy0007",
+      "name": "Mk Ben",
+      "username": "mk_ben",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcmtsyd3wy008a",
+      "createdAt": "2026-08-02T12:36:52.450Z",
+      "userId": "apf9dstyd3wy0007",
+      "user": {
+        "id": "apf9dstyd3wy0007",
+        "name": "Mk Ben",
+        "username": "mk_ben",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "text": null,
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 0,
+      "reactions": {},
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": "apfcm4u3d3wy007r",
+      "clippedCount": 0,
+      "renote": {
+        "id": "apfcm4u3d3wy007r",
+        "createdAt": "2026-08-02T12:36:20.091Z",
+        "userId": "apf9dsoyd3wy0006",
+        "user": {
+          "id": "apf9dsoyd3wy0006",
+          "name": "Mk Ann",
+          "username": "mk_ann",
+          "host": null,
+          "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+          "avatarBlurhash": null,
+          "avatarDecorations": [],
+          "isBot": false,
+          "isCat": false,
+          "emojis": {},
+          "onlineStatus": "unknown",
+          "badgeRoles": [
+            {
+              "name": "E2E World Role",
+              "iconUrl": null,
+              "displayOrder": 0
+            }
+          ]
+        },
+        "text": "ローカル連合テストの様子を記録しています #e2elife",
+        "cw": null,
+        "visibility": "public",
+        "localOnly": false,
+        "reactionAcceptance": null,
+        "renoteCount": 1,
+        "repliesCount": 0,
+        "reactionCount": 1,
+        "reactions": {
+          "❤": 1
+        },
+        "reactionEmojis": {},
+        "tags": [
+          "e2elife"
+        ],
+        "fileIds": [],
+        "files": [],
+        "replyId": null,
+        "renoteId": null,
+        "clippedCount": 0
+      }
+    }
+  },
+  {
+    "id": "apfcmteod3wy0089",
+    "createdAt": "2026-08-02T12:36:51.936Z",
+    "type": "reaction",
+    "userId": "apf9dstyd3wy0007",
+    "user": {
+      "id": "apf9dstyd3wy0007",
+      "name": "Mk Ben",
+      "username": "mk_ben",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_ben@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apfcm4u3d3wy007r",
+      "createdAt": "2026-08-02T12:36:20.091Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "ローカル連合テストの様子を記録しています #e2elife",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 1,
+      "repliesCount": 0,
+      "reactionCount": 1,
+      "reactions": {
+        "❤": 1
+      },
+      "reactionEmojis": {},
+      "tags": [
+        "e2elife"
+      ],
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  },
+  {
+    "id": "apfbz5bdd3wy0071",
+    "createdAt": "2026-08-02T12:18:27.625Z",
+    "type": "reaction",
+    "userId": "apf9dszmd3wy0009",
+    "user": {
+      "id": "apf9dszmd3wy0009",
+      "name": "Mk Dan",
+      "username": "mk_dan",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apf9sjv2d3wy004h",
+      "createdAt": "2026-08-02T11:17:20.654Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "添付つきの投稿 #e2elife",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 1,
+      "reactionCount": 2,
+      "reactions": {
+        "❤": 1,
+        "🚀": 1
+      },
+      "reactionEmojis": {},
+      "tags": [
+        "e2elife"
+      ],
+      "fileIds": [
+        "apf9sjuud3wy004g"
+      ],
+      "files": [
+        {
+          "id": "apf9sjuud3wy004g",
+          "createdAt": "2026-08-02T11:17:20.646Z",
+          "name": "world_mk_ann.png",
+          "type": "image/png",
+          "md5": "2b666b5f086f96785b4a68a3d7560eb6",
+          "size": 67,
+          "isSensitive": false,
+          "blurhash": "e44diLR-xDxFRl}XR-s,xFR+xsR-kSxYafBmWXS{oxjZBmoeX7baoJ",
+          "properties": {
+            "width": 1,
+            "height": 1
+          },
+          "url": "https://misskey.test/files/ed254365-b96c-4fda-9273-800fac035f63",
+          "thumbnailUrl": "https://misskey.test/files/thumbnail-526b1cbc-b1d3-4067-ae3a-0876eeda730d",
+          "comment": null,
+          "folderId": null,
+          "folder": null,
+          "userId": "apf9dsoyd3wy0006",
+          "user": null
+        }
+      ],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "🚀"
+  },
+  {
+    "id": "apfa784bd3wy005z",
+    "createdAt": "2026-08-02T11:28:45.275Z",
+    "type": "reaction",
+    "userId": "apf9dszmd3wy0009",
+    "user": {
+      "id": "apf9dszmd3wy0009",
+      "name": "Mk Dan",
+      "username": "mk_dan",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/mk_dan@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "note": {
+      "id": "apf9ssjfd3wy004v",
+      "createdAt": "2026-08-02T11:17:31.899Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "どのサーバーが好きですか #e2elife",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 1,
+      "reactions": {
+        "👍": 1
+      },
+      "reactionEmojis": {},
+      "tags": [
+        "e2elife"
+      ],
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "hasPoll": true,
+      "clippedCount": 0,
+      "poll": {
+        "multiple": false,
+        "expiresAt": null,
+        "choices": [
+          {
+            "text": "Misskey",
+            "votes": 0,
+            "isVoted": false
+          },
+          {
+            "text": "Mastodon",
+            "votes": 0,
+            "isVoted": false
+          },
+          {
+            "text": "Fedibird",
+            "votes": 0,
+            "isVoted": false
+          }
+        ]
+      }
+    },
+    "reaction": "👍"
+  },
+  {
+    "id": "apf9v3gpn6k0002p",
+    "createdAt": "2026-08-02T11:19:19.369Z",
+    "type": "reaction",
+    "userId": "apf9i2kun6k0000g",
+    "user": {
+      "id": "apf9i2kun6k0000g",
+      "name": "Fb Ito",
+      "username": "fb_ito",
+      "host": "fedibird.test",
+      "avatarUrl": "https://misskey.test/identicon/fb_ito@fedibird.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "instance": {
+        "name": "Mastodon",
+        "softwareName": "mastodon",
+        "softwareVersion": "3.4.1",
+        "iconUrl": "https://fedibird.test/android-chrome-192x192.png",
+        "faviconUrl": "https://fedibird.test/favicon.ico",
+        "themeColor": "#282c37"
+      },
+      "emojis": {},
+      "onlineStatus": "unknown"
+    },
+    "note": {
+      "id": "apf9tqbad3wy005i",
+      "createdAt": "2026-08-02T11:18:15.670Z",
+      "userId": "apf9dsoyd3wy0006",
+      "user": {
+        "id": "apf9dsoyd3wy0006",
+        "name": "Mk Ann",
+        "username": "mk_ann",
+        "host": null,
+        "avatarUrl": "https://misskey.test/identicon/mk_ann@misskey.test",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": [
+          {
+            "name": "E2E World Role",
+            "iconUrl": null,
+            "displayOrder": 0
+          }
+        ]
+      },
+      "text": "こちらもどうぞ https://mastodon.test/@md_eve",
+      "cw": null,
+      "visibility": "public",
+      "localOnly": false,
+      "reactionAcceptance": null,
+      "renoteCount": 0,
+      "repliesCount": 0,
+      "reactionCount": 1,
+      "reactions": {
+        "❤": 1
+      },
+      "reactionEmojis": {},
+      "fileIds": [],
+      "files": [],
+      "replyId": null,
+      "renoteId": null,
+      "clippedCount": 0
+    },
+    "reaction": "❤"
+  }
+]

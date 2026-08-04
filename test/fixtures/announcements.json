@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ak3qcgvlrt4w000a",
+    "createdAt": "2026-03-21T10:08:57.969Z",
+    "updatedAt": null,
+    "title": "Test Announcement",
+    "text": "This is a test announcement for API testing.",
+    "imageUrl": null,
+    "icon": "info",
+    "display": "normal",
+    "forYou": false,
+    "needConfirmationToRead": false,
+    "silence": false,
+    "isRead": false
+  }
+]

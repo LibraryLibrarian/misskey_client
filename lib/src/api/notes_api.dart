@@ -1,6 +1,8 @@
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/optional.dart';
+import '../internal/request_body.dart';
 import '../models/misskey_clip.dart';
 import '../models/misskey_note.dart';
 import '../models/misskey_note_draft.dart';
@@ -1032,44 +1034,64 @@ class NotesApi {
   ///
   /// Pass the ID of the draft to update in [draftId].
   /// All other parameters are the same as [draftsCreate].
+  ///
+  /// For the nullable fields [cw], [hashtag], [reactionAcceptance], [replyId],
+  /// [renoteId], [channelId], [text] and [scheduledAt], use the [Optional]
+  /// type: pass `Optional(value)` to set and `Optional.null_()` to clear.
+  ///
+  /// Beware of three server-side behaviours this client cannot work around:
+  ///
+  /// - [scheduledAt] is always overwritten. The server sends
+  ///   `scheduledAt ? new Date(scheduledAt) : null` on every call, so omitting
+  ///   it unschedules the draft instead of leaving the schedule alone. Pass
+  ///   the current value explicitly on every update to keep a draft scheduled.
+  /// - Omitting the poll parameters clears the poll's deadline. The server
+  ///   resolves `poll.expiresAt` the same way, so an update that does not
+  ///   mention the poll keeps the choices but drops their expiry.
+  /// - A poll cannot be removed from a draft. The server reads the poll
+  ///   through `poll?.choices`, so sending `poll: null` is indistinguishable
+  ///   from omitting it and does nothing. Passing an empty [pollChoices] list
+  ///   is the closest available operation: it empties the choices while
+  ///   leaving the poll object in place.
   Future<MisskeyNoteDraft> draftsUpdate({
     required String draftId,
     String? visibility,
     List<String>? visibleUserIds,
-    String? cw,
-    String? hashtag,
+    Optional<String>? cw,
+    Optional<String>? hashtag,
     bool? localOnly,
-    String? reactionAcceptance,
-    String? replyId,
-    String? renoteId,
-    String? channelId,
-    String? text,
+    Optional<String>? reactionAcceptance,
+    Optional<String>? replyId,
+    Optional<String>? renoteId,
+    Optional<String>? channelId,
+    Optional<String>? text,
     List<String>? fileIds,
     List<String>? pollChoices,
     bool? pollMultiple,
     int? pollExpiresAt,
     int? pollExpiredAfter,
-    int? scheduledAt,
+    Optional<int>? scheduledAt,
     bool? isActuallyScheduled,
   }) async {
     final body = <String, dynamic>{
       'draftId': draftId,
       if (visibility != null) 'visibility': visibility,
       if (visibleUserIds != null) 'visibleUserIds': visibleUserIds,
-      if (cw != null) 'cw': cw,
-      if (hashtag != null) 'hashtag': hashtag,
       if (localOnly != null) 'localOnly': localOnly,
-      if (reactionAcceptance != null) 'reactionAcceptance': reactionAcceptance,
-      if (replyId != null) 'replyId': replyId,
-      if (renoteId != null) 'renoteId': renoteId,
-      if (channelId != null) 'channelId': channelId,
-      if (text != null) 'text': text,
       if (fileIds != null) 'fileIds': fileIds,
-      if (scheduledAt != null) 'scheduledAt': scheduledAt,
       if (isActuallyScheduled != null)
         'isActuallyScheduled': isActuallyScheduled,
     };
-    if (pollChoices != null && pollChoices.isNotEmpty) {
+    putOptional(body, 'cw', cw);
+    putOptional(body, 'hashtag', hashtag);
+    putOptional(body, 'reactionAcceptance', reactionAcceptance);
+    putOptional(body, 'replyId', replyId);
+    putOptional(body, 'renoteId', renoteId);
+    putOptional(body, 'channelId', channelId);
+    putOptional(body, 'text', text);
+    putOptional(body, 'scheduledAt', scheduledAt);
+    // 空配列は選択肢を空にする唯一の手段なので、createと違って除外しない
+    if (pollChoices != null) {
       final poll = <String, dynamic>{'choices': pollChoices};
       if (pollMultiple != null) poll['multiple'] = pollMultiple;
       if (pollExpiresAt != null) poll['expiresAt'] = pollExpiresAt;

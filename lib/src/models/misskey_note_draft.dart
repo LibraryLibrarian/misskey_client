@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'json_converters.dart';
-import 'misskey_poll.dart';
+import 'misskey_note_draft_poll.dart';
 
 part 'misskey_note_draft.g.dart';
 
@@ -84,7 +84,10 @@ class MisskeyNoteDraft {
   final List<String>? fileIds;
 
   /// The poll attached to this draft.
-  final MisskeyPoll? poll;
+  ///
+  /// Drafts use their own poll shape, not the published-note one: the choices
+  /// are plain strings and the deadline may still be relative.
+  final MisskeyNoteDraftPoll? poll;
 
   /// The scheduled post time as a Unix timestamp in milliseconds.
   final int? scheduledAt;

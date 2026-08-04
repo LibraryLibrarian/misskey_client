@@ -1,0 +1,20 @@
+{
+  "provider": "none",
+  "hcaptcha": {
+    "siteKey": null,
+    "secretKey": null
+  },
+  "mcaptcha": {
+    "siteKey": null,
+    "secretKey": null,
+    "instanceUrl": null
+  },
+  "recaptcha": {
+    "siteKey": null,
+    "secretKey": null
+  },
+  "turnstile": {
+    "siteKey": null,
+    "secretKey": null
+  }
+}

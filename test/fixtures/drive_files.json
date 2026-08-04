@@ -1,0 +1,62 @@
+[
+  {
+    "id": "apfceri6d3wy007m",
+    "createdAt": "2026-08-02T12:30:36.222Z",
+    "name": "world_note.txt",
+    "type": "text/plain",
+    "md5": "4f3c149738b145d261a245cdb132be89",
+    "size": 25,
+    "isSensitive": false,
+    "blurhash": null,
+    "properties": {},
+    "url": "https://misskey.test/files/8bce678c-c57b-4eec-bf1d-1f600aab53a4",
+    "thumbnailUrl": null,
+    "comment": null,
+    "folderId": null,
+    "folder": null,
+    "userId": "apf9dsoyd3wy0006",
+    "user": null
+  },
+  {
+    "id": "apf9sjuud3wy004g",
+    "createdAt": "2026-08-02T11:17:20.646Z",
+    "name": "world_mk_ann.png",
+    "type": "image/png",
+    "md5": "2b666b5f086f96785b4a68a3d7560eb6",
+    "size": 67,
+    "isSensitive": false,
+    "blurhash": "e44diLR-xDxFRl}XR-s,xFR+xsR-kSxYafBmWXS{oxjZBmoeX7baoJ",
+    "properties": {
+      "width": 1,
+      "height": 1
+    },
+    "url": "https://misskey.test/files/ed254365-b96c-4fda-9273-800fac035f63",
+    "thumbnailUrl": "https://misskey.test/files/thumbnail-526b1cbc-b1d3-4067-ae3a-0876eeda730d",
+    "comment": null,
+    "folderId": null,
+    "folder": null,
+    "userId": "apf9dsoyd3wy0006",
+    "user": null
+  },
+  {
+    "id": "apf9i8mld3wy000w",
+    "createdAt": "2026-08-02T11:09:19.533Z",
+    "name": "world_mk_ann.png",
+    "type": "image/png",
+    "md5": "2b666b5f086f96785b4a68a3d7560eb6",
+    "size": 67,
+    "isSensitive": false,
+    "blurhash": "e00000fQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    "properties": {
+      "width": 1,
+      "height": 1
+    },
+    "url": "https://misskey.test/files/3f1ab75e-b765-4512-b40d-ddddc9e26e07",
+    "thumbnailUrl": "https://misskey.test/files/thumbnail-7c716ff4-8115-4404-a420-d10b561dfe5e",
+    "comment": null,
+    "folderId": null,
+    "folder": null,
+    "userId": "apf9dsoyd3wy0006",
+    "user": null
+  }
+]

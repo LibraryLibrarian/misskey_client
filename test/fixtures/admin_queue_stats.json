@@ -1,0 +1,42 @@
+{
+  "deliver": {
+    "active": 0,
+    "completed": 30,
+    "delayed": 8,
+    "failed": 3,
+    "paused": 0,
+    "prioritized": 0,
+    "waiting": 0,
+    "waiting-children": 0
+  },
+  "inbox": {
+    "active": 0,
+    "completed": 8,
+    "delayed": 0,
+    "failed": 0,
+    "paused": 0,
+    "prioritized": 0,
+    "waiting": 0,
+    "waiting-children": 0
+  },
+  "db": {
+    "active": 0,
+    "completed": 12,
+    "delayed": 0,
+    "failed": 0,
+    "paused": 0,
+    "prioritized": 0,
+    "waiting": 0,
+    "waiting-children": 0
+  },
+  "objectStorage": {
+    "active": 0,
+    "completed": 0,
+    "delayed": 0,
+    "failed": 0,
+    "paused": 0,
+    "prioritized": 0,
+    "waiting": 0,
+    "waiting-children": 0
+  }
+}

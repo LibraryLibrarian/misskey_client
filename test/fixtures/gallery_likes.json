@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ak6ou7vkrt4w001q",
+    "post": {
+      "id": "ak6otcb6rt4w001n",
+      "createdAt": "2026-03-23T11:49:24.498Z",
+      "updatedAt": "2026-03-23T11:49:24.498Z",
+      "userId": "ak3po4qort4w0001",
+      "user": {
+        "id": "ak3po4qort4w0001",
+        "name": null,
+        "username": "testadmin",
+        "host": null,
+        "avatarUrl": "http://localhost:3000/identicon/testadmin@localhost:3000",
+        "avatarBlurhash": null,
+        "avatarDecorations": [],
+        "isBot": false,
+        "isCat": false,
+        "emojis": {},
+        "onlineStatus": "unknown",
+        "badgeRoles": []
+      },
+      "title": "Test Gallery Post",
+      "description": "A test gallery post",
+      "fileIds": [
+        "ak3qfimsrt4w000d"
+      ],
+      "files": [
+        {
+          "id": "ak3qfimsrt4w000d",
+          "createdAt": "2026-03-21T10:11:20.212Z",
+          "name": "test_emoji.png",
+          "type": "image/png",
+          "md5": "3c599a9944128b1539343151a92b15f3",
+          "size": 67,
+          "isSensitive": false,
+          "blurhash": null,
+          "properties": {
+            "width": 1,
+            "height": 1
+          },
+          "url": "http://localhost:3000/files/b218ec80-89be-4914-9ebb-14eb2ea99220",
+          "thumbnailUrl": "http://localhost:3000/files/thumbnail-b4c47b5a-965f-4cea-bc80-bcf8aa953346",
+          "comment": null,
+          "folderId": null,
+          "folder": null,
+          "userId": "ak3po4qort4w0001",
+          "user": null
+        }
+      ],
+      "isSensitive": false,
+      "likedCount": 1,
+      "isLiked": true
+    }
+  }
+]
