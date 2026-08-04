@@ -414,4 +414,78 @@ void main() {
       expect(reread.description, isNull);
     });
   });
+
+  group('antennas/update', () {
+    late String antennaId;
+    late String userListId;
+
+    setUpAll(() async {
+      final list = await client.users.lists.create(name: 'e2e optional clear');
+      userListId = list.id;
+    });
+
+    setUp(() async {
+      final antenna = await client.antennas.create(
+        name: 'e2e optional clear',
+        src: 'list',
+        userListId: userListId,
+        keywords: const <List<String>>[
+          <String>['e2e'],
+        ],
+        excludeKeywords: const <List<String>>[],
+        users: const <String>[],
+        caseSensitive: false,
+        withReplies: false,
+        withFile: false,
+      );
+      antennaId = antenna.id;
+    });
+
+    tearDown(() async {
+      await client.antennas.delete(antennaId: antennaId);
+    });
+
+    tearDownAll(() async {
+      await client.users.lists.delete(listId: userListId);
+    });
+
+    test('omitting userListId keeps the current value', () async {
+      final updated = await client.antennas.update(
+        antennaId: antennaId,
+        name: 'renamed only',
+      );
+      expect(updated.name, 'renamed only');
+      expect(updated.userListId, userListId);
+
+      final shown = await client.antennas.show(antennaId: antennaId);
+      expect(shown.userListId, userListId);
+    });
+
+    test('Optional.null_() clears the userListId', () async {
+      final updated = await client.antennas.update(
+        antennaId: antennaId,
+        userListId: const Optional.null_(),
+      );
+      expect(updated.userListId, isNull);
+
+      final shown = await client.antennas.show(antennaId: antennaId);
+      expect(shown.userListId, isNull);
+    });
+
+    test('Optional(value) sets the userListId back', () async {
+      await client.antennas.update(
+        antennaId: antennaId,
+        userListId: const Optional.null_(),
+      );
+
+      final updated = await client.antennas.update(
+        antennaId: antennaId,
+        userListId: Optional(userListId),
+      );
+      expect(updated.userListId, userListId);
+
+      final shown = await client.antennas.show(antennaId: antennaId);
+      expect(shown.userListId, userListId);
+    });
+  });
 }

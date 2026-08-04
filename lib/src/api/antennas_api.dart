@@ -1,5 +1,7 @@
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/optional.dart';
+import '../internal/request_body.dart';
 import '../models/misskey_antenna.dart';
 import '../models/misskey_note.dart';
 
@@ -67,6 +69,9 @@ class AntennasApi {
   /// Only [antennaId] is required. Other parameters update only the specified
   /// fields.
   ///
+  /// For [userListId], use the [Optional] type: pass `Optional('value')` to
+  /// set and `Optional.null_()` to detach the antenna from its user list.
+  ///
   /// Common errors:
   /// - `NO_SUCH_ANTENNA`: The antenna does not exist
   /// - `NO_SUCH_USER_LIST`: The specified user list does not exist
@@ -75,7 +80,7 @@ class AntennasApi {
     required String antennaId,
     String? name,
     String? src,
-    String? userListId,
+    Optional<String>? userListId,
     List<List<String>>? keywords,
     List<List<String>>? excludeKeywords,
     List<String>? users,
@@ -90,7 +95,6 @@ class AntennasApi {
       'antennaId': antennaId,
       if (name != null) 'name': name,
       if (src != null) 'src': src,
-      if (userListId != null) 'userListId': userListId,
       if (keywords != null) 'keywords': keywords,
       if (excludeKeywords != null) 'excludeKeywords': excludeKeywords,
       if (users != null) 'users': users,
@@ -102,6 +106,7 @@ class AntennasApi {
       if (excludeNotesInSensitiveChannel != null)
         'excludeNotesInSensitiveChannel': excludeNotesInSensitiveChannel,
     };
+    putOptional(body, 'userListId', userListId);
     final res = await http.send<Map<String, dynamic>>(
       '/antennas/update',
       body: body,
