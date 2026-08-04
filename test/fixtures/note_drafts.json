@@ -32,5 +32,43 @@
     "renoteId": null,
     "channelId": null,
     "poll": null
+  },
+  {
+    "id": "apiespj19npu01b3",
+    "createdAt": "2026-08-04T16:00:44.605Z",
+    "scheduledAt": null,
+    "isActuallyScheduled": false,
+    "userId": "apdwbdng3h9o0004",
+    "user": {
+      "id": "apdwbdng3h9o0004",
+      "name": null,
+      "username": "e2e_alice",
+      "host": null,
+      "avatarUrl": "https://misskey.test/identicon/e2e_alice@misskey.test",
+      "avatarBlurhash": null,
+      "avatarDecorations": [],
+      "isBot": false,
+      "isCat": false,
+      "emojis": {},
+      "onlineStatus": "unknown",
+      "badgeRoles": []
+    },
+    "text": "draft with a poll",
+    "cw": null,
+    "visibility": "public",
+    "localOnly": false,
+    "reactionAcceptance": null,
+    "visibleUserIds": [],
+    "hashtag": null,
+    "fileIds": [],
+    "files": [],
+    "replyId": null,
+    "renoteId": null,
+    "channelId": null,
+    "poll": {
+      "choices": ["a", "b"],
+      "multiple": false,
+      "expiredAfter": null
+    }
   }
 ]

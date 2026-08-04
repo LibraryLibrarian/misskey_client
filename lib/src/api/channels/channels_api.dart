@@ -1,6 +1,8 @@
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/misskey_channel.dart';
 import '../../models/misskey_note.dart';
 import 'channel_mute_api.dart';
@@ -63,31 +65,45 @@ class ChannelsApi {
   /// [isSensitive] indicates whether the channel is sensitive.
   /// [allowRenoteToExternal] indicates whether renotes outside the channel
   /// are allowed.
+  ///
+  /// Omitted parameters keep their current value. For [description] and
+  /// [bannerId], use the [Optional] type: pass `Optional('value')` to set and
+  /// `Optional.null_()` to clear.
+  ///
+  /// Beware that clearing [bannerId] does not work on Misskey 2026.5.1: the
+  /// server builds its update object with `banner ? { bannerId: banner.id }
+  /// : {}`, so an explicit `null` is dropped. Passing `Optional.null_()` on
+  /// its own leaves the update object empty and the server responds with a
+  /// 500 (`INTERNAL_ERROR`); combined with another parameter the call
+  /// succeeds but the banner is left in place. `Optional.null_()` is still
+  /// the correct way to express the intent and will take effect once the
+  /// server is fixed.
   Future<MisskeyChannel> update({
     required String channelId,
     String? name,
-    String? description,
-    String? bannerId,
+    Optional<String>? description,
+    Optional<String>? bannerId,
     bool? isArchived,
     List<String>? pinnedNoteIds,
     String? color,
     bool? isSensitive,
     bool? allowRenoteToExternal,
   }) async {
+    final body = <String, dynamic>{
+      'channelId': channelId,
+      if (name != null) 'name': name,
+      if (isArchived != null) 'isArchived': isArchived,
+      if (pinnedNoteIds != null) 'pinnedNoteIds': pinnedNoteIds,
+      if (color != null) 'color': color,
+      if (isSensitive != null) 'isSensitive': isSensitive,
+      if (allowRenoteToExternal != null)
+        'allowRenoteToExternal': allowRenoteToExternal,
+    };
+    putOptional(body, 'description', description);
+    putOptional(body, 'bannerId', bannerId);
     final res = await _http.send<Map<String, dynamic>>(
       '/channels/update',
-      body: <String, dynamic>{
-        'channelId': channelId,
-        if (name != null) 'name': name,
-        if (description != null) 'description': description,
-        if (bannerId != null) 'bannerId': bannerId,
-        if (isArchived != null) 'isArchived': isArchived,
-        if (pinnedNoteIds != null) 'pinnedNoteIds': pinnedNoteIds,
-        if (color != null) 'color': color,
-        if (isSensitive != null) 'isSensitive': isSensitive,
-        if (allowRenoteToExternal != null)
-          'allowRenoteToExternal': allowRenoteToExternal,
-      },
+      body: body,
     );
     return MisskeyChannel.fromJson(res);
   }

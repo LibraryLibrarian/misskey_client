@@ -1,5 +1,7 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/admin/misskey_admin_announcement.dart';
 
 /// Provides announcement management admin APIs
@@ -82,36 +84,48 @@ class AdminAnnouncementsApi {
   /// remain unchanged. Set [isActive] to `false` to archive the
   /// announcement.
   ///
+  /// For [imageUrl], use the [Optional] type: pass `Optional('value')` to set
+  /// and `Optional.null_()` to clear.
+  ///
+  /// Beware that this endpoint always overwrites `imageUrl`: the server
+  /// evaluates it as `imageUrl || null`, so omitting the parameter clears the
+  /// existing image rather than keeping it. Pass the current value explicitly
+  /// to preserve it. An empty string is stored as `null` for the same reason
+  /// (deliberate on the server's side, so that an emptied input field clears
+  /// the image). The other parameters are not affected.
+  ///
   /// Common errors:
   /// - `NO_SUCH_ANNOUNCEMENT`: The specified announcement does not exist
   Future<void> update({
     required String id,
     String? title,
     String? text,
-    String? imageUrl,
+    Optional<String>? imageUrl,
     String? icon,
     String? display,
     bool? forExistingUsers,
     bool? silence,
     bool? needConfirmationToRead,
     bool? isActive,
-  }) =>
-      http.send<Object?>(
-        '/admin/announcements/update',
-        body: <String, dynamic>{
-          'id': id,
-          if (title != null) 'title': title,
-          if (text != null) 'text': text,
-          if (imageUrl != null) 'imageUrl': imageUrl,
-          if (icon != null) 'icon': icon,
-          if (display != null) 'display': display,
-          if (forExistingUsers != null) 'forExistingUsers': forExistingUsers,
-          if (silence != null) 'silence': silence,
-          if (needConfirmationToRead != null)
-            'needConfirmationToRead': needConfirmationToRead,
-          if (isActive != null) 'isActive': isActive,
-        },
-      );
+  }) {
+    final body = <String, dynamic>{
+      'id': id,
+      if (title != null) 'title': title,
+      if (text != null) 'text': text,
+      if (icon != null) 'icon': icon,
+      if (display != null) 'display': display,
+      if (forExistingUsers != null) 'forExistingUsers': forExistingUsers,
+      if (silence != null) 'silence': silence,
+      if (needConfirmationToRead != null)
+        'needConfirmationToRead': needConfirmationToRead,
+      if (isActive != null) 'isActive': isActive,
+    };
+    putOptional(body, 'imageUrl', imageUrl);
+    return http.send<Object?>(
+      '/admin/announcements/update',
+      body: body,
+    );
+  }
 
   /// Deletes an announcement (`/api/admin/announcements/delete`).
   ///

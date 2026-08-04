@@ -1,5 +1,7 @@
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/optional.dart';
+import '../internal/request_body.dart';
 import '../models/misskey_clip.dart';
 import '../models/misskey_note.dart';
 
@@ -43,20 +45,30 @@ class ClipsApi {
   /// Optionally supply [name] (1-100 characters), [isPublic], or
   /// [description] (up to 2048 characters) to change those fields.
   ///
+  /// For [description], use the [Optional] type: pass `Optional('value')` to
+  /// set and `Optional.null_()` to clear.
+  ///
+  /// Beware that this endpoint always overwrites `description`: the server
+  /// evaluates it as `description || null`, so omitting the parameter clears
+  /// the existing description rather than keeping it. Pass the current value
+  /// explicitly to preserve it. An empty string is stored as `null` for the
+  /// same reason. [name] and [isPublic] are not affected and keep their
+  /// current value when omitted.
+  ///
   /// Notable errors:
   /// - `NO_SUCH_CLIP`: The clip does not exist.
   Future<MisskeyClip> update({
     required String clipId,
     String? name,
     bool? isPublic,
-    String? description,
+    Optional<String>? description,
   }) async {
     final body = <String, dynamic>{
       'clipId': clipId,
       if (name != null) 'name': name,
       if (isPublic != null) 'isPublic': isPublic,
-      if (description != null) 'description': description,
     };
+    putOptional(body, 'description', description);
     final res = await http.send<Map<String, dynamic>>(
       '/clips/update',
       body: body,

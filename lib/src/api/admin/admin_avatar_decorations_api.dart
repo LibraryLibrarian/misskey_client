@@ -1,5 +1,7 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/admin/misskey_admin_avatar_decoration.dart';
 
 /// Provides avatar decoration management admin APIs
@@ -71,6 +73,9 @@ class AdminAvatarDecorationsApi {
   /// Only the parameters that are provided are sent; omitted parameters
   /// remain unchanged.
   ///
+  /// For [category], use the [Optional] type: pass `Optional('value')` to set
+  /// and `Optional.null_()` to clear.
+  ///
   /// Common errors:
   /// - `NO_SUCH_AVATAR_DECORATION`: The specified decoration does not exist
   Future<void> update({
@@ -79,21 +84,23 @@ class AdminAvatarDecorationsApi {
     String? description,
     String? url,
     List<String>? roleIdsThatCanBeUsedThisDecoration,
-    String? category,
-  }) =>
-      http.send<Object?>(
-        '/admin/avatar-decorations/update',
-        body: <String, dynamic>{
-          'id': id,
-          if (name != null) 'name': name,
-          if (description != null) 'description': description,
-          if (url != null) 'url': url,
-          if (roleIdsThatCanBeUsedThisDecoration != null)
-            'roleIdsThatCanBeUsedThisDecoration':
-                roleIdsThatCanBeUsedThisDecoration,
-          if (category != null) 'category': category,
-        },
-      );
+    Optional<String>? category,
+  }) {
+    final body = <String, dynamic>{
+      'id': id,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (url != null) 'url': url,
+      if (roleIdsThatCanBeUsedThisDecoration != null)
+        'roleIdsThatCanBeUsedThisDecoration':
+            roleIdsThatCanBeUsedThisDecoration,
+    };
+    putOptional(body, 'category', category);
+    return http.send<Object?>(
+      '/admin/avatar-decorations/update',
+      body: body,
+    );
+  }
 
   /// Deletes an avatar decoration
   /// (`/api/admin/avatar-decorations/delete`).

@@ -2,6 +2,8 @@ import 'package:dio/dio.dart' show FormData, MultipartFile;
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/chat/misskey_chat_message.dart';
 import '../../models/misskey_drive_file.dart';
 import '../../models/misskey_note.dart';
@@ -128,12 +130,15 @@ class DriveFilesApi {
   /// `true` to move the file to the root folder (sends `folderId: null`
   /// explicitly). [comment] is an optional comment (up to 512 characters).
   /// Set [isSensitive] to mark the file as sensitive content.
+  ///
+  /// For [comment], use the [Optional] type: pass `Optional('value')` to set
+  /// and `Optional.null_()` to clear.
   Future<MisskeyDriveFile> update({
     required String fileId,
     String? name,
     String? folderId,
     bool moveToRoot = false,
-    String? comment,
+    Optional<String>? comment,
     bool? isSensitive,
   }) async {
     final body = <String, dynamic>{
@@ -143,9 +148,9 @@ class DriveFilesApi {
         'folderId': null
       else if (folderId != null)
         'folderId': folderId,
-      if (comment != null) 'comment': comment,
       if (isSensitive != null) 'isSensitive': isSensitive,
     };
+    putOptional(body, 'comment', comment);
     final res = await http.send<Map<String, dynamic>>(
       '/drive/files/update',
       body: body,

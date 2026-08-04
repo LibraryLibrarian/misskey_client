@@ -1,6 +1,8 @@
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/optional.dart';
+import '../../internal/request_body.dart';
 import '../../models/gallery/misskey_gallery_post.dart';
 
 /// Provides gallery operations (`/api/gallery/*`).
@@ -141,20 +143,28 @@ class GalleryApi {
   /// Authentication required. Rate limit: 300 requests/hour.
   /// [postId] is required. Optionally provide [title], [fileIds] (1-32 unique
   /// IDs), [description], and [isSensitive] to update those fields.
+  ///
+  /// For [description], use the [Optional] type: pass `Optional('value')` to
+  /// set and `Optional.null_()` to clear.
+  ///
+  /// Beware that [isSensitive] does not behave like the other parameters: its
+  /// server-side schema declares `default: false`, so omitting it resets the
+  /// post to not sensitive instead of keeping the current value. Always pass
+  /// the intended value when updating a sensitive post.
   Future<MisskeyGalleryPost> postsUpdate({
     required String postId,
     String? title,
     List<String>? fileIds,
-    String? description,
+    Optional<String>? description,
     bool? isSensitive,
   }) async {
     final body = <String, dynamic>{
       'postId': postId,
       if (title != null) 'title': title,
       if (fileIds != null) 'fileIds': fileIds,
-      if (description != null) 'description': description,
       if (isSensitive != null) 'isSensitive': isSensitive,
     };
+    putOptional(body, 'description', description);
     final res = await http.send<Map<String, dynamic>>(
       '/gallery/posts/update',
       body: body,
