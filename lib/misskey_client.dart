@@ -107,6 +107,7 @@ export 'src/models/misskey_invite_code.dart';
 export 'src/models/misskey_muting.dart';
 export 'src/models/misskey_note.dart';
 export 'src/models/misskey_note_draft.dart';
+export 'src/models/misskey_note_draft_poll.dart';
 export 'src/models/misskey_note_favorite.dart';
 export 'src/models/misskey_note_partial.dart';
 export 'src/models/misskey_note_reaction.dart';

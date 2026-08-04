@@ -32,7 +32,7 @@ MisskeyNoteDraft _$MisskeyNoteDraftFromJson(Map<String, dynamic> json) =>
           [],
       poll: json['poll'] == null
           ? null
-          : MisskeyPoll.fromJson(json['poll'] as Map<String, dynamic>),
+          : MisskeyNoteDraftPoll.fromJson(json['poll'] as Map<String, dynamic>),
       scheduledAt: (json['scheduledAt'] as num?)?.toInt(),
       isActuallyScheduled: json['isActuallyScheduled'] as bool? ?? false,
     );

@@ -674,4 +674,128 @@ void main() {
       expect(shown.category, isNull);
     });
   });
+
+  group('notes/drafts/update', () {
+    late String draftId;
+    late int scheduledAt;
+
+    Future<MisskeyNoteDraft> fetch() async {
+      final list = await client.notes.draftsList(limit: 100);
+      return list.firstWhere((d) => d.id == draftId);
+    }
+
+    setUp(() async {
+      scheduledAt = DateTime.now()
+          .add(const Duration(days: 1))
+          .millisecondsSinceEpoch;
+      final created = await client.notes.draftsCreate(
+        text: 'initial text',
+        cw: 'initial cw',
+        hashtag: 'initialtag',
+        reactionAcceptance: 'likeOnly',
+        pollChoices: <String>['a', 'b'],
+        scheduledAt: scheduledAt,
+        isActuallyScheduled: true,
+      );
+      draftId = created.id;
+    });
+
+    tearDown(() async {
+      await client.notes.draftsDelete(draftId: draftId);
+    });
+
+    test('omitting the nullable fields keeps their current values', () async {
+      await client.notes.draftsUpdate(
+        draftId: draftId,
+        visibility: 'home',
+      );
+
+      final shown = await fetch();
+      expect(shown.visibility, 'home');
+      expect(shown.cw, 'initial cw');
+      expect(shown.hashtag, 'initialtag');
+      expect(shown.reactionAcceptance, 'likeOnly');
+      expect(shown.text, 'initial text');
+    });
+
+    test('Optional.null_() clears the nullable fields', () async {
+      await client.notes.draftsUpdate(
+        draftId: draftId,
+        cw: const Optional.null_(),
+        hashtag: const Optional.null_(),
+        reactionAcceptance: const Optional.null_(),
+        text: const Optional.null_(),
+        scheduledAt: const Optional.null_(),
+        isActuallyScheduled: false,
+      );
+
+      final shown = await fetch();
+      expect(shown.cw, isNull);
+      expect(shown.hashtag, isNull);
+      expect(shown.reactionAcceptance, isNull);
+      expect(shown.text, isNull);
+      expect(shown.scheduledAt, isNull);
+    });
+
+    test('Optional(value) sets the nullable fields', () async {
+      await client.notes.draftsUpdate(
+        draftId: draftId,
+        cw: const Optional('updated cw'),
+        text: const Optional('updated text'),
+      );
+
+      final shown = await fetch();
+      expect(shown.cw, 'updated cw');
+      expect(shown.text, 'updated text');
+    });
+
+    // サーバーは毎回 `scheduledAt ? new Date(scheduledAt) : null` を送るため、
+    // 省略した更新でスケジュールが解除される。ライブラリ側では制御できない
+    test('omitting scheduledAt unschedules the draft (server-side quirk)',
+        () async {
+      final before = await fetch();
+      expect(before.scheduledAt, scheduledAt);
+
+      await client.notes.draftsUpdate(
+        draftId: draftId,
+        text: const Optional('renamed only'),
+      );
+
+      final shown = await fetch();
+      expect(shown.text, 'renamed only');
+      expect(shown.scheduledAt, isNull);
+    });
+
+    // pollを指定しない更新は、選択肢を残したまま期限だけ消す(サーバー側の挙動)
+    test('omitting the poll drops its deadline (server-side quirk)', () async {
+      await client.notes.draftsUpdate(
+        draftId: draftId,
+        pollChoices: <String>['a', 'b'],
+        pollExpiresAt: scheduledAt,
+      );
+      final before = await fetch();
+      expect(before.poll?.expiresAt, isNotNull);
+
+      await client.notes.draftsUpdate(
+        draftId: draftId,
+        text: const Optional('renamed only'),
+      );
+
+      final shown = await fetch();
+      expect(shown.poll?.choices, <String>['a', 'b']);
+      expect(shown.poll?.expiresAt, isNull);
+    });
+
+    // pollは削除できず、空配列で選択肢を空にするのが唯一の手段(サーバー側の挙動)
+    test('an empty pollChoices empties the poll (server-side quirk)', () async {
+      await client.notes.draftsUpdate(
+        draftId: draftId,
+        pollChoices: const <String>[],
+      );
+
+      final shown = await fetch();
+      expect(shown.poll, isNotNull);
+      expect(shown.poll?.choices, isEmpty);
+    });
+  });
 }
