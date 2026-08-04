@@ -11,8 +11,7 @@ void main() {
     setUp(() {
       final file = File('test/fixtures/webhooks_list.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      webhook =
-          MisskeyWebhook.fromJson(jsonList.first as Map<String, dynamic>);
+      webhook = MisskeyWebhook.fromJson(jsonList.first as Map<String, dynamic>);
     });
 
     test('deserializes without error', () {

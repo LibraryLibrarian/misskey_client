@@ -12,8 +12,8 @@ void main() {
       final file = File('test/fixtures/registry_scopes.json');
       // registry_scopes.jsonは配列形式
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      scope = MisskeyRegistryScope.fromJson(
-          jsonList.first as Map<String, dynamic>);
+      scope =
+          MisskeyRegistryScope.fromJson(jsonList.first as Map<String, dynamic>);
     });
 
     test('deserializes without error', () {

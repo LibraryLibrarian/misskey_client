@@ -11,8 +11,7 @@ void main() {
     setUp(() {
       final file = File('test/fixtures/note_drafts.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      draft =
-          MisskeyNoteDraft.fromJson(jsonList.first as Map<String, dynamic>);
+      draft = MisskeyNoteDraft.fromJson(jsonList.first as Map<String, dynamic>);
     });
 
     test('deserializes without error', () {

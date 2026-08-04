@@ -11,9 +11,9 @@ void main() {
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       final note = MisskeyNote.fromJson(json);
 
-      expect(note.id, 'ak3pobcjrt4w0002');
-      expect(note.text, 'Hello, this is a test note for API testing!');
-      expect(note.userId, 'ak3po4qort4w0001');
+      expect(note.id, isNotEmpty);
+      expect(note.text, isNotEmpty);
+      expect(note.userId, isNotEmpty);
       expect(note.visibility, MisskeyNoteVisibility.public);
       expect(note.createdAt, isA<DateTime>());
     });
@@ -23,8 +23,8 @@ void main() {
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       final note = MisskeyNote.fromJson(json);
 
-      expect(note.user.id, 'ak3po4qort4w0001');
-      expect(note.user.username, 'testadmin');
+      expect(note.user.id, note.userId);
+      expect(note.user.username, isNotEmpty);
       expect(note.user.host, isNull);
     });
 
@@ -48,8 +48,8 @@ void main() {
           .map((e) => MisskeyNote.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      expect(notes, hasLength(1));
-      expect(notes.first.id, 'ak3pobcjrt4w0002');
+      expect(notes, isNotEmpty);
+      expect(notes.first.id, isNotEmpty);
     });
 
     test('handles null optional fields correctly', () {
@@ -83,6 +83,42 @@ void main() {
       expect(note.renoteCount, 0);
       expect(note.repliesCount, 0);
       expect(note.reactionCount, 0);
+    });
+
+    test(
+        'visibility falls back to public for a value not yet known to '
+        'this client', () {
+      final file = File('test/fixtures/notes_show.json');
+      final json = (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
+        ..['visibility'] = 'someFutureVisibilityNotInEnum';
+
+      final note = MisskeyNote.fromJson(json);
+
+      // MisskeyNoteVisibility には専用のunknown値が無く、
+      // 実装上はpublicへフォールバックする
+      expect(note.visibility, MisskeyNoteVisibility.public);
+    });
+
+    test(
+        'reactionAcceptance falls back to unknown for a value not yet '
+        'known to this client', () {
+      final file = File('test/fixtures/notes_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      json['reactionAcceptance'] = 'someFutureValueNotInEnum';
+
+      final note = MisskeyNote.fromJson(json);
+
+      expect(note.reactionAcceptance, MisskeyReactionAcceptance.unknown);
+    });
+
+    test('reactionAcceptance is null when the field is absent', () {
+      final file = File('test/fixtures/notes_show.json');
+      final json = (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
+        ..remove('reactionAcceptance');
+
+      final note = MisskeyNote.fromJson(json);
+
+      expect(note.reactionAcceptance, isNull);
     });
   });
 }

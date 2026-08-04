@@ -18,7 +18,8 @@ MisskeyNote _$MisskeyNoteFromJson(Map<String, dynamic> json) => MisskeyNote(
           unknownValue: MisskeyNoteVisibility.public),
       localOnly: json['localOnly'] as bool? ?? false,
       reactionAcceptance: $enumDecodeNullable(
-          _$MisskeyReactionAcceptanceEnumMap, json['reactionAcceptance']),
+          _$MisskeyReactionAcceptanceEnumMap, json['reactionAcceptance'],
+          unknownValue: MisskeyReactionAcceptance.unknown),
       renoteCount: (json['renoteCount'] as num?)?.toInt() ?? 0,
       repliesCount: (json['repliesCount'] as num?)?.toInt() ?? 0,
       reactionCount: (json['reactionCount'] as num?)?.toInt() ?? 0,
@@ -130,6 +131,7 @@ const _$MisskeyReactionAcceptanceEnumMap = {
   MisskeyReactionAcceptance.nonSensitiveOnlyForLocalLikeOnlyForRemote:
       'nonSensitiveOnlyForLocalLikeOnlyForRemote',
   MisskeyReactionAcceptance.likeOnly: 'likeOnly',
+  MisskeyReactionAcceptance.unknown: 'unknown',
 };
 
 MisskeyNoteChannel _$MisskeyNoteChannelFromJson(Map<String, dynamic> json) =>

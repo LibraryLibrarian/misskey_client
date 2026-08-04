@@ -19,12 +19,12 @@ void main() {
     });
 
     test('name and description are correct', () {
-      expect(role.name, 'Test Role');
-      expect(role.description, 'A test role');
+      expect(role.name, 'E2E World Role');
+      expect(role.description, isNotEmpty);
     });
 
     test('color is correct', () {
-      expect(role.color, '#ff0000');
+      expect(role.color, '#86b300');
     });
 
     test('iconUrl is null', () {
@@ -41,8 +41,8 @@ void main() {
       expect(role.target, 'manual');
     });
 
-    test('usersCount is 0', () {
-      expect(role.usersCount, 0);
+    test('usersCount is positive (role assigned to a world account)', () {
+      expect(role.usersCount, 1);
     });
 
     test('displayOrder is 0', () {

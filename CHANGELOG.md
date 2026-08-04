@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Admin API: complete coverage of all 99 `/api/admin/*` endpoints
+  - Core admin (`AdminApi`): meta, update-meta, server-info, show-user, show-users, suspend-user, unsuspend-user, reset-password, update-user-note, delete-account, delete-all-files-of-a-user, unset-user-avatar, unset-user-banner, get-user-ips, show-moderation-logs, send-email, update-proxy-account, promo/create, get-index-stats, get-table-stats
+  - Account management (`AdminAccountsApi`): create, delete, find-by-email
+  - Role management (`AdminRolesApi`): list, show, create, update, delete, assign, unassign, update-default-policies, users
+  - Invite management (`AdminInviteApi`): create, list
+  - Custom emoji management (`AdminEmojiApi`): add, update, delete, delete-bulk, list, list-remote, copy, import-zip, add/remove/set-aliases-bulk, set-category-bulk, set-license-bulk
+  - Federation management (`AdminFederationApi`): delete-all-files, refresh-remote-instance-metadata, remove-all-following, update-instance
+  - Relay management (`AdminRelaysApi`): add, list, remove
+  - Abuse report management (`AdminAbuseReportsApi`): list, resolve, forward, update, notification-recipient list/show/create/update/delete
+  - Announcement management (`AdminAnnouncementsApi`): create, list, update, delete
+  - Job queue management (`AdminQueueApi`): stats, queues, queue-stats, jobs, show-job, show-job-logs, retry-job, remove-job, promote-jobs, clear, deliver-delayed, inbox-delayed
+  - Drive management (`AdminDriveApi`): files, show-file, clean-remote-files, cleanup
+  - Advertisement (`AdminAdApi`), avatar decoration (`AdminAvatarDecorationsApi`), system webhook (`AdminSystemWebhookApi`), and CAPTCHA configuration (`AdminCaptchaApi`)
+- Admin models: `MisskeyAdminMeta` (typed subset + raw), `MisskeyAdminServerInfo`, `MisskeyAdminUserDetail` (with `MisskeySignin` / `MisskeyRoleAssign`), `MisskeyAdminCreatedAccount`, `MisskeyAbuseUserReport`, `MisskeyAbuseReportNotificationRecipient`, `MisskeyRelay`, `MisskeyAdminAnnouncement`, `MisskeyQueueStats`, `MisskeyQueueCount`, `MisskeyQueueInfo`, `MisskeyQueueMetrics`, `MisskeyQueueJob`, `MisskeyDelayedQueueEntry`, `MisskeyAd`, `MisskeyAdminAvatarDecoration`, `MisskeySystemWebhook`, `MisskeyCaptchaSettings`, `MisskeyModerationLog`, `MisskeyUserIp`, `MisskeyIndexStat`, `MisskeyTableStat`
+- `httpClientAdapter` parameter on `MisskeyClient` to customize the HTTP transport (private CA trust, proxying)
+- E2E test layer (`test/e2e/`) targeting the local closed-federation environment (`fediverse_e2e`); enabled via `RUN_E2E=1`, auto-skipped otherwise. Run it with `-j 1` — parallel suites hit the server's rate limit
+- Tests covering the `unknownEnumValue` fallback for `MisskeyNoteVisibility`, `MisskeyOnlineStatus`, and `MisskeyNotificationType` when the server returns a value not yet known to this client
+- Tests pinning `MisskeyUser.isAdmin` / `isModerator` in their `true` state, from an admin-scoped `users/show` fixture. Both fields default to `false`, so the previous general-user fixture could not distinguish a parsed `false` from an omitted field
+
+### Changed
+
+- **Breaking:** `MisskeyReactionAcceptance` gained an `unknown` member. Exhaustive `switch` statements over this enum in downstream code will no longer compile until the new member is handled
+- Refreshed fixtures against a live, federated world (multi-account, cross-server posts/reactions/follows) via the fixture collection tool in `fediverse_e2e`, replacing the single-server March snapshot. Corresponding model tests were updated to assert on structural properties rather than hardcoded IDs/counts where the underlying data is inherently dynamic (timestamps, counters, federated content)
+
+### Fixed
+
+- `MisskeyNote.reactionAcceptance` threw when the server returned a value not yet known to this client (no `unknownEnumValue` was configured), which would fail the deserialization of the entire note. Added a `MisskeyReactionAcceptance.unknown` fallback
+- Model fields that the API documentation omits or mistypes, verified against a live Misskey 2026.5.1 server: queue counts include `paused` / `prioritized` / `waiting-children`; `QueueJob.failedReason` is absent for successful jobs; `QueueJob.progress` and `returnValue` are not objects; index stats include `schemaname` / `tablespace` / `indexdef`
+
+### Notes
+
+- `Meta.policies` / `MisskeyUser.policies` / `MisskeyRole.policies` already surface `canCreateChannel` (and any other server-added policy) through their dynamic `Map<String, dynamic>` representation, without needing a typed field — verified against Misskey 2026.5.1 and now covered by a fixture-based test
+
+
 ## [1.0.0-beta.1] - 2026-03-18
 
 ### Added

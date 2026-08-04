@@ -22,21 +22,23 @@ void main() {
 
     test('first reaction has correct id, createdAt, type, and user', () {
       final first = reactions[0];
-      expect(first.id, 'ak6nei91rt4w000t');
+      expect(first.id, isNotEmpty);
       expect(first.createdAt, isA<DateTime>());
-      expect(first.type, '❤');
+      expect(first.type, '🎉');
       expect(first.user, isNotNull);
     });
 
-    test('second reaction has correct type', () {
-      expect(reactions[1].type, '👍');
+    // 2件目はカスタム絵文字リアクション(`:name@host:` 形式)
+    test('second reaction is a custom emoji reaction', () {
+      expect(reactions[1].type, startsWith(':'));
+      expect(reactions[1].type, endsWith(':'));
     });
 
     test('each reaction user has id and username', () {
-      expect(reactions[0].user.id, 'ak3po4qort4w0001');
-      expect(reactions[0].user.username, 'testadmin');
-      expect(reactions[1].user.id, 'ak3qbtu5rt4w0009');
-      expect(reactions[1].user.username, 'testuser2');
+      expect(reactions[0].user.id, isNotEmpty);
+      expect(reactions[0].user.username, 'mk_ann');
+      expect(reactions[1].user.id, isNotEmpty);
+      expect(reactions[1].user.username, 'mk_ben');
     });
   });
 }

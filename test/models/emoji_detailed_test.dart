@@ -19,11 +19,11 @@ void main() {
     });
 
     test('name is correct', () {
-      expect(emoji.name, 'test_emoji');
+      expect(emoji.name, 'e2e_world');
     });
 
     test('has id and url', () {
-      expect(emoji.id, 'ak3qfn18rt4w000e');
+      expect(emoji.id, isNotEmpty);
       expect(emoji.url, isNotEmpty);
     });
 
@@ -40,7 +40,11 @@ void main() {
     });
 
     test('category is correct', () {
-      expect(emoji.category, 'test');
+      expect(emoji.category, 'e2e');
+    });
+
+    test('license is correct', () {
+      expect(emoji.license, 'CC0');
     });
   });
 }

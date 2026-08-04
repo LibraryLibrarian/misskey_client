@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": "apf9rgepd3wy0047",
+    "createdAt": "2026-08-02T11:16:29.521Z",
+    "ip": "192.0.2.1",
+    "headers": {
+      "redacted": true
+    },
+    "success": true
+  }
+]
