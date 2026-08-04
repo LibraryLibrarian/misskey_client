@@ -488,4 +488,55 @@ void main() {
       expect(shown.userListId, userListId);
     });
   });
+
+  group('drive/files/update', () {
+    late String fileId;
+
+    setUp(() async {
+      final file = await client.drive.files.create(
+        bytes: pngBytes,
+        filename: 'e2e-optional-clear.png',
+        comment: 'initial comment',
+      );
+      fileId = file.id;
+    });
+
+    tearDown(() async {
+      await client.drive.files.delete(fileId: fileId);
+    });
+
+    test('omitting comment keeps the current value', () async {
+      final updated = await client.drive.files.update(
+        fileId: fileId,
+        name: 'renamed-only.png',
+      );
+      expect(updated.name, 'renamed-only.png');
+      expect(updated.comment, 'initial comment');
+
+      final shown = await client.drive.files.showByFileId(fileId);
+      expect(shown.comment, 'initial comment');
+    });
+
+    test('Optional(value) sets the comment', () async {
+      final updated = await client.drive.files.update(
+        fileId: fileId,
+        comment: const Optional('updated comment'),
+      );
+      expect(updated.comment, 'updated comment');
+
+      final shown = await client.drive.files.showByFileId(fileId);
+      expect(shown.comment, 'updated comment');
+    });
+
+    test('Optional.null_() clears the comment', () async {
+      final updated = await client.drive.files.update(
+        fileId: fileId,
+        comment: const Optional.null_(),
+      );
+      expect(updated.comment, isNull);
+
+      final shown = await client.drive.files.showByFileId(fileId);
+      expect(shown.comment, isNull);
+    });
+  });
 }
