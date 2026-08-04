@@ -539,4 +539,85 @@ void main() {
       expect(shown.comment, isNull);
     });
   });
+
+  group('gallery/posts/update', () {
+    late String postId;
+    late String fileId;
+
+    // /gallery/posts/create は1時間20件までのため、投稿は1つだけ作って使い回す
+    setUpAll(() async {
+      final file = await client.drive.files.create(
+        bytes: pngBytes,
+        filename: 'e2e-gallery.png',
+      );
+      fileId = file.id;
+      final post = await client.gallery.postsCreate(
+        title: 'e2e optional clear',
+        fileIds: <String>[fileId],
+        description: 'initial description',
+      );
+      postId = post.id;
+    });
+
+    setUp(() async {
+      await client.gallery.postsUpdate(
+        postId: postId,
+        title: 'e2e optional clear',
+        description: const Optional('initial description'),
+      );
+    });
+
+    tearDownAll(() async {
+      await client.gallery.postsDelete(postId: postId);
+      await client.drive.files.delete(fileId: fileId);
+    });
+
+    test('omitting description keeps the current value', () async {
+      final updated = await client.gallery.postsUpdate(
+        postId: postId,
+        title: 'renamed only',
+      );
+      expect(updated.title, 'renamed only');
+      expect(updated.description, 'initial description');
+
+      final shown = await client.gallery.postsShow(postId: postId);
+      expect(shown.description, 'initial description');
+    });
+
+    test('Optional(value) sets the description', () async {
+      final updated = await client.gallery.postsUpdate(
+        postId: postId,
+        description: const Optional('updated description'),
+      );
+      expect(updated.description, 'updated description');
+
+      final shown = await client.gallery.postsShow(postId: postId);
+      expect(shown.description, 'updated description');
+    });
+
+    test('Optional.null_() clears the description', () async {
+      final updated = await client.gallery.postsUpdate(
+        postId: postId,
+        description: const Optional.null_(),
+      );
+      expect(updated.description, isNull);
+
+      final shown = await client.gallery.postsShow(postId: postId);
+      expect(shown.description, isNull);
+    });
+
+    // isSensitive はサーバー側のスキーマが `default: false` のため、省略すると
+    // 無変更ではなく false にリセットされる。Optionalでは解決できない別種の
+    // 落とし穴なので、挙動をここで固定しておく
+    test('omitting isSensitive resets it to false (server-side default)',
+        () async {
+      await client.gallery.postsUpdate(postId: postId, isSensitive: true);
+      final sensitive = await client.gallery.postsShow(postId: postId);
+      expect(sensitive.isSensitive, isTrue);
+
+      await client.gallery.postsUpdate(postId: postId, title: 'renamed only');
+      final reset = await client.gallery.postsShow(postId: postId);
+      expect(reset.isSensitive, isFalse);
+    });
+  });
 }
