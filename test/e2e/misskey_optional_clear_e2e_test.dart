@@ -29,9 +29,11 @@ void main() {
   }
 
   late MisskeyClient client;
+  late MisskeyClient admin;
 
   setUpAll(() {
     client = env.createMisskeyClient();
+    admin = env.createMisskeyClient(admin: true);
   });
 
   group('clips/update', () {
@@ -312,6 +314,73 @@ void main() {
       expect(cleared.eyeCatchingImageId, isNull);
 
       await client.drive.files.delete(fileId: file.id);
+    });
+  });
+
+  group('admin/announcements/update', () {
+    late String announcementId;
+
+    Future<MisskeyAdminAnnouncement> fetch() async {
+      final list = await admin.adminAnnouncements.list(limit: 100);
+      return list.firstWhere((a) => a.id == announcementId);
+    }
+
+    setUp(() async {
+      final created = await admin.adminAnnouncements.create(
+        title: 'e2e optional clear',
+        text: 'body',
+        imageUrl: 'https://misskey.test/static-assets/icons/192.png',
+      );
+      announcementId = created.id;
+    });
+
+    tearDown(() async {
+      await admin.adminAnnouncements.delete(id: announcementId);
+    });
+
+    // /admin/announcements/update はサーバー側が `ps.imageUrl || null` で評価する
+    // ため、省略しても無変更にはならずクリアされる。ライブラリ側では制御できない
+    // 仕様なので、その挙動をここで固定しておく
+    test('omitting imageUrl clears it (server-side quirk)', () async {
+      await admin.adminAnnouncements.update(
+        id: announcementId,
+        title: 'renamed only',
+      );
+
+      final shown = await fetch();
+      expect(shown.title, 'renamed only');
+      expect(shown.imageUrl, isNull);
+    });
+
+    test('an empty string is stored as null (server-side quirk)', () async {
+      await admin.adminAnnouncements.update(
+        id: announcementId,
+        imageUrl: const Optional(''),
+      );
+
+      final shown = await fetch();
+      expect(shown.imageUrl, isNull);
+    });
+
+    test('Optional(value) sets the imageUrl', () async {
+      const url = 'https://misskey.test/static-assets/icons/512.png';
+      await admin.adminAnnouncements.update(
+        id: announcementId,
+        imageUrl: const Optional(url),
+      );
+
+      final shown = await fetch();
+      expect(shown.imageUrl, url);
+    });
+
+    test('Optional.null_() clears the imageUrl', () async {
+      await admin.adminAnnouncements.update(
+        id: announcementId,
+        imageUrl: const Optional.null_(),
+      );
+
+      final shown = await fetch();
+      expect(shown.imageUrl, isNull);
     });
   });
 }
