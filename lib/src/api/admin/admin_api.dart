@@ -314,12 +314,18 @@ class AdminApi {
   ///
   /// Requires administrator privileges. Returns the updated proxy
   /// account.
-  Future<MisskeyUser> updateProxyAccount({String? description}) async {
+  ///
+  /// Omitting [description] keeps the current value. Use the [Optional] type
+  /// to change it: pass `Optional('value')` to set and `Optional.null_()` to
+  /// clear.
+  Future<MisskeyUser> updateProxyAccount({
+    Optional<String>? description,
+  }) async {
+    final body = <String, dynamic>{};
+    putOptional(body, 'description', description);
     final res = await http.send<Map<String, dynamic>>(
       '/admin/update-proxy-account',
-      body: <String, dynamic>{
-        if (description != null) 'description': description,
-      },
+      body: body,
     );
     return MisskeyUser.fromJson(res);
   }

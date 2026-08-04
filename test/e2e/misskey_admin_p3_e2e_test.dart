@@ -282,7 +282,7 @@ void main() {
     test('updateProxyAccount updates the instance actor', () async {
       final marker = 'e2e proxy ${DateTime.now().millisecondsSinceEpoch}';
       final proxy = await admin.admin.updateProxyAccount(
-        description: marker,
+        description: Optional(marker),
       );
       expect(proxy.description, marker);
     });

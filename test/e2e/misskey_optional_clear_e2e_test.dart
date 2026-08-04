@@ -383,4 +383,35 @@ void main() {
       expect(shown.imageUrl, isNull);
     });
   });
+
+  group('admin/update-proxy-account', () {
+    setUp(() async {
+      await admin.admin.updateProxyAccount(
+        description: const Optional('initial description'),
+      );
+    });
+
+    test('omitting description keeps the current value', () async {
+      final updated = await admin.admin.updateProxyAccount();
+      expect(updated.description, 'initial description');
+    });
+
+    test('Optional(value) sets the description', () async {
+      final updated = await admin.admin.updateProxyAccount(
+        description: const Optional('updated description'),
+      );
+      expect(updated.description, 'updated description');
+    });
+
+    test('Optional.null_() clears the description', () async {
+      final updated = await admin.admin.updateProxyAccount(
+        description: const Optional.null_(),
+      );
+      expect(updated.description, isNull);
+
+      // 永続化を別リクエストで確認する
+      final reread = await admin.admin.updateProxyAccount();
+      expect(reread.description, isNull);
+    });
+  });
 }
