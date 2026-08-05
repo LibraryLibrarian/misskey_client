@@ -19,6 +19,7 @@ class MisskeyClip {
     this.isPublic,
     this.favoritedCount,
     this.isFavorited,
+    this.notesCount,
   });
 
   factory MisskeyClip.fromJson(Map<String, dynamic> json) =>
@@ -58,4 +59,12 @@ class MisskeyClip {
 
   /// Whether the current user has favorited this clip.
   final bool? isFavorited;
+
+  /// The number of notes in this clip.
+  ///
+  /// The server only returns this field to the clip's owner, so it is `null`
+  /// when reading another user's clip or when unauthenticated. It is
+  /// deliberately left without a default so that "not disclosed" stays
+  /// distinguishable from an empty clip.
+  final int? notesCount;
 }

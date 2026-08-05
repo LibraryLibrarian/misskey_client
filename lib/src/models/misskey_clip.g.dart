@@ -20,6 +20,7 @@ MisskeyClip _$MisskeyClipFromJson(Map<String, dynamic> json) => MisskeyClip(
       isPublic: json['isPublic'] as bool? ?? false,
       favoritedCount: (json['favoritedCount'] as num?)?.toInt() ?? 0,
       isFavorited: json['isFavorited'] as bool?,
+      notesCount: (json['notesCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$MisskeyClipToJson(MisskeyClip instance) =>
@@ -35,4 +36,5 @@ Map<String, dynamic> _$MisskeyClipToJson(MisskeyClip instance) =>
       'isPublic': instance.isPublic,
       'favoritedCount': instance.favoritedCount,
       'isFavorited': instance.isFavorited,
+      'notesCount': instance.notesCount,
     };

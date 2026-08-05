@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.3] - 2026-08-05
+
+### Added
+
+- `MisskeyClip.notesCount`: the number of notes in a clip. The server already returned this field, but the model did not declare it, so it was silently discarded on deserialization. It now surfaces on every clip-returning endpoint: `ClipsApi.create()` / `update()` / `show()` / `list()` / `myFavorites()`, `NotesApi.clips()`, and `UsersApi.clips()`. Misskey packs this field only for the clip's owner, so it stays `null` when reading another user's clip or when unauthenticated. It is deliberately left without a default value so that "not disclosed" remains distinguishable from an empty clip
+
 ## [1.0.0-beta.2] - 2026-08-05
 
 ### Added
@@ -101,5 +107,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `i/2fa/update-key` name parameter changed to optional
 
+[1.0.0-beta.3]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.3
 [1.0.0-beta.2]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.2
 [1.0.0-beta.1]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.1
