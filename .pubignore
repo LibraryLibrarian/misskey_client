@@ -1,1 +1,10 @@
 docs/
+
+# 開発支援・ローカル環境用ファイル
+/AGENTS.md
+/CLAUDE.md
+/firebase-debug.log
+/*.iml
+
+# pub.dev 側で生成される API ドキュメント
+/doc/api/
