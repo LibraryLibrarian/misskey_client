@@ -22,7 +22,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.2
+  misskey_client: ^1.0.0-beta.3
 ```
 
 그런 다음 실행합니다:
