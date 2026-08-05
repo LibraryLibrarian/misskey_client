@@ -35,5 +35,24 @@ void main() {
       expect(clip.user, isNotNull);
       expect(clip.user?.username, 'testadmin');
     });
+
+    test('parses notesCount', () {
+      final file = File('test/fixtures/clips_list.json');
+      final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
+      final clip = MisskeyClip.fromJson(jsonList.first as Map<String, dynamic>);
+
+      expect(clip.notesCount, 1);
+    });
+
+    test('notesCount is null when the field is absent', () {
+      final file = File('test/fixtures/clips_list.json');
+      final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
+      final json = (jsonList.first as Map<String, dynamic>)
+        ..remove('notesCount');
+
+      final clip = MisskeyClip.fromJson(json);
+
+      expect(clip.notesCount, isNull);
+    });
   });
 }
