@@ -17,17 +17,19 @@ MisskeyGalleryPost _$MisskeyGalleryPostFromJson(Map<String, dynamic> json) =>
           ? null
           : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
       description: json['description'] as String?,
-      fileIds: (json['fileIds'] as List<dynamic>?)
+      fileIds:
+          (json['fileIds'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      files: (json['files'] as List<dynamic>?)
+      files:
+          (json['files'] as List<dynamic>?)
               ?.map((e) => MisskeyDriveFile.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-              const [],
+          const [],
       isSensitive: json['isSensitive'] as bool? ?? false,
       likedCount: (json['likedCount'] as num?)?.toInt() ?? 0,
       isLiked: json['isLiked'] as bool?,

@@ -10,8 +10,11 @@ MisskeyNotification _$MisskeyNotificationFromJson(Map<String, dynamic> json) =>
     MisskeyNotification(
       id: json['id'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
-      type: $enumDecode(_$MisskeyNotificationTypeEnumMap, json['type'],
-          unknownValue: MisskeyNotificationType.unknown),
+      type: $enumDecode(
+        _$MisskeyNotificationTypeEnumMap,
+        json['type'],
+        unknownValue: MisskeyNotificationType.unknown,
+      ),
       userId: json['userId'] as String?,
       user: json['user'] == null
           ? null
@@ -33,24 +36,24 @@ MisskeyNotification _$MisskeyNotificationFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyNotificationToJson(
-        MisskeyNotification instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'type': _$MisskeyNotificationTypeEnumMap[instance.type]!,
-      'userId': instance.userId,
-      'user': instance.user?.toJson(),
-      'note': instance.note?.toJson(),
-      'reaction': instance.reaction,
-      'achievement': instance.achievement,
-      'body': instance.body,
-      'header': instance.header,
-      'icon': instance.icon,
-      'role': instance.role,
-      'message': instance.message,
-      'reactions': instance.reactions,
-      'users': instance.users?.map((e) => e.toJson()).toList(),
-    };
+  MisskeyNotification instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'type': _$MisskeyNotificationTypeEnumMap[instance.type]!,
+  'userId': instance.userId,
+  'user': instance.user?.toJson(),
+  'note': instance.note?.toJson(),
+  'reaction': instance.reaction,
+  'achievement': instance.achievement,
+  'body': instance.body,
+  'header': instance.header,
+  'icon': instance.icon,
+  'role': instance.role,
+  'message': instance.message,
+  'reactions': instance.reactions,
+  'users': instance.users?.map((e) => e.toJson()).toList(),
+};
 
 const _$MisskeyNotificationTypeEnumMap = {
   MisskeyNotificationType.follow: 'follow',

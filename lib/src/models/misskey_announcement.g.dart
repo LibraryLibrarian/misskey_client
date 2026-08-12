@@ -14,8 +14,9 @@ MisskeyAnnouncement _$MisskeyAnnouncementFromJson(Map<String, dynamic> json) =>
       text: json['text'] as String,
       icon: json['icon'] as String,
       display: json['display'] as String,
-      updatedAt:
-          const SafeDateTimeConverter().fromJson(json['updatedAt'] as String?),
+      updatedAt: const SafeDateTimeConverter().fromJson(
+        json['updatedAt'] as String?,
+      ),
       imageUrl: json['imageUrl'] as String?,
       needConfirmationToRead: json['needConfirmationToRead'] as bool? ?? false,
       silence: json['silence'] as bool? ?? false,
@@ -27,21 +28,21 @@ MisskeyAnnouncement _$MisskeyAnnouncementFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyAnnouncementToJson(
-        MisskeyAnnouncement instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
-      'title': instance.title,
-      'text': instance.text,
-      'imageUrl': instance.imageUrl,
-      'icon': instance.icon,
-      'display': instance.display,
-      'needConfirmationToRead': instance.needConfirmationToRead,
-      'silence': instance.silence,
-      'forYou': instance.forYou,
-      'isRead': instance.isRead,
-      'isActive': instance.isActive,
-      'forExistingUsers': instance.forExistingUsers,
-      'userId': instance.userId,
-    };
+  MisskeyAnnouncement instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
+  'title': instance.title,
+  'text': instance.text,
+  'imageUrl': instance.imageUrl,
+  'icon': instance.icon,
+  'display': instance.display,
+  'needConfirmationToRead': instance.needConfirmationToRead,
+  'silence': instance.silence,
+  'forYou': instance.forYou,
+  'isRead': instance.isRead,
+  'isActive': instance.isActive,
+  'forExistingUsers': instance.forExistingUsers,
+  'userId': instance.userId,
+};

@@ -16,9 +16,9 @@ MisskeyHashtagTrend _$MisskeyHashtagTrendFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyHashtagTrendToJson(
-        MisskeyHashtagTrend instance) =>
-    <String, dynamic>{
-      'tag': instance.tag,
-      'chart': instance.chart,
-      'usersCount': instance.usersCount,
-    };
+  MisskeyHashtagTrend instance,
+) => <String, dynamic>{
+  'tag': instance.tag,
+  'chart': instance.chart,
+  'usersCount': instance.usersCount,
+};

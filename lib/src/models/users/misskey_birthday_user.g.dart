@@ -16,9 +16,9 @@ MisskeyBirthdayUser _$MisskeyBirthdayUserFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyBirthdayUserToJson(
-        MisskeyBirthdayUser instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'birthday': instance.birthday,
-      'user': instance.user?.toJson(),
-    };
+  MisskeyBirthdayUser instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'birthday': instance.birthday,
+  'user': instance.user?.toJson(),
+};

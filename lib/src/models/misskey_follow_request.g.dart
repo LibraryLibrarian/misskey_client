@@ -7,17 +7,17 @@ part of 'misskey_follow_request.dart';
 // **************************************************************************
 
 MisskeyFollowRequest _$MisskeyFollowRequestFromJson(
-        Map<String, dynamic> json) =>
-    MisskeyFollowRequest(
-      id: json['id'] as String,
-      follower: MisskeyUser.fromJson(json['follower'] as Map<String, dynamic>),
-      followee: MisskeyUser.fromJson(json['followee'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => MisskeyFollowRequest(
+  id: json['id'] as String,
+  follower: MisskeyUser.fromJson(json['follower'] as Map<String, dynamic>),
+  followee: MisskeyUser.fromJson(json['followee'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$MisskeyFollowRequestToJson(
-        MisskeyFollowRequest instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'follower': instance.follower.toJson(),
-      'followee': instance.followee.toJson(),
-    };
+  MisskeyFollowRequest instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'follower': instance.follower.toJson(),
+  'followee': instance.followee.toJson(),
+};

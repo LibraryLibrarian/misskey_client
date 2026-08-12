@@ -22,15 +22,15 @@ MisskeyUserRelation _$MisskeyUserRelationFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyUserRelationToJson(
-        MisskeyUserRelation instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'isFollowing': instance.isFollowing,
-      'hasPendingFollowRequestFromYou': instance.hasPendingFollowRequestFromYou,
-      'hasPendingFollowRequestToYou': instance.hasPendingFollowRequestToYou,
-      'isFollowed': instance.isFollowed,
-      'isBlocking': instance.isBlocking,
-      'isBlocked': instance.isBlocked,
-      'isMuted': instance.isMuted,
-      'isRenoteMuted': instance.isRenoteMuted,
-    };
+  MisskeyUserRelation instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'isFollowing': instance.isFollowing,
+  'hasPendingFollowRequestFromYou': instance.hasPendingFollowRequestFromYou,
+  'hasPendingFollowRequestToYou': instance.hasPendingFollowRequestToYou,
+  'isFollowed': instance.isFollowed,
+  'isBlocking': instance.isBlocking,
+  'isBlocked': instance.isBlocked,
+  'isMuted': instance.isMuted,
+  'isRenoteMuted': instance.isRenoteMuted,
+};

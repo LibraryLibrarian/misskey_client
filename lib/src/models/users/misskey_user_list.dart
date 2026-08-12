@@ -33,11 +33,9 @@ class MisskeyUserList {
   final String name;
 
   /// The array of user IDs in the list.
-  @JsonKey(defaultValue: <String>[])
   final List<String> userIds;
 
   /// Whether the list is public.
-  @JsonKey(defaultValue: false)
   final bool isPublic;
 
   /// The number of likes (only when `forPublic: true`).

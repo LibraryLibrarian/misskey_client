@@ -15,10 +15,10 @@ MisskeyNoteReaction _$MisskeyNoteReactionFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyNoteReactionToJson(
-        MisskeyNoteReaction instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'type': instance.type,
-      'user': instance.user.toJson(),
-    };
+  MisskeyNoteReaction instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'type': instance.type,
+  'user': instance.user.toJson(),
+};
