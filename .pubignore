@@ -3,8 +3,12 @@ docs/
 # 開発支援・ローカル環境用ファイル
 /AGENTS.md
 /CLAUDE.md
+/.claude/
 /firebase-debug.log
 /*.iml
+
+# テスト用ファイル
+/test/
 
 # pub.dev 側で生成される API ドキュメント
 /doc/api/
