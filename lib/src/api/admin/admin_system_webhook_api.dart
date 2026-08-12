@@ -33,7 +33,7 @@ class AdminSystemWebhookApi {
         'name': name,
         'on': on,
         'url': url,
-        if (secret != null) 'secret': secret,
+        'secret': ?secret,
       },
     );
     return MisskeySystemWebhook.fromJson(res);
@@ -48,10 +48,7 @@ class AdminSystemWebhookApi {
   }) async {
     final res = await http.send<List<dynamic>>(
       '/admin/system-webhook/list',
-      body: <String, dynamic>{
-        if (isActive != null) 'isActive': isActive,
-        if (on != null) 'on': on,
-      },
+      body: <String, dynamic>{'isActive': ?isActive, 'on': ?on},
       options: const RequestOptions(idempotent: true),
     );
     return res
@@ -96,7 +93,7 @@ class AdminSystemWebhookApi {
         'name': name,
         'on': on,
         'url': url,
-        if (secret != null) 'secret': secret,
+        'secret': ?secret,
       },
     );
     return MisskeySystemWebhook.fromJson(res);
@@ -107,9 +104,9 @@ class AdminSystemWebhookApi {
   /// Common errors:
   /// - `NO_SUCH_WEBHOOK`: The specified webhook does not exist
   Future<void> delete({required String id}) => http.send<Object?>(
-        '/admin/system-webhook/delete',
-        body: <String, dynamic>{'id': id},
-      );
+    '/admin/system-webhook/delete',
+    body: <String, dynamic>{'id': id},
+  );
 
   /// Sends a test delivery for a system webhook
   /// (`/api/admin/system-webhook/test`).
@@ -120,13 +117,12 @@ class AdminSystemWebhookApi {
     required String webhookId,
     required String type,
     Map<String, dynamic>? override,
-  }) =>
-      http.send<Object?>(
-        '/admin/system-webhook/test',
-        body: <String, dynamic>{
-          'webhookId': webhookId,
-          'type': type,
-          if (override != null) 'override': override,
-        },
-      );
+  }) => http.send<Object?>(
+    '/admin/system-webhook/test',
+    body: <String, dynamic>{
+      'webhookId': webhookId,
+      'type': type,
+      'override': ?override,
+    },
+  );
 }

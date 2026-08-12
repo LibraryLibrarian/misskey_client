@@ -12,7 +12,8 @@ void main() {
       final file = File('test/fixtures/user_list_memberships.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
       membership = MisskeyUserListMembership.fromJson(
-          jsonList.first as Map<String, dynamic>);
+        jsonList.first as Map<String, dynamic>,
+      );
     });
 
     test('deserializes without error', () {

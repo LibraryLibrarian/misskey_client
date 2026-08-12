@@ -11,9 +11,9 @@ class AdminFederationApi {
   /// Deletes all cached files from a remote instance
   /// (`/api/admin/federation/delete-all-files`).
   Future<void> deleteAllFiles({required String host}) => http.send<Object?>(
-        '/admin/federation/delete-all-files',
-        body: <String, dynamic>{'host': host},
-      );
+    '/admin/federation/delete-all-files',
+    body: <String, dynamic>{'host': host},
+  );
 
   /// Refreshes the cached metadata of a remote instance
   /// (`/api/admin/federation/refresh-remote-instance-metadata`).
@@ -29,9 +29,9 @@ class AdminFederationApi {
   /// This is a destructive moderation action; follow relationships
   /// cannot be restored automatically afterwards.
   Future<void> removeAllFollowing({required String host}) => http.send<Object?>(
-        '/admin/federation/remove-all-following',
-        body: <String, dynamic>{'host': host},
-      );
+    '/admin/federation/remove-all-following',
+    body: <String, dynamic>{'host': host},
+  );
 
   /// Updates moderation settings for a remote instance
   /// (`/api/admin/federation/update-instance`).
@@ -46,13 +46,12 @@ class AdminFederationApi {
     required String host,
     bool? isSuspended,
     String? moderationNote,
-  }) =>
-      http.send<Object?>(
-        '/admin/federation/update-instance',
-        body: <String, dynamic>{
-          'host': host,
-          if (isSuspended != null) 'isSuspended': isSuspended,
-          if (moderationNote != null) 'moderationNote': moderationNote,
-        },
-      );
+  }) => http.send<Object?>(
+    '/admin/federation/update-instance',
+    body: <String, dynamic>{
+      'host': host,
+      'isSuspended': ?isSuspended,
+      'moderationNote': ?moderationNote,
+    },
+  );
 }

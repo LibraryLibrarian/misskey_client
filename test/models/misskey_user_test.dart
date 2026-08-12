@@ -248,8 +248,7 @@ void main() {
       expect(user.policies, isNull);
     });
 
-    test(
-        'onlineStatus falls back to unknown for a value not yet known '
+    test('onlineStatus falls back to unknown for a value not yet known '
         'to this client', () {
       final file = File('test/fixtures/users_show.json');
       final json = (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)

@@ -91,25 +91,25 @@ class E2eEnv {
 
   /// Creates a dio adapter that trusts the E2E root CA.
   HttpClientAdapter createHttpClientAdapter() => IOHttpClientAdapter(
-        createHttpClient: () {
-          final context = SecurityContext(withTrustedRoots: true)
-            ..setTrustedCertificates(rootCaPath);
-          return HttpClient(context: context);
-        },
-      );
+    createHttpClient: () {
+      final context = SecurityContext(withTrustedRoots: true)
+        ..setTrustedCertificates(rootCaPath);
+      return HttpClient(context: context);
+    },
+  );
 
   /// Creates a [MisskeyClient] connected to `misskey.test`.
   ///
   /// Uses the admin token when [admin] is `true`, the regular user token
   /// otherwise.
   MisskeyClient createMisskeyClient({bool admin = false}) => MisskeyClient(
-        config: MisskeyClientConfig(
-          baseUrl: Uri.parse(misskeyBaseUrl),
-          timeout: const Duration(seconds: 30),
-        ),
-        tokenProvider: () => admin ? misskeyAdminToken : misskeyUserToken,
-        httpClientAdapter: createHttpClientAdapter(),
-      );
+    config: MisskeyClientConfig(
+      baseUrl: Uri.parse(misskeyBaseUrl),
+      timeout: const Duration(seconds: 30),
+    ),
+    tokenProvider: () => admin ? misskeyAdminToken : misskeyUserToken,
+    httpClientAdapter: createHttpClientAdapter(),
+  );
 }
 
 /// Polls [probe] until it returns non-null, or fails after [timeout].

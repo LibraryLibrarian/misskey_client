@@ -38,7 +38,7 @@ class FlashApi {
         'summary': summary,
         'script': script,
         'permissions': permissions,
-        if (visibility != null) 'visibility': visibility,
+        'visibility': ?visibility,
       },
     );
     return MisskeyFlash.fromJson(res);
@@ -63,16 +63,13 @@ class FlashApi {
   }) {
     final body = <String, dynamic>{
       'flashId': flashId,
-      if (title != null) 'title': title,
-      if (summary != null) 'summary': summary,
-      if (script != null) 'script': script,
-      if (permissions != null) 'permissions': permissions,
-      if (visibility != null) 'visibility': visibility,
+      'title': ?title,
+      'summary': ?summary,
+      'script': ?script,
+      'permissions': ?permissions,
+      'visibility': ?visibility,
     };
-    return http.send<Object?>(
-      '/flash/update',
-      body: body,
-    );
+    return http.send<Object?>('/flash/update', body: body);
   }
 
   /// Deletes a Flash (`/api/flash/delete`).
@@ -84,9 +81,9 @@ class FlashApi {
   /// - `NO_SUCH_FLASH`: The Flash does not exist.
   /// - `ACCESS_DENIED`: Insufficient permissions.
   Future<void> delete({required String flashId}) => http.send<Object?>(
-        '/flash/delete',
-        body: <String, dynamic>{'flashId': flashId},
-      );
+    '/flash/delete',
+    body: <String, dynamic>{'flashId': flashId},
+  );
 
   /// Retrieves the details of a Flash (`/api/flash/show`).
   ///
@@ -120,11 +117,11 @@ class FlashApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/flash/my',
@@ -142,14 +139,8 @@ class FlashApi {
   /// No authentication required. Uses offset-based pagination.
   /// Pass [offset] to skip entries (default: 0) and use [limit] to cap
   /// the number of results (1-100, default 10).
-  Future<List<MisskeyFlash>> featured({
-    int? offset,
-    int? limit,
-  }) async {
-    final body = <String, dynamic>{
-      if (offset != null) 'offset': offset,
-      if (limit != null) 'limit': limit,
-    };
+  Future<List<MisskeyFlash>> featured({int? offset, int? limit}) async {
+    final body = <String, dynamic>{'offset': ?offset, 'limit': ?limit};
     final res = await http.send<List<dynamic>>(
       '/flash/featured',
       body: body,
@@ -173,9 +164,9 @@ class FlashApi {
   /// - `YOUR_FLASH`: Cannot like your own Flash.
   /// - `ALREADY_LIKED`: Already liked.
   Future<void> like({required String flashId}) => http.send<Object?>(
-        '/flash/like',
-        body: <String, dynamic>{'flashId': flashId},
-      );
+    '/flash/like',
+    body: <String, dynamic>{'flashId': flashId},
+  );
 
   /// Removes a like from a Flash (`/api/flash/unlike`).
   ///
@@ -185,9 +176,9 @@ class FlashApi {
   /// - `NO_SUCH_FLASH`: The Flash does not exist.
   /// - `NOT_LIKED`: Not liked.
   Future<void> unlike({required String flashId}) => http.send<Object?>(
-        '/flash/unlike',
-        body: <String, dynamic>{'flashId': flashId},
-      );
+    '/flash/unlike',
+    body: <String, dynamic>{'flashId': flashId},
+  );
 
   /// Retrieves the authenticated user's liked Flashes
   /// (`/api/flash/my-likes`).
@@ -206,12 +197,12 @@ class FlashApi {
     String? search,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (search != null) 'search': search,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'search': ?search,
     };
     final res = await http.send<List<dynamic>>(
       '/flash/my-likes',
@@ -240,11 +231,11 @@ class FlashApi {
   }) async {
     final body = <String, dynamic>{
       'query': query,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/flash/search',

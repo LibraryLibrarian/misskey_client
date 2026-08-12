@@ -107,8 +107,7 @@ void main() {
   });
 
   group('MisskeyNotification.fromJson - unknown type', () {
-    test(
-        'type falls back to unknown for a value not yet known to this '
+    test('type falls back to unknown for a value not yet known to this '
         'client', () {
       final notification = MisskeyNotification.fromJson({
         'id': 'abc123',

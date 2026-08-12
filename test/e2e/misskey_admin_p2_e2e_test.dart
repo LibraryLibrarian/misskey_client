@@ -66,10 +66,7 @@ void main() {
         ids: [emoji.id],
         aliases: ['bulk_alias'],
       );
-      await admin.adminEmoji.setLicenseBulk(
-        ids: [emoji.id],
-        license: 'CC0',
-      );
+      await admin.adminEmoji.setLicenseBulk(ids: [emoji.id], license: 'CC0');
       final afterBulk = await admin.adminEmoji.list(query: name);
       expect(afterBulk.single.aliases, contains('bulk_alias'));
       expect(afterBulk.single.license, 'CC0');
@@ -186,54 +183,60 @@ void main() {
       );
     });
 
-    test('notification recipient create -> show -> list -> update -> delete',
-        () async {
-      // webhookメソッドならメールアドレス設定なしでCRUDを一巡できる
-      final hookName = 'e2e-rcpt-hook-${DateTime.now().millisecondsSinceEpoch}';
-      final webhook = await admin.adminSystemWebhook.create(
-        isActive: true,
-        name: hookName,
-        on: ['abuseReport'],
-        url: 'https://example.test/abuse-hook',
-      );
-      addTearDown(() => admin.adminSystemWebhook.delete(id: webhook.id));
+    test(
+      'notification recipient create -> show -> list -> update -> delete',
+      () async {
+        // webhookメソッドならメールアドレス設定なしでCRUDを一巡できる
+        final hookName =
+            'e2e-rcpt-hook-${DateTime.now().millisecondsSinceEpoch}';
+        final webhook = await admin.adminSystemWebhook.create(
+          isActive: true,
+          name: hookName,
+          on: ['abuseReport'],
+          url: 'https://example.test/abuse-hook',
+        );
+        addTearDown(() => admin.adminSystemWebhook.delete(id: webhook.id));
 
-      final name = 'e2e-rcpt-${DateTime.now().millisecondsSinceEpoch}';
-      final created = await admin.adminAbuseReports.createNotificationRecipient(
-        isActive: true,
-        name: name,
-        method: 'webhook',
-        systemWebhookId: webhook.id,
-      );
-      expect(created.name, name);
-      expect(created.method, 'webhook');
+        final name = 'e2e-rcpt-${DateTime.now().millisecondsSinceEpoch}';
+        final created = await admin.adminAbuseReports
+            .createNotificationRecipient(
+              isActive: true,
+              name: name,
+              method: 'webhook',
+              systemWebhookId: webhook.id,
+            );
+        expect(created.name, name);
+        expect(created.method, 'webhook');
 
-      final shown = await admin.adminAbuseReports.showNotificationRecipient(
-        id: created.id,
-      );
-      expect(shown.id, created.id);
-      expect(shown.systemWebhookId, webhook.id);
+        final shown = await admin.adminAbuseReports.showNotificationRecipient(
+          id: created.id,
+        );
+        expect(shown.id, created.id);
+        expect(shown.systemWebhookId, webhook.id);
 
-      final listed = await admin.adminAbuseReports.listNotificationRecipients();
-      expect(listed.map((r) => r.id), contains(created.id));
+        final listed = await admin.adminAbuseReports
+            .listNotificationRecipients();
+        expect(listed.map((r) => r.id), contains(created.id));
 
-      final updated = await admin.adminAbuseReports.updateNotificationRecipient(
-        id: created.id,
-        isActive: false,
-        name: '$name updated',
-        method: 'webhook',
-        systemWebhookId: webhook.id,
-      );
-      expect(updated.isActive, isFalse);
-      expect(updated.name, '$name updated');
+        final updated = await admin.adminAbuseReports
+            .updateNotificationRecipient(
+              id: created.id,
+              isActive: false,
+              name: '$name updated',
+              method: 'webhook',
+              systemWebhookId: webhook.id,
+            );
+        expect(updated.isActive, isFalse);
+        expect(updated.name, '$name updated');
 
-      await admin.adminAbuseReports.deleteNotificationRecipient(
-        id: created.id,
-      );
-      final afterDelete =
-          await admin.adminAbuseReports.listNotificationRecipients();
-      expect(afterDelete.map((r) => r.id), isNot(contains(created.id)));
-    });
+        await admin.adminAbuseReports.deleteNotificationRecipient(
+          id: created.id,
+        );
+        final afterDelete = await admin.adminAbuseReports
+            .listNotificationRecipients();
+        expect(afterDelete.map((r) => r.id), isNot(contains(created.id)));
+      },
+    );
   });
 
   group('admin federation', () {

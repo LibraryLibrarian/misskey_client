@@ -36,9 +36,9 @@ class InviteApi {
   /// - `CAN_NOT_DELETE_INVITE_CODE`: This invite code cannot be deleted
   /// - `ACCESS_DENIED`: Not the creator or a moderator
   Future<void> delete({required String inviteId}) => http.send<Object?>(
-        '/invite/delete',
-        body: <String, dynamic>{'inviteId': inviteId},
-      );
+    '/invite/delete',
+    body: <String, dynamic>{'inviteId': inviteId},
+  );
 
   /// Retrieves the remaining invite quota (`/api/invite/limit`).
   ///
@@ -65,11 +65,11 @@ class InviteApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/invite/list',

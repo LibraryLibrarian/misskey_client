@@ -28,7 +28,7 @@ void main() {
 
     test('keywords are correct', () {
       expect(antenna.keywords, [
-        ['test']
+        ['test'],
       ]);
     });
 

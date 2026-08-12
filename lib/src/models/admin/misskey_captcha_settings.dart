@@ -38,11 +38,7 @@ class MisskeyCaptchaSettings {
 /// The site/secret key pair of a CAPTCHA provider.
 @JsonSerializable()
 class MisskeyCaptchaKeys {
-  const MisskeyCaptchaKeys({
-    this.siteKey,
-    this.secretKey,
-    this.instanceUrl,
-  });
+  const MisskeyCaptchaKeys({this.siteKey, this.secretKey, this.instanceUrl});
 
   factory MisskeyCaptchaKeys.fromJson(Map<String, dynamic> json) =>
       _$MisskeyCaptchaKeysFromJson(json);

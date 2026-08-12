@@ -11,8 +11,9 @@ void main() {
     setUp(() {
       final file = File('test/fixtures/birthday_users.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      birthdayUser =
-          MisskeyBirthdayUser.fromJson(jsonList.first as Map<String, dynamic>);
+      birthdayUser = MisskeyBirthdayUser.fromJson(
+        jsonList.first as Map<String, dynamic>,
+      );
     });
 
     test('deserializes without error', () {

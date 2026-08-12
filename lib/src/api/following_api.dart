@@ -9,8 +9,8 @@ import 'following_requests_api.dart';
 /// Use [requests] for follow request operations.
 class FollowingApi {
   FollowingApi({required MisskeyHttp http})
-      : _http = http,
-        requests = FollowingRequestsApi(http: http);
+    : _http = http,
+      requests = FollowingRequestsApi(http: http);
 
   final MisskeyHttp _http;
 
@@ -37,10 +37,7 @@ class FollowingApi {
   }) async {
     final res = await _http.send<Map<String, dynamic>>(
       '/following/create',
-      body: <String, dynamic>{
-        'userId': userId,
-        if (withReplies != null) 'withReplies': withReplies,
-      },
+      body: <String, dynamic>{'userId': userId, 'withReplies': ?withReplies},
     );
     return MisskeyUser.fromJson(res);
   }
@@ -84,8 +81,8 @@ class FollowingApi {
       '/following/update',
       body: <String, dynamic>{
         'userId': userId,
-        if (notify != null) 'notify': notify,
-        if (withReplies != null) 'withReplies': withReplies,
+        'notify': ?notify,
+        'withReplies': ?withReplies,
       },
     );
     return MisskeyUser.fromJson(res);
@@ -96,16 +93,10 @@ class FollowingApi {
   /// Rate limit: 10 requests/hour. Use [notify] to control notifications
   /// (`normal` / `none`) and [withReplies] to toggle reply visibility
   /// in the timeline for all followed users.
-  Future<void> updateAll({
-    String? notify,
-    bool? withReplies,
-  }) =>
+  Future<void> updateAll({String? notify, bool? withReplies}) =>
       _http.send<Object?>(
         '/following/update-all',
-        body: <String, dynamic>{
-          if (notify != null) 'notify': notify,
-          if (withReplies != null) 'withReplies': withReplies,
-        },
+        body: <String, dynamic>{'notify': ?notify, 'withReplies': ?withReplies},
       );
 
   /// Forcibly removes a follower (`/api/following/invalidate`).

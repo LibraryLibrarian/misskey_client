@@ -33,11 +33,7 @@ class MisskeyPollChoice {
 /// A Misskey poll.
 @JsonSerializable()
 class MisskeyPoll {
-  const MisskeyPoll({
-    required this.choices,
-    this.multiple,
-    this.expiresAt,
-  });
+  const MisskeyPoll({required this.choices, this.multiple, this.expiresAt});
 
   factory MisskeyPoll.fromJson(Map<String, dynamic> json) =>
       _$MisskeyPollFromJson(json);

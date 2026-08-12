@@ -21,8 +21,8 @@ import 'user_lists_api.dart';
 /// Use [lists] for list operations.
 class UsersApi {
   UsersApi({required MisskeyHttp http})
-      : _http = http,
-        lists = UserListsApi(http: http);
+    : _http = http,
+      lists = UserListsApi(http: http);
 
   final MisskeyHttp _http;
 
@@ -48,12 +48,12 @@ class UsersApi {
     String? hostname,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-      if (sort != null) 'sort': sort,
-      if (state != null) 'state': state,
-      if (origin != null) 'origin': origin,
-      if (hostname != null) 'hostname': hostname,
+      'limit': ?limit,
+      'offset': ?offset,
+      'sort': ?sort,
+      'state': ?state,
+      'origin': ?origin,
+      'hostname': ?hostname,
     };
     final res = await _http.send<List<dynamic>>(
       '/users',
@@ -90,10 +90,7 @@ class UsersApi {
   /// Omit [host] to search for a local user.
   /// Use [showMany] to retrieve multiple users at once.
   /// Authentication optional (works without authentication).
-  Future<MisskeyUser> showOneByUsername(
-    String username, {
-    String? host,
-  }) async {
+  Future<MisskeyUser> showOneByUsername(String username, {String? host}) async {
     final res = await _http.send<Map<String, dynamic>>(
       '/users/show',
       body: <String, dynamic>{
@@ -140,16 +137,15 @@ class UsersApi {
     String? untilId,
     int? sinceDate,
     int? untilDate,
-  }) =>
-      _fetchFollowList(
-        path: '/users/followers',
-        userId: userId,
-        limit: limit,
-        sinceId: sinceId,
-        untilId: untilId,
-        sinceDate: sinceDate,
-        untilDate: untilDate,
-      );
+  }) => _fetchFollowList(
+    path: '/users/followers',
+    userId: userId,
+    limit: limit,
+    sinceId: sinceId,
+    untilId: untilId,
+    sinceDate: sinceDate,
+    untilDate: untilDate,
+  );
 
   /// Fetches the followers of a user by username.
   ///
@@ -165,17 +161,16 @@ class UsersApi {
     String? untilId,
     int? sinceDate,
     int? untilDate,
-  }) =>
-      _fetchFollowList(
-        path: '/users/followers',
-        username: username,
-        host: host,
-        limit: limit,
-        sinceId: sinceId,
-        untilId: untilId,
-        sinceDate: sinceDate,
-        untilDate: untilDate,
-      );
+  }) => _fetchFollowList(
+    path: '/users/followers',
+    username: username,
+    host: host,
+    limit: limit,
+    sinceId: sinceId,
+    untilId: untilId,
+    sinceDate: sinceDate,
+    untilDate: untilDate,
+  );
 
   /// Fetches the following list of a user by user ID.
   ///
@@ -189,16 +184,15 @@ class UsersApi {
     String? untilId,
     int? sinceDate,
     int? untilDate,
-  }) =>
-      _fetchFollowList(
-        path: '/users/following',
-        userId: userId,
-        limit: limit,
-        sinceId: sinceId,
-        untilId: untilId,
-        sinceDate: sinceDate,
-        untilDate: untilDate,
-      );
+  }) => _fetchFollowList(
+    path: '/users/following',
+    userId: userId,
+    limit: limit,
+    sinceId: sinceId,
+    untilId: untilId,
+    sinceDate: sinceDate,
+    untilDate: untilDate,
+  );
 
   /// Fetches the following list of a user by username.
   ///
@@ -214,17 +208,16 @@ class UsersApi {
     String? untilId,
     int? sinceDate,
     int? untilDate,
-  }) =>
-      _fetchFollowList(
-        path: '/users/following',
-        username: username,
-        host: host,
-        limit: limit,
-        sinceId: sinceId,
-        untilId: untilId,
-        sinceDate: sinceDate,
-        untilDate: untilDate,
-      );
+  }) => _fetchFollowList(
+    path: '/users/following',
+    username: username,
+    host: host,
+    limit: limit,
+    sinceId: sinceId,
+    untilId: untilId,
+    sinceDate: sinceDate,
+    untilDate: untilDate,
+  );
 
   /// Fetches notes by a user.
   ///
@@ -249,16 +242,16 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (withReplies != null) 'withReplies': withReplies,
-      if (withRenotes != null) 'withRenotes': withRenotes,
-      if (withChannelNotes != null) 'withChannelNotes': withChannelNotes,
-      if (withFiles != null) 'withFiles': withFiles,
-      if (allowPartial != null) 'allowPartial': allowPartial,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'withReplies': ?withReplies,
+      'withRenotes': ?withRenotes,
+      'withChannelNotes': ?withChannelNotes,
+      'withFiles': ?withFiles,
+      'allowPartial': ?allowPartial,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/notes',
@@ -308,11 +301,11 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/clips',
@@ -339,8 +332,8 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      if (limit != null) 'limit': limit,
-      if (untilId != null) 'untilId': untilId,
+      'limit': ?limit,
+      'untilId': ?untilId,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/featured-notes',
@@ -370,11 +363,11 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/flashs',
@@ -399,10 +392,7 @@ class UsersApi {
     required String userId,
     int? limit,
   }) async {
-    final body = <String, dynamic>{
-      'userId': userId,
-      if (limit != null) 'limit': limit,
-    };
+    final body = <String, dynamic>{'userId': userId, 'limit': ?limit};
     final res = await _http.send<List<dynamic>>(
       '/users/get-frequently-replied-users',
       body: body,
@@ -431,11 +421,11 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/pages',
@@ -467,11 +457,11 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/reactions',
@@ -492,14 +482,8 @@ class UsersApi {
   /// Authentication required.
   /// [limit] is 1-100 (default: 10).
   /// Paginate with [offset] (default: 0).
-  Future<List<MisskeyUser>> recommendation({
-    int? limit,
-    int? offset,
-  }) async {
-    final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-    };
+  Future<List<MisskeyUser>> recommendation({int? limit, int? offset}) async {
+    final body = <String, dynamic>{'limit': ?limit, 'offset': ?offset};
     final res = await _http.send<List<dynamic>>(
       '/users/recommendation',
       body: body,
@@ -544,10 +528,7 @@ class UsersApi {
   ///
   /// Authentication required.
   /// [comment] must be 1-2048 characters.
-  Future<void> reportAbuse({
-    required String userId,
-    required String comment,
-  }) =>
+  Future<void> reportAbuse({required String userId, required String comment}) =>
       _http.send<Object?>(
         '/users/report-abuse',
         body: <String, dynamic>{'userId': userId, 'comment': comment},
@@ -568,10 +549,10 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'query': query,
-      if (offset != null) 'offset': offset,
-      if (limit != null) 'limit': limit,
-      if (origin != null) 'origin': origin,
-      if (detail != null) 'detail': detail,
+      'offset': ?offset,
+      'limit': ?limit,
+      'origin': ?origin,
+      'detail': ?detail,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/search',
@@ -599,10 +580,10 @@ class UsersApi {
     bool? detail,
   }) async {
     final body = <String, dynamic>{
-      if (username != null) 'username': username,
-      if (host != null) 'host': host,
-      if (limit != null) 'limit': limit,
-      if (detail != null) 'detail': detail,
+      'username': ?username,
+      'host': ?host,
+      'limit': ?limit,
+      'detail': ?detail,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/search-by-username-and-host',
@@ -622,10 +603,7 @@ class UsersApi {
   ///
   /// Authentication required.
   /// Pass `null` to [memo] to delete the memo.
-  Future<void> updateMemo({
-    required String userId,
-    required String? memo,
-  }) =>
+  Future<void> updateMemo({required String userId, required String? memo}) =>
       _http.send<Object?>(
         '/users/update-memo',
         body: <String, dynamic>{'userId': userId, 'memo': memo},
@@ -645,8 +623,8 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'birthday': {'month': month, 'day': day},
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/get-following-users-by-birthday',
@@ -678,8 +656,8 @@ class UsersApi {
         'begin': {'month': beginMonth, 'day': beginDay},
         'end': {'month': endMonth, 'day': endDay},
       },
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/get-following-users-by-birthday',
@@ -706,11 +684,11 @@ class UsersApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       '/users/gallery/posts',
@@ -739,16 +717,16 @@ class UsersApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (userId != null) 'userId': userId,
+      'limit': ?limit,
+      'userId': ?userId,
       if (username != null) ...{
         'username': username,
         'host': host?.isNotEmpty == true ? host : null,
       },
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       path,

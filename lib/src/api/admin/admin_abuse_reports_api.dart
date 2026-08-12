@@ -31,12 +31,12 @@ class AdminAbuseReportsApi {
     final res = await http.send<List<dynamic>>(
       '/admin/abuse-user-reports',
       body: <String, dynamic>{
-        if (limit != null) 'limit': limit,
-        if (sinceId != null) 'sinceId': sinceId,
-        if (untilId != null) 'untilId': untilId,
-        if (state != null) 'state': state,
-        if (reporterOrigin != null) 'reporterOrigin': reporterOrigin,
-        if (targetUserOrigin != null) 'targetUserOrigin': targetUserOrigin,
+        'limit': ?limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        'state': ?state,
+        'reporterOrigin': ?reporterOrigin,
+        'targetUserOrigin': ?targetUserOrigin,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -53,15 +53,12 @@ class AdminAbuseReportsApi {
   ///
   /// Common errors:
   /// - `NO_SUCH_ABUSE_REPORT`: The specified report does not exist
-  Future<void> resolve({
-    required String reportId,
-    String? resolvedAs,
-  }) =>
+  Future<void> resolve({required String reportId, String? resolvedAs}) =>
       http.send<Object?>(
         '/admin/resolve-abuse-user-report',
         body: <String, dynamic>{
           'reportId': reportId,
-          if (resolvedAs != null) 'resolvedAs': resolvedAs,
+          'resolvedAs': ?resolvedAs,
         },
       );
 
@@ -70,21 +67,18 @@ class AdminAbuseReportsApi {
   ///
   /// Only valid for reports whose target user is remote.
   Future<void> forward({required String reportId}) => http.send<Object?>(
-        '/admin/forward-abuse-user-report',
-        body: <String, dynamic>{'reportId': reportId},
-      );
+    '/admin/forward-abuse-user-report',
+    body: <String, dynamic>{'reportId': reportId},
+  );
 
   /// Updates the moderation note of an abuse report
   /// (`/api/admin/update-abuse-user-report`).
-  Future<void> update({
-    required String reportId,
-    String? moderationNote,
-  }) =>
+  Future<void> update({required String reportId, String? moderationNote}) =>
       http.send<Object?>(
         '/admin/update-abuse-user-report',
         body: <String, dynamic>{
           'reportId': reportId,
-          if (moderationNote != null) 'moderationNote': moderationNote,
+          'moderationNote': ?moderationNote,
         },
       );
 
@@ -94,12 +88,10 @@ class AdminAbuseReportsApi {
   /// Use [method] to filter by notification methods
   /// (`email` / `webhook`).
   Future<List<MisskeyAbuseReportNotificationRecipient>>
-      listNotificationRecipients({List<String>? method}) async {
+  listNotificationRecipients({List<String>? method}) async {
     final res = await http.send<List<dynamic>>(
       '/admin/abuse-report/notification-recipient/list',
-      body: <String, dynamic>{
-        if (method != null) 'method': method,
-      },
+      body: <String, dynamic>{'method': ?method},
       options: const RequestOptions(idempotent: true),
     );
     return res
@@ -139,8 +131,8 @@ class AdminAbuseReportsApi {
         'isActive': isActive,
         'name': name,
         'method': method,
-        if (userId != null) 'userId': userId,
-        if (systemWebhookId != null) 'systemWebhookId': systemWebhookId,
+        'userId': ?userId,
+        'systemWebhookId': ?systemWebhookId,
       },
     );
     return MisskeyAbuseReportNotificationRecipient.fromJson(res);
@@ -163,8 +155,8 @@ class AdminAbuseReportsApi {
         'isActive': isActive,
         'name': name,
         'method': method,
-        if (userId != null) 'userId': userId,
-        if (systemWebhookId != null) 'systemWebhookId': systemWebhookId,
+        'userId': ?userId,
+        'systemWebhookId': ?systemWebhookId,
       },
     );
     return MisskeyAbuseReportNotificationRecipient.fromJson(res);

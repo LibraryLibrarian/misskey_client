@@ -11,9 +11,9 @@ import 'chat_rooms_api.dart';
 /// All endpoints require authentication.
 class ChatApi {
   ChatApi({required MisskeyHttp http})
-      : _http = http,
-        messages = ChatMessagesApi(http: http),
-        rooms = ChatRoomsApi(http: http);
+    : _http = http,
+      messages = ChatMessagesApi(http: http),
+      rooms = ChatRoomsApi(http: http);
 
   final MisskeyHttp _http;
 
@@ -30,14 +30,8 @@ class ChatApi {
   ///
   /// [limit] controls how many items to fetch (1-100, default 10). Set [room]
   /// to `true` for room history or `false` for DM history (default false).
-  Future<List<MisskeyChatMessage>> history({
-    int? limit,
-    bool? room,
-  }) async {
-    final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (room != null) 'room': room,
-    };
+  Future<List<MisskeyChatMessage>> history({int? limit, bool? room}) async {
+    final body = <String, dynamic>{'limit': ?limit, 'room': ?room};
     final res = await _http.send<List<dynamic>>(
       '/chat/history',
       body: body,
@@ -50,8 +44,6 @@ class ChatApi {
   }
 
   /// Marks all chat messages as read (`/api/chat/read-all`).
-  Future<void> readAll() => _http.send<Object?>(
-        '/chat/read-all',
-        body: const <String, dynamic>{},
-      );
+  Future<void> readAll() =>
+      _http.send<Object?>('/chat/read-all', body: const <String, dynamic>{});
 }

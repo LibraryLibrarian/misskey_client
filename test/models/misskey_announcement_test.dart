@@ -11,8 +11,9 @@ void main() {
     setUp(() {
       final file = File('test/fixtures/announcements.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      announcement =
-          MisskeyAnnouncement.fromJson(jsonList.first as Map<String, dynamic>);
+      announcement = MisskeyAnnouncement.fromJson(
+        jsonList.first as Map<String, dynamic>,
+      );
     });
 
     test('deserializes without error', () {
@@ -28,10 +29,7 @@ void main() {
     });
 
     test('text is correct', () {
-      expect(
-        announcement.text,
-        'This is a test announcement for API testing.',
-      );
+      expect(announcement.text, 'This is a test announcement for API testing.');
     });
 
     test('icon and display are correct', () {

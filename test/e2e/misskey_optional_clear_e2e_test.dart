@@ -118,8 +118,7 @@ void main() {
           : (await client.channels.create(
               name: channelName,
               description: 'initial description',
-            ))
-              .id;
+            )).id;
     });
 
     setUp(() async {
@@ -183,27 +182,29 @@ void main() {
     // 更新対象が空になりTypeORMが例外を投げて500、他フィールドと併用すると
     // 例外は出ないがバナーは消えない。ライブラリ側では制御できないため、
     // 現状の挙動をここで固定しておく
-    test('clearing the banner alone fails with 500 (server-side bug)',
-        () async {
-      final file = await client.drive.files.create(
-        bytes: pngBytes,
-        filename: 'e2e-channel-banner.png',
-      );
-      await client.channels.update(
-        channelId: channelId,
-        bannerId: Optional(file.id),
-      );
-
-      await expectLater(
-        client.channels.update(
+    test(
+      'clearing the banner alone fails with 500 (server-side bug)',
+      () async {
+        final file = await client.drive.files.create(
+          bytes: pngBytes,
+          filename: 'e2e-channel-banner.png',
+        );
+        await client.channels.update(
           channelId: channelId,
-          bannerId: const Optional.null_(),
-        ),
-        throwsA(isA<MisskeyServerException>()),
-      );
+          bannerId: Optional(file.id),
+        );
 
-      await client.drive.files.delete(fileId: file.id);
-    });
+        await expectLater(
+          client.channels.update(
+            channelId: channelId,
+            bannerId: const Optional.null_(),
+          ),
+          throwsA(isA<MisskeyServerException>()),
+        );
+
+        await client.drive.files.delete(fileId: file.id);
+      },
+    );
 
     test('clearing the banner with another field silently does nothing '
         '(server-side bug)', () async {
@@ -609,16 +610,18 @@ void main() {
     // isSensitive はサーバー側のスキーマが `default: false` のため、省略すると
     // 無変更ではなく false にリセットされる。Optionalでは解決できない別種の
     // 落とし穴なので、挙動をここで固定しておく
-    test('omitting isSensitive resets it to false (server-side default)',
-        () async {
-      await client.gallery.postsUpdate(postId: postId, isSensitive: true);
-      final sensitive = await client.gallery.postsShow(postId: postId);
-      expect(sensitive.isSensitive, isTrue);
+    test(
+      'omitting isSensitive resets it to false (server-side default)',
+      () async {
+        await client.gallery.postsUpdate(postId: postId, isSensitive: true);
+        final sensitive = await client.gallery.postsShow(postId: postId);
+        expect(sensitive.isSensitive, isTrue);
 
-      await client.gallery.postsUpdate(postId: postId, title: 'renamed only');
-      final reset = await client.gallery.postsShow(postId: postId);
-      expect(reset.isSensitive, isFalse);
-    });
+        await client.gallery.postsUpdate(postId: postId, title: 'renamed only');
+        final reset = await client.gallery.postsShow(postId: postId);
+        expect(reset.isSensitive, isFalse);
+      },
+    );
   });
 
   group('admin/avatar-decorations/update', () {
@@ -705,10 +708,7 @@ void main() {
     });
 
     test('omitting the nullable fields keeps their current values', () async {
-      await client.notes.draftsUpdate(
-        draftId: draftId,
-        visibility: 'home',
-      );
+      await client.notes.draftsUpdate(draftId: draftId, visibility: 'home');
 
       final shown = await fetch();
       expect(shown.visibility, 'home');
@@ -751,20 +751,22 @@ void main() {
 
     // サーバーは毎回 `scheduledAt ? new Date(scheduledAt) : null` を送るため、
     // 省略した更新でスケジュールが解除される。ライブラリ側では制御できない
-    test('omitting scheduledAt unschedules the draft (server-side quirk)',
-        () async {
-      final before = await fetch();
-      expect(before.scheduledAt, scheduledAt);
+    test(
+      'omitting scheduledAt unschedules the draft (server-side quirk)',
+      () async {
+        final before = await fetch();
+        expect(before.scheduledAt, scheduledAt);
 
-      await client.notes.draftsUpdate(
-        draftId: draftId,
-        text: const Optional('renamed only'),
-      );
+        await client.notes.draftsUpdate(
+          draftId: draftId,
+          text: const Optional('renamed only'),
+        );
 
-      final shown = await fetch();
-      expect(shown.text, 'renamed only');
-      expect(shown.scheduledAt, isNull);
-    });
+        final shown = await fetch();
+        expect(shown.text, 'renamed only');
+        expect(shown.scheduledAt, isNull);
+      },
+    );
 
     // pollを指定しない更新は、選択肢を残したまま期限だけ消す(サーバー側の挙動)
     test('omitting the poll drops its deadline (server-side quirk)', () async {

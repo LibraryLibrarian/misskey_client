@@ -90,11 +90,7 @@ class MisskeyQueueStats {
 /// Throughput metrics for a queue.
 @JsonSerializable()
 class MisskeyQueueMetrics {
-  const MisskeyQueueMetrics({
-    this.meta,
-    this.data,
-    this.count,
-  });
+  const MisskeyQueueMetrics({this.meta, this.data, this.count});
 
   factory MisskeyQueueMetrics.fromJson(Map<String, dynamic> json) =>
       _$MisskeyQueueMetricsFromJson(json);
@@ -134,9 +130,7 @@ class MisskeyQueueInfo {
       qualifiedName: json['qualifiedName'] as String?,
       counts: json['counts'] == null
           ? null
-          : MisskeyQueueCount.fromJson(
-              json['counts'] as Map<String, dynamic>,
-            ),
+          : MisskeyQueueCount.fromJson(json['counts'] as Map<String, dynamic>),
       isPaused: json['isPaused'] as bool?,
       completedMetrics: metrics?['completed'] == null
           ? null
@@ -265,10 +259,7 @@ class MisskeyDelayedQueueEntry {
 
   /// Creates an instance from the raw `[host, count]` tuple.
   factory MisskeyDelayedQueueEntry.fromJson(List<dynamic> json) =>
-      MisskeyDelayedQueueEntry(
-        host: json[0] as String,
-        count: json[1] as num,
-      );
+      MisskeyDelayedQueueEntry(host: json[0] as String, count: json[1] as num);
 
   /// The destination host.
   final String host;

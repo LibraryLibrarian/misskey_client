@@ -67,7 +67,7 @@ class AdminQueueApi {
       body: <String, dynamic>{
         'queue': queue,
         'state': state,
-        if (search != null) 'search': search,
+        'search': ?search,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -104,20 +104,14 @@ class AdminQueueApi {
   }
 
   /// Retries a failed job (`/api/admin/queue/retry-job`).
-  Future<void> retryJob({
-    required String queue,
-    required String jobId,
-  }) =>
+  Future<void> retryJob({required String queue, required String jobId}) =>
       http.send<Object?>(
         '/admin/queue/retry-job',
         body: <String, dynamic>{'queue': queue, 'jobId': jobId},
       );
 
   /// Removes a job from a queue (`/api/admin/queue/remove-job`).
-  Future<void> removeJob({
-    required String queue,
-    required String jobId,
-  }) =>
+  Future<void> removeJob({required String queue, required String jobId}) =>
       http.send<Object?>(
         '/admin/queue/remove-job',
         body: <String, dynamic>{'queue': queue, 'jobId': jobId},
@@ -126,19 +120,16 @@ class AdminQueueApi {
   /// Promotes delayed jobs so they run immediately
   /// (`/api/admin/queue/promote-jobs`).
   Future<void> promoteJobs({required String queue}) => http.send<Object?>(
-        '/admin/queue/promote-jobs',
-        body: <String, dynamic>{'queue': queue},
-      );
+    '/admin/queue/promote-jobs',
+    body: <String, dynamic>{'queue': queue},
+  );
 
   /// Clears jobs in a queue (`/api/admin/queue/clear`).
   ///
   /// [state] accepts `*` (all states) or a specific state such as
   /// `completed`, `wait`, `active`, `paused`, `prioritized`, `delayed`,
   /// or `failed`.
-  Future<void> clear({
-    required String queue,
-    required String state,
-  }) =>
+  Future<void> clear({required String queue, required String state}) =>
       http.send<Object?>(
         '/admin/queue/clear',
         body: <String, dynamic>{'queue': queue, 'state': state},

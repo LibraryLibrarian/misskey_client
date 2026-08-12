@@ -7,12 +7,7 @@ part 'misskey_user.g.dart';
 
 /// The online status of a user.
 @JsonEnum()
-enum MisskeyOnlineStatus {
-  unknown,
-  online,
-  active,
-  offline,
-}
+enum MisskeyOnlineStatus { unknown, online, active, offline }
 
 /// A Misskey user (unified model of UserLite and UserDetailed).
 @JsonSerializable()
@@ -581,11 +576,7 @@ class MisskeyUserInstance {
 /// A badge role.
 @JsonSerializable()
 class MisskeyBadgeRole {
-  const MisskeyBadgeRole({
-    required this.name,
-    this.iconUrl,
-    this.displayOrder,
-  });
+  const MisskeyBadgeRole({required this.name, this.iconUrl, this.displayOrder});
 
   factory MisskeyBadgeRole.fromJson(Map<String, dynamic> json) =>
       _$MisskeyBadgeRoleFromJson(json);

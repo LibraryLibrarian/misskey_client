@@ -91,20 +91,22 @@ void main() {
       );
     });
 
-    test('deleteAccount and deleteAllFilesOfAUser work on a throwaway user',
-        () async {
-      final username = 'e2e_del${DateTime.now().millisecondsSinceEpoch}';
-      final created = await admin.adminAccounts.create(
-        username: username,
-        password: 'e2e-temp-pass',
-      );
+    test(
+      'deleteAccount and deleteAllFilesOfAUser work on a throwaway user',
+      () async {
+        final username = 'e2e_del${DateTime.now().millisecondsSinceEpoch}';
+        final created = await admin.adminAccounts.create(
+          username: username,
+          password: 'e2e-temp-pass',
+        );
 
-      // 使い捨てアカウントに対してのみ実行する。世界のデータには触れない。
-      // 実削除はジョブキュー経由で非同期に進むため、ここでは呼び出しが
-      // 成功すること自体が検証内容
-      await admin.admin.deleteAllFilesOfAUser(userId: created.user.id);
-      await admin.admin.deleteAccount(userId: created.user.id);
-    });
+        // 使い捨てアカウントに対してのみ実行する。世界のデータには触れない。
+        // 実削除はジョブキュー経由で非同期に進むため、ここでは呼び出しが
+        // 成功すること自体が検証内容
+        await admin.admin.deleteAllFilesOfAUser(userId: created.user.id);
+        await admin.admin.deleteAccount(userId: created.user.id);
+      },
+    );
 
     test('showUsers filters local users', () async {
       final users = await admin.admin.showUsers(origin: 'local', limit: 100);
@@ -122,9 +124,7 @@ void main() {
       );
       addTearDown(() => admin.adminAccounts.delete(userId: created.user.id));
 
-      final password = await admin.admin.resetPassword(
-        userId: created.user.id,
-      );
+      final password = await admin.admin.resetPassword(userId: created.user.id);
       expect(password, hasLength(8));
     });
 
