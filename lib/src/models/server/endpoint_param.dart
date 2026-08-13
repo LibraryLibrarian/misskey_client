@@ -5,10 +5,7 @@ part 'endpoint_param.g.dart';
 /// A parameter definition for an API endpoint from `/api/endpoint`.
 @JsonSerializable()
 class EndpointParam {
-  const EndpointParam({
-    required this.name,
-    required this.type,
-  });
+  const EndpointParam({required this.name, required this.type});
 
   factory EndpointParam.fromJson(Map<String, dynamic> json) =>
       _$EndpointParamFromJson(json);

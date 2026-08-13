@@ -14,8 +14,9 @@ void main() {
           jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       // フィクスチャは {"emojis": [...]} の形式で包まれている
       final jsonList = jsonMap['emojis'] as List<dynamic>;
-      emoji =
-          MisskeyCustomEmoji.fromJson(jsonList.first as Map<String, dynamic>);
+      emoji = MisskeyCustomEmoji.fromJson(
+        jsonList.first as Map<String, dynamic>,
+      );
     });
 
     test('deserializes without error', () {

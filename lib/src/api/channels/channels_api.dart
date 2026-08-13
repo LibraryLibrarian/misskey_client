@@ -13,8 +13,8 @@ import 'channel_mute_api.dart';
 /// Use the [mute] sub-API for mute operations.
 class ChannelsApi {
   ChannelsApi({required MisskeyHttp http})
-      : _http = http,
-        mute = ChannelMuteApi(http: http);
+    : _http = http,
+      mute = ChannelMuteApi(http: http);
 
   final MisskeyHttp _http;
 
@@ -42,12 +42,11 @@ class ChannelsApi {
       '/channels/create',
       body: <String, dynamic>{
         'name': name,
-        if (description != null) 'description': description,
-        if (bannerId != null) 'bannerId': bannerId,
-        if (color != null) 'color': color,
-        if (isSensitive != null) 'isSensitive': isSensitive,
-        if (allowRenoteToExternal != null)
-          'allowRenoteToExternal': allowRenoteToExternal,
+        'description': ?description,
+        'bannerId': ?bannerId,
+        'color': ?color,
+        'isSensitive': ?isSensitive,
+        'allowRenoteToExternal': ?allowRenoteToExternal,
       },
     );
     return MisskeyChannel.fromJson(res);
@@ -91,13 +90,12 @@ class ChannelsApi {
   }) async {
     final body = <String, dynamic>{
       'channelId': channelId,
-      if (name != null) 'name': name,
-      if (isArchived != null) 'isArchived': isArchived,
-      if (pinnedNoteIds != null) 'pinnedNoteIds': pinnedNoteIds,
-      if (color != null) 'color': color,
-      if (isSensitive != null) 'isSensitive': isSensitive,
-      if (allowRenoteToExternal != null)
-        'allowRenoteToExternal': allowRenoteToExternal,
+      'name': ?name,
+      'isArchived': ?isArchived,
+      'pinnedNoteIds': ?pinnedNoteIds,
+      'color': ?color,
+      'isSensitive': ?isSensitive,
+      'allowRenoteToExternal': ?allowRenoteToExternal,
     };
     putOptional(body, 'description', description);
     putOptional(body, 'bannerId', bannerId);
@@ -157,12 +155,12 @@ class ChannelsApi {
   }) async {
     final body = <String, dynamic>{
       'channelId': channelId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (allowPartial != null) 'allowPartial': allowPartial,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'allowPartial': ?allowPartial,
     };
     final res = await _http.send<List<dynamic>>(
       '/channels/timeline',
@@ -209,11 +207,11 @@ class ChannelsApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       '/channels/followed',
@@ -238,11 +236,11 @@ class ChannelsApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       '/channels/owned',
@@ -273,12 +271,12 @@ class ChannelsApi {
   }) async {
     final body = <String, dynamic>{
       'query': query,
-      if (limit != null) 'limit': limit,
-      if (type != null) 'type': type,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'type': ?type,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await _http.send<List<dynamic>>(
       '/channels/search',
@@ -298,31 +296,31 @@ class ChannelsApi {
   ///
   /// Specify the target channel with [channelId].
   Future<void> follow({required String channelId}) => _http.send<Object?>(
-        '/channels/follow',
-        body: <String, dynamic>{'channelId': channelId},
-      );
+    '/channels/follow',
+    body: <String, dynamic>{'channelId': channelId},
+  );
 
   /// Unfollows a channel.
   ///
   /// Specify the target channel with [channelId].
   Future<void> unfollow({required String channelId}) => _http.send<Object?>(
-        '/channels/unfollow',
-        body: <String, dynamic>{'channelId': channelId},
-      );
+    '/channels/unfollow',
+    body: <String, dynamic>{'channelId': channelId},
+  );
 
   /// Favorites a channel.
   ///
   /// Specify the target channel with [channelId].
   Future<void> favorite({required String channelId}) => _http.send<Object?>(
-        '/channels/favorite',
-        body: <String, dynamic>{'channelId': channelId},
-      );
+    '/channels/favorite',
+    body: <String, dynamic>{'channelId': channelId},
+  );
 
   /// Unfavorites a channel.
   ///
   /// Specify the target channel with [channelId].
   Future<void> unfavorite({required String channelId}) => _http.send<Object?>(
-        '/channels/unfavorite',
-        body: <String, dynamic>{'channelId': channelId},
-      );
+    '/channels/unfavorite',
+    body: <String, dynamic>{'channelId': channelId},
+  );
 }

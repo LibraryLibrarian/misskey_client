@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../models/ap_show_result.dart';
 
@@ -7,6 +9,7 @@ import '../models/ap_show_result.dart';
 class ApApi {
   const ApApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Resolves a user or note from an ActivityPub URI (`/api/ap/show`).

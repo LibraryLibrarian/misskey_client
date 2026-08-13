@@ -13,7 +13,4 @@ DriveCapacityInfo _$DriveCapacityInfoFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DriveCapacityInfoToJson(DriveCapacityInfo instance) =>
-    <String, dynamic>{
-      'capacity': instance.capacity,
-      'usage': instance.usage,
-    };
+    <String, dynamic>{'capacity': instance.capacity, 'usage': instance.usage};

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -8,6 +10,7 @@ import '../../models/users/misskey_user_list_membership.dart';
 class UserListsApi {
   const UserListsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches user lists.
@@ -15,9 +18,7 @@ class UserListsApi {
   /// Returns public lists for the specified [userId].
   /// If omitted, returns the authenticated user's own lists.
   Future<List<MisskeyUserList>> list({String? userId}) async {
-    final body = <String, dynamic>{
-      if (userId != null) 'userId': userId,
-    };
+    final body = <String, dynamic>{'userId': ?userId};
     final res = await http.send<List<dynamic>>(
       '/users/lists/list',
       body: body,
@@ -40,10 +41,7 @@ class UserListsApi {
     required String listId,
     bool? forPublic,
   }) async {
-    final body = <String, dynamic>{
-      'listId': listId,
-      if (forPublic != null) 'forPublic': forPublic,
-    };
+    final body = <String, dynamic>{'listId': listId, 'forPublic': ?forPublic};
     final res = await http.send<Map<String, dynamic>>(
       '/users/lists/show',
       body: body,
@@ -87,8 +85,8 @@ class UserListsApi {
   }) async {
     final body = <String, dynamic>{
       'listId': listId,
-      if (name != null) 'name': name,
-      if (isPublic != null) 'isPublic': isPublic,
+      'name': ?name,
+      'isPublic': ?isPublic,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/users/lists/update',
@@ -99,25 +97,19 @@ class UserListsApi {
 
   /// Deletes a list.
   Future<void> delete({required String listId}) => http.send<Object?>(
-        '/users/lists/delete',
-        body: <String, dynamic>{'listId': listId},
-      );
+    '/users/lists/delete',
+    body: <String, dynamic>{'listId': listId},
+  );
 
   /// Adds a user to a list.
-  Future<void> push({
-    required String listId,
-    required String userId,
-  }) =>
+  Future<void> push({required String listId, required String userId}) =>
       http.send<Object?>(
         '/users/lists/push',
         body: <String, dynamic>{'listId': listId, 'userId': userId},
       );
 
   /// Removes a user from a list.
-  Future<void> pull({
-    required String listId,
-    required String userId,
-  }) =>
+  Future<void> pull({required String listId, required String userId}) =>
       http.send<Object?>(
         '/users/lists/pull',
         body: <String, dynamic>{'listId': listId, 'userId': userId},
@@ -138,12 +130,12 @@ class UserListsApi {
   }) async {
     final body = <String, dynamic>{
       'listId': listId,
-      if (forPublic != null) 'forPublic': forPublic,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'forPublic': ?forPublic,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/users/lists/get-memberships',
@@ -164,25 +156,24 @@ class UserListsApi {
     required String listId,
     required String userId,
     bool? withReplies,
-  }) =>
-      http.send<Object?>(
-        '/users/lists/update-membership',
-        body: <String, dynamic>{
-          'listId': listId,
-          'userId': userId,
-          if (withReplies != null) 'withReplies': withReplies,
-        },
-      );
+  }) => http.send<Object?>(
+    '/users/lists/update-membership',
+    body: <String, dynamic>{
+      'listId': listId,
+      'userId': userId,
+      'withReplies': ?withReplies,
+    },
+  );
 
   /// Favorites a list.
   Future<void> favorite({required String listId}) => http.send<Object?>(
-        '/users/lists/favorite',
-        body: <String, dynamic>{'listId': listId},
-      );
+    '/users/lists/favorite',
+    body: <String, dynamic>{'listId': listId},
+  );
 
   /// Unfavorites a list.
   Future<void> unfavorite({required String listId}) => http.send<Object?>(
-        '/users/lists/unfavorite',
-        body: <String, dynamic>{'listId': listId},
-      );
+    '/users/lists/unfavorite',
+    body: <String, dynamic>{'listId': listId},
+  );
 }

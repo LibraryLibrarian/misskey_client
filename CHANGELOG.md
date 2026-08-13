@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.4] - 2026-08-13
+
+### Added
+
+- Added `MisskeyCustomEmoji.roleIdsThatCanNotBeUsedThisEmojiAsReaction` for roles denied from using a custom emoji as a reaction
+- Added migration guides from `misskey_api_core` to all six README languages
+- Added CI checks for formatting, static analysis, generated code, unit tests, and package validation on the minimum and stable Dart SDKs (issue #29)
+- Added OIDC-based pub.dev publishing and release version update/verification tooling (issue #29)
+- Added automatic GitHub Release creation from the matching CHANGELOG section after a successful pub.dev publication (issue #29)
+
+### Changed
+
+- Raised the minimum Dart SDK from 3.5 to 3.9 to match the supported range of the JSON serialization dependencies
+- Updated the HTTP, logging, JSON serialization, code generation, lint, and test dependencies
+- Replaced the Flutter-dependent `pedantic_mono` lint set with the official Dart `lints` recommended set, and removed the unused Flutter-dependent pubspec sorter to keep the package tooling pure Dart
+- Migrated conditional collection entries to Dart 3.9 null-aware elements and reformatted the package with the current Dart formatter
+
+### Fixed
+
+- Reduced the published package size by excluding test sources and local agent configuration (issue #16)
+
 ## [1.0.0-beta.3] - 2026-08-05
 
 ### Added
@@ -107,6 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `i/2fa/update-key` name parameter changed to optional
 
+[1.0.0-beta.4]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.4
 [1.0.0-beta.3]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.3
 [1.0.0-beta.2]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.2
 [1.0.0-beta.1]: https://github.com/LibraryLibrarian/misskey_client/releases/tag/v1.0.0-beta.1

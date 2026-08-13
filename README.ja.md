@@ -21,7 +21,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.3
+  misskey_client: ^1.0.0-beta.4
 ```
 
 その後、以下を実行します：
@@ -147,6 +147,37 @@ final client = MisskeyClient(
   logger: MyLogger(),
 );
 ```
+
+## misskey_api_core からの移行
+
+### API 対応表
+
+| misskey_api_core | misskey_client |
+|---|---|
+| `MisskeyHttpClient(config: ..., tokenProvider: ...)` | `MisskeyClient(config: ..., tokenProvider: ...)` |
+| `MisskeyApiConfig(baseUrl: ...)` | `MisskeyClientConfig(baseUrl: ...)` |
+| `http.send<T>('/emojis', ...)` | 対応する型付きメソッド（例：`client.meta.getEmojis()`） |
+| `MetaClient(http).getMeta()` | `client.meta.getMeta()` |
+| `MisskeyApiException` | `MisskeyApiException`、`MisskeyUnauthorizedException`、`MisskeyForbiddenException`、`MisskeyRateLimitException` などを含む sealed 階層 |
+| `RequestOptions(authRequired: false)` | 型付きメソッドが内部で処理するため、利用側の指定は不要 |
+| `Logger` / `FunctionLogger` | 同名クラス |
+| `kReleaseMode` / `kDebugMode` | 公開 API に含めない（下記参照） |
+
+### MisskeyApiException の名前衝突
+
+両パッケージに `MisskeyApiException` が存在しますが、内容も継承関係も異なります。`misskey_api_core` 版は単純なクラスである一方、`misskey_client` 版は `MisskeyClientException` を継承し、`statusCode` が必須です。移行中に両方のパッケージを import する場合は、接頭辞を付けて衝突を回避してください：
+
+```dart
+import 'package:misskey_api_core/misskey_api_core.dart' as core;
+```
+
+### ビルドモード定数
+
+`misskey_api_core` は `kReleaseMode` と `kDebugMode` を export していましたが、`misskey_client` の公開 API には含めません。これらは Misskey とは無関係な汎用ユーティリティです。Flutter アプリでは `package:flutter/foundation.dart` の定数を、pure Dart では `bool.fromEnvironment('dart.vm.product')` を使用してください。ログ出力は `MisskeyClientConfig.enableLog` で制御し、たとえば `enableLog: kDebugMode` のように渡します。
+
+### 低レベル HTTP アクセス
+
+`MisskeyHttpClient.send<T>()` に相当する低レベル API は公開しません。`misskey_client` は25の API ドメインを網羅しているため、型付きメソッドを使用してください。必要なエンドポイントが未実装の場合は、型付き API に追加できるよう GitHub issue で報告してください。
 
 ## ドキュメント
 

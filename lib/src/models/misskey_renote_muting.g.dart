@@ -17,10 +17,10 @@ MisskeyRenoteMuting _$MisskeyRenoteMutingFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyRenoteMutingToJson(
-        MisskeyRenoteMuting instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'muteeId': instance.muteeId,
-      'mutee': instance.mutee?.toJson(),
-    };
+  MisskeyRenoteMuting instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'muteeId': instance.muteeId,
+  'mutee': instance.mutee?.toJson(),
+};

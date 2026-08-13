@@ -13,7 +13,4 @@ MisskeyRoleUser _$MisskeyRoleUserFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyRoleUserToJson(MisskeyRoleUser instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'user': instance.user.toJson(),
-    };
+    <String, dynamic>{'id': instance.id, 'user': instance.user.toJson()};

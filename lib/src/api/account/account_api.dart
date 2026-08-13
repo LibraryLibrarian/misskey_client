@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -14,10 +16,11 @@ import 'webhooks_api.dart';
 /// Provides APIs for the currently authenticated user (`/api/i/*`).
 class AccountApi {
   AccountApi({required this.http})
-      : registry = RegistryApi(http: http),
-        twoFactor = TwoFactorApi(http: http),
-        webhooks = WebhooksApi(http: http);
+    : registry = RegistryApi(http: http),
+      twoFactor = TwoFactorApi(http: http),
+      webhooks = WebhooksApi(http: http);
 
+  @internal
   final MisskeyHttp http;
 
   /// Provides registry (client settings storage) APIs.
@@ -186,7 +189,10 @@ class AccountApi {
       body['requireSigninToViewContents'] = requireSigninToViewContents;
     }
     putOptional(
-        body, 'makeNotesFollowersOnlyBefore', makeNotesFollowersOnlyBefore);
+      body,
+      'makeNotesFollowersOnlyBefore',
+      makeNotesFollowersOnlyBefore,
+    );
     putOptional(body, 'makeNotesHiddenBefore', makeNotesHiddenBefore);
     putOptional(body, 'pinnedPageId', pinnedPageId);
     if (mutedWords != null) body['mutedWords'] = mutedWords;
@@ -200,10 +206,7 @@ class AccountApi {
     }
     if (alsoKnownAs != null) body['alsoKnownAs'] = alsoKnownAs;
     putOptional(body, 'followedMessage', followedMessage);
-    final res = await http.send<Map<String, dynamic>>(
-      '/i/update',
-      body: body,
-    );
+    final res = await http.send<Map<String, dynamic>>('/i/update', body: body);
     return MisskeyUser.fromJson(res);
   }
 
@@ -244,11 +247,11 @@ class AccountApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/i/favorites',
@@ -274,9 +277,9 @@ class AccountApi {
   ///
   /// Specify the server-defined achievement name with [name].
   Future<void> claimAchievement({required String name}) => http.send<Object?>(
-        '/i/claim-achievement',
-        body: <String, dynamic>{'name': name},
-      );
+    '/i/claim-achievement',
+    body: <String, dynamic>{'name': name},
+  );
 
   /// Retrieves the list of Pages created by the current user (`/api/i/pages`).
   ///
@@ -291,11 +294,11 @@ class AccountApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/i/pages',
@@ -319,11 +322,11 @@ class AccountApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/i/page-likes',
@@ -342,15 +345,14 @@ class AccountApi {
     required String currentPassword,
     required String newPassword,
     String? token,
-  }) =>
-      http.send<Object?>(
-        '/i/change-password',
-        body: <String, dynamic>{
-          'currentPassword': currentPassword,
-          'newPassword': newPassword,
-          if (token != null) 'token': token,
-        },
-      );
+  }) => http.send<Object?>(
+    '/i/change-password',
+    body: <String, dynamic>{
+      'currentPassword': currentPassword,
+      'newPassword': newPassword,
+      'token': ?token,
+    },
+  );
 
   /// Updates the email address (`/api/i/update-email`).
   ///
@@ -364,10 +366,7 @@ class AccountApi {
     Optional<String>? email,
     String? token,
   }) async {
-    final body = <String, dynamic>{
-      'password': password,
-      if (token != null) 'token': token,
-    };
+    final body = <String, dynamic>{'password': password, 'token': ?token};
     putOptional(body, 'email', email);
     final res = await http.send<Map<String, dynamic>>(
       '/i/update-email',
@@ -388,30 +387,24 @@ class AccountApi {
 
   /// Revokes an authorized token by token ID (`/api/i/revoke-token`).
   Future<void> revokeTokenById(String tokenId) => http.send<Object?>(
-        '/i/revoke-token',
-        body: <String, dynamic>{'tokenId': tokenId},
-      );
+    '/i/revoke-token',
+    body: <String, dynamic>{'tokenId': tokenId},
+  );
 
   /// Revokes an authorized token by token string (`/api/i/revoke-token`).
   Future<void> revokeTokenByToken(String token) => http.send<Object?>(
-        '/i/revoke-token',
-        body: <String, dynamic>{'token': token},
-      );
+    '/i/revoke-token',
+    body: <String, dynamic>{'token': token},
+  );
 
   /// Deletes the account (`/api/i/delete-account`).
   ///
   /// [password] is the account password and is required. If two-factor
   /// authentication is enabled, supply the current TOTP code as [token].
-  Future<void> deleteAccount({
-    required String password,
-    String? token,
-  }) =>
+  Future<void> deleteAccount({required String password, String? token}) =>
       http.send<Object?>(
         '/i/delete-account',
-        body: <String, dynamic>{
-          'password': password,
-          if (token != null) 'token': token,
-        },
+        body: <String, dynamic>{'password': password, 'token': ?token},
       );
 
   /// Retrieves the list of access tokens created by the current user
@@ -420,9 +413,7 @@ class AccountApi {
   /// [sort] controls the ordering and accepts `+createdAt`, `-createdAt`,
   /// `+lastUsedAt`, or `-lastUsedAt`.
   Future<List<Map<String, dynamic>>> apps({String? sort}) async {
-    final body = <String, dynamic>{
-      if (sort != null) 'sort': sort,
-    };
+    final body = <String, dynamic>{'sort': ?sort};
     final res = await http.send<List<dynamic>>(
       '/i/apps',
       body: body,
@@ -442,9 +433,9 @@ class AccountApi {
     String? sort,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-      if (sort != null) 'sort': sort,
+      'limit': ?limit,
+      'offset': ?offset,
+      'sort': ?sort,
     };
     final res = await http.send<List<dynamic>>(
       '/i/authorized-apps',
@@ -467,11 +458,11 @@ class AccountApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/i/signin-history',
@@ -501,111 +492,92 @@ class AccountApi {
   /// Exports notes (`/api/i/export-notes`).
   ///
   /// Queued as an asynchronous job. A notification is sent upon completion.
-  Future<void> exportNotes() => http.send<Object?>(
-        '/i/export-notes',
-        body: const <String, dynamic>{},
-      );
+  Future<void> exportNotes() =>
+      http.send<Object?>('/i/export-notes', body: const <String, dynamic>{});
 
   /// Exports the following list (`/api/i/export-following`).
   ///
   /// When [excludeMuting] is true, muted users are omitted from the export
   /// (default false). When [excludeInactive] is true, inactive users are
   /// omitted (default false).
-  Future<void> exportFollowing({
-    bool? excludeMuting,
-    bool? excludeInactive,
-  }) =>
+  Future<void> exportFollowing({bool? excludeMuting, bool? excludeInactive}) =>
       http.send<Object?>(
         '/i/export-following',
         body: <String, dynamic>{
-          if (excludeMuting != null) 'excludeMuting': excludeMuting,
-          if (excludeInactive != null) 'excludeInactive': excludeInactive,
+          'excludeMuting': ?excludeMuting,
+          'excludeInactive': ?excludeInactive,
         },
       );
 
   /// Exports the block list (`/api/i/export-blocking`).
-  Future<void> exportBlocking() => http.send<Object?>(
-        '/i/export-blocking',
-        body: const <String, dynamic>{},
-      );
+  Future<void> exportBlocking() =>
+      http.send<Object?>('/i/export-blocking', body: const <String, dynamic>{});
 
   /// Exports the mute list (`/api/i/export-mute`).
-  Future<void> exportMute() => http.send<Object?>(
-        '/i/export-mute',
-        body: const <String, dynamic>{},
-      );
+  Future<void> exportMute() =>
+      http.send<Object?>('/i/export-mute', body: const <String, dynamic>{});
 
   /// Exports favorites (`/api/i/export-favorites`).
   Future<void> exportFavorites() => http.send<Object?>(
-        '/i/export-favorites',
-        body: const <String, dynamic>{},
-      );
+    '/i/export-favorites',
+    body: const <String, dynamic>{},
+  );
 
   /// Exports antenna settings (`/api/i/export-antennas`).
-  Future<void> exportAntennas() => http.send<Object?>(
-        '/i/export-antennas',
-        body: const <String, dynamic>{},
-      );
+  Future<void> exportAntennas() =>
+      http.send<Object?>('/i/export-antennas', body: const <String, dynamic>{});
 
   /// Exports clips (`/api/i/export-clips`).
-  Future<void> exportClips() => http.send<Object?>(
-        '/i/export-clips',
-        body: const <String, dynamic>{},
-      );
+  Future<void> exportClips() =>
+      http.send<Object?>('/i/export-clips', body: const <String, dynamic>{});
 
   /// Exports user lists (`/api/i/export-user-lists`).
   Future<void> exportUserLists() => http.send<Object?>(
-        '/i/export-user-lists',
-        body: const <String, dynamic>{},
-      );
+    '/i/export-user-lists',
+    body: const <String, dynamic>{},
+  );
 
   /// Imports a following list (`/api/i/import-following`).
   ///
   /// [fileId] is the Drive file ID of the import file. When [withReplies] is
   /// true, followed accounts are followed with replies enabled.
-  Future<void> importFollowing({
-    required String fileId,
-    bool? withReplies,
-  }) =>
+  Future<void> importFollowing({required String fileId, bool? withReplies}) =>
       http.send<Object?>(
         '/i/import-following',
-        body: <String, dynamic>{
-          'fileId': fileId,
-          if (withReplies != null) 'withReplies': withReplies,
-        },
+        body: <String, dynamic>{'fileId': fileId, 'withReplies': ?withReplies},
       );
 
   /// Imports a block list (`/api/i/import-blocking`).
   ///
   /// [fileId] is the Drive file ID of the import file.
   Future<void> importBlocking({required String fileId}) => http.send<Object?>(
-        '/i/import-blocking',
-        body: <String, dynamic>{'fileId': fileId},
-      );
+    '/i/import-blocking',
+    body: <String, dynamic>{'fileId': fileId},
+  );
 
   /// Imports a mute list (`/api/i/import-muting`).
   ///
   /// [fileId] is the Drive file ID of the import file.
   Future<void> importMuting({required String fileId}) => http.send<Object?>(
-        '/i/import-muting',
-        body: <String, dynamic>{'fileId': fileId},
-      );
+    '/i/import-muting',
+    body: <String, dynamic>{'fileId': fileId},
+  );
 
   /// Imports antenna settings (`/api/i/import-antennas`).
   ///
   /// [fileId] is the Drive file ID of the import file.
   Future<void> importAntennas({required String fileId}) => http.send<Object?>(
-        '/i/import-antennas',
-        body: <String, dynamic>{'fileId': fileId},
-      );
+    '/i/import-antennas',
+    body: <String, dynamic>{'fileId': fileId},
+  );
 
   /// Imports user lists (`/api/i/import-user-lists`).
   ///
   /// [fileId] is the Drive file ID of the import file.
   Future<void> importUserLists({required String fileId}) => http.send<Object?>(
-        '/i/import-user-lists',
-        body: <String, dynamic>{'fileId': fileId},
-      );
+    '/i/import-user-lists',
+    body: <String, dynamic>{'fileId': fileId},
+  );
 
   /// Retrieves the list of gallery posts by the current user
   /// (`/api/i/gallery/posts`).
@@ -621,11 +593,11 @@ class AccountApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/i/gallery/posts',
@@ -652,11 +624,11 @@ class AccountApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/i/gallery/likes',

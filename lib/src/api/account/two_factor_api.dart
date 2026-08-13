@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../models/account/misskey_totp_registration.dart';
 
@@ -9,6 +11,7 @@ import '../../models/account/misskey_totp_registration.dart';
 class TwoFactorApi {
   const TwoFactorApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Initiates TOTP two-factor authentication registration
@@ -26,10 +29,7 @@ class TwoFactorApi {
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/i/2fa/register',
-      body: <String, dynamic>{
-        'password': password,
-        if (token != null) 'token': token,
-      },
+      body: <String, dynamic>{'password': password, 'token': ?token},
     );
     return MisskeyTotpRegistration.fromJson(res);
   }
@@ -54,16 +54,10 @@ class TwoFactorApi {
   ///
   /// [password] is the current account password. [token] is the TOTP token
   /// and is required when 2FA is enabled.
-  Future<void> unregister({
-    required String password,
-    String? token,
-  }) =>
+  Future<void> unregister({required String password, String? token}) =>
       http.send<Object?>(
         '/i/2fa/unregister',
-        body: <String, dynamic>{
-          'password': password,
-          if (token != null) 'token': token,
-        },
+        body: <String, dynamic>{'password': password, 'token': ?token},
       );
 
   /// Initiates security key registration (`/api/i/2fa/register-key`).
@@ -84,10 +78,7 @@ class TwoFactorApi {
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/i/2fa/register-key',
-      body: <String, dynamic>{
-        'password': password,
-        if (token != null) 'token': token,
-      },
+      body: <String, dynamic>{'password': password, 'token': ?token},
     );
     return res;
   }
@@ -114,7 +105,7 @@ class TwoFactorApi {
         'password': password,
         'name': name,
         'credential': credential,
-        if (token != null) 'token': token,
+        'token': ?token,
       },
     );
     return res;
@@ -129,30 +120,23 @@ class TwoFactorApi {
     required String password,
     required String credentialId,
     String? token,
-  }) =>
-      http.send<Object?>(
-        '/i/2fa/remove-key',
-        body: <String, dynamic>{
-          'password': password,
-          'credentialId': credentialId,
-          if (token != null) 'token': token,
-        },
-      );
+  }) => http.send<Object?>(
+    '/i/2fa/remove-key',
+    body: <String, dynamic>{
+      'password': password,
+      'credentialId': credentialId,
+      'token': ?token,
+    },
+  );
 
   /// Updates the name of a security key (`/api/i/2fa/update-key`).
   ///
   /// [credentialId] identifies the target key. [name] is the new key name
   /// (1-30 characters).
-  Future<void> updateKey({
-    required String credentialId,
-    String? name,
-  }) =>
+  Future<void> updateKey({required String credentialId, String? name}) =>
       http.send<Object?>(
         '/i/2fa/update-key',
-        body: <String, dynamic>{
-          'credentialId': credentialId,
-          if (name != null) 'name': name,
-        },
+        body: <String, dynamic>{'credentialId': credentialId, 'name': ?name},
       );
 
   /// Toggles passwordless login (`/api/i/2fa/password-less`).
@@ -160,7 +144,7 @@ class TwoFactorApi {
   /// Requires a security key to be registered. Pass `true` for [value] to
   /// enable passwordless login, or `false` to disable it.
   Future<void> passwordLess({required bool value}) => http.send<Object?>(
-        '/i/2fa/password-less',
-        body: <String, dynamic>{'value': value},
-      );
+    '/i/2fa/password-less',
+    body: <String, dynamic>{'value': value},
+  );
 }

@@ -11,12 +11,17 @@ MisskeyCustomEmoji _$MisskeyCustomEmojiFromJson(Map<String, dynamic> json) =>
       shortcode: json['name'] as String,
       url: json['url'] as String,
       category: json['category'] as String?,
-      aliases:
-          (json['aliases'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      aliases: (json['aliases'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       localOnly: json['localOnly'] as bool?,
       isSensitive: json['isSensitive'] as bool?,
       roleIdsThatCanBeUsedThisEmojiAsReaction:
           (json['roleIdsThatCanBeUsedThisEmojiAsReaction'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
+      roleIdsThatCanNotBeUsedThisEmojiAsReaction:
+          (json['roleIdsThatCanNotBeUsedThisEmojiAsReaction'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList(),
     );
@@ -31,4 +36,6 @@ Map<String, dynamic> _$MisskeyCustomEmojiToJson(MisskeyCustomEmoji instance) =>
       'isSensitive': instance.isSensitive,
       'roleIdsThatCanBeUsedThisEmojiAsReaction':
           instance.roleIdsThatCanBeUsedThisEmojiAsReaction,
+      'roleIdsThatCanNotBeUsedThisEmojiAsReaction':
+          instance.roleIdsThatCanNotBeUsedThisEmojiAsReaction,
     };

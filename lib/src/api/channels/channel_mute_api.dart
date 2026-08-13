@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/misskey_channel.dart';
@@ -8,6 +10,7 @@ import '../../models/misskey_channel.dart';
 class ChannelMuteApi {
   const ChannelMuteApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Mutes a channel.
@@ -15,15 +18,12 @@ class ChannelMuteApi {
   /// Specify the target channel with [channelId].
   /// Set [expiresAt] to a Unix epoch timestamp (ms) for a time-limited mute.
   /// If `null`, the mute is indefinite.
-  Future<void> create({
-    required String channelId,
-    int? expiresAt,
-  }) =>
+  Future<void> create({required String channelId, int? expiresAt}) =>
       http.send<Object?>(
         '/channels/mute/create',
         body: <String, dynamic>{
           'channelId': channelId,
-          if (expiresAt != null) 'expiresAt': expiresAt,
+          'expiresAt': ?expiresAt,
         },
       );
 
@@ -31,9 +31,9 @@ class ChannelMuteApi {
   ///
   /// Specify the target channel with [channelId].
   Future<void> delete({required String channelId}) => http.send<Object?>(
-        '/channels/mute/delete',
-        body: <String, dynamic>{'channelId': channelId},
-      );
+    '/channels/mute/delete',
+    body: <String, dynamic>{'channelId': channelId},
+  );
 
   /// Retrieves the list of muted channels.
   ///

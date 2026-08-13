@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/chat/misskey_chat_message.dart';
@@ -10,6 +12,7 @@ import '../../models/chat/misskey_chat_message.dart';
 class ChatMessagesApi {
   const ChatMessagesApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Sends a message to a user (`/api/chat/messages/create-to-user`).
@@ -30,8 +33,8 @@ class ChatMessagesApi {
       '/chat/messages/create-to-user',
       body: <String, dynamic>{
         'toUserId': toUserId,
-        if (text != null) 'text': text,
-        if (fileId != null) 'fileId': fileId,
+        'text': ?text,
+        'fileId': ?fileId,
       },
     );
     return MisskeyChatMessage.fromJson(res);
@@ -54,8 +57,8 @@ class ChatMessagesApi {
       '/chat/messages/create-to-room',
       body: <String, dynamic>{
         'toRoomId': toRoomId,
-        if (text != null) 'text': text,
-        if (fileId != null) 'fileId': fileId,
+        'text': ?text,
+        'fileId': ?fileId,
       },
     );
     return MisskeyChatMessage.fromJson(res);
@@ -66,9 +69,9 @@ class ChatMessagesApi {
   /// [messageId] is the ID of the message to delete.
   /// Throws `NO_SUCH_MESSAGE` if the message does not exist.
   Future<void> delete({required String messageId}) => http.send<Object?>(
-        '/chat/messages/delete',
-        body: <String, dynamic>{'messageId': messageId},
-      );
+    '/chat/messages/delete',
+    body: <String, dynamic>{'messageId': messageId},
+  );
 
   /// Retrieves the details of a message (`/api/chat/messages/show`).
   ///
@@ -87,16 +90,10 @@ class ChatMessagesApi {
   ///
   /// [messageId] is the target message ID and [reaction] is the reaction
   /// string to add. Throws `NO_SUCH_MESSAGE` if the message does not exist.
-  Future<void> react({
-    required String messageId,
-    required String reaction,
-  }) =>
+  Future<void> react({required String messageId, required String reaction}) =>
       http.send<Object?>(
         '/chat/messages/react',
-        body: <String, dynamic>{
-          'messageId': messageId,
-          'reaction': reaction,
-        },
+        body: <String, dynamic>{'messageId': messageId, 'reaction': reaction},
       );
 
   /// Removes a reaction from a message (`/api/chat/messages/unreact`).
@@ -104,16 +101,10 @@ class ChatMessagesApi {
   /// [messageId] is the target message ID and [reaction] is the reaction
   /// string to remove. Throws `NO_SUCH_MESSAGE` if the message does not
   /// exist.
-  Future<void> unreact({
-    required String messageId,
-    required String reaction,
-  }) =>
+  Future<void> unreact({required String messageId, required String reaction}) =>
       http.send<Object?>(
         '/chat/messages/unreact',
-        body: <String, dynamic>{
-          'messageId': messageId,
-          'reaction': reaction,
-        },
+        body: <String, dynamic>{'messageId': messageId, 'reaction': reaction},
       );
 
   /// Searches chat messages (`/api/chat/messages/search`).
@@ -129,9 +120,9 @@ class ChatMessagesApi {
   }) async {
     final body = <String, dynamic>{
       'query': query,
-      if (limit != null) 'limit': limit,
-      if (userId != null) 'userId': userId,
-      if (roomId != null) 'roomId': roomId,
+      'limit': ?limit,
+      'userId': ?userId,
+      'roomId': ?roomId,
     };
     final res = await http.send<List<dynamic>>(
       '/chat/messages/search',
@@ -162,11 +153,11 @@ class ChatMessagesApi {
   }) async {
     final body = <String, dynamic>{
       'userId': userId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/chat/messages/user-timeline',
@@ -197,11 +188,11 @@ class ChatMessagesApi {
   }) async {
     final body = <String, dynamic>{
       'roomId': roomId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/chat/messages/room-timeline',

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -10,6 +12,7 @@ import '../models/misskey_announcement.dart';
 class AnnouncementsApi {
   const AnnouncementsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves the list of announcements (`/api/announcements`).
@@ -28,12 +31,12 @@ class AnnouncementsApi {
     bool? isActive,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (isActive != null) 'isActive': isActive,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'isActive': ?isActive,
     };
     final res = await http.send<List<dynamic>>(
       '/announcements',
@@ -56,9 +59,7 @@ class AnnouncementsApi {
   ///
   /// Common errors:
   /// - `NO_SUCH_ANNOUNCEMENT`: The specified announcement does not exist
-  Future<MisskeyAnnouncement> show({
-    required String announcementId,
-  }) async {
+  Future<MisskeyAnnouncement> show({required String announcementId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/announcements/show',
       body: <String, dynamic>{'announcementId': announcementId},

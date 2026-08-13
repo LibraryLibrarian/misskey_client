@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -11,6 +13,7 @@ import '../../models/admin/misskey_admin_avatar_decoration.dart';
 class AdminAvatarDecorationsApi {
   const AdminAvatarDecorationsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Registers an avatar decoration
@@ -31,10 +34,9 @@ class AdminAvatarDecorationsApi {
         'name': name,
         'description': description,
         'url': url,
-        if (roleIdsThatCanBeUsedThisDecoration != null)
-          'roleIdsThatCanBeUsedThisDecoration':
-              roleIdsThatCanBeUsedThisDecoration,
-        if (category != null) 'category': category,
+        'roleIdsThatCanBeUsedThisDecoration':
+            ?roleIdsThatCanBeUsedThisDecoration,
+        'category': ?category,
       },
     );
     return MisskeyAdminAvatarDecoration.fromJson(res);
@@ -54,10 +56,10 @@ class AdminAvatarDecorationsApi {
     final res = await http.send<List<dynamic>>(
       '/admin/avatar-decorations/list',
       body: <String, dynamic>{
-        if (limit != null) 'limit': limit,
-        if (sinceId != null) 'sinceId': sinceId,
-        if (untilId != null) 'untilId': untilId,
-        if (userId != null) 'userId': userId,
+        'limit': ?limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        'userId': ?userId,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -88,18 +90,13 @@ class AdminAvatarDecorationsApi {
   }) {
     final body = <String, dynamic>{
       'id': id,
-      if (name != null) 'name': name,
-      if (description != null) 'description': description,
-      if (url != null) 'url': url,
-      if (roleIdsThatCanBeUsedThisDecoration != null)
-        'roleIdsThatCanBeUsedThisDecoration':
-            roleIdsThatCanBeUsedThisDecoration,
+      'name': ?name,
+      'description': ?description,
+      'url': ?url,
+      'roleIdsThatCanBeUsedThisDecoration': ?roleIdsThatCanBeUsedThisDecoration,
     };
     putOptional(body, 'category', category);
-    return http.send<Object?>(
-      '/admin/avatar-decorations/update',
-      body: body,
-    );
+    return http.send<Object?>('/admin/avatar-decorations/update', body: body);
   }
 
   /// Deletes an avatar decoration
@@ -108,7 +105,7 @@ class AdminAvatarDecorationsApi {
   /// Common errors:
   /// - `NO_SUCH_AVATAR_DECORATION`: The specified decoration does not exist
   Future<void> delete({required String id}) => http.send<Object?>(
-        '/admin/avatar-decorations/delete',
-        body: <String, dynamic>{'id': id},
-      );
+    '/admin/avatar-decorations/delete',
+    body: <String, dynamic>{'id': id},
+  );
 }

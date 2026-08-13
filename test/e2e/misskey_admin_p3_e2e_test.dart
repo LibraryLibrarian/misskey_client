@@ -300,8 +300,9 @@ void main() {
 
       await admin.admin.createPromo(
         noteId: note.id,
-        expiresAt:
-            DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch,
+        expiresAt: DateTime.now()
+            .add(const Duration(days: 1))
+            .millisecondsSinceEpoch,
       );
 
       // 同じノートの二重登録はサーバーが拒否する

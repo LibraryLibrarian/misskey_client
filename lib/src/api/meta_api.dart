@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -20,6 +22,7 @@ class MetaApi {
   MetaApi({required this.http});
 
   /// HTTP client.
+  @internal
   final MisskeyHttp http;
 
   Meta? _cached;
@@ -37,13 +40,8 @@ class MetaApi {
     if (!refresh && detail != false && _cached != null) return _cached!;
     final res = await http.send<Map<String, dynamic>>(
       '/meta',
-      body: <String, dynamic>{
-        if (detail != null) 'detail': detail,
-      },
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      body: <String, dynamic>{'detail': ?detail},
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     final meta = Meta.fromJson(res);
     if (detail != false) _cached = meta;
@@ -59,10 +57,7 @@ class MetaApi {
     final res = await http.send<Map<String, dynamic>>(
       '/server-info',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return ServerInfo.fromJson(res);
   }
@@ -75,10 +70,7 @@ class MetaApi {
     final res = await http.send<Map<String, dynamic>>(
       '/stats',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return InstanceStats.fromJson(res);
   }
@@ -91,10 +83,7 @@ class MetaApi {
     final res = await http.send<Map<String, dynamic>>(
       '/ping',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return (res['pong'] as num).toInt();
   }
@@ -104,10 +93,7 @@ class MetaApi {
     final res = await http.send<List<dynamic>>(
       '/endpoints',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res.cast<String>();
   }
@@ -120,10 +106,7 @@ class MetaApi {
     final res = await http.send<Map<String, dynamic>?>(
       '/endpoint',
       body: <String, dynamic>{'endpoint': endpoint},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     if (res == null) return null;
     return EndpointInfo.fromJson(res);
@@ -136,10 +119,7 @@ class MetaApi {
     final res = await http.send<Map<String, dynamic>>(
       '/emojis',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     final list = res['emojis'] as List<dynamic>;
     return list
@@ -154,10 +134,7 @@ class MetaApi {
     final res = await http.send<Map<String, dynamic>>(
       '/emoji',
       body: <String, dynamic>{'name': name},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return EmojiDetailed.fromJson(res);
   }
@@ -169,10 +146,7 @@ class MetaApi {
     final res = await http.send<List<dynamic>>(
       '/pinned-users',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -187,10 +161,7 @@ class MetaApi {
     final res = await http.send<Map<String, dynamic>>(
       '/get-online-users-count',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return (res['count'] as num).toInt();
   }
@@ -203,10 +174,7 @@ class MetaApi {
     final res = await http.send<List<dynamic>>(
       '/get-avatar-decorations',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -222,10 +190,7 @@ class MetaApi {
     final res = await http.send<List<dynamic>>(
       '/retention',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()

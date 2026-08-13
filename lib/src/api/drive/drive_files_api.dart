@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'package:dio/dio.dart' show FormData, MultipartFile;
 
 import '../../client/misskey_http.dart';
@@ -17,6 +19,7 @@ class DriveFilesApi {
   const DriveFilesApi({required this.http});
 
   /// The HTTP client used for requests.
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves a list of Drive files (`/api/drive/files`).
@@ -38,14 +41,14 @@ class DriveFilesApi {
     String? sort,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (folderId != null) 'folderId': folderId,
-      if (type != null) 'type': type,
-      if (sort != null) 'sort': sort,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'folderId': ?folderId,
+      'type': ?type,
+      'sort': ?sort,
     };
     final res = await http.send<List<dynamic>>(
       '/drive/files',
@@ -143,12 +146,9 @@ class DriveFilesApi {
   }) async {
     final body = <String, dynamic>{
       'fileId': fileId,
-      if (name != null) 'name': name,
-      if (moveToRoot)
-        'folderId': null
-      else if (folderId != null)
-        'folderId': folderId,
-      if (isSensitive != null) 'isSensitive': isSensitive,
+      'name': ?name,
+      if (moveToRoot) 'folderId': null else 'folderId': ?folderId,
+      'isSensitive': ?isSensitive,
     };
     putOptional(body, 'comment', comment);
     final res = await http.send<Map<String, dynamic>>(
@@ -162,9 +162,9 @@ class DriveFilesApi {
   ///
   /// [fileId] is the ID of the file to delete.
   Future<void> delete({required String fileId}) => http.send<Object?>(
-        '/drive/files/delete',
-        body: <String, dynamic>{'fileId': fileId},
-      );
+    '/drive/files/delete',
+    body: <String, dynamic>{'fileId': fileId},
+  );
 
   /// Searches the Drive by file name (`/api/drive/files/find`).
   ///
@@ -174,10 +174,7 @@ class DriveFilesApi {
     required String name,
     String? folderId,
   }) async {
-    final body = <String, dynamic>{
-      'name': name,
-      if (folderId != null) 'folderId': folderId,
-    };
+    final body = <String, dynamic>{'name': name, 'folderId': ?folderId};
     final res = await http.send<List<dynamic>>(
       '/drive/files/find',
       body: body,
@@ -194,10 +191,10 @@ class DriveFilesApi {
   ///
   /// [md5] is the MD5 hash to check.
   Future<bool> checkExistence({required String md5}) => http.send<bool>(
-        '/drive/files/check-existence',
-        body: <String, dynamic>{'md5': md5},
-        options: const RequestOptions(idempotent: true),
-      );
+    '/drive/files/check-existence',
+    body: <String, dynamic>{'md5': md5},
+    options: const RequestOptions(idempotent: true),
+  );
 
   /// Uploads a file to Drive from a URL
   /// (`/api/drive/files/upload-from-url`).
@@ -219,18 +216,17 @@ class DriveFilesApi {
     String? comment,
     String? marker,
     bool? force,
-  }) =>
-      http.send<Object?>(
-        '/drive/files/upload-from-url',
-        body: <String, dynamic>{
-          'url': url,
-          if (folderId != null) 'folderId': folderId,
-          if (isSensitive != null) 'isSensitive': isSensitive,
-          if (comment != null) 'comment': comment,
-          if (marker != null) 'marker': marker,
-          if (force != null) 'force': force,
-        },
-      );
+  }) => http.send<Object?>(
+    '/drive/files/upload-from-url',
+    body: <String, dynamic>{
+      'url': url,
+      'folderId': ?folderId,
+      'isSensitive': ?isSensitive,
+      'comment': ?comment,
+      'marker': ?marker,
+      'force': ?force,
+    },
+  );
 
   /// Searches Drive files by MD5 hash
   /// (`/api/drive/files/find-by-hash`).
@@ -257,16 +253,10 @@ class DriveFilesApi {
   /// [fileIds] is the list of file IDs to move (1-100 entries, no duplicates).
   /// [folderId] is the destination folder ID; pass `null` to move to the
   /// root.
-  Future<void> moveBulk({
-    required List<String> fileIds,
-    String? folderId,
-  }) =>
+  Future<void> moveBulk({required List<String> fileIds, String? folderId}) =>
       http.send<Object?>(
         '/drive/files/move-bulk',
-        body: <String, dynamic>{
-          'fileIds': fileIds,
-          'folderId': folderId,
-        },
+        body: <String, dynamic>{'fileIds': fileIds, 'folderId': folderId},
       );
 
   /// Retrieves chat messages that have the specified file attached
@@ -286,11 +276,11 @@ class DriveFilesApi {
   }) async {
     final body = <String, dynamic>{
       'fileId': fileId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/drive/files/attached-chat-messages',
@@ -319,11 +309,11 @@ class DriveFilesApi {
   }) async {
     final body = <String, dynamic>{
       'fileId': fileId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/drive/files/attached-notes',

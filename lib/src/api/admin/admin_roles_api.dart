@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -11,6 +13,7 @@ import '../../models/misskey_role_user.dart';
 class AdminRolesApi {
   const AdminRolesApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches all roles (`/api/admin/roles/list`).
@@ -81,10 +84,9 @@ class AdminRolesApi {
         'isPublic': isPublic,
         'isModerator': isModerator,
         'isAdministrator': isAdministrator,
-        if (isExplorable != null) 'isExplorable': isExplorable,
+        'isExplorable': ?isExplorable,
         'asBadge': asBadge,
-        if (preserveAssignmentOnMoveAccount != null)
-          'preserveAssignmentOnMoveAccount': preserveAssignmentOnMoveAccount,
+        'preserveAssignmentOnMoveAccount': ?preserveAssignmentOnMoveAccount,
         'canEditMembersByModerator': canEditMembersByModerator,
         'displayOrder': displayOrder,
         'policies': policies,
@@ -122,21 +124,19 @@ class AdminRolesApi {
   }) async {
     final body = <String, dynamic>{
       'roleId': roleId,
-      if (name != null) 'name': name,
-      if (description != null) 'description': description,
-      if (target != null) 'target': target,
-      if (condFormula != null) 'condFormula': condFormula,
-      if (isPublic != null) 'isPublic': isPublic,
-      if (isModerator != null) 'isModerator': isModerator,
-      if (isAdministrator != null) 'isAdministrator': isAdministrator,
-      if (isExplorable != null) 'isExplorable': isExplorable,
-      if (asBadge != null) 'asBadge': asBadge,
-      if (preserveAssignmentOnMoveAccount != null)
-        'preserveAssignmentOnMoveAccount': preserveAssignmentOnMoveAccount,
-      if (canEditMembersByModerator != null)
-        'canEditMembersByModerator': canEditMembersByModerator,
-      if (displayOrder != null) 'displayOrder': displayOrder,
-      if (policies != null) 'policies': policies,
+      'name': ?name,
+      'description': ?description,
+      'target': ?target,
+      'condFormula': ?condFormula,
+      'isPublic': ?isPublic,
+      'isModerator': ?isModerator,
+      'isAdministrator': ?isAdministrator,
+      'isExplorable': ?isExplorable,
+      'asBadge': ?asBadge,
+      'preserveAssignmentOnMoveAccount': ?preserveAssignmentOnMoveAccount,
+      'canEditMembersByModerator': ?canEditMembersByModerator,
+      'displayOrder': ?displayOrder,
+      'policies': ?policies,
     };
     putOptional(body, 'color', color);
     putOptional(body, 'iconUrl', iconUrl);
@@ -150,9 +150,9 @@ class AdminRolesApi {
   /// Common errors:
   /// - `NO_SUCH_ROLE`: The specified role does not exist
   Future<void> delete({required String roleId}) => http.send<Object?>(
-        '/admin/roles/delete',
-        body: <String, dynamic>{'roleId': roleId},
-      );
+    '/admin/roles/delete',
+    body: <String, dynamic>{'roleId': roleId},
+  );
 
   /// Assigns a role to a user (`/api/admin/roles/assign`).
   ///
@@ -168,15 +168,14 @@ class AdminRolesApi {
     required String roleId,
     required String userId,
     int? expiresAt,
-  }) =>
-      http.send<Object?>(
-        '/admin/roles/assign',
-        body: <String, dynamic>{
-          'roleId': roleId,
-          'userId': userId,
-          if (expiresAt != null) 'expiresAt': expiresAt,
-        },
-      );
+  }) => http.send<Object?>(
+    '/admin/roles/assign',
+    body: <String, dynamic>{
+      'roleId': roleId,
+      'userId': userId,
+      'expiresAt': ?expiresAt,
+    },
+  );
 
   /// Removes a role from a user (`/api/admin/roles/unassign`).
   ///
@@ -187,10 +186,7 @@ class AdminRolesApi {
   /// - `NO_SUCH_ROLE`: The specified role does not exist
   /// - `NO_SUCH_USER`: The specified user does not exist
   /// - `NOT_ASSIGNED`: The role is not assigned to the user
-  Future<void> unassign({
-    required String roleId,
-    required String userId,
-  }) =>
+  Future<void> unassign({required String roleId, required String userId}) =>
       http.send<Object?>(
         '/admin/roles/unassign',
         body: <String, dynamic>{'roleId': roleId, 'userId': userId},
@@ -203,11 +199,10 @@ class AdminRolesApi {
   /// their default values.
   Future<void> updateDefaultPolicies({
     required Map<String, dynamic> policies,
-  }) =>
-      http.send<Object?>(
-        '/admin/roles/update-default-policies',
-        body: <String, dynamic>{'policies': policies},
-      );
+  }) => http.send<Object?>(
+    '/admin/roles/update-default-policies',
+    body: <String, dynamic>{'policies': policies},
+  );
 
   /// Fetches the users assigned to a role (`/api/admin/roles/users`).
   ///
@@ -230,11 +225,11 @@ class AdminRolesApi {
       '/admin/roles/users',
       body: <String, dynamic>{
         'roleId': roleId,
-        if (sinceId != null) 'sinceId': sinceId,
-        if (untilId != null) 'untilId': untilId,
-        if (sinceDate != null) 'sinceDate': sinceDate,
-        if (untilDate != null) 'untilDate': untilDate,
-        if (limit != null) 'limit': limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
+        'limit': ?limit,
       },
       options: const RequestOptions(idempotent: true),
     );

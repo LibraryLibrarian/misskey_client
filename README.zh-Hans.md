@@ -22,7 +22,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.3
+  misskey_client: ^1.0.0-beta.4
 ```
 
 然后运行：
@@ -148,6 +148,37 @@ final client = MisskeyClient(
   logger: MyLogger(),
 );
 ```
+
+## 从 misskey_api_core 迁移
+
+### API 对应表
+
+| misskey_api_core | misskey_client |
+|---|---|
+| `MisskeyHttpClient(config: ..., tokenProvider: ...)` | `MisskeyClient(config: ..., tokenProvider: ...)` |
+| `MisskeyApiConfig(baseUrl: ...)` | `MisskeyClientConfig(baseUrl: ...)` |
+| `http.send<T>('/emojis', ...)` | 对应的强类型方法，例如 `client.meta.getEmojis()` |
+| `MetaClient(http).getMeta()` | `client.meta.getMeta()` |
+| `MisskeyApiException` | 包含 `MisskeyApiException`、`MisskeyUnauthorizedException`、`MisskeyForbiddenException`、`MisskeyRateLimitException` 等的密封层次结构 |
+| `RequestOptions(authRequired: false)` | 由强类型方法在内部处理，调用方无需指定 |
+| `Logger` / `FunctionLogger` | 同名类 |
+| `kReleaseMode` / `kDebugMode` | 不属于公共 API；详见下文 |
+
+### MisskeyApiException 名称冲突
+
+两个包都定义了 `MisskeyApiException`，但类的内容和继承关系不同。`misskey_api_core` 版本是简单类，而 `misskey_client` 版本继承 `MisskeyClientException`，并且必须提供 `statusCode`。迁移期间同时导入两个包时，请使用前缀避免冲突：
+
+```dart
+import 'package:misskey_api_core/misskey_api_core.dart' as core;
+```
+
+### 构建模式常量
+
+`misskey_api_core` 导出了 `kReleaseMode` 和 `kDebugMode`，但 `misskey_client` 不会将它们纳入公共 API。它们是与 Misskey 无关的通用工具。Flutter 应用应使用 `package:flutter/foundation.dart` 中的常量；纯 Dart 应用可使用 `bool.fromEnvironment('dart.vm.product')`。请通过 `MisskeyClientConfig.enableLog` 控制客户端日志，例如传入 `enableLog: kDebugMode`。
+
+### 低级 HTTP 访问
+
+与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 25 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub issue 报告，以便将其加入强类型 API。
 
 ## 文档
 

@@ -7,10 +7,7 @@ part 'misskey_role_user.g.dart';
 /// A user assigned to a role (element of `/api/roles/users` response).
 @JsonSerializable()
 class MisskeyRoleUser {
-  const MisskeyRoleUser({
-    required this.id,
-    required this.user,
-  });
+  const MisskeyRoleUser({required this.id, required this.user});
 
   factory MisskeyRoleUser.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRoleUserFromJson(json);

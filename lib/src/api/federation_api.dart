@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -13,6 +15,7 @@ import '../models/misskey_user.dart';
 class FederationApi {
   const FederationApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves a list of federated instances (`/api/federation/instances`).
@@ -43,25 +46,22 @@ class FederationApi {
     String? sort,
   }) async {
     final body = <String, dynamic>{
-      if (host != null) 'host': host,
-      if (blocked != null) 'blocked': blocked,
-      if (notResponding != null) 'notResponding': notResponding,
-      if (suspended != null) 'suspended': suspended,
-      if (silenced != null) 'silenced': silenced,
-      if (federating != null) 'federating': federating,
-      if (subscribing != null) 'subscribing': subscribing,
-      if (publishing != null) 'publishing': publishing,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-      if (sort != null) 'sort': sort,
+      'host': ?host,
+      'blocked': ?blocked,
+      'notResponding': ?notResponding,
+      'suspended': ?suspended,
+      'silenced': ?silenced,
+      'federating': ?federating,
+      'subscribing': ?subscribing,
+      'publishing': ?publishing,
+      'limit': ?limit,
+      'offset': ?offset,
+      'sort': ?sort,
     };
     final res = await http.send<List<dynamic>>(
       '/federation/instances',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -80,10 +80,7 @@ class FederationApi {
     final res = await http.send<Map<String, dynamic>?>(
       '/federation/show-instance',
       body: <String, dynamic>{'host': host},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     if (res == null) return null;
     return MisskeyFederationInstance.fromJson(res);
@@ -106,19 +103,16 @@ class FederationApi {
   }) async {
     final body = <String, dynamic>{
       'host': host,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/federation/followers',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -143,19 +137,16 @@ class FederationApi {
   }) async {
     final body = <String, dynamic>{
       'host': host,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/federation/following',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -180,19 +171,16 @@ class FederationApi {
   }) async {
     final body = <String, dynamic>{
       'host': host,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/federation/users',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -206,16 +194,11 @@ class FederationApi {
   /// No authentication required. Use [limit] to cap the number of top
   /// instances returned (1-100, default: 10).
   Future<MisskeyFederationStats> stats({int? limit}) async {
-    final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-    };
+    final body = <String, dynamic>{'limit': ?limit};
     final res = await http.send<Map<String, dynamic>>(
       '/federation/stats',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return MisskeyFederationStats.fromJson(res);
   }
@@ -226,7 +209,7 @@ class FederationApi {
   /// Re-fetches the ActivityPub information for the specified remote user.
   /// Authentication required. Pass [userId] as the ID of the user to update.
   Future<void> updateRemoteUser({required String userId}) => http.send<Object?>(
-        '/federation/update-remote-user',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/federation/update-remote-user',
+    body: <String, dynamic>{'userId': userId},
+  );
 }

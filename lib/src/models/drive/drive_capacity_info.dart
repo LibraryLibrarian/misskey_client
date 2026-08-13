@@ -5,10 +5,7 @@ part 'drive_capacity_info.g.dart';
 /// Drive storage capacity information for a user.
 @JsonSerializable()
 class DriveCapacityInfo {
-  const DriveCapacityInfo({
-    required this.capacity,
-    required this.usage,
-  });
+  const DriveCapacityInfo({required this.capacity, required this.usage});
 
   factory DriveCapacityInfo.fromJson(Map<String, dynamic> json) =>
       _$DriveCapacityInfoFromJson(json);

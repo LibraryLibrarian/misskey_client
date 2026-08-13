@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -15,6 +17,7 @@ import '../models/misskey_note_translation.dart';
 class NotesApi {
   const NotesApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches public notes (`/api/notes`).
@@ -43,24 +46,21 @@ class NotesApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (local != null) 'local': local,
-      if (reply != null) 'reply': reply,
-      if (renote != null) 'renote': renote,
-      if (withFiles != null) 'withFiles': withFiles,
-      if (poll != null) 'poll': poll,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'local': ?local,
+      'reply': ?reply,
+      'renote': ?renote,
+      'withFiles': ?withFiles,
+      'poll': ?poll,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/notes',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -89,22 +89,21 @@ class NotesApi {
     bool? includeMyRenotes,
     bool? includeRenotedMyNotes,
     bool? includeLocalRenotes,
-  }) =>
-      _fetchTimeline(
-        path: '/notes/timeline',
-        limit: limit,
-        sinceId: sinceId,
-        untilId: untilId,
-        sinceDate: sinceDate,
-        untilDate: untilDate,
-        allowPartial: allowPartial,
-        withRenotes: withRenotes,
-        withFiles: withFiles,
-        includeMyRenotes: includeMyRenotes,
-        includeRenotedMyNotes: includeRenotedMyNotes,
-        includeLocalRenotes: includeLocalRenotes,
-        authMode: AuthMode.required,
-      );
+  }) => _fetchTimeline(
+    path: '/notes/timeline',
+    limit: limit,
+    sinceId: sinceId,
+    untilId: untilId,
+    sinceDate: sinceDate,
+    untilDate: untilDate,
+    allowPartial: allowPartial,
+    withRenotes: withRenotes,
+    withFiles: withFiles,
+    includeMyRenotes: includeMyRenotes,
+    includeRenotedMyNotes: includeRenotedMyNotes,
+    includeLocalRenotes: includeLocalRenotes,
+    authMode: AuthMode.required,
+  );
 
   /// Fetches the global timeline (`/api/notes/global-timeline`).
   ///
@@ -118,18 +117,17 @@ class NotesApi {
     int? untilDate,
     bool? withRenotes,
     bool? withFiles,
-  }) =>
-      _fetchTimeline(
-        path: '/notes/global-timeline',
-        limit: limit,
-        sinceId: sinceId,
-        untilId: untilId,
-        sinceDate: sinceDate,
-        untilDate: untilDate,
-        withRenotes: withRenotes,
-        withFiles: withFiles,
-        authMode: AuthMode.optional,
-      );
+  }) => _fetchTimeline(
+    path: '/notes/global-timeline',
+    limit: limit,
+    sinceId: sinceId,
+    untilId: untilId,
+    sinceDate: sinceDate,
+    untilDate: untilDate,
+    withRenotes: withRenotes,
+    withFiles: withFiles,
+    authMode: AuthMode.optional,
+  );
 
   /// Fetches the hybrid timeline (`/api/notes/hybrid-timeline`).
   ///
@@ -150,23 +148,22 @@ class NotesApi {
     bool? includeMyRenotes,
     bool? includeRenotedMyNotes,
     bool? includeLocalRenotes,
-  }) =>
-      _fetchTimeline(
-        path: '/notes/hybrid-timeline',
-        limit: limit,
-        sinceId: sinceId,
-        untilId: untilId,
-        sinceDate: sinceDate,
-        untilDate: untilDate,
-        allowPartial: allowPartial,
-        withRenotes: withRenotes,
-        withReplies: withReplies,
-        withFiles: withFiles,
-        includeMyRenotes: includeMyRenotes,
-        includeRenotedMyNotes: includeRenotedMyNotes,
-        includeLocalRenotes: includeLocalRenotes,
-        authMode: AuthMode.required,
-      );
+  }) => _fetchTimeline(
+    path: '/notes/hybrid-timeline',
+    limit: limit,
+    sinceId: sinceId,
+    untilId: untilId,
+    sinceDate: sinceDate,
+    untilDate: untilDate,
+    allowPartial: allowPartial,
+    withRenotes: withRenotes,
+    withReplies: withReplies,
+    withFiles: withFiles,
+    includeMyRenotes: includeMyRenotes,
+    includeRenotedMyNotes: includeRenotedMyNotes,
+    includeLocalRenotes: includeLocalRenotes,
+    authMode: AuthMode.required,
+  );
 
   /// Fetches the local timeline (`/api/notes/local-timeline`).
   ///
@@ -184,20 +181,19 @@ class NotesApi {
     bool? withRenotes,
     bool? withReplies,
     bool? withFiles,
-  }) =>
-      _fetchTimeline(
-        path: '/notes/local-timeline',
-        limit: limit,
-        sinceId: sinceId,
-        untilId: untilId,
-        sinceDate: sinceDate,
-        untilDate: untilDate,
-        allowPartial: allowPartial,
-        withRenotes: withRenotes,
-        withReplies: withReplies,
-        withFiles: withFiles,
-        authMode: AuthMode.optional,
-      );
+  }) => _fetchTimeline(
+    path: '/notes/local-timeline',
+    limit: limit,
+    sinceId: sinceId,
+    untilId: untilId,
+    sinceDate: sinceDate,
+    untilDate: untilDate,
+    allowPartial: allowPartial,
+    withRenotes: withRenotes,
+    withReplies: withReplies,
+    withFiles: withFiles,
+    authMode: AuthMode.optional,
+  );
 
   /// Fetches a single note (`/api/notes/show`).
   ///
@@ -236,11 +232,11 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'noteId': noteId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/replies',
@@ -274,11 +270,11 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'noteId': noteId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/renotes',
@@ -315,12 +311,12 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'noteId': noteId,
-      if (limit != null) 'limit': limit,
-      if (type != null) 'type': type,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'type': ?type,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/reactions',
@@ -370,7 +366,8 @@ class NotesApi {
     int? pollExpiresAt,
     int? pollExpiredAfter,
   }) async {
-    final hasContent = text != null ||
+    final hasContent =
+        text != null ||
         renoteId != null ||
         (fileIds != null && fileIds.isNotEmpty) ||
         (mediaIds != null && mediaIds.isNotEmpty) ||
@@ -383,15 +380,15 @@ class NotesApi {
     }
 
     final body = <String, dynamic>{
-      if (text != null) 'text': text,
-      if (cw != null) 'cw': cw,
-      if (replyId != null) 'replyId': replyId,
-      if (renoteId != null) 'renoteId': renoteId,
-      if (channelId != null) 'channelId': channelId,
-      if (reactionAcceptance != null) 'reactionAcceptance': reactionAcceptance,
-      if (noExtractMentions != null) 'noExtractMentions': noExtractMentions,
-      if (noExtractHashtags != null) 'noExtractHashtags': noExtractHashtags,
-      if (noExtractEmojis != null) 'noExtractEmojis': noExtractEmojis,
+      'text': ?text,
+      'cw': ?cw,
+      'replyId': ?replyId,
+      'renoteId': ?renoteId,
+      'channelId': ?channelId,
+      'reactionAcceptance': ?reactionAcceptance,
+      'noExtractMentions': ?noExtractMentions,
+      'noExtractHashtags': ?noExtractHashtags,
+      'noExtractEmojis': ?noExtractEmojis,
     };
 
     if (channelId == null) {
@@ -431,10 +428,7 @@ class NotesApi {
   ///
   /// Specify the note containing the poll in [noteId].
   /// Specify the zero-based choice index in [choice].
-  Future<void> pollsVote({
-    required String noteId,
-    required int choice,
-  }) =>
+  Future<void> pollsVote({required String noteId, required int choice}) =>
       http.send<Object?>(
         '/notes/polls/vote',
         body: <String, dynamic>{'noteId': noteId, 'choice': choice},
@@ -447,38 +441,34 @@ class NotesApi {
   Future<void> reactionsCreate({
     required String noteId,
     required String reaction,
-  }) =>
-      http.send<Object?>(
-        '/notes/reactions/create',
-        body: <String, dynamic>{
-          'noteId': noteId,
-          'reaction': reaction,
-        },
-      );
+  }) => http.send<Object?>(
+    '/notes/reactions/create',
+    body: <String, dynamic>{'noteId': noteId, 'reaction': reaction},
+  );
 
   /// Removes the authenticated user's reaction from a note (`/api/notes/reactions/delete`).
   Future<void> reactionsDelete({required String noteId}) => http.send<Object?>(
-        '/notes/reactions/delete',
-        body: <String, dynamic>{'noteId': noteId},
-      );
+    '/notes/reactions/delete',
+    body: <String, dynamic>{'noteId': noteId},
+  );
 
   /// Deletes a note (`/api/notes/delete`).
   ///
   /// Deletes own note or another user's note with moderator privileges.
   /// Authentication required.
   Future<void> delete({required String noteId}) => http.send<Object?>(
-        '/notes/delete',
-        body: <String, dynamic>{'noteId': noteId},
-      );
+    '/notes/delete',
+    body: <String, dynamic>{'noteId': noteId},
+  );
 
   /// Cancels a renote of a note (`/api/notes/unrenote`).
   ///
   /// Deletes all renotes of the specified [noteId] by the authenticated user.
   /// Authentication required. Rate limit: 300 requests/hour, min interval 1 second.
   Future<void> unrenote({required String noteId}) => http.send<Object?>(
-        '/notes/unrenote',
-        body: <String, dynamic>{'noteId': noteId},
-      );
+    '/notes/unrenote',
+    body: <String, dynamic>{'noteId': noteId},
+  );
 
   /// Fetches child notes (replies and quote renotes) of a note (`/api/notes/children`).
   ///
@@ -498,11 +488,11 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'noteId': noteId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/children',
@@ -551,8 +541,8 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'noteId': noteId,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/conversation',
@@ -581,9 +571,9 @@ class NotesApi {
     String? channelId,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (untilId != null) 'untilId': untilId,
-      if (channelId != null) 'channelId': channelId,
+      'limit': ?limit,
+      'untilId': ?untilId,
+      'channelId': ?channelId,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/featured',
@@ -618,13 +608,13 @@ class NotesApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (following != null) 'following': following,
-      if (visibility != null) 'visibility': visibility,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'following': ?following,
+      'visibility': ?visibility,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/mentions',
@@ -658,15 +648,15 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'query': query,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (host != null) 'host': host,
-      if (userId != null) 'userId': userId,
-      if (channelId != null) 'channelId': channelId,
+      'limit': ?limit,
+      'offset': ?offset,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'host': ?host,
+      'userId': ?userId,
+      'channelId': ?channelId,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/search',
@@ -705,22 +695,19 @@ class NotesApi {
     int? sinceDate,
     int? untilDate,
   }) async {
-    assert(
-      tag != null || queryTags != null,
-      'tag か queryTags のいずれかを指定してください',
-    );
+    assert(tag != null || queryTags != null, 'tag か queryTags のいずれかを指定してください');
     final body = <String, dynamic>{
-      if (tag != null) 'tag': tag,
-      if (queryTags != null) 'query': queryTags,
-      if (reply != null) 'reply': reply,
-      if (renote != null) 'renote': renote,
-      if (withFiles != null) 'withFiles': withFiles,
-      if (poll != null) 'poll': poll,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'tag': ?tag,
+      'query': ?queryTags,
+      'reply': ?reply,
+      'renote': ?renote,
+      'withFiles': ?withFiles,
+      'poll': ?poll,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/search-by-tag',
@@ -748,10 +735,7 @@ class NotesApi {
     final res = await http.send<List<dynamic>>(
       '/notes/show-partial-bulk',
       body: <String, dynamic>{'noteIds': noteIds},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -787,10 +771,7 @@ class NotesApi {
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/notes/translate',
-      body: <String, dynamic>{
-        'noteId': noteId,
-        'targetLang': targetLang,
-      },
+      body: <String, dynamic>{'noteId': noteId, 'targetLang': targetLang},
       options: const RequestOptions(idempotent: true),
     );
     return MisskeyNoteTranslation.fromJson(res);
@@ -822,19 +803,17 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'listId': listId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (allowPartial != null) 'allowPartial': allowPartial,
-      if (withRenotes != null) 'withRenotes': withRenotes,
-      if (withFiles != null) 'withFiles': withFiles,
-      if (includeMyRenotes != null) 'includeMyRenotes': includeMyRenotes,
-      if (includeRenotedMyNotes != null)
-        'includeRenotedMyNotes': includeRenotedMyNotes,
-      if (includeLocalRenotes != null)
-        'includeLocalRenotes': includeLocalRenotes,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'allowPartial': ?allowPartial,
+      'withRenotes': ?withRenotes,
+      'withFiles': ?withFiles,
+      'includeMyRenotes': ?includeMyRenotes,
+      'includeRenotedMyNotes': ?includeRenotedMyNotes,
+      'includeLocalRenotes': ?includeLocalRenotes,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/user-list-timeline',
@@ -851,17 +830,17 @@ class NotesApi {
   ///
   /// Authentication required. Rate limit: 20 requests/hour.
   Future<void> favoritesCreate({required String noteId}) => http.send<Object?>(
-        '/notes/favorites/create',
-        body: <String, dynamic>{'noteId': noteId},
-      );
+    '/notes/favorites/create',
+    body: <String, dynamic>{'noteId': noteId},
+  );
 
   /// Removes a note from favorites (`/api/notes/favorites/delete`).
   ///
   /// Authentication required.
   Future<void> favoritesDelete({required String noteId}) => http.send<Object?>(
-        '/notes/favorites/delete',
-        body: <String, dynamic>{'noteId': noteId},
-      );
+    '/notes/favorites/delete',
+    body: <String, dynamic>{'noteId': noteId},
+  );
 
   /// Fetches recommended polls (`/api/notes/polls/recommendation`).
   ///
@@ -878,9 +857,9 @@ class NotesApi {
     bool? excludeChannels,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-      if (excludeChannels != null) 'excludeChannels': excludeChannels,
+      'limit': ?limit,
+      'offset': ?offset,
+      'excludeChannels': ?excludeChannels,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/polls/recommendation',
@@ -940,12 +919,12 @@ class NotesApi {
     bool? scheduled,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (scheduled != null) 'scheduled': scheduled,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'scheduled': ?scheduled,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/drafts/list',
@@ -996,20 +975,19 @@ class NotesApi {
     bool? isActuallyScheduled,
   }) async {
     final body = <String, dynamic>{
-      if (visibility != null) 'visibility': visibility,
-      if (visibleUserIds != null) 'visibleUserIds': visibleUserIds,
-      if (cw != null) 'cw': cw,
-      if (hashtag != null) 'hashtag': hashtag,
-      if (localOnly != null) 'localOnly': localOnly,
-      if (reactionAcceptance != null) 'reactionAcceptance': reactionAcceptance,
-      if (replyId != null) 'replyId': replyId,
-      if (renoteId != null) 'renoteId': renoteId,
-      if (channelId != null) 'channelId': channelId,
-      if (text != null) 'text': text,
-      if (fileIds != null) 'fileIds': fileIds,
-      if (scheduledAt != null) 'scheduledAt': scheduledAt,
-      if (isActuallyScheduled != null)
-        'isActuallyScheduled': isActuallyScheduled,
+      'visibility': ?visibility,
+      'visibleUserIds': ?visibleUserIds,
+      'cw': ?cw,
+      'hashtag': ?hashtag,
+      'localOnly': ?localOnly,
+      'reactionAcceptance': ?reactionAcceptance,
+      'replyId': ?replyId,
+      'renoteId': ?renoteId,
+      'channelId': ?channelId,
+      'text': ?text,
+      'fileIds': ?fileIds,
+      'scheduledAt': ?scheduledAt,
+      'isActuallyScheduled': ?isActuallyScheduled,
     };
     if (pollChoices != null && pollChoices.isNotEmpty) {
       final poll = <String, dynamic>{'choices': pollChoices};
@@ -1075,12 +1053,11 @@ class NotesApi {
   }) async {
     final body = <String, dynamic>{
       'draftId': draftId,
-      if (visibility != null) 'visibility': visibility,
-      if (visibleUserIds != null) 'visibleUserIds': visibleUserIds,
-      if (localOnly != null) 'localOnly': localOnly,
-      if (fileIds != null) 'fileIds': fileIds,
-      if (isActuallyScheduled != null)
-        'isActuallyScheduled': isActuallyScheduled,
+      'visibility': ?visibility,
+      'visibleUserIds': ?visibleUserIds,
+      'localOnly': ?localOnly,
+      'fileIds': ?fileIds,
+      'isActuallyScheduled': ?isActuallyScheduled,
     };
     putOptional(body, 'cw', cw);
     putOptional(body, 'hashtag', hashtag);
@@ -1112,9 +1089,9 @@ class NotesApi {
   ///
   /// Authentication required.
   Future<void> draftsDelete({required String draftId}) => http.send<Object?>(
-        '/notes/drafts/delete',
-        body: <String, dynamic>{'draftId': draftId},
-      );
+    '/notes/drafts/delete',
+    body: <String, dynamic>{'draftId': draftId},
+  );
 
   /// Resolves a list of username tokens to user IDs.
   ///
@@ -1150,8 +1127,8 @@ class NotesApi {
           ),
         );
         if (res.isNotEmpty && res.first is Map) {
-          final user =
-              (res.first as Map<dynamic, dynamic>).cast<String, dynamic>();
+          final user = (res.first as Map<dynamic, dynamic>)
+              .cast<String, dynamic>();
           final id = (user['id'] ?? '').toString();
           if (id.isNotEmpty) results.add(id);
         }
@@ -1184,20 +1161,18 @@ class NotesApi {
     bool? includeLocalRenotes,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (allowPartial != null) 'allowPartial': allowPartial,
-      if (withRenotes != null) 'withRenotes': withRenotes,
-      if (withReplies != null) 'withReplies': withReplies,
-      if (withFiles != null) 'withFiles': withFiles,
-      if (includeMyRenotes != null) 'includeMyRenotes': includeMyRenotes,
-      if (includeRenotedMyNotes != null)
-        'includeRenotedMyNotes': includeRenotedMyNotes,
-      if (includeLocalRenotes != null)
-        'includeLocalRenotes': includeLocalRenotes,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'allowPartial': ?allowPartial,
+      'withRenotes': ?withRenotes,
+      'withReplies': ?withReplies,
+      'withFiles': ?withFiles,
+      'includeMyRenotes': ?includeMyRenotes,
+      'includeRenotedMyNotes': ?includeRenotedMyNotes,
+      'includeLocalRenotes': ?includeLocalRenotes,
     };
 
     final res = await http.send<List<dynamic>>(

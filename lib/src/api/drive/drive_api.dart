@@ -12,10 +12,10 @@ import 'drive_stats_api.dart';
 class DriveApi {
   /// Creates a [DriveApi] instance.
   DriveApi({required MisskeyHttp http})
-      : _http = http,
-        files = DriveFilesApi(http: http),
-        folders = DriveFoldersApi(http: http),
-        stats = DriveStatsApi(http: http);
+    : _http = http,
+      files = DriveFilesApi(http: http),
+      folders = DriveFoldersApi(http: http),
+      stats = DriveStatsApi(http: http);
 
   final MisskeyHttp _http;
 
@@ -48,12 +48,12 @@ class DriveApi {
     String? type,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (type != null) 'type': type,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'type': ?type,
     };
     final res = await _http.send<List<dynamic>>(
       '/drive/stream',

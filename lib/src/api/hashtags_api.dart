@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -11,6 +13,7 @@ import '../models/misskey_user.dart';
 class HashtagsApi {
   const HashtagsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches a list of hashtags (`/api/hashtags/list`).
@@ -38,20 +41,15 @@ class HashtagsApi {
   }) async {
     final body = <String, dynamic>{
       'sort': sort,
-      if (limit != null) 'limit': limit,
-      if (attachedToUserOnly != null) 'attachedToUserOnly': attachedToUserOnly,
-      if (attachedToLocalUserOnly != null)
-        'attachedToLocalUserOnly': attachedToLocalUserOnly,
-      if (attachedToRemoteUserOnly != null)
-        'attachedToRemoteUserOnly': attachedToRemoteUserOnly,
+      'limit': ?limit,
+      'attachedToUserOnly': ?attachedToUserOnly,
+      'attachedToLocalUserOnly': ?attachedToLocalUserOnly,
+      'attachedToRemoteUserOnly': ?attachedToRemoteUserOnly,
     };
     final res = await http.send<List<dynamic>>(
       '/hashtags/list',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -74,16 +72,13 @@ class HashtagsApi {
   }) async {
     final body = <String, dynamic>{
       'query': query,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await http.send<List<dynamic>>(
       '/hashtags/search',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res.cast<String>();
   }
@@ -98,10 +93,7 @@ class HashtagsApi {
     final res = await http.send<Map<String, dynamic>>(
       '/hashtags/show',
       body: <String, dynamic>{'tag': tag},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return MisskeyHashtag.fromJson(res);
   }
@@ -114,10 +106,7 @@ class HashtagsApi {
     final res = await http.send<List<dynamic>>(
       '/hashtags/trend',
       body: const <String, dynamic>{},
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -146,18 +135,15 @@ class HashtagsApi {
     final body = <String, dynamic>{
       'tag': tag,
       'sort': sort,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-      if (state != null) 'state': state,
-      if (origin != null) 'origin': origin,
+      'limit': ?limit,
+      'offset': ?offset,
+      'state': ?state,
+      'origin': ?origin,
     };
     final res = await http.send<List<dynamic>>(
       '/hashtags/users',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res
         .whereType<Map<String, dynamic>>()

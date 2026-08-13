@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:meta/meta.dart';
 
 import '../api/account/account_api.dart';
 import '../api/admin/admin_abuse_reports_api.dart';
@@ -57,11 +58,11 @@ class MisskeyClient {
     Logger? logger,
     HttpClientAdapter? httpClientAdapter,
   }) : http = MisskeyHttp(
-          config: config,
-          tokenProvider: tokenProvider,
-          logger: logger,
-          httpClientAdapter: httpClientAdapter,
-        ) {
+         config: config,
+         tokenProvider: tokenProvider,
+         logger: logger,
+         httpClientAdapter: httpClientAdapter,
+       ) {
     account = AccountApi(http: http);
     admin = AdminApi(http: http);
     adminAbuseReports = AdminAbuseReportsApi(http: http);
@@ -105,6 +106,7 @@ class MisskeyClient {
   }
 
   /// The underlying HTTP client used for all API requests.
+  @internal
   final MisskeyHttp http;
 
   /// Account and profile management API.

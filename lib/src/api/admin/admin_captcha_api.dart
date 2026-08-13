@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/admin/misskey_captcha_settings.dart';
@@ -8,6 +10,7 @@ import '../../models/admin/misskey_captcha_settings.dart';
 class AdminCaptchaApi {
   const AdminCaptchaApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches the current CAPTCHA settings (`/api/admin/captcha/current`).
@@ -33,15 +36,14 @@ class AdminCaptchaApi {
     String? sitekey,
     String? secret,
     String? instanceUrl,
-  }) =>
-      http.send<Object?>(
-        '/admin/captcha/save',
-        body: <String, dynamic>{
-          'provider': provider,
-          if (captchaResult != null) 'captchaResult': captchaResult,
-          if (sitekey != null) 'sitekey': sitekey,
-          if (secret != null) 'secret': secret,
-          if (instanceUrl != null) 'instanceUrl': instanceUrl,
-        },
-      );
+  }) => http.send<Object?>(
+    '/admin/captcha/save',
+    body: <String, dynamic>{
+      'provider': provider,
+      'captchaResult': ?captchaResult,
+      'sitekey': ?sitekey,
+      'secret': ?secret,
+      'instanceUrl': ?instanceUrl,
+    },
+  );
 }

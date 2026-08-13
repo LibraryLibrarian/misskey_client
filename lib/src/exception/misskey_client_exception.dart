@@ -37,7 +37,8 @@ class MisskeyApiException extends MisskeyClientException {
   final Object? raw;
 
   @override
-  String toString() => '$runtimeType($statusCode): $message'
+  String toString() =>
+      '$runtimeType($statusCode): $message'
       '${code != null ? ' code=$code' : ''}'
       '${endpoint != null ? ' endpoint=$endpoint' : ''}';
 }

@@ -33,9 +33,7 @@ final class Some<T> extends Optional<T> {
   const Some(this.value) : super._();
 
   /// Creates an instance that explicitly sends `null`.
-  const Some.null_()
-      : value = null,
-        super._();
+  const Some.null_() : value = null, super._();
 
   /// The specified value, or `null` if the intent is to clear it.
   final T? value;

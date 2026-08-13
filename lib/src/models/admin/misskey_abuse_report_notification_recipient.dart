@@ -23,8 +23,7 @@ class MisskeyAbuseReportNotificationRecipient {
 
   factory MisskeyAbuseReportNotificationRecipient.fromJson(
     Map<String, dynamic> json,
-  ) =>
-      _$MisskeyAbuseReportNotificationRecipientFromJson(json);
+  ) => _$MisskeyAbuseReportNotificationRecipientFromJson(json);
 
   Map<String, dynamic> toJson() =>
       _$MisskeyAbuseReportNotificationRecipientToJson(this);

@@ -7,10 +7,7 @@ part 'misskey_gallery_like.g.dart';
 /// A like on a gallery post.
 @JsonSerializable()
 class MisskeyGalleryLike {
-  const MisskeyGalleryLike({
-    required this.id,
-    required this.post,
-  });
+  const MisskeyGalleryLike({required this.id, required this.post});
 
   factory MisskeyGalleryLike.fromJson(Map<String, dynamic> json) =>
       _$MisskeyGalleryLikeFromJson(json);

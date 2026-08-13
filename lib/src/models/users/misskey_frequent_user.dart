@@ -7,10 +7,7 @@ part 'misskey_frequent_user.g.dart';
 /// A frequently replied-to user from `/api/users/get-frequently-replied-users`.
 @JsonSerializable()
 class MisskeyFrequentUser {
-  const MisskeyFrequentUser({
-    required this.user,
-    required this.weight,
-  });
+  const MisskeyFrequentUser({required this.user, required this.weight});
 
   factory MisskeyFrequentUser.fromJson(Map<String, dynamic> json) =>
       _$MisskeyFrequentUserFromJson(json);

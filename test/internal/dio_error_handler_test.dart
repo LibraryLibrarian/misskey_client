@@ -222,10 +222,7 @@ void main() {
         _networkError(DioExceptionType.connectionError),
         '/notes/timeline',
       );
-      expect(
-        (result as MisskeyNetworkException).endpoint,
-        '/notes/timeline',
-      );
+      expect((result as MisskeyNetworkException).endpoint, '/notes/timeline');
     });
   });
 }

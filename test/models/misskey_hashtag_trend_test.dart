@@ -11,9 +11,7 @@ void main() {
     setUp(() {
       final file = File('test/fixtures/hashtag_trend.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      trend = MisskeyHashtagTrend.fromJson(
-        jsonList[0] as Map<String, dynamic>,
-      );
+      trend = MisskeyHashtagTrend.fromJson(jsonList[0] as Map<String, dynamic>);
     });
 
     test('tag is "testhashtag"', () {

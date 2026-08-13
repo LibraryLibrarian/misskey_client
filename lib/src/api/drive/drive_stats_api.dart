@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -12,6 +14,7 @@ class DriveStatsApi {
   const DriveStatsApi({required this.http});
 
   /// The HTTP client used for requests.
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves the Drive capacity information for the authenticated user
@@ -41,16 +44,13 @@ class DriveStatsApi {
   }) async {
     final body = <String, dynamic>{
       'span': span,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/charts/drive',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res;
   }
@@ -71,16 +71,13 @@ class DriveStatsApi {
     final body = <String, dynamic>{
       'userId': userId,
       'span': span,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/charts/user/drive',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res;
   }

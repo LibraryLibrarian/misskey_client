@@ -11,8 +11,9 @@ void main() {
     setUp(() {
       final file = File('test/fixtures/users_following.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
-      following =
-          MisskeyFollowing.fromJson(jsonList.first as Map<String, dynamic>);
+      following = MisskeyFollowing.fromJson(
+        jsonList.first as Map<String, dynamic>,
+      );
     });
 
     test('deserializes without error', () {

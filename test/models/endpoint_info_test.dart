@@ -53,8 +53,10 @@ void main() {
 
   group('EndpointParam.fromJson', () {
     test('deserializes name and type', () {
-      final param =
-          EndpointParam.fromJson({'name': 'limit', 'type': 'Integer'});
+      final param = EndpointParam.fromJson({
+        'name': 'limit',
+        'type': 'Integer',
+      });
       expect(param.name, 'limit');
       expect(param.type, 'Integer');
     });

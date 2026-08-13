@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/misskey_invite_code.dart';
@@ -6,6 +8,7 @@ import '../../models/misskey_invite_code.dart';
 class AdminInviteApi {
   const AdminInviteApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates invite codes (`/api/admin/invite/create`).
@@ -19,10 +22,7 @@ class AdminInviteApi {
   }) async {
     final res = await http.send<List<dynamic>>(
       '/admin/invite/create',
-      body: <String, dynamic>{
-        if (count != null) 'count': count,
-        if (expiresAt != null) 'expiresAt': expiresAt,
-      },
+      body: <String, dynamic>{'count': ?count, 'expiresAt': ?expiresAt},
     );
     return res
         .whereType<Map<String, dynamic>>()
@@ -45,10 +45,10 @@ class AdminInviteApi {
     final res = await http.send<List<dynamic>>(
       '/admin/invite/list',
       body: <String, dynamic>{
-        if (limit != null) 'limit': limit,
-        if (offset != null) 'offset': offset,
-        if (type != null) 'type': type,
-        if (sort != null) 'sort': sort,
+        'limit': ?limit,
+        'offset': ?offset,
+        'type': ?type,
+        'sort': ?sort,
       },
       options: const RequestOptions(idempotent: true),
     );

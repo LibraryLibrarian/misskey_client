@@ -151,9 +151,10 @@ void main() {
 
   group('MisskeyDelayedQueueEntry.fromJson', () {
     test('parses the [host, count] tuple', () {
-      final entry = MisskeyDelayedQueueEntry.fromJson(
-        <dynamic>['example.test', 12],
-      );
+      final entry = MisskeyDelayedQueueEntry.fromJson(<dynamic>[
+        'example.test',
+        12,
+      ]);
       expect(entry.host, 'example.test');
       expect(entry.count, 12);
     });

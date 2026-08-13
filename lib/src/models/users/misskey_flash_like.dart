@@ -7,10 +7,7 @@ part 'misskey_flash_like.g.dart';
 /// A Flash (Play) like entry from the `/api/flash/my-likes` response.
 @JsonSerializable()
 class MisskeyFlashLike {
-  const MisskeyFlashLike({
-    required this.id,
-    required this.flash,
-  });
+  const MisskeyFlashLike({required this.id, required this.flash});
 
   factory MisskeyFlashLike.fromJson(Map<String, dynamic> json) =>
       _$MisskeyFlashLikeFromJson(json);

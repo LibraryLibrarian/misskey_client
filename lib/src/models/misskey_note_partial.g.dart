@@ -9,11 +9,13 @@ part of 'misskey_note_partial.dart';
 MisskeyNotePartial _$MisskeyNotePartialFromJson(Map<String, dynamic> json) =>
     MisskeyNotePartial(
       id: json['id'] as String,
-      reactions: (json['reactions'] as Map<String, dynamic>?)?.map(
+      reactions:
+          (json['reactions'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, (e as num).toInt()),
           ) ??
           {},
-      reactionEmojis: (json['reactionEmojis'] as Map<String, dynamic>?)?.map(
+      reactionEmojis:
+          (json['reactionEmojis'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, e as String),
           ) ??
           {},

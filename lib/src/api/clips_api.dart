@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../internal/optional.dart';
@@ -13,6 +15,7 @@ import '../models/misskey_note.dart';
 class ClipsApi {
   const ClipsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates a clip (`/api/clips/create`).
@@ -32,8 +35,8 @@ class ClipsApi {
       '/clips/create',
       body: <String, dynamic>{
         'name': name,
-        if (isPublic != null) 'isPublic': isPublic,
-        if (description != null) 'description': description,
+        'isPublic': ?isPublic,
+        'description': ?description,
       },
     );
     return MisskeyClip.fromJson(res);
@@ -65,8 +68,8 @@ class ClipsApi {
   }) async {
     final body = <String, dynamic>{
       'clipId': clipId,
-      if (name != null) 'name': name,
-      if (isPublic != null) 'isPublic': isPublic,
+      'name': ?name,
+      'isPublic': ?isPublic,
     };
     putOptional(body, 'description', description);
     final res = await http.send<Map<String, dynamic>>(
@@ -83,9 +86,9 @@ class ClipsApi {
   /// Notable errors:
   /// - `NO_SUCH_CLIP`: The clip does not exist.
   Future<void> delete({required String clipId}) => http.send<Object?>(
-        '/clips/delete',
-        body: <String, dynamic>{'clipId': clipId},
-      );
+    '/clips/delete',
+    body: <String, dynamic>{'clipId': clipId},
+  );
 
   /// Retrieves the details of a clip (`/api/clips/show`).
   ///
@@ -115,11 +118,11 @@ class ClipsApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/clips/list',
@@ -142,10 +145,7 @@ class ClipsApi {
   /// - `NO_SUCH_NOTE`: The note does not exist.
   /// - `ALREADY_CLIPPED`: The note is already clipped.
   /// - `TOO_MANY_CLIP_NOTES`: The clip's note limit has been reached.
-  Future<void> addNote({
-    required String clipId,
-    required String noteId,
-  }) =>
+  Future<void> addNote({required String clipId, required String noteId}) =>
       http.send<Object?>(
         '/clips/add-note',
         body: <String, dynamic>{'clipId': clipId, 'noteId': noteId},
@@ -159,10 +159,7 @@ class ClipsApi {
   /// Notable errors:
   /// - `NO_SUCH_CLIP`: The clip does not exist.
   /// - `NO_SUCH_NOTE`: The note does not exist.
-  Future<void> removeNote({
-    required String clipId,
-    required String noteId,
-  }) =>
+  Future<void> removeNote({required String clipId, required String noteId}) =>
       http.send<Object?>(
         '/clips/remove-note',
         body: <String, dynamic>{'clipId': clipId, 'noteId': noteId},
@@ -189,12 +186,12 @@ class ClipsApi {
   }) async {
     final body = <String, dynamic>{
       'clipId': clipId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (search != null) 'search': search,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'search': ?search,
     };
     final res = await http.send<List<dynamic>>(
       '/clips/notes',
@@ -215,9 +212,9 @@ class ClipsApi {
   /// - `NO_SUCH_CLIP`: The clip does not exist.
   /// - `ALREADY_FAVORITED`: The clip is already favorited.
   Future<void> favorite({required String clipId}) => http.send<Object?>(
-        '/clips/favorite',
-        body: <String, dynamic>{'clipId': clipId},
-      );
+    '/clips/favorite',
+    body: <String, dynamic>{'clipId': clipId},
+  );
 
   /// Removes a clip from favorites (`/api/clips/unfavorite`).
   ///
@@ -227,9 +224,9 @@ class ClipsApi {
   /// - `NO_SUCH_CLIP`: The clip does not exist.
   /// - `NOT_FAVORITED`: The clip is not favorited.
   Future<void> unfavorite({required String clipId}) => http.send<Object?>(
-        '/clips/unfavorite',
-        body: <String, dynamic>{'clipId': clipId},
-      );
+    '/clips/unfavorite',
+    body: <String, dynamic>{'clipId': clipId},
+  );
 
   /// Retrieves the authenticated user's favorited clips
   /// (`/api/clips/my-favorites`).

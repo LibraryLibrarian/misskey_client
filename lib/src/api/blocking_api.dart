@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_blocking.dart';
@@ -9,6 +11,7 @@ import '../models/misskey_user.dart';
 class BlockingApi {
   const BlockingApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Blocks a user (`/api/blocking/create`).
@@ -57,11 +60,11 @@ class BlockingApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/blocking/list',

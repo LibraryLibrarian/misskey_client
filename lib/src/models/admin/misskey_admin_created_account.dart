@@ -5,10 +5,7 @@ import '../misskey_user.dart';
 /// The response is the created user object (`MeDetailed`) with an
 /// additional `token` field containing the account's API token.
 class MisskeyAdminCreatedAccount {
-  const MisskeyAdminCreatedAccount({
-    required this.user,
-    required this.token,
-  });
+  const MisskeyAdminCreatedAccount({required this.user, required this.token});
 
   /// Creates an instance from the raw response JSON.
   factory MisskeyAdminCreatedAccount.fromJson(Map<String, dynamic> json) =>

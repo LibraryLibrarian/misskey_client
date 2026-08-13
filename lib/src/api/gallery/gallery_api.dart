@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -13,6 +15,7 @@ import '../../models/gallery/misskey_gallery_post.dart';
 class GalleryApi {
   const GalleryApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves featured gallery posts (`/api/gallery/featured`).
@@ -24,10 +27,7 @@ class GalleryApi {
     int? limit,
     String? untilId,
   }) async {
-    final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (untilId != null) 'untilId': untilId,
-    };
+    final body = <String, dynamic>{'limit': ?limit, 'untilId': ?untilId};
     final res = await http.send<List<dynamic>>(
       '/gallery/featured',
       body: body,
@@ -75,11 +75,11 @@ class GalleryApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/gallery/posts',
@@ -128,8 +128,8 @@ class GalleryApi {
     final body = <String, dynamic>{
       'title': title,
       'fileIds': fileIds,
-      if (description != null) 'description': description,
-      if (isSensitive != null) 'isSensitive': isSensitive,
+      'description': ?description,
+      'isSensitive': ?isSensitive,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/gallery/posts/create',
@@ -160,9 +160,9 @@ class GalleryApi {
   }) async {
     final body = <String, dynamic>{
       'postId': postId,
-      if (title != null) 'title': title,
-      if (fileIds != null) 'fileIds': fileIds,
-      if (isSensitive != null) 'isSensitive': isSensitive,
+      'title': ?title,
+      'fileIds': ?fileIds,
+      'isSensitive': ?isSensitive,
     };
     putOptional(body, 'description', description);
     final res = await http.send<Map<String, dynamic>>(
@@ -180,9 +180,9 @@ class GalleryApi {
   /// - `NO_SUCH_POST`: The post does not exist.
   /// - `ACCESS_DENIED`: Insufficient permissions.
   Future<void> postsDelete({required String postId}) => http.send<Object?>(
-        '/gallery/posts/delete',
-        body: <String, dynamic>{'postId': postId},
-      );
+    '/gallery/posts/delete',
+    body: <String, dynamic>{'postId': postId},
+  );
 
   /// Likes a gallery post (`/api/gallery/posts/like`).
   ///
@@ -193,9 +193,9 @@ class GalleryApi {
   /// - `YOUR_POST`: Cannot like your own post.
   /// - `ALREADY_LIKED`: Already liked.
   Future<void> postsLike({required String postId}) => http.send<Object?>(
-        '/gallery/posts/like',
-        body: <String, dynamic>{'postId': postId},
-      );
+    '/gallery/posts/like',
+    body: <String, dynamic>{'postId': postId},
+  );
 
   /// Removes a like from a gallery post (`/api/gallery/posts/unlike`).
   ///
@@ -205,7 +205,7 @@ class GalleryApi {
   /// - `NO_SUCH_POST`: The post does not exist.
   /// - `NOT_LIKED`: Not liked.
   Future<void> postsUnlike({required String postId}) => http.send<Object?>(
-        '/gallery/posts/unlike',
-        body: <String, dynamic>{'postId': postId},
-      );
+    '/gallery/posts/unlike',
+    body: <String, dynamic>{'postId': postId},
+  );
 }

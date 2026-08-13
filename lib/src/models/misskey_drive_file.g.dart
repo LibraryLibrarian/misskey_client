@@ -30,7 +30,8 @@ MisskeyDriveFile _$MisskeyDriveFileFromJson(Map<String, dynamic> json) =>
       properties: json['properties'] == null
           ? null
           : MisskeyDriveFileProperties.fromJson(
-              json['properties'] as Map<String, dynamic>),
+              json['properties'] as Map<String, dynamic>,
+            ),
       isAiGenerated: json['isAiGenerated'] as bool? ?? false,
     );
 
@@ -56,19 +57,19 @@ Map<String, dynamic> _$MisskeyDriveFileToJson(MisskeyDriveFile instance) =>
     };
 
 MisskeyDriveFileProperties _$MisskeyDriveFilePropertiesFromJson(
-        Map<String, dynamic> json) =>
-    MisskeyDriveFileProperties(
-      width: (json['width'] as num?)?.toInt(),
-      height: (json['height'] as num?)?.toInt(),
-      orientation: (json['orientation'] as num?)?.toInt(),
-      avgColor: json['avgColor'] as String?,
-    );
+  Map<String, dynamic> json,
+) => MisskeyDriveFileProperties(
+  width: (json['width'] as num?)?.toInt(),
+  height: (json['height'] as num?)?.toInt(),
+  orientation: (json['orientation'] as num?)?.toInt(),
+  avgColor: json['avgColor'] as String?,
+);
 
 Map<String, dynamic> _$MisskeyDriveFilePropertiesToJson(
-        MisskeyDriveFileProperties instance) =>
-    <String, dynamic>{
-      'width': instance.width,
-      'height': instance.height,
-      'orientation': instance.orientation,
-      'avgColor': instance.avgColor,
-    };
+  MisskeyDriveFileProperties instance,
+) => <String, dynamic>{
+  'width': instance.width,
+  'height': instance.height,
+  'orientation': instance.orientation,
+  'avgColor': instance.avgColor,
+};

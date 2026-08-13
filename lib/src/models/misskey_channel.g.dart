@@ -13,10 +13,12 @@ MisskeyChannel _$MisskeyChannelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       description: json['description'] as String?,
       userId: json['userId'] as String?,
-      lastNotedAt: const SafeDateTimeConverter()
-          .fromJson(json['lastNotedAt'] as String?),
+      lastNotedAt: const SafeDateTimeConverter().fromJson(
+        json['lastNotedAt'] as String?,
+      ),
       bannerUrl: json['bannerUrl'] as String?,
-      pinnedNoteIds: (json['pinnedNoteIds'] as List<dynamic>?)
+      pinnedNoteIds:
+          (json['pinnedNoteIds'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],

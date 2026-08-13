@@ -29,8 +29,10 @@ MisskeyChatMessage _$MisskeyChatMessageFromJson(Map<String, dynamic> json) =>
           : MisskeyDriveFile.fromJson(json['file'] as Map<String, dynamic>),
       isRead: json['isRead'] as bool?,
       reactions: (json['reactions'] as List<dynamic>)
-          .map((e) =>
-              MisskeyChatMessageReaction.fromJson(e as Map<String, dynamic>))
+          .map(
+            (e) =>
+                MisskeyChatMessageReaction.fromJson(e as Map<String, dynamic>),
+          )
           .toList(),
     );
 
@@ -52,17 +54,17 @@ Map<String, dynamic> _$MisskeyChatMessageToJson(MisskeyChatMessage instance) =>
     };
 
 MisskeyChatMessageReaction _$MisskeyChatMessageReactionFromJson(
-        Map<String, dynamic> json) =>
-    MisskeyChatMessageReaction(
-      reaction: json['reaction'] as String,
-      user: json['user'] == null
-          ? null
-          : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => MisskeyChatMessageReaction(
+  reaction: json['reaction'] as String,
+  user: json['user'] == null
+      ? null
+      : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$MisskeyChatMessageReactionToJson(
-        MisskeyChatMessageReaction instance) =>
-    <String, dynamic>{
-      'reaction': instance.reaction,
-      'user': instance.user?.toJson(),
-    };
+  MisskeyChatMessageReaction instance,
+) => <String, dynamic>{
+  'reaction': instance.reaction,
+  'user': instance.user?.toJson(),
+};

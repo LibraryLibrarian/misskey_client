@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/chat/misskey_chat_room.dart';
@@ -12,6 +14,7 @@ import '../../models/chat/misskey_chat_room_member.dart';
 class ChatRoomsApi {
   const ChatRoomsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates a chat room (`/api/chat/rooms/create`).
@@ -24,10 +27,7 @@ class ChatRoomsApi {
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/chat/rooms/create',
-      body: <String, dynamic>{
-        'name': name,
-        if (description != null) 'description': description,
-      },
+      body: <String, dynamic>{'name': name, 'description': ?description},
     );
     return MisskeyChatRoom.fromJson(res);
   }
@@ -44,8 +44,8 @@ class ChatRoomsApi {
   }) async {
     final body = <String, dynamic>{
       'roomId': roomId,
-      if (name != null) 'name': name,
-      if (description != null) 'description': description,
+      'name': ?name,
+      'description': ?description,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/chat/rooms/update',
@@ -59,9 +59,9 @@ class ChatRoomsApi {
   /// [roomId] is the ID of the room to delete.
   /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<void> delete({required String roomId}) => http.send<Object?>(
-        '/chat/rooms/delete',
-        body: <String, dynamic>{'roomId': roomId},
-      );
+    '/chat/rooms/delete',
+    body: <String, dynamic>{'roomId': roomId},
+  );
 
   /// Retrieves the details of a chat room (`/api/chat/rooms/show`).
   ///
@@ -81,28 +81,25 @@ class ChatRoomsApi {
   /// [roomId] is the ID of the room to join.
   /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<void> join({required String roomId}) => http.send<Object?>(
-        '/chat/rooms/join',
-        body: <String, dynamic>{'roomId': roomId},
-      );
+    '/chat/rooms/join',
+    body: <String, dynamic>{'roomId': roomId},
+  );
 
   /// Leaves a chat room (`/api/chat/rooms/leave`).
   ///
   /// [roomId] is the ID of the room to leave.
   /// Throws `NO_SUCH_ROOM` if the room does not exist.
   Future<void> leave({required String roomId}) => http.send<Object?>(
-        '/chat/rooms/leave',
-        body: <String, dynamic>{'roomId': roomId},
-      );
+    '/chat/rooms/leave',
+    body: <String, dynamic>{'roomId': roomId},
+  );
 
   /// Updates the mute setting for a chat room (`/api/chat/rooms/mute`).
   ///
   /// [roomId] is the target room ID. Pass `true` for [mute] to mute the room
   /// or `false` to unmute it. Throws `NO_SUCH_ROOM` if the room does not
   /// exist.
-  Future<void> setMute({
-    required String roomId,
-    required bool mute,
-  }) =>
+  Future<void> setMute({required String roomId, required bool mute}) =>
       http.send<Object?>(
         '/chat/rooms/mute',
         body: <String, dynamic>{'roomId': roomId, 'mute': mute},
@@ -124,11 +121,11 @@ class ChatRoomsApi {
   }) async {
     final body = <String, dynamic>{
       'roomId': roomId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/chat/rooms/members',
@@ -155,11 +152,11 @@ class ChatRoomsApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/chat/rooms/owned',
@@ -188,11 +185,11 @@ class ChatRoomsApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/chat/rooms/joining',
@@ -233,11 +230,11 @@ class ChatRoomsApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/chat/rooms/invitations/inbox',
@@ -266,11 +263,11 @@ class ChatRoomsApi {
   }) async {
     final body = <String, dynamic>{
       'roomId': roomId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/chat/rooms/invitations/outbox',

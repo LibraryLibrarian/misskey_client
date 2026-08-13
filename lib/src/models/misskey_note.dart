@@ -9,12 +9,7 @@ part 'misskey_note.g.dart';
 
 /// The visibility scope of a note.
 @JsonEnum()
-enum MisskeyNoteVisibility {
-  public,
-  home,
-  followers,
-  specified,
-}
+enum MisskeyNoteVisibility { public, home, followers, specified }
 
 /// The reaction acceptance setting for a note.
 @JsonEnum()

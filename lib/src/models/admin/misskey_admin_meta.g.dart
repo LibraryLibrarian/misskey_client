@@ -12,8 +12,9 @@ MisskeyAdminMeta _$MisskeyAdminMetaFromJson(Map<String, dynamic> json) =>
       maintainerEmail: json['maintainerEmail'] as String?,
       name: json['name'] as String?,
       description: json['description'] as String?,
-      langs:
-          (json['langs'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      langs: (json['langs'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       tosUrl: json['tosUrl'] as String?,
       privacyPolicyUrl: json['privacyPolicyUrl'] as String?,
       impressumUrl: json['impressumUrl'] as String?,

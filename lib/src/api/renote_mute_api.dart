@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_renote_muting.dart';
@@ -10,6 +12,7 @@ import '../models/misskey_renote_muting.dart';
 class RenoteMuteApi {
   const RenoteMuteApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Mutes renotes from a user (`/api/renote-mute/create`).
@@ -23,9 +26,9 @@ class RenoteMuteApi {
   /// - `MUTEE_IS_YOURSELF`: Specified yourself
   /// - `ALREADY_MUTING`: Already renote-muting this user
   Future<void> create({required String userId}) => http.send<Object?>(
-        '/renote-mute/create',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/renote-mute/create',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Unmutes renotes from a user (`/api/renote-mute/delete`).
   ///
@@ -36,9 +39,9 @@ class RenoteMuteApi {
   /// - `MUTEE_IS_YOURSELF`: Specified yourself
   /// - `NOT_MUTING`: Not renote-muting this user
   Future<void> delete({required String userId}) => http.send<Object?>(
-        '/renote-mute/delete',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/renote-mute/delete',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Lists users whose renotes are muted (`/api/renote-mute/list`).
   ///
@@ -53,11 +56,11 @@ class RenoteMuteApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/renote-mute/list',

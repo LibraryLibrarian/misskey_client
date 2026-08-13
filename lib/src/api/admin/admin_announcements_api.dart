@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -11,6 +13,7 @@ import '../../models/admin/misskey_admin_announcement.dart';
 class AdminAnnouncementsApi {
   const AdminAnnouncementsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates an announcement (`/api/admin/announcements/create`).
@@ -36,13 +39,12 @@ class AdminAnnouncementsApi {
         'text': text,
         // imageUrlはnull込みで必須パラメータ
         'imageUrl': imageUrl,
-        if (icon != null) 'icon': icon,
-        if (display != null) 'display': display,
-        if (forExistingUsers != null) 'forExistingUsers': forExistingUsers,
-        if (silence != null) 'silence': silence,
-        if (needConfirmationToRead != null)
-          'needConfirmationToRead': needConfirmationToRead,
-        if (userId != null) 'userId': userId,
+        'icon': ?icon,
+        'display': ?display,
+        'forExistingUsers': ?forExistingUsers,
+        'silence': ?silence,
+        'needConfirmationToRead': ?needConfirmationToRead,
+        'userId': ?userId,
       },
     );
     return MisskeyAdminAnnouncement.fromJson(res);
@@ -64,11 +66,11 @@ class AdminAnnouncementsApi {
     final res = await http.send<List<dynamic>>(
       '/admin/announcements/list',
       body: <String, dynamic>{
-        if (limit != null) 'limit': limit,
-        if (sinceId != null) 'sinceId': sinceId,
-        if (untilId != null) 'untilId': untilId,
-        if (userId != null) 'userId': userId,
-        if (status != null) 'status': status,
+        'limit': ?limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        'userId': ?userId,
+        'status': ?status,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -110,21 +112,17 @@ class AdminAnnouncementsApi {
   }) {
     final body = <String, dynamic>{
       'id': id,
-      if (title != null) 'title': title,
-      if (text != null) 'text': text,
-      if (icon != null) 'icon': icon,
-      if (display != null) 'display': display,
-      if (forExistingUsers != null) 'forExistingUsers': forExistingUsers,
-      if (silence != null) 'silence': silence,
-      if (needConfirmationToRead != null)
-        'needConfirmationToRead': needConfirmationToRead,
-      if (isActive != null) 'isActive': isActive,
+      'title': ?title,
+      'text': ?text,
+      'icon': ?icon,
+      'display': ?display,
+      'forExistingUsers': ?forExistingUsers,
+      'silence': ?silence,
+      'needConfirmationToRead': ?needConfirmationToRead,
+      'isActive': ?isActive,
     };
     putOptional(body, 'imageUrl', imageUrl);
-    return http.send<Object?>(
-      '/admin/announcements/update',
-      body: body,
-    );
+    return http.send<Object?>('/admin/announcements/update', body: body);
   }
 
   /// Deletes an announcement (`/api/admin/announcements/delete`).
@@ -132,7 +130,7 @@ class AdminAnnouncementsApi {
   /// Common errors:
   /// - `NO_SUCH_ANNOUNCEMENT`: The specified announcement does not exist
   Future<void> delete({required String id}) => http.send<Object?>(
-        '/admin/announcements/delete',
-        body: <String, dynamic>{'id': id},
-      );
+    '/admin/announcements/delete',
+    body: <String, dynamic>{'id': id},
+  );
 }

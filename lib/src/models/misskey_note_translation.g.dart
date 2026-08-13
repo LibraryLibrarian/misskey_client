@@ -7,15 +7,15 @@ part of 'misskey_note_translation.dart';
 // **************************************************************************
 
 MisskeyNoteTranslation _$MisskeyNoteTranslationFromJson(
-        Map<String, dynamic> json) =>
-    MisskeyNoteTranslation(
-      sourceLang: json['sourceLang'] as String,
-      text: json['text'] as String,
-    );
+  Map<String, dynamic> json,
+) => MisskeyNoteTranslation(
+  sourceLang: json['sourceLang'] as String,
+  text: json['text'] as String,
+);
 
 Map<String, dynamic> _$MisskeyNoteTranslationToJson(
-        MisskeyNoteTranslation instance) =>
-    <String, dynamic>{
-      'sourceLang': instance.sourceLang,
-      'text': instance.text,
-    };
+  MisskeyNoteTranslation instance,
+) => <String, dynamic>{
+  'sourceLang': instance.sourceLang,
+  'text': instance.text,
+};
