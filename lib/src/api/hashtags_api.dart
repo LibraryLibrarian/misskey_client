@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -11,6 +13,7 @@ import '../models/misskey_user.dart';
 class HashtagsApi {
   const HashtagsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches a list of hashtags (`/api/hashtags/list`).

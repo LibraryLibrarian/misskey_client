@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_invite_code.dart';
@@ -10,6 +12,7 @@ import '../models/misskey_invite_code.dart';
 class InviteApi {
   const InviteApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates a new invite code (`/api/invite/create`).

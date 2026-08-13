@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/chat/misskey_chat_message.dart';
@@ -10,6 +12,7 @@ import '../../models/chat/misskey_chat_message.dart';
 class ChatMessagesApi {
   const ChatMessagesApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Sends a message to a user (`/api/chat/messages/create-to-user`).

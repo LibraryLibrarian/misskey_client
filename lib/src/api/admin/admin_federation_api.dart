@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 
 /// Provides federation management admin APIs (`/api/admin/federation/*`).
@@ -6,6 +8,7 @@ import '../../client/misskey_http.dart';
 class AdminFederationApi {
   const AdminFederationApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Deletes all cached files from a remote instance

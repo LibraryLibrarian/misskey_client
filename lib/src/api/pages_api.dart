@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -13,6 +15,7 @@ import '../models/users/misskey_page.dart';
 class PagesApi {
   const PagesApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves page details by page ID (`/api/pages/show`).

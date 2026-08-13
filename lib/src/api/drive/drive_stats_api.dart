@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -12,6 +14,7 @@ class DriveStatsApi {
   const DriveStatsApi({required this.http});
 
   /// The HTTP client used for requests.
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves the Drive capacity information for the authenticated user

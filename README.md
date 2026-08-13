@@ -149,6 +149,37 @@ final client = MisskeyClient(
 );
 ```
 
+## Migrating from misskey_api_core
+
+### API mapping
+
+| misskey_api_core | misskey_client |
+|---|---|
+| `MisskeyHttpClient(config: ..., tokenProvider: ...)` | `MisskeyClient(config: ..., tokenProvider: ...)` |
+| `MisskeyApiConfig(baseUrl: ...)` | `MisskeyClientConfig(baseUrl: ...)` |
+| `http.send<T>('/emojis', ...)` | The corresponding typed method, such as `client.meta.getEmojis()` |
+| `MetaClient(http).getMeta()` | `client.meta.getMeta()` |
+| `MisskeyApiException` | The sealed hierarchy containing `MisskeyApiException`, `MisskeyUnauthorizedException`, `MisskeyForbiddenException`, `MisskeyRateLimitException`, and others |
+| `RequestOptions(authRequired: false)` | Handled internally by typed methods; callers do not need to specify it |
+| `Logger` / `FunctionLogger` | Classes with the same names |
+| `kReleaseMode` / `kDebugMode` | Not part of the public API; see below |
+
+### Exception name collision
+
+Both packages define `MisskeyApiException`, but the classes have different contents and no inheritance relationship. The `misskey_api_core` version is a simple class, while the `misskey_client` version extends `MisskeyClientException` and requires a `statusCode`. While importing both packages during migration, use a prefix to avoid the collision:
+
+```dart
+import 'package:misskey_api_core/misskey_api_core.dart' as core;
+```
+
+### Build mode constants
+
+`misskey_api_core` exported `kReleaseMode` and `kDebugMode`, but `misskey_client` does not. They are general-purpose utilities unrelated to Misskey. Flutter applications should import them from `package:flutter/foundation.dart`; pure Dart applications can use `bool.fromEnvironment('dart.vm.product')`. To control client logging, pass the value through `MisskeyClientConfig.enableLog`, for example `enableLog: kDebugMode`.
+
+### Low-level HTTP access
+
+The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 25 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub issue so it can be added to the typed API.
+
 ## Documentation
 
 - API reference: https://librarylibrarian.github.io/misskey_client/

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/misskey_channel.dart';
@@ -8,6 +10,7 @@ import '../../models/misskey_channel.dart';
 class ChannelMuteApi {
   const ChannelMuteApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Mutes a channel.

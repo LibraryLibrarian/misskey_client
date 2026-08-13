@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/misskey_invite_code.dart';
@@ -6,6 +8,7 @@ import '../../models/misskey_invite_code.dart';
 class AdminInviteApi {
   const AdminInviteApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates invite codes (`/api/admin/invite/create`).

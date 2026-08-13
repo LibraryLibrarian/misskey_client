@@ -149,6 +149,37 @@ final client = MisskeyClient(
 );
 ```
 
+## misskey_api_core에서 마이그레이션
+
+### API 대응표
+
+| misskey_api_core | misskey_client |
+|---|---|
+| `MisskeyHttpClient(config: ..., tokenProvider: ...)` | `MisskeyClient(config: ..., tokenProvider: ...)` |
+| `MisskeyApiConfig(baseUrl: ...)` | `MisskeyClientConfig(baseUrl: ...)` |
+| `http.send<T>('/emojis', ...)` | 대응하는 타입 지정 메서드(예: `client.meta.getEmojis()`) |
+| `MetaClient(http).getMeta()` | `client.meta.getMeta()` |
+| `MisskeyApiException` | `MisskeyApiException`, `MisskeyUnauthorizedException`, `MisskeyForbiddenException`, `MisskeyRateLimitException` 등을 포함하는 sealed 계층 구조 |
+| `RequestOptions(authRequired: false)` | 타입 지정 메서드가 내부에서 처리하므로 호출자가 지정할 필요 없음 |
+| `Logger` / `FunctionLogger` | 이름이 같은 클래스 |
+| `kReleaseMode` / `kDebugMode` | 공개 API에 포함하지 않음(아래 참조) |
+
+### MisskeyApiException 이름 충돌
+
+두 패키지 모두 `MisskeyApiException`을 정의하지만 클래스의 내용과 상속 관계가 다릅니다. `misskey_api_core` 버전은 단순 클래스인 반면, `misskey_client` 버전은 `MisskeyClientException`을 상속하며 `statusCode`가 필수입니다. 마이그레이션 중 두 패키지를 함께 import할 때는 접두사를 사용하여 충돌을 피하세요:
+
+```dart
+import 'package:misskey_api_core/misskey_api_core.dart' as core;
+```
+
+### 빌드 모드 상수
+
+`misskey_api_core`는 `kReleaseMode`와 `kDebugMode`를 export했지만, `misskey_client`의 공개 API에는 포함하지 않습니다. 이들은 Misskey와 무관한 범용 유틸리티입니다. Flutter 앱에서는 `package:flutter/foundation.dart`의 상수를 사용하고, 순수 Dart 앱에서는 `bool.fromEnvironment('dart.vm.product')`를 사용하세요. 클라이언트 로그는 `MisskeyClientConfig.enableLog`를 통해 제어하며, 예를 들어 `enableLog: kDebugMode`처럼 전달합니다.
+
+### 저수준 HTTP 접근
+
+`MisskeyHttpClient.send<T>()`에 해당하는 저수준 API는 공개하지 않습니다. `misskey_client`는 25개의 API 도메인을 지원하므로 타입 지정 메서드를 사용하세요. 필요한 엔드포인트가 구현되어 있지 않다면 타입 지정 API에 추가할 수 있도록 GitHub issue로 알려 주세요.
+
 ## 문서
 
 - API 레퍼런스: https://librarylibrarian.github.io/misskey_client/

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/chat/misskey_chat_room.dart';
@@ -12,6 +14,7 @@ import '../../models/chat/misskey_chat_room_member.dart';
 class ChatRoomsApi {
   const ChatRoomsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates a chat room (`/api/chat/rooms/create`).

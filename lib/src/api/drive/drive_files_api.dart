@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'package:dio/dio.dart' show FormData, MultipartFile;
 
 import '../../client/misskey_http.dart';
@@ -17,6 +19,7 @@ class DriveFilesApi {
   const DriveFilesApi({required this.http});
 
   /// The HTTP client used for requests.
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves a list of Drive files (`/api/drive/files`).

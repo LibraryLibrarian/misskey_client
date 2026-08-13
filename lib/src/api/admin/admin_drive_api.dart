@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/misskey_drive_file.dart';
@@ -8,6 +10,7 @@ import '../../models/misskey_drive_file.dart';
 class AdminDriveApi {
   const AdminDriveApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches drive files across all users (`/api/admin/drive/files`).

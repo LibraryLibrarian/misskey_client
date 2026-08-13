@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/admin/misskey_abuse_report_notification_recipient.dart';
@@ -11,6 +13,7 @@ import '../../models/admin/misskey_abuse_user_report.dart';
 class AdminAbuseReportsApi {
   const AdminAbuseReportsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches abuse reports (`/api/admin/abuse-user-reports`).

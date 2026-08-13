@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -11,6 +13,7 @@ import '../../models/misskey_role_user.dart';
 class AdminRolesApi {
   const AdminRolesApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches all roles (`/api/admin/roles/list`).

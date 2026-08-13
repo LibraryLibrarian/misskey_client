@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -11,6 +13,7 @@ import '../../models/admin/misskey_admin_announcement.dart';
 class AdminAnnouncementsApi {
   const AdminAnnouncementsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates an announcement (`/api/admin/announcements/create`).

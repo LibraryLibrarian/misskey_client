@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../models/admin/misskey_admin_created_account.dart';
 import '../../models/misskey_user.dart';
@@ -6,6 +8,7 @@ import '../../models/misskey_user.dart';
 class AdminAccountsApi {
   const AdminAccountsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates a new local account (`/api/admin/accounts/create`).

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -12,6 +14,7 @@ import '../models/misskey_role_user.dart';
 class RolesApi {
   const RolesApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches the list of public roles (`/api/roles/list`).

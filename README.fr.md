@@ -149,6 +149,37 @@ final client = MisskeyClient(
 );
 ```
 
+## Migration depuis misskey_api_core
+
+### Correspondance des API
+
+| misskey_api_core | misskey_client |
+|---|---|
+| `MisskeyHttpClient(config: ..., tokenProvider: ...)` | `MisskeyClient(config: ..., tokenProvider: ...)` |
+| `MisskeyApiConfig(baseUrl: ...)` | `MisskeyClientConfig(baseUrl: ...)` |
+| `http.send<T>('/emojis', ...)` | La méthode typée correspondante, par exemple `client.meta.getEmojis()` |
+| `MetaClient(http).getMeta()` | `client.meta.getMeta()` |
+| `MisskeyApiException` | La hiérarchie scellée comprenant `MisskeyApiException`, `MisskeyUnauthorizedException`, `MisskeyForbiddenException`, `MisskeyRateLimitException`, etc. |
+| `RequestOptions(authRequired: false)` | Géré en interne par les méthodes typées ; aucun paramètre n'est nécessaire côté appelant |
+| `Logger` / `FunctionLogger` | Classes portant les mêmes noms |
+| `kReleaseMode` / `kDebugMode` | Non inclus dans l'API publique ; voir ci-dessous |
+
+### Conflit de nom MisskeyApiException
+
+Les deux packages définissent `MisskeyApiException`, mais les classes ont un contenu différent et aucune relation d'héritage. La version de `misskey_api_core` est une classe simple, tandis que celle de `misskey_client` étend `MisskeyClientException` et exige un `statusCode`. Lorsque les deux packages sont importés pendant la migration, utilisez un préfixe pour éviter le conflit :
+
+```dart
+import 'package:misskey_api_core/misskey_api_core.dart' as core;
+```
+
+### Constantes du mode de compilation
+
+`misskey_api_core` exportait `kReleaseMode` et `kDebugMode`, mais `misskey_client` ne les inclut pas dans son API publique. Il s'agit d'utilitaires généraux sans rapport avec Misskey. Les applications Flutter doivent utiliser ceux de `package:flutter/foundation.dart` ; les applications Dart pur peuvent utiliser `bool.fromEnvironment('dart.vm.product')`. Pour contrôler la journalisation du client, transmettez la valeur à `MisskeyClientConfig.enableLog`, par exemple `enableLog: kDebugMode`.
+
+### Accès HTTP de bas niveau
+
+L'équivalent de bas niveau de `MisskeyHttpClient.send<T>()` n'est pas public. `misskey_client` couvre 25 domaines d'API ; utilisez donc les méthodes typées. Si un point de terminaison nécessaire manque, veuillez le signaler dans une issue GitHub afin qu'il soit ajouté à l'API typée.
+
 ## Documentation
 
 - Référence API : https://librarylibrarian.github.io/misskey_client/

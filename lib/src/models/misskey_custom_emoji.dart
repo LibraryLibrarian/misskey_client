@@ -13,6 +13,7 @@ class MisskeyCustomEmoji {
     this.localOnly,
     this.isSensitive,
     this.roleIdsThatCanBeUsedThisEmojiAsReaction,
+    this.roleIdsThatCanNotBeUsedThisEmojiAsReaction,
   });
 
   // Misskey API may return emoji objects in different formats.
@@ -45,4 +46,7 @@ class MisskeyCustomEmoji {
 
   /// The role IDs that are allowed to use this emoji as a reaction.
   final List<String>? roleIdsThatCanBeUsedThisEmojiAsReaction;
+
+  /// The role IDs that are not allowed to use this emoji as a reaction.
+  final List<String>? roleIdsThatCanNotBeUsedThisEmojiAsReaction;
 }

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_blocking.dart';
@@ -9,6 +11,7 @@ import '../models/misskey_user.dart';
 class BlockingApi {
   const BlockingApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Blocks a user (`/api/blocking/create`).

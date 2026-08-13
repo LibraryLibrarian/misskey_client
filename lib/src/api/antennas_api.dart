@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../internal/optional.dart';
@@ -12,6 +14,7 @@ import '../models/misskey_note.dart';
 class AntennasApi {
   const AntennasApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates an antenna (`/api/antennas/create`).

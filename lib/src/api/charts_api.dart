@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -12,6 +14,7 @@ class ChartsApi {
   const ChartsApi({required this.http});
 
   /// The HTTP client.
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves active user statistics (`/api/charts/active-users`).

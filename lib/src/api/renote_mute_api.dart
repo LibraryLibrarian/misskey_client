@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_renote_muting.dart';
@@ -10,6 +12,7 @@ import '../models/misskey_renote_muting.dart';
 class RenoteMuteApi {
   const RenoteMuteApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Mutes renotes from a user (`/api/renote-mute/create`).

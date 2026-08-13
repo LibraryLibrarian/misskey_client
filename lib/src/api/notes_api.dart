@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -15,6 +17,7 @@ import '../models/misskey_note_translation.dart';
 class NotesApi {
   const NotesApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches public notes (`/api/notes`).

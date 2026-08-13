@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/account/misskey_registry_detail.dart';
@@ -10,6 +12,7 @@ import '../../models/account/misskey_registry_scope.dart';
 class RegistryApi {
   const RegistryApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves the value of a specific key (`/api/i/registry/get`).

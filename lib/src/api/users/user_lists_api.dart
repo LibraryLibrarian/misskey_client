@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -8,6 +10,7 @@ import '../../models/users/misskey_user_list_membership.dart';
 class UserListsApi {
   const UserListsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches user lists.

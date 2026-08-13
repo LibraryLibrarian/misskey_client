@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/admin/misskey_queue.dart';
@@ -12,6 +14,7 @@ import '../../models/admin/misskey_queue.dart';
 class AdminQueueApi {
   const AdminQueueApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches aggregated job counts for the main queues

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_notification.dart';
@@ -6,6 +8,7 @@ import '../models/misskey_notification.dart';
 class NotificationsApi {
   const NotificationsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches a list of notifications (`/api/i/notifications`).

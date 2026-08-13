@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -20,6 +22,7 @@ class MetaApi {
   MetaApi({required this.http});
 
   /// HTTP client.
+  @internal
   final MisskeyHttp http;
 
   Meta? _cached;
