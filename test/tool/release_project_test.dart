@@ -1,0 +1,160 @@
+import 'dart:io';
+
+import 'package:test/test.dart';
+
+import '../../tool/src/release_project.dart';
+
+void main() {
+  late Directory root;
+
+  setUp(() {
+    root = Directory.systemTemp.createTempSync('misskey_release_tools_');
+    _createProject(root);
+  });
+
+  tearDown(() {
+    root.deleteSync(recursive: true);
+  });
+
+  test('bumpVersion updates all version references and CHANGELOG', () {
+    final updatedPaths = bumpVersion(
+      root,
+      '1.0.0-beta.4',
+      releaseDate: DateTime.utc(2026, 8, 13),
+    );
+
+    expect(_read(root, 'pubspec.yaml'), contains('version: 1.0.0-beta.4'));
+    for (final path in versionReferencePaths) {
+      expect(
+        _read(root, path),
+        contains('misskey_client: ^1.0.0-beta.4'),
+        reason: path,
+      );
+    }
+    expect(
+      _read(root, 'CHANGELOG.md'),
+      contains(
+        '## [Unreleased]\n\n'
+        '## [1.0.0-beta.4] - 2026-08-13\n\n'
+        '### Added',
+      ),
+    );
+    expect(
+      updatedPaths,
+      containsAll(<String>[
+        'pubspec.yaml',
+        ...versionReferencePaths,
+        'CHANGELOG.md',
+      ]),
+    );
+    expect(() => verifyRelease(root, '1.0.0-beta.4'), returnsNormally);
+  });
+
+  test('bumpVersion does not write files when a reference is inconsistent', () {
+    _write(
+      root,
+      versionReferencePaths.first,
+      'dependencies:\n  misskey_client: ^1.0.0-beta.2\n',
+    );
+    final originalPubspec = _read(root, 'pubspec.yaml');
+    final originalChangelog = _read(root, 'CHANGELOG.md');
+
+    expect(
+      () => bumpVersion(root, '1.0.0-beta.4'),
+      throwsA(
+        isA<ReleaseToolException>().having(
+          (error) => error.message,
+          'message',
+          contains(versionReferencePaths.first),
+        ),
+      ),
+    );
+    expect(_read(root, 'pubspec.yaml'), originalPubspec);
+    expect(_read(root, 'CHANGELOG.md'), originalChangelog);
+  });
+
+  test('verifyRelease rejects a mismatched documentation version', () {
+    _write(
+      root,
+      versionReferencePaths.last,
+      'dependencies:\n  misskey_client: ^1.0.0-beta.2\n',
+    );
+
+    expect(
+      () => verifyRelease(root, '1.0.0-beta.3'),
+      throwsA(
+        isA<ReleaseToolException>().having(
+          (error) => error.message,
+          'message',
+          contains(versionReferencePaths.last),
+        ),
+      ),
+    );
+  });
+
+  test('verifyRelease rejects an invalid CHANGELOG date', () {
+    final changelog = _read(
+      root,
+      'CHANGELOG.md',
+    ).replaceFirst('2026-08-05', '2026-02-30');
+    _write(root, 'CHANGELOG.md', changelog);
+
+    expect(
+      () => verifyRelease(root, '1.0.0-beta.3'),
+      throwsA(
+        isA<ReleaseToolException>().having(
+          (error) => error.message,
+          'message',
+          contains('invalid release date'),
+        ),
+      ),
+    );
+  });
+
+  test('release tools reject invalid Semantic Versions', () {
+    expect(
+      () => bumpVersion(root, '1.0'),
+      throwsA(isA<ReleaseToolException>()),
+    );
+    expect(
+      () => verifyRelease(root, '1.0.0-01'),
+      throwsA(isA<ReleaseToolException>()),
+    );
+  });
+}
+
+void _createProject(Directory root) {
+  _write(
+    root,
+    'pubspec.yaml',
+    'name: misskey_client\n'
+        'version: 1.0.0-beta.3\n',
+  );
+  for (final path in versionReferencePaths) {
+    _write(
+      root,
+      path,
+      '# Usage\n\n'
+      'dependencies:\n'
+      '  misskey_client: ^1.0.0-beta.3\n',
+    );
+  }
+  _write(
+    root,
+    'CHANGELOG.md',
+    '# Changelog\n\n'
+        '## [Unreleased]\n\n'
+        '### Added\n\n'
+        '- Pending change\n\n'
+        '## [1.0.0-beta.3] - 2026-08-05\n',
+  );
+}
+
+void _write(Directory root, String path, String content) {
+  final file = File.fromUri(root.uri.resolve(path));
+  file.parent.createSync(recursive: true);
+  file.writeAsStringSync(content);
+}
+
+String _read(Directory root, String path) =>
+    File.fromUri(root.uri.resolve(path)).readAsStringSync();
