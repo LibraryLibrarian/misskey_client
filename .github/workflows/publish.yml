@@ -1,0 +1,14 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    # プレリリースを含むバージョンタグをpub.dev側のtag patternで検証する
+    tags: ['v*']
+
+jobs:
+  publish:
+    permissions:
+      id-token: write
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+    with:
+      environment: pub.dev
