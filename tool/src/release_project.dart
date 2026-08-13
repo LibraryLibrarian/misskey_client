@@ -106,26 +106,53 @@ void verifyRelease(Directory root, String expectedVersion) {
     );
   }
 
+  final heading = _releaseHeading(
+    _readFile(root, 'CHANGELOG.md'),
+    expectedVersion,
+  );
+  final date = heading.group(1)!;
+  if (!_isValidDate(date)) {
+    throw ReleaseToolException(
+      'CHANGELOG.md has an invalid release date for $expectedVersion: $date.',
+    );
+  }
+}
+
+/// Extracts the CHANGELOG body for [version] to use as release notes.
+String extractReleaseNotes(Directory root, String version) {
+  validateReleaseVersion(version);
+
   final changelog = _readFile(root, 'CHANGELOG.md');
+  final heading = _releaseHeading(changelog, version);
+  final nextHeading = RegExp(
+    r'^## \[[^\]]+\](?:[ \t]+-[ \t]+.*)?$',
+    multiLine: true,
+  ).firstMatch(changelog.substring(heading.end));
+  final end = nextHeading == null
+      ? changelog.length
+      : heading.end + nextHeading.start;
+  final notes = changelog.substring(heading.end, end).trim();
+  if (notes.isEmpty) {
+    throw ReleaseToolException(
+      'CHANGELOG.md has no release notes for $version.',
+    );
+  }
+  return '$notes\n';
+}
+
+RegExpMatch _releaseHeading(String changelog, String version) {
   final headingPattern = RegExp(
-    '^## \\[${RegExp.escape(expectedVersion)}\\] - '
+    '^## \\[${RegExp.escape(version)}\\] - '
     r'(\d{4}-\d{2}-\d{2})[ \t]*$',
     multiLine: true,
   );
   final headings = headingPattern.allMatches(changelog).toList();
   if (headings.length != 1) {
     throw ReleaseToolException(
-      'CHANGELOG.md must contain exactly one release heading for '
-      '$expectedVersion.',
+      'CHANGELOG.md must contain exactly one release heading for $version.',
     );
   }
-
-  final date = headings.single.group(1)!;
-  if (!_isValidDate(date)) {
-    throw ReleaseToolException(
-      'CHANGELOG.md has an invalid release date for $expectedVersion: $date.',
-    );
-  }
+  return headings.single;
 }
 
 bool _isValidDate(String value) {

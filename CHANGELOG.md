@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added CI checks for formatting, static analysis, generated code, unit tests, and package validation on the minimum and stable Dart SDKs (issue #29)
 - Added OIDC-based pub.dev publishing and release version update/verification tooling (issue #29)
+- Added automatic GitHub Release creation from the matching CHANGELOG section after a successful pub.dev publication (issue #29)
 
 ### Changed
 
