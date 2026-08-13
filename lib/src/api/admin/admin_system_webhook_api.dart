@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/admin/misskey_system_webhook.dart';
@@ -12,6 +14,7 @@ import '../../models/admin/misskey_system_webhook.dart';
 class AdminSystemWebhookApi {
   const AdminSystemWebhookApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates a system webhook (`/api/admin/system-webhook/create`).

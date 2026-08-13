@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/admin/misskey_captcha_settings.dart';
@@ -8,6 +10,7 @@ import '../../models/admin/misskey_captcha_settings.dart';
 class AdminCaptchaApi {
   const AdminCaptchaApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches the current CAPTCHA settings (`/api/admin/captcha/current`).

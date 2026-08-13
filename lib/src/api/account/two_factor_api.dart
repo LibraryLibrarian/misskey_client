@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../models/account/misskey_totp_registration.dart';
 
@@ -9,6 +11,7 @@ import '../../models/account/misskey_totp_registration.dart';
 class TwoFactorApi {
   const TwoFactorApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Initiates TOTP two-factor authentication registration

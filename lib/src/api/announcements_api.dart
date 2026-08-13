@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -10,6 +12,7 @@ import '../models/misskey_announcement.dart';
 class AnnouncementsApi {
   const AnnouncementsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves the list of announcements (`/api/announcements`).

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -13,6 +15,7 @@ import '../../models/gallery/misskey_gallery_post.dart';
 class GalleryApi {
   const GalleryApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves featured gallery posts (`/api/gallery/featured`).

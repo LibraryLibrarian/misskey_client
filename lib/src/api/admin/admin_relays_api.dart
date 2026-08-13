@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/admin/misskey_relay.dart';
@@ -8,6 +10,7 @@ import '../../models/admin/misskey_relay.dart';
 class AdminRelaysApi {
   const AdminRelaysApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Subscribes to a relay (`/api/admin/relays/add`).

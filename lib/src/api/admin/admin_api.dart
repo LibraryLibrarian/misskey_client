@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -15,6 +17,7 @@ import '../../models/misskey_user.dart';
 class AdminApi {
   const AdminApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Fetches the full instance settings (`/api/admin/meta`).

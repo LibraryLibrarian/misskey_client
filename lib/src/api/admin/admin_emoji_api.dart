@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -10,6 +12,7 @@ import '../../models/server/emoji_detailed.dart';
 class AdminEmojiApi {
   const AdminEmojiApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Registers a custom emoji (`/api/admin/emoji/add`).

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -18,6 +20,7 @@ class AccountApi {
       twoFactor = TwoFactorApi(http: http),
       webhooks = WebhooksApi(http: http);
 
+  @internal
   final MisskeyHttp http;
 
   /// Provides registry (client settings storage) APIs.

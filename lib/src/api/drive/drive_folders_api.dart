@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/misskey_drive_folder.dart';
@@ -11,6 +13,7 @@ class DriveFoldersApi {
   const DriveFoldersApi({required this.http});
 
   /// The HTTP client used for requests.
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves a list of Drive folders (`/api/drive/folders`).

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/admin/misskey_ad.dart';
@@ -8,6 +10,7 @@ import '../../models/admin/misskey_ad.dart';
 class AdminAdApi {
   const AdminAdApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates an advertisement (`/api/admin/ad/create`).

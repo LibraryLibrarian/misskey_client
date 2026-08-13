@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
@@ -10,6 +12,7 @@ import '../../models/account/misskey_webhook.dart';
 class WebhooksApi {
   const WebhooksApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates a new webhook (`/api/i/webhooks/create`).

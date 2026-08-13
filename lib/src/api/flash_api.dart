@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
@@ -12,6 +14,7 @@ import '../models/users/misskey_flash_like.dart';
 class FlashApi {
   const FlashApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Creates a Flash (`/api/flash/create`).

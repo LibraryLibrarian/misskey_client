@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_follow_request.dart';
@@ -10,6 +12,7 @@ import '../models/misskey_user.dart';
 class FollowingRequestsApi {
   const FollowingRequestsApi({required this.http});
 
+  @internal
   final MisskeyHttp http;
 
   /// Retrieves received follow requests (`/api/following/requests/list`).
