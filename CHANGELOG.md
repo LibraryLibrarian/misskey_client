@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.5] - 2026-08-14
+
+### Removed
+
+- Removed `MisskeyCustomEmoji.roleIdsThatCanNotBeUsedThisEmojiAsReaction`, a breaking API change, because the field does not exist in upstream Misskey and is specific to the misskey.io fork
+
 ## [1.0.0-beta.4] - 2026-08-13
 
 ### Added

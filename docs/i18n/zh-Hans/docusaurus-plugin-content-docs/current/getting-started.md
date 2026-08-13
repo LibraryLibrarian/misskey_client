@@ -23,7 +23,7 @@ misskey_client 是一个纯 Dart 编写的 Misskey API 客户端库。
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.4
+  misskey_client: ^1.0.0-beta.5
 ```
 
 然后获取依赖：
