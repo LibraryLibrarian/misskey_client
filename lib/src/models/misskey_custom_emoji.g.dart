@@ -20,10 +20,6 @@ MisskeyCustomEmoji _$MisskeyCustomEmojiFromJson(Map<String, dynamic> json) =>
           (json['roleIdsThatCanBeUsedThisEmojiAsReaction'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList(),
-      roleIdsThatCanNotBeUsedThisEmojiAsReaction:
-          (json['roleIdsThatCanNotBeUsedThisEmojiAsReaction'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList(),
     );
 
 Map<String, dynamic> _$MisskeyCustomEmojiToJson(MisskeyCustomEmoji instance) =>
@@ -36,6 +32,4 @@ Map<String, dynamic> _$MisskeyCustomEmojiToJson(MisskeyCustomEmoji instance) =>
       'isSensitive': instance.isSensitive,
       'roleIdsThatCanBeUsedThisEmojiAsReaction':
           instance.roleIdsThatCanBeUsedThisEmojiAsReaction,
-      'roleIdsThatCanNotBeUsedThisEmojiAsReaction':
-          instance.roleIdsThatCanNotBeUsedThisEmojiAsReaction,
     };
