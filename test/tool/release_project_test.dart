@@ -111,6 +111,38 @@ void main() {
     );
   });
 
+  test('extractReleaseNotes returns only the requested release body', () {
+    final notes = extractReleaseNotes(root, '1.0.0-beta.3');
+
+    expect(notes, '### Added\n\n- Released change\n');
+    expect(notes, isNot(contains('Pending change')));
+    expect(notes, isNot(contains('1.0.0-beta.2')));
+  });
+
+  test('extractReleaseNotes rejects a release without notes', () {
+    _write(
+      root,
+      'CHANGELOG.md',
+      '# Changelog\n\n'
+          '## [Unreleased]\n\n'
+          '## [1.0.0-beta.3] - 2026-08-05\n\n'
+          '## [1.0.0-beta.2] - 2026-07-01\n\n'
+          '### Fixed\n\n'
+          '- Older change\n',
+    );
+
+    expect(
+      () => extractReleaseNotes(root, '1.0.0-beta.3'),
+      throwsA(
+        isA<ReleaseToolException>().having(
+          (error) => error.message,
+          'message',
+          contains('no release notes'),
+        ),
+      ),
+    );
+  });
+
   test('release tools reject invalid Semantic Versions', () {
     expect(
       () => bumpVersion(root, '1.0'),
@@ -146,7 +178,12 @@ void _createProject(Directory root) {
         '## [Unreleased]\n\n'
         '### Added\n\n'
         '- Pending change\n\n'
-        '## [1.0.0-beta.3] - 2026-08-05\n',
+        '## [1.0.0-beta.3] - 2026-08-05\n\n'
+        '### Added\n\n'
+        '- Released change\n\n'
+        '## [1.0.0-beta.2] - 2026-07-01\n\n'
+        '### Fixed\n\n'
+        '- Older change\n',
   );
 }
 
