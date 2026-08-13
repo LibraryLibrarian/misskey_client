@@ -22,16 +22,11 @@ class RegistryApi {
     required String key,
     List<String> scope = const <String>[],
     String? domain,
-  }) =>
-      http.send<dynamic>(
-        '/i/registry/get',
-        body: <String, dynamic>{
-          'key': key,
-          'scope': scope,
-          if (domain != null) 'domain': domain,
-        },
-        options: const RequestOptions(idempotent: true),
-      );
+  }) => http.send<dynamic>(
+    '/i/registry/get',
+    body: <String, dynamic>{'key': key, 'scope': scope, 'domain': ?domain},
+    options: const RequestOptions(idempotent: true),
+  );
 
   /// Retrieves all key-value pairs within a scope
   /// (`/api/i/registry/get-all`).
@@ -46,10 +41,7 @@ class RegistryApi {
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/i/registry/get-all',
-      body: <String, dynamic>{
-        'scope': scope,
-        if (domain != null) 'domain': domain,
-      },
+      body: <String, dynamic>{'scope': scope, 'domain': ?domain},
       options: const RequestOptions(idempotent: true),
     );
     return res;
@@ -71,11 +63,7 @@ class RegistryApi {
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/i/registry/get-detail',
-      body: <String, dynamic>{
-        'key': key,
-        'scope': scope,
-        if (domain != null) 'domain': domain,
-      },
+      body: <String, dynamic>{'key': key, 'scope': scope, 'domain': ?domain},
       options: const RequestOptions(idempotent: true),
     );
     return MisskeyRegistryDetail.fromJson(res);
@@ -92,10 +80,7 @@ class RegistryApi {
   }) async {
     final res = await http.send<List<dynamic>>(
       '/i/registry/keys',
-      body: <String, dynamic>{
-        'scope': scope,
-        if (domain != null) 'domain': domain,
-      },
+      body: <String, dynamic>{'scope': scope, 'domain': ?domain},
       options: const RequestOptions(idempotent: true),
     );
     return res.cast<String>();
@@ -115,10 +100,7 @@ class RegistryApi {
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/i/registry/keys-with-type',
-      body: <String, dynamic>{
-        'scope': scope,
-        if (domain != null) 'domain': domain,
-      },
+      body: <String, dynamic>{'scope': scope, 'domain': ?domain},
       options: const RequestOptions(idempotent: true),
     );
     return res.map((k, v) => MapEntry(k, v.toString()));
@@ -137,16 +119,15 @@ class RegistryApi {
     required dynamic value,
     List<String> scope = const <String>[],
     String? domain,
-  }) =>
-      http.send<Object?>(
-        '/i/registry/set',
-        body: <String, dynamic>{
-          'key': key,
-          'value': value,
-          'scope': scope,
-          if (domain != null) 'domain': domain,
-        },
-      );
+  }) => http.send<Object?>(
+    '/i/registry/set',
+    body: <String, dynamic>{
+      'key': key,
+      'value': value,
+      'scope': scope,
+      'domain': ?domain,
+    },
+  );
 
   /// Removes a key (`/api/i/registry/remove`).
   ///
@@ -158,15 +139,10 @@ class RegistryApi {
     required String key,
     List<String> scope = const <String>[],
     String? domain,
-  }) =>
-      http.send<Object?>(
-        '/i/registry/remove',
-        body: <String, dynamic>{
-          'key': key,
-          'scope': scope,
-          if (domain != null) 'domain': domain,
-        },
-      );
+  }) => http.send<Object?>(
+    '/i/registry/remove',
+    body: <String, dynamic>{'key': key, 'scope': scope, 'domain': ?domain},
+  );
 
   /// Retrieves all scopes and domains
   /// (`/api/i/registry/scopes-with-domain`).

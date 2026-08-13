@@ -57,11 +57,11 @@ class MisskeyClient {
     Logger? logger,
     HttpClientAdapter? httpClientAdapter,
   }) : http = MisskeyHttp(
-          config: config,
-          tokenProvider: tokenProvider,
-          logger: logger,
-          httpClientAdapter: httpClientAdapter,
-        ) {
+         config: config,
+         tokenProvider: tokenProvider,
+         logger: logger,
+         httpClientAdapter: httpClientAdapter,
+       ) {
     account = AccountApi(http: http);
     admin = AdminApi(http: http);
     adminAbuseReports = AdminAbuseReportsApi(http: http);

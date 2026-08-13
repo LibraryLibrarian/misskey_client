@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Raised the minimum Dart SDK from 3.5 to 3.9 to match the supported range of the JSON serialization dependencies
+- Updated the HTTP, logging, JSON serialization, code generation, lint, and test dependencies
+- Replaced the Flutter-dependent `pedantic_mono` lint set with the official Dart `lints` recommended set, and removed the unused Flutter-dependent pubspec sorter to keep the package tooling pure Dart
+- Migrated conditional collection entries to Dart 3.9 null-aware elements and reformatted the package with the current Dart formatter
+
 ### Fixed
 
 - Reduced the published package size by excluding test sources and local agent configuration (issue #16)

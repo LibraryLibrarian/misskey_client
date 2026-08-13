@@ -31,7 +31,7 @@ class WebhooksApi {
       'name': name,
       'url': url,
       'on': on,
-      if (secret != null) 'secret': secret,
+      'secret': ?secret,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/i/webhooks/create',
@@ -89,18 +89,15 @@ class WebhooksApi {
   }) {
     final body = <String, dynamic>{
       'webhookId': webhookId,
-      if (name != null) 'name': name,
-      if (url != null) 'url': url,
-      if (on != null) 'on': on,
-      if (active != null) 'active': active,
+      'name': ?name,
+      'url': ?url,
+      'on': ?on,
+      'active': ?active,
     };
     if (secret case Some<String>(:final value)) {
       body['secret'] = value;
     }
-    return http.send<Object?>(
-      '/i/webhooks/update',
-      body: body,
-    );
+    return http.send<Object?>('/i/webhooks/update', body: body);
   }
 
   /// Deletes a webhook (`/api/i/webhooks/delete`).
@@ -109,9 +106,9 @@ class WebhooksApi {
   /// Throws a `NO_SUCH_WEBHOOK` error if the webhook does not exist or is not
   /// owned by the user.
   Future<void> delete({required String webhookId}) => http.send<Object?>(
-        '/i/webhooks/delete',
-        body: <String, dynamic>{'webhookId': webhookId},
-      );
+    '/i/webhooks/delete',
+    body: <String, dynamic>{'webhookId': webhookId},
+  );
 
   /// Sends a test event to a webhook (`/api/i/webhooks/test`).
   ///
@@ -126,13 +123,12 @@ class WebhooksApi {
     required String webhookId,
     required String type,
     Map<String, String>? override,
-  }) =>
-      http.send<Object?>(
-        '/i/webhooks/test',
-        body: <String, dynamic>{
-          'webhookId': webhookId,
-          'type': type,
-          if (override != null) 'override': override,
-        },
-      );
+  }) => http.send<Object?>(
+    '/i/webhooks/test',
+    body: <String, dynamic>{
+      'webhookId': webhookId,
+      'type': type,
+      'override': ?override,
+    },
+  );
 }

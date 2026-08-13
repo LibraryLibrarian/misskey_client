@@ -85,9 +85,7 @@ class MisskeyHttp {
             headers: options.headers.isEmpty
                 ? null
                 : Map<String, dynamic>.from(options.headers),
-            extra: {
-              'authMode': options.authMode.name,
-            },
+            extra: {'authMode': options.authMode.name},
           );
           final res = await _dio.request<dynamic>(
             path.startsWith('/') ? path : '/$path',
@@ -209,7 +207,8 @@ class _MisskeyInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (enableLog && kDebugMode) {
       final statusCode = err.response?.statusCode;
-      final isExpectedClientError = statusCode != null &&
+      final isExpectedClientError =
+          statusCode != null &&
           (statusCode == 401 || statusCode == 403 || statusCode == 404);
 
       if (isExpectedClientError) {

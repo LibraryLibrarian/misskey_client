@@ -5,10 +5,7 @@ part 'misskey_achievement.g.dart';
 /// A user achievement from the `/api/users/achievements` response.
 @JsonSerializable()
 class MisskeyAchievement {
-  const MisskeyAchievement({
-    required this.name,
-    required this.unlockedAt,
-  });
+  const MisskeyAchievement({required this.name, required this.unlockedAt});
 
   factory MisskeyAchievement.fromJson(Map<String, dynamic> json) =>
       _$MisskeyAchievementFromJson(json);

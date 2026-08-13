@@ -76,10 +76,7 @@ class MisskeyChatMessage {
 /// A reaction on a chat message.
 @JsonSerializable()
 class MisskeyChatMessageReaction {
-  const MisskeyChatMessageReaction({
-    required this.reaction,
-    this.user,
-  });
+  const MisskeyChatMessageReaction({required this.reaction, this.user});
 
   factory MisskeyChatMessageReaction.fromJson(Map<String, dynamic> json) =>
       _$MisskeyChatMessageReactionFromJson(json);

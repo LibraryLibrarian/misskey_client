@@ -17,10 +17,10 @@ MisskeyNoteFavorite _$MisskeyNoteFavoriteFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyNoteFavoriteToJson(
-        MisskeyNoteFavorite instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'noteId': instance.noteId,
-      'note': instance.note?.toJson(),
-    };
+  MisskeyNoteFavorite instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'noteId': instance.noteId,
+  'note': instance.note?.toJson(),
+};

@@ -28,14 +28,14 @@ class NotificationsApi {
     List<String>? excludeTypes,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (markAsRead != null) 'markAsRead': markAsRead,
-      if (includeTypes != null) 'includeTypes': includeTypes,
-      if (excludeTypes != null) 'excludeTypes': excludeTypes,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'markAsRead': ?markAsRead,
+      'includeTypes': ?includeTypes,
+      'excludeTypes': ?excludeTypes,
     };
     // markAsRead=false のときのみ冪等として再試行可
     final idempotent = markAsRead == false;
@@ -72,14 +72,14 @@ class NotificationsApi {
     List<String>? excludeTypes,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (markAsRead != null) 'markAsRead': markAsRead,
-      if (includeTypes != null) 'includeTypes': includeTypes,
-      if (excludeTypes != null) 'excludeTypes': excludeTypes,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'markAsRead': ?markAsRead,
+      'includeTypes': ?includeTypes,
+      'excludeTypes': ?excludeTypes,
     };
     // markAsRead=false のときのみ冪等として再試行可
     final idempotent = markAsRead == false;
@@ -97,16 +97,18 @@ class NotificationsApi {
   /// Flushes (deletes) all notifications (`/api/notifications/flush`).
   ///
   /// Returns 204 No Content.
-  Future<void> flush() => http
-      .send<Object?>('/notifications/flush', body: const <String, dynamic>{});
+  Future<void> flush() => http.send<Object?>(
+    '/notifications/flush',
+    body: const <String, dynamic>{},
+  );
 
   /// Marks all notifications as read (`/api/notifications/mark-all-as-read`).
   ///
   /// Returns 204 No Content.
   Future<void> markAllAsRead() => http.send<Object?>(
-        '/notifications/mark-all-as-read',
-        body: const <String, dynamic>{},
-      );
+    '/notifications/mark-all-as-read',
+    body: const <String, dynamic>{},
+  );
 
   /// Creates an app notification (`/api/notifications/create`).
   ///
@@ -119,18 +121,10 @@ class NotificationsApi {
   /// Provide the notification body text in [body]. Use [header] to set a
   /// custom title (defaults to the access token name if omitted), and [icon]
   /// to set a custom icon URL (defaults to the token's icon URL if omitted).
-  Future<void> create({
-    required String body,
-    String? header,
-    String? icon,
-  }) =>
+  Future<void> create({required String body, String? header, String? icon}) =>
       http.send<Object?>(
         '/notifications/create',
-        body: <String, dynamic>{
-          'body': body,
-          if (header != null) 'header': header,
-          if (icon != null) 'icon': icon,
-        },
+        body: <String, dynamic>{'body': body, 'header': ?header, 'icon': ?icon},
       );
 
   /// Sends a test notification (`/api/notifications/test-notification`).
@@ -140,7 +134,7 @@ class NotificationsApi {
   /// Authentication required. Permission: `write:notifications`.
   /// Rate limit: 10 requests per minute.
   Future<void> testNotification() => http.send<Object?>(
-        '/notifications/test-notification',
-        body: const <String, dynamic>{},
-      );
+    '/notifications/test-notification',
+    body: const <String, dynamic>{},
+  );
 }

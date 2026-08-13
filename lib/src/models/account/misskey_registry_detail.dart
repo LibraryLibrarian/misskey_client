@@ -7,10 +7,7 @@ part 'misskey_registry_detail.g.dart';
 /// Detailed information about a registry item.
 @JsonSerializable()
 class MisskeyRegistryDetail {
-  const MisskeyRegistryDetail({
-    required this.updatedAt,
-    required this.value,
-  });
+  const MisskeyRegistryDetail({required this.updatedAt, required this.value});
 
   factory MisskeyRegistryDetail.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRegistryDetailFromJson(json);

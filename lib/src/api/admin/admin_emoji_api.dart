@@ -35,14 +35,13 @@ class AdminEmojiApi {
       body: <String, dynamic>{
         'name': name,
         'fileId': fileId,
-        if (category != null) 'category': category,
-        if (aliases != null) 'aliases': aliases,
-        if (license != null) 'license': license,
-        if (isSensitive != null) 'isSensitive': isSensitive,
-        if (localOnly != null) 'localOnly': localOnly,
-        if (roleIdsThatCanBeUsedThisEmojiAsReaction != null)
-          'roleIdsThatCanBeUsedThisEmojiAsReaction':
-              roleIdsThatCanBeUsedThisEmojiAsReaction,
+        'category': ?category,
+        'aliases': ?aliases,
+        'license': ?license,
+        'isSensitive': ?isSensitive,
+        'localOnly': ?localOnly,
+        'roleIdsThatCanBeUsedThisEmojiAsReaction':
+            ?roleIdsThatCanBeUsedThisEmojiAsReaction,
       },
     );
     return EmojiDetailed.fromJson(res);
@@ -74,15 +73,14 @@ class AdminEmojiApi {
       'Either id or name must be provided to identify the emoji.',
     );
     final body = <String, dynamic>{
-      if (id != null) 'id': id,
-      if (name != null) 'name': name,
-      if (fileId != null) 'fileId': fileId,
-      if (aliases != null) 'aliases': aliases,
-      if (isSensitive != null) 'isSensitive': isSensitive,
-      if (localOnly != null) 'localOnly': localOnly,
-      if (roleIdsThatCanBeUsedThisEmojiAsReaction != null)
-        'roleIdsThatCanBeUsedThisEmojiAsReaction':
-            roleIdsThatCanBeUsedThisEmojiAsReaction,
+      'id': ?id,
+      'name': ?name,
+      'fileId': ?fileId,
+      'aliases': ?aliases,
+      'isSensitive': ?isSensitive,
+      'localOnly': ?localOnly,
+      'roleIdsThatCanBeUsedThisEmojiAsReaction':
+          ?roleIdsThatCanBeUsedThisEmojiAsReaction,
     };
     putOptional(body, 'category', category);
     putOptional(body, 'license', license);
@@ -94,15 +92,15 @@ class AdminEmojiApi {
   /// Common errors:
   /// - `NO_SUCH_EMOJI`: The specified emoji does not exist
   Future<void> delete({required String id}) => http.send<Object?>(
-        '/admin/emoji/delete',
-        body: <String, dynamic>{'id': id},
-      );
+    '/admin/emoji/delete',
+    body: <String, dynamic>{'id': id},
+  );
 
   /// Deletes multiple custom emojis (`/api/admin/emoji/delete-bulk`).
   Future<void> deleteBulk({required List<String> ids}) => http.send<Object?>(
-        '/admin/emoji/delete-bulk',
-        body: <String, dynamic>{'ids': ids},
-      );
+    '/admin/emoji/delete-bulk',
+    body: <String, dynamic>{'ids': ids},
+  );
 
   /// Fetches local custom emojis (`/api/admin/emoji/list`).
   ///
@@ -118,10 +116,10 @@ class AdminEmojiApi {
     final res = await http.send<List<dynamic>>(
       '/admin/emoji/list',
       body: <String, dynamic>{
-        if (query != null) 'query': query,
-        if (limit != null) 'limit': limit,
-        if (sinceId != null) 'sinceId': sinceId,
-        if (untilId != null) 'untilId': untilId,
+        'query': ?query,
+        'limit': ?limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -146,11 +144,11 @@ class AdminEmojiApi {
     final res = await http.send<List<dynamic>>(
       '/admin/emoji/list-remote',
       body: <String, dynamic>{
-        if (query != null) 'query': query,
-        if (host != null) 'host': host,
-        if (limit != null) 'limit': limit,
-        if (sinceId != null) 'sinceId': sinceId,
-        if (untilId != null) 'untilId': untilId,
+        'query': ?query,
+        'host': ?host,
+        'limit': ?limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -181,50 +179,44 @@ class AdminEmojiApi {
   ///
   /// The import is processed asynchronously on the server.
   Future<void> importZip({required String fileId}) => http.send<Object?>(
-        '/admin/emoji/import-zip',
-        body: <String, dynamic>{'fileId': fileId},
-      );
+    '/admin/emoji/import-zip',
+    body: <String, dynamic>{'fileId': fileId},
+  );
 
   /// Adds aliases to multiple emojis (`/api/admin/emoji/add-aliases-bulk`).
   Future<void> addAliasesBulk({
     required List<String> ids,
     required List<String> aliases,
-  }) =>
-      http.send<Object?>(
-        '/admin/emoji/add-aliases-bulk',
-        body: <String, dynamic>{'ids': ids, 'aliases': aliases},
-      );
+  }) => http.send<Object?>(
+    '/admin/emoji/add-aliases-bulk',
+    body: <String, dynamic>{'ids': ids, 'aliases': aliases},
+  );
 
   /// Removes aliases from multiple emojis
   /// (`/api/admin/emoji/remove-aliases-bulk`).
   Future<void> removeAliasesBulk({
     required List<String> ids,
     required List<String> aliases,
-  }) =>
-      http.send<Object?>(
-        '/admin/emoji/remove-aliases-bulk',
-        body: <String, dynamic>{'ids': ids, 'aliases': aliases},
-      );
+  }) => http.send<Object?>(
+    '/admin/emoji/remove-aliases-bulk',
+    body: <String, dynamic>{'ids': ids, 'aliases': aliases},
+  );
 
   /// Replaces the aliases of multiple emojis
   /// (`/api/admin/emoji/set-aliases-bulk`).
   Future<void> setAliasesBulk({
     required List<String> ids,
     required List<String> aliases,
-  }) =>
-      http.send<Object?>(
-        '/admin/emoji/set-aliases-bulk',
-        body: <String, dynamic>{'ids': ids, 'aliases': aliases},
-      );
+  }) => http.send<Object?>(
+    '/admin/emoji/set-aliases-bulk',
+    body: <String, dynamic>{'ids': ids, 'aliases': aliases},
+  );
 
   /// Sets the category of multiple emojis
   /// (`/api/admin/emoji/set-category-bulk`).
   ///
   /// Pass `null` as [category] to clear the category.
-  Future<void> setCategoryBulk({
-    required List<String> ids,
-    String? category,
-  }) =>
+  Future<void> setCategoryBulk({required List<String> ids, String? category}) =>
       http.send<Object?>(
         '/admin/emoji/set-category-bulk',
         body: <String, dynamic>{'ids': ids, 'category': category},
@@ -234,10 +226,7 @@ class AdminEmojiApi {
   /// (`/api/admin/emoji/set-license-bulk`).
   ///
   /// Pass `null` as [license] to clear the license.
-  Future<void> setLicenseBulk({
-    required List<String> ids,
-    String? license,
-  }) =>
+  Future<void> setLicenseBulk({required List<String> ids, String? license}) =>
       http.send<Object?>(
         '/admin/emoji/set-license-bulk',
         body: <String, dynamic>{'ids': ids, 'license': license},

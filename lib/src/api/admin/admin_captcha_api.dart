@@ -33,15 +33,14 @@ class AdminCaptchaApi {
     String? sitekey,
     String? secret,
     String? instanceUrl,
-  }) =>
-      http.send<Object?>(
-        '/admin/captcha/save',
-        body: <String, dynamic>{
-          'provider': provider,
-          if (captchaResult != null) 'captchaResult': captchaResult,
-          if (sitekey != null) 'sitekey': sitekey,
-          if (secret != null) 'secret': secret,
-          if (instanceUrl != null) 'instanceUrl': instanceUrl,
-        },
-      );
+  }) => http.send<Object?>(
+    '/admin/captcha/save',
+    body: <String, dynamic>{
+      'provider': provider,
+      'captchaResult': ?captchaResult,
+      'sitekey': ?sitekey,
+      'secret': ?secret,
+      'instanceUrl': ?instanceUrl,
+    },
+  );
 }

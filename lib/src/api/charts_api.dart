@@ -30,8 +30,12 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/active-users',
-        span: span, limit: limit, offset: offset);
+    return _fetchChart(
+      '/charts/active-users',
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// Retrieves ActivityPub request statistics (`/api/charts/ap-request`).
@@ -47,8 +51,12 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/ap-request',
-        span: span, limit: limit, offset: offset);
+    return _fetchChart(
+      '/charts/ap-request',
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// Retrieves federation statistics (`/api/charts/federation`).
@@ -65,8 +73,12 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/federation',
-        span: span, limit: limit, offset: offset);
+    return _fetchChart(
+      '/charts/federation',
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// Retrieves statistics for a specific instance (`/api/charts/instance`).
@@ -92,16 +104,13 @@ class ChartsApi {
     final body = <String, dynamic>{
       'host': host,
       'span': span,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/charts/instance',
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res;
   }
@@ -120,8 +129,12 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/notes',
-        span: span, limit: limit, offset: offset);
+    return _fetchChart(
+      '/charts/notes',
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// Retrieves user statistics (`/api/charts/users`).
@@ -138,8 +151,12 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchChart('/charts/users',
-        span: span, limit: limit, offset: offset);
+    return _fetchChart(
+      '/charts/users',
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// Retrieves following statistics for a specific user
@@ -161,8 +178,13 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchUserChart('/charts/user/following',
-        userId: userId, span: span, limit: limit, offset: offset);
+    return _fetchUserChart(
+      '/charts/user/following',
+      userId: userId,
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// Retrieves note statistics for a specific user
@@ -182,8 +204,13 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchUserChart('/charts/user/notes',
-        userId: userId, span: span, limit: limit, offset: offset);
+    return _fetchUserChart(
+      '/charts/user/notes',
+      userId: userId,
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// Retrieves page view statistics for a specific user
@@ -203,8 +230,13 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchUserChart('/charts/user/pv',
-        userId: userId, span: span, limit: limit, offset: offset);
+    return _fetchUserChart(
+      '/charts/user/pv',
+      userId: userId,
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// Retrieves reaction statistics for a specific user
@@ -224,8 +256,13 @@ class ChartsApi {
     int? limit,
     int? offset,
   }) {
-    return _fetchUserChart('/charts/user/reactions',
-        userId: userId, span: span, limit: limit, offset: offset);
+    return _fetchUserChart(
+      '/charts/user/reactions',
+      userId: userId,
+      span: span,
+      limit: limit,
+      offset: offset,
+    );
   }
 
   /// 共通のチャートデータ取得処理（サーバー全体用）
@@ -237,16 +274,13 @@ class ChartsApi {
   }) async {
     final body = <String, dynamic>{
       'span': span,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await http.send<Map<String, dynamic>>(
       path,
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res;
   }
@@ -262,16 +296,13 @@ class ChartsApi {
     final body = <String, dynamic>{
       'userId': userId,
       'span': span,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
+      'limit': ?limit,
+      'offset': ?offset,
     };
     final res = await http.send<Map<String, dynamic>>(
       path,
       body: body,
-      options: const RequestOptions(
-        authMode: AuthMode.none,
-        idempotent: true,
-      ),
+      options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
     return res;
   }

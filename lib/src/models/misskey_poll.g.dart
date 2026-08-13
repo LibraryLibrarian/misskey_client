@@ -21,13 +21,14 @@ Map<String, dynamic> _$MisskeyPollChoiceToJson(MisskeyPollChoice instance) =>
     };
 
 MisskeyPoll _$MisskeyPollFromJson(Map<String, dynamic> json) => MisskeyPoll(
-      choices: (json['choices'] as List<dynamic>)
-          .map((e) => MisskeyPollChoice.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      multiple: json['multiple'] as bool? ?? false,
-      expiresAt:
-          const SafeDateTimeConverter().fromJson(json['expiresAt'] as String?),
-    );
+  choices: (json['choices'] as List<dynamic>)
+      .map((e) => MisskeyPollChoice.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  multiple: json['multiple'] as bool? ?? false,
+  expiresAt: const SafeDateTimeConverter().fromJson(
+    json['expiresAt'] as String?,
+  ),
+);
 
 Map<String, dynamic> _$MisskeyPollToJson(MisskeyPoll instance) =>
     <String, dynamic>{

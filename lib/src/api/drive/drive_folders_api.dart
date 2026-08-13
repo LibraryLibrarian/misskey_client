@@ -28,12 +28,12 @@ class DriveFoldersApi {
     String? folderId,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
-      if (folderId != null) 'folderId': folderId,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
+      'folderId': ?folderId,
     };
     final res = await http.send<List<dynamic>>(
       '/drive/folders',
@@ -51,14 +51,8 @@ class DriveFoldersApi {
   /// Use [name] to set the folder name (up to 200 characters, default
   /// `'Untitled'`). Pass [parentId] to create the folder inside an existing
   /// folder, or omit it to create at root.
-  Future<MisskeyDriveFolder> create({
-    String? name,
-    String? parentId,
-  }) async {
-    final body = <String, dynamic>{
-      if (name != null) 'name': name,
-      if (parentId != null) 'parentId': parentId,
-    };
+  Future<MisskeyDriveFolder> create({String? name, String? parentId}) async {
+    final body = <String, dynamic>{'name': ?name, 'parentId': ?parentId};
     final res = await http.send<Map<String, dynamic>>(
       '/drive/folders/create',
       body: body,
@@ -92,11 +86,8 @@ class DriveFoldersApi {
   }) async {
     final body = <String, dynamic>{
       'folderId': folderId,
-      if (name != null) 'name': name,
-      if (moveToRoot)
-        'parentId': null
-      else if (parentId != null)
-        'parentId': parentId,
+      'name': ?name,
+      if (moveToRoot) 'parentId': null else 'parentId': ?parentId,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/drive/folders/update',
@@ -110,9 +101,9 @@ class DriveFoldersApi {
   /// Pass the target folder's ID as [folderId]. Fails if the folder contains
   /// child files or subfolders.
   Future<void> delete({required String folderId}) => http.send<Object?>(
-        '/drive/folders/delete',
-        body: <String, dynamic>{'folderId': folderId},
-      );
+    '/drive/folders/delete',
+    body: <String, dynamic>{'folderId': folderId},
+  );
 
   /// Searches the Drive by folder name (`/api/drive/folders/find`).
   ///
@@ -122,10 +113,7 @@ class DriveFoldersApi {
     required String name,
     String? parentId,
   }) async {
-    final body = <String, dynamic>{
-      'name': name,
-      if (parentId != null) 'parentId': parentId,
-    };
+    final body = <String, dynamic>{'name': name, 'parentId': ?parentId};
     final res = await http.send<List<dynamic>>(
       '/drive/folders/find',
       body: body,

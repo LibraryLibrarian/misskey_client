@@ -68,28 +68,23 @@ class AdminApi {
     List<String>? preservedUsernames,
   }) async {
     final body = <String, dynamic>{
-      if (disableRegistration != null)
-        'disableRegistration': disableRegistration,
-      if (emailRequiredForSignup != null)
-        'emailRequiredForSignup': emailRequiredForSignup,
-      if (enableEmail != null) 'enableEmail': enableEmail,
-      if (enableServiceWorker != null)
-        'enableServiceWorker': enableServiceWorker,
-      if (enableIpLogging != null) 'enableIpLogging': enableIpLogging,
-      if (enableActiveEmailValidation != null)
-        'enableActiveEmailValidation': enableActiveEmailValidation,
-      if (cacheRemoteFiles != null) 'cacheRemoteFiles': cacheRemoteFiles,
-      if (cacheRemoteSensitiveFiles != null)
-        'cacheRemoteSensitiveFiles': cacheRemoteSensitiveFiles,
-      if (federation != null) 'federation': federation,
-      if (federationHosts != null) 'federationHosts': federationHosts,
-      if (blockedHosts != null) 'blockedHosts': blockedHosts,
-      if (silencedHosts != null) 'silencedHosts': silencedHosts,
-      if (mediaSilencedHosts != null) 'mediaSilencedHosts': mediaSilencedHosts,
-      if (sensitiveWords != null) 'sensitiveWords': sensitiveWords,
-      if (prohibitedWords != null) 'prohibitedWords': prohibitedWords,
-      if (hiddenTags != null) 'hiddenTags': hiddenTags,
-      if (preservedUsernames != null) 'preservedUsernames': preservedUsernames,
+      'disableRegistration': ?disableRegistration,
+      'emailRequiredForSignup': ?emailRequiredForSignup,
+      'enableEmail': ?enableEmail,
+      'enableServiceWorker': ?enableServiceWorker,
+      'enableIpLogging': ?enableIpLogging,
+      'enableActiveEmailValidation': ?enableActiveEmailValidation,
+      'cacheRemoteFiles': ?cacheRemoteFiles,
+      'cacheRemoteSensitiveFiles': ?cacheRemoteSensitiveFiles,
+      'federation': ?federation,
+      'federationHosts': ?federationHosts,
+      'blockedHosts': ?blockedHosts,
+      'silencedHosts': ?silencedHosts,
+      'mediaSilencedHosts': ?mediaSilencedHosts,
+      'sensitiveWords': ?sensitiveWords,
+      'prohibitedWords': ?prohibitedWords,
+      'hiddenTags': ?hiddenTags,
+      'preservedUsernames': ?preservedUsernames,
     };
     putOptional(body, 'name', name);
     putOptional(body, 'description', description);
@@ -154,13 +149,13 @@ class AdminApi {
     final res = await http.send<List<dynamic>>(
       '/admin/show-users',
       body: <String, dynamic>{
-        if (limit != null) 'limit': limit,
-        if (offset != null) 'offset': offset,
-        if (sort != null) 'sort': sort,
-        if (state != null) 'state': state,
-        if (origin != null) 'origin': origin,
-        if (username != null) 'username': username,
-        if (hostname != null) 'hostname': hostname,
+        'limit': ?limit,
+        'offset': ?offset,
+        'sort': ?sort,
+        'state': ?state,
+        'origin': ?origin,
+        'username': ?username,
+        'hostname': ?hostname,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -174,17 +169,17 @@ class AdminApi {
   ///
   /// Requires moderator privileges. Pass the target user ID in [userId].
   Future<void> suspendUser({required String userId}) => http.send<Object?>(
-        '/admin/suspend-user',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/admin/suspend-user',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Lifts a user's suspension (`/api/admin/unsuspend-user`).
   ///
   /// Requires moderator privileges. Pass the target user ID in [userId].
   Future<void> unsuspendUser({required String userId}) => http.send<Object?>(
-        '/admin/unsuspend-user',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/admin/unsuspend-user',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Resets a user's password (`/api/admin/reset-password`).
   ///
@@ -203,10 +198,7 @@ class AdminApi {
   ///
   /// Requires moderator privileges. The note in [text] is visible only
   /// to moderators.
-  Future<void> updateUserNote({
-    required String userId,
-    required String text,
-  }) =>
+  Future<void> updateUserNote({required String userId, required String text}) =>
       http.send<Object?>(
         '/admin/update-user-note',
         body: <String, dynamic>{'userId': userId, 'text': text},
@@ -217,9 +209,9 @@ class AdminApi {
   /// Requires administrator privileges. The deletion is processed
   /// asynchronously on the server.
   Future<void> deleteAccount({required String userId}) => http.send<Object?>(
-        '/admin/delete-account',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/admin/delete-account',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Deletes every drive file owned by a user
   /// (`/api/admin/delete-all-files-of-a-user`).
@@ -235,17 +227,17 @@ class AdminApi {
   ///
   /// Requires moderator privileges.
   Future<void> unsetUserAvatar({required String userId}) => http.send<Object?>(
-        '/admin/unset-user-avatar',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/admin/unset-user-avatar',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Removes a user's banner image (`/api/admin/unset-user-banner`).
   ///
   /// Requires moderator privileges.
   Future<void> unsetUserBanner({required String userId}) => http.send<Object?>(
-        '/admin/unset-user-banner',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/admin/unset-user-banner',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Fetches the IP addresses recorded for a user
   /// (`/api/admin/get-user-ips`).
@@ -281,12 +273,12 @@ class AdminApi {
     final res = await http.send<List<dynamic>>(
       '/admin/show-moderation-logs',
       body: <String, dynamic>{
-        if (limit != null) 'limit': limit,
-        if (sinceId != null) 'sinceId': sinceId,
-        if (untilId != null) 'untilId': untilId,
-        if (type != null) 'type': type,
-        if (userId != null) 'userId': userId,
-        if (search != null) 'search': search,
+        'limit': ?limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        'type': ?type,
+        'userId': ?userId,
+        'search': ?search,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -303,11 +295,10 @@ class AdminApi {
     required String to,
     required String subject,
     required String text,
-  }) =>
-      http.send<Object?>(
-        '/admin/send-email',
-        body: <String, dynamic>{'to': to, 'subject': subject, 'text': text},
-      );
+  }) => http.send<Object?>(
+    '/admin/send-email',
+    body: <String, dynamic>{'to': to, 'subject': subject, 'text': text},
+  );
 
   /// Updates the proxy account's profile
   /// (`/api/admin/update-proxy-account`).
@@ -338,10 +329,7 @@ class AdminApi {
   /// Common errors:
   /// - `NO_SUCH_NOTE`: The specified note does not exist
   /// - `ALREADY_PROMOTED`: The note is already promoted
-  Future<void> createPromo({
-    required String noteId,
-    required int expiresAt,
-  }) =>
+  Future<void> createPromo({required String noteId, required int expiresAt}) =>
       http.send<Object?>(
         '/admin/promo/create',
         body: <String, dynamic>{'noteId': noteId, 'expiresAt': expiresAt},

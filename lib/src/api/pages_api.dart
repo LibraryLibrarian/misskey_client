@@ -108,12 +108,11 @@ class PagesApi {
       'content': content,
       'variables': variables,
       'script': script,
-      if (summary != null) 'summary': summary,
-      if (eyeCatchingImageId != null) 'eyeCatchingImageId': eyeCatchingImageId,
-      if (font != null) 'font': font,
-      if (alignCenter != null) 'alignCenter': alignCenter,
-      if (hideTitleWhenPinned != null)
-        'hideTitleWhenPinned': hideTitleWhenPinned,
+      'summary': ?summary,
+      'eyeCatchingImageId': ?eyeCatchingImageId,
+      'font': ?font,
+      'alignCenter': ?alignCenter,
+      'hideTitleWhenPinned': ?hideTitleWhenPinned,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/pages/create',
@@ -157,22 +156,18 @@ class PagesApi {
   }) {
     final body = <String, dynamic>{
       'pageId': pageId,
-      if (title != null) 'title': title,
-      if (name != null) 'name': name,
-      if (content != null) 'content': content,
-      if (variables != null) 'variables': variables,
-      if (script != null) 'script': script,
-      if (font != null) 'font': font,
-      if (alignCenter != null) 'alignCenter': alignCenter,
-      if (hideTitleWhenPinned != null)
-        'hideTitleWhenPinned': hideTitleWhenPinned,
+      'title': ?title,
+      'name': ?name,
+      'content': ?content,
+      'variables': ?variables,
+      'script': ?script,
+      'font': ?font,
+      'alignCenter': ?alignCenter,
+      'hideTitleWhenPinned': ?hideTitleWhenPinned,
     };
     putOptional(body, 'summary', summary);
     putOptional(body, 'eyeCatchingImageId', eyeCatchingImageId);
-    return http.send<Object?>(
-      '/pages/update',
-      body: body,
-    );
+    return http.send<Object?>('/pages/update', body: body);
   }
 
   /// Deletes a page (`/api/pages/delete`).
@@ -185,9 +180,9 @@ class PagesApi {
   /// - `NO_SUCH_PAGE`: The page does not exist
   /// - `ACCESS_DENIED`: Insufficient permissions
   Future<void> delete({required String pageId}) => http.send<Object?>(
-        '/pages/delete',
-        body: <String, dynamic>{'pageId': pageId},
-      );
+    '/pages/delete',
+    body: <String, dynamic>{'pageId': pageId},
+  );
 
   /// Likes a page (`/api/pages/like`).
   ///
@@ -198,9 +193,9 @@ class PagesApi {
   /// - `YOUR_PAGE`: Cannot like your own page
   /// - `ALREADY_LIKED`: Already liked
   Future<void> like({required String pageId}) => http.send<Object?>(
-        '/pages/like',
-        body: <String, dynamic>{'pageId': pageId},
-      );
+    '/pages/like',
+    body: <String, dynamic>{'pageId': pageId},
+  );
 
   /// Unlikes a page (`/api/pages/unlike`).
   ///
@@ -210,7 +205,7 @@ class PagesApi {
   /// - `NO_SUCH_PAGE`: The page does not exist
   /// - `NOT_LIKED`: Not liked yet
   Future<void> unlike({required String pageId}) => http.send<Object?>(
-        '/pages/unlike',
-        body: <String, dynamic>{'pageId': pageId},
-      );
+    '/pages/unlike',
+    body: <String, dynamic>{'pageId': pageId},
+  );
 }

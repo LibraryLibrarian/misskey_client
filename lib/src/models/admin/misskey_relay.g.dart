@@ -7,11 +7,14 @@ part of 'misskey_relay.dart';
 // **************************************************************************
 
 MisskeyRelay _$MisskeyRelayFromJson(Map<String, dynamic> json) => MisskeyRelay(
-      id: json['id'] as String,
-      inbox: json['inbox'] as String,
-      status: $enumDecode(_$MisskeyRelayStatusEnumMap, json['status'],
-          unknownValue: MisskeyRelayStatus.requesting),
-    );
+  id: json['id'] as String,
+  inbox: json['inbox'] as String,
+  status: $enumDecode(
+    _$MisskeyRelayStatusEnumMap,
+    json['status'],
+    unknownValue: MisskeyRelayStatus.requesting,
+  ),
+);
 
 Map<String, dynamic> _$MisskeyRelayToJson(MisskeyRelay instance) =>
     <String, dynamic>{

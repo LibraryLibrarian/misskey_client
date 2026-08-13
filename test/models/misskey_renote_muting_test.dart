@@ -12,9 +12,7 @@ void main() {
       final file = File('test/fixtures/renote_mute_list.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
       list = jsonList
-          .map(
-            (e) => MisskeyRenoteMuting.fromJson(e as Map<String, dynamic>),
-          )
+          .map((e) => MisskeyRenoteMuting.fromJson(e as Map<String, dynamic>))
           .toList();
     });
 

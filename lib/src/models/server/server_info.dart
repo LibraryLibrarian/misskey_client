@@ -33,10 +33,7 @@ class ServerInfo {
 /// Server CPU information.
 @JsonSerializable()
 class ServerCpuInfo {
-  const ServerCpuInfo({
-    required this.model,
-    required this.cores,
-  });
+  const ServerCpuInfo({required this.model, required this.cores});
 
   factory ServerCpuInfo.fromJson(Map<String, dynamic> json) =>
       _$ServerCpuInfoFromJson(json);
@@ -53,9 +50,7 @@ class ServerCpuInfo {
 /// Server memory information.
 @JsonSerializable()
 class ServerMemInfo {
-  const ServerMemInfo({
-    required this.total,
-  });
+  const ServerMemInfo({required this.total});
 
   factory ServerMemInfo.fromJson(Map<String, dynamic> json) =>
       _$ServerMemInfoFromJson(json);
@@ -69,10 +64,7 @@ class ServerMemInfo {
 /// Server filesystem information.
 @JsonSerializable()
 class ServerFsInfo {
-  const ServerFsInfo({
-    required this.total,
-    required this.used,
-  });
+  const ServerFsInfo({required this.total, required this.used});
 
   factory ServerFsInfo.fromJson(Map<String, dynamic> json) =>
       _$ServerFsInfoFromJson(json);

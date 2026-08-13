@@ -44,10 +44,7 @@ void main() {
 
     test('instances includes mastodon.test', () async {
       final instances = await client.federation.instances(limit: 30);
-      expect(
-        instances.map((e) => e.host),
-        contains('mastodon.test'),
-      );
+      expect(instances.map((e) => e.host), contains('mastodon.test'));
     });
   });
 

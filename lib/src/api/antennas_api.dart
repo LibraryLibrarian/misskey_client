@@ -53,12 +53,11 @@ class AntennasApi {
         'excludeKeywords': excludeKeywords,
         'users': users,
         'caseSensitive': caseSensitive,
-        if (localOnly != null) 'localOnly': localOnly,
-        if (excludeBots != null) 'excludeBots': excludeBots,
+        'localOnly': ?localOnly,
+        'excludeBots': ?excludeBots,
         'withReplies': withReplies,
         'withFile': withFile,
-        if (excludeNotesInSensitiveChannel != null)
-          'excludeNotesInSensitiveChannel': excludeNotesInSensitiveChannel,
+        'excludeNotesInSensitiveChannel': ?excludeNotesInSensitiveChannel,
       },
     );
     return MisskeyAntenna.fromJson(res);
@@ -93,18 +92,17 @@ class AntennasApi {
   }) async {
     final body = <String, dynamic>{
       'antennaId': antennaId,
-      if (name != null) 'name': name,
-      if (src != null) 'src': src,
-      if (keywords != null) 'keywords': keywords,
-      if (excludeKeywords != null) 'excludeKeywords': excludeKeywords,
-      if (users != null) 'users': users,
-      if (caseSensitive != null) 'caseSensitive': caseSensitive,
-      if (localOnly != null) 'localOnly': localOnly,
-      if (excludeBots != null) 'excludeBots': excludeBots,
-      if (withReplies != null) 'withReplies': withReplies,
-      if (withFile != null) 'withFile': withFile,
-      if (excludeNotesInSensitiveChannel != null)
-        'excludeNotesInSensitiveChannel': excludeNotesInSensitiveChannel,
+      'name': ?name,
+      'src': ?src,
+      'keywords': ?keywords,
+      'excludeKeywords': ?excludeKeywords,
+      'users': ?users,
+      'caseSensitive': ?caseSensitive,
+      'localOnly': ?localOnly,
+      'excludeBots': ?excludeBots,
+      'withReplies': ?withReplies,
+      'withFile': ?withFile,
+      'excludeNotesInSensitiveChannel': ?excludeNotesInSensitiveChannel,
     };
     putOptional(body, 'userListId', userListId);
     final res = await http.send<Map<String, dynamic>>(
@@ -121,9 +119,9 @@ class AntennasApi {
   /// Common errors:
   /// - `NO_SUCH_ANTENNA`: The antenna does not exist
   Future<void> delete({required String antennaId}) => http.send<Object?>(
-        '/antennas/delete',
-        body: <String, dynamic>{'antennaId': antennaId},
-      );
+    '/antennas/delete',
+    body: <String, dynamic>{'antennaId': antennaId},
+  );
 
   /// Retrieves the details of an antenna (`/api/antennas/show`).
   ///
@@ -173,11 +171,11 @@ class AntennasApi {
   }) async {
     final body = <String, dynamic>{
       'antennaId': antennaId,
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/antennas/notes',

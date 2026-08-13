@@ -25,11 +25,11 @@ class FollowingRequestsApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/following/requests/list',
@@ -50,9 +50,9 @@ class FollowingRequestsApi {
   /// - `NO_SUCH_USER`: The target user does not exist.
   /// - `NO_FOLLOW_REQUEST`: The follow request does not exist.
   Future<void> accept({required String userId}) => http.send<Object?>(
-        '/following/requests/accept',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/following/requests/accept',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Rejects a follow request (`/api/following/requests/reject`).
   ///
@@ -61,9 +61,9 @@ class FollowingRequestsApi {
   /// Notable errors:
   /// - `NO_SUCH_USER`: The target user does not exist.
   Future<void> reject({required String userId}) => http.send<Object?>(
-        '/following/requests/reject',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/following/requests/reject',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Cancels a sent follow request (`/api/following/requests/cancel`).
   ///
@@ -93,11 +93,11 @@ class FollowingRequestsApi {
     int? untilDate,
   }) async {
     final body = <String, dynamic>{
-      if (limit != null) 'limit': limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
-      if (sinceDate != null) 'sinceDate': sinceDate,
-      if (untilDate != null) 'untilDate': untilDate,
+      'limit': ?limit,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
+      'sinceDate': ?sinceDate,
+      'untilDate': ?untilDate,
     };
     final res = await http.send<List<dynamic>>(
       '/following/requests/sent',

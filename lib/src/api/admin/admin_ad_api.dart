@@ -41,7 +41,7 @@ class AdminAdApi {
         'startsAt': startsAt,
         'imageUrl': imageUrl,
         'dayOfWeek': dayOfWeek,
-        if (isSensitive != null) 'isSensitive': isSensitive,
+        'isSensitive': ?isSensitive,
       },
     );
     return MisskeyAd.fromJson(res);
@@ -62,10 +62,10 @@ class AdminAdApi {
     final res = await http.send<List<dynamic>>(
       '/admin/ad/list',
       body: <String, dynamic>{
-        if (limit != null) 'limit': limit,
-        if (sinceId != null) 'sinceId': sinceId,
-        if (untilId != null) 'untilId': untilId,
-        if (publishing != null) 'publishing': publishing,
+        'limit': ?limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        'publishing': ?publishing,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -94,30 +94,27 @@ class AdminAdApi {
     int? startsAt,
     int? dayOfWeek,
     bool? isSensitive,
-  }) =>
-      http.send<Object?>(
-        '/admin/ad/update',
-        body: <String, dynamic>{
-          'id': id,
-          if (memo != null) 'memo': memo,
-          if (url != null) 'url': url,
-          if (imageUrl != null) 'imageUrl': imageUrl,
-          if (place != null) 'place': place,
-          if (priority != null) 'priority': priority,
-          if (ratio != null) 'ratio': ratio,
-          if (expiresAt != null) 'expiresAt': expiresAt,
-          if (startsAt != null) 'startsAt': startsAt,
-          if (dayOfWeek != null) 'dayOfWeek': dayOfWeek,
-          if (isSensitive != null) 'isSensitive': isSensitive,
-        },
-      );
+  }) => http.send<Object?>(
+    '/admin/ad/update',
+    body: <String, dynamic>{
+      'id': id,
+      'memo': ?memo,
+      'url': ?url,
+      'imageUrl': ?imageUrl,
+      'place': ?place,
+      'priority': ?priority,
+      'ratio': ?ratio,
+      'expiresAt': ?expiresAt,
+      'startsAt': ?startsAt,
+      'dayOfWeek': ?dayOfWeek,
+      'isSensitive': ?isSensitive,
+    },
+  );
 
   /// Deletes an advertisement (`/api/admin/ad/delete`).
   ///
   /// Common errors:
   /// - `NO_SUCH_AD`: The specified advertisement does not exist
-  Future<void> delete({required String id}) => http.send<Object?>(
-        '/admin/ad/delete',
-        body: <String, dynamic>{'id': id},
-      );
+  Future<void> delete({required String id}) =>
+      http.send<Object?>('/admin/ad/delete', body: <String, dynamic>{'id': id});
 }

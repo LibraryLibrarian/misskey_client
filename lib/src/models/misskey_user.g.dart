@@ -7,269 +7,270 @@ part of 'misskey_user.dart';
 // **************************************************************************
 
 MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
-      id: json['id'] as String,
-      username: json['username'] as String,
-      name: json['name'] as String? ?? '',
-      host: json['host'] as String?,
-      avatarUrl: json['avatarUrl'] as String?,
-      avatarBlurhash: json['avatarBlurhash'] as String?,
-      isBot: json['isBot'] as bool? ?? false,
-      isCat: json['isCat'] as bool? ?? false,
-      emojis: (json['emojis'] as Map<String, dynamic>?)?.map(
-            (k, e) => MapEntry(k, e as String),
-          ) ??
-          {},
-      onlineStatus: $enumDecodeNullable(
-          _$MisskeyOnlineStatusEnumMap, json['onlineStatus'],
-          unknownValue: MisskeyOnlineStatus.unknown),
-      createdAt:
-          const SafeDateTimeConverter().fromJson(json['createdAt'] as String?),
-      description: json['description'] as String?,
-      followersCount: (json['followersCount'] as num?)?.toInt() ?? 0,
-      followingCount: (json['followingCount'] as num?)?.toInt() ?? 0,
-      notesCount: (json['notesCount'] as num?)?.toInt() ?? 0,
-      isLocked: json['isLocked'] as bool? ?? false,
-      isSuspended: json['isSuspended'] as bool? ?? false,
-      isSilenced: json['isSilenced'] as bool? ?? false,
-      pinnedNoteIds: (json['pinnedNoteIds'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      pinnedNotes: (json['pinnedNotes'] as List<dynamic>?)
-          ?.map((e) => MisskeyNote.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      bannerUrl: json['bannerUrl'] as String?,
-      bannerBlurhash: json['bannerBlurhash'] as String?,
-      fields: (json['fields'] as List<dynamic>?)
-              ?.map((e) => MisskeyUserField.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      isFollowing: json['isFollowing'] as bool?,
-      isFollowed: json['isFollowed'] as bool?,
-      hasPendingFollowRequestFromYou:
-          json['hasPendingFollowRequestFromYou'] as bool?,
-      hasPendingFollowRequestToYou:
-          json['hasPendingFollowRequestToYou'] as bool?,
-      isBlocking: json['isBlocking'] as bool?,
-      isBlocked: json['isBlocked'] as bool?,
-      isMuted: json['isMuted'] as bool?,
-      isRenoteMuted: json['isRenoteMuted'] as bool?,
-      avatarDecorations: (json['avatarDecorations'] as List<dynamic>?)
-          ?.map((e) =>
-              MisskeyAvatarDecoration.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      requireSigninToViewContents:
-          json['requireSigninToViewContents'] as bool? ?? false,
-      makeNotesFollowersOnlyBefore:
-          (json['makeNotesFollowersOnlyBefore'] as num?)?.toInt(),
-      makeNotesHiddenBefore: (json['makeNotesHiddenBefore'] as num?)?.toInt(),
-      instance: json['instance'] == null
-          ? null
-          : MisskeyUserInstance.fromJson(
-              json['instance'] as Map<String, dynamic>),
-      badgeRoles: (json['badgeRoles'] as List<dynamic>?)
-          ?.map((e) => MisskeyBadgeRole.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      url: json['url'] as String?,
-      uri: json['uri'] as String?,
-      movedTo: json['movedTo'] as String?,
-      alsoKnownAs: (json['alsoKnownAs'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      updatedAt:
-          const SafeDateTimeConverter().fromJson(json['updatedAt'] as String?),
-      lastFetchedAt: const SafeDateTimeConverter()
-          .fromJson(json['lastFetchedAt'] as String?),
-      location: json['location'] as String?,
-      birthday: json['birthday'] as String?,
-      lang: json['lang'] as String?,
-      verifiedLinks: (json['verifiedLinks'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      publicReactions: json['publicReactions'] as bool? ?? false,
-      followingVisibility: json['followingVisibility'] as String?,
-      followersVisibility: json['followersVisibility'] as String?,
-      roles: (json['roles'] as List<dynamic>?)
-          ?.map((e) => MisskeyRoleLite.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      memo: json['memo'] as String?,
-      notify: json['notify'] as String?,
-      withReplies: json['withReplies'] as bool? ?? false,
-      twoFactorEnabled: json['twoFactorEnabled'] as bool? ?? false,
-      usePasswordLessLogin: json['usePasswordLessLogin'] as bool? ?? false,
-      securityKeys: json['securityKeys'] as bool? ?? false,
-      isAdmin: json['isAdmin'] as bool? ?? false,
-      isModerator: json['isModerator'] as bool? ?? false,
-      pinnedPageId: json['pinnedPageId'] as String?,
-      avatarId: json['avatarId'] as String?,
-      bannerId: json['bannerId'] as String?,
-      followedMessage: json['followedMessage'] as String?,
-      noCrawle: json['noCrawle'] as bool? ?? false,
-      preventAiLearning: json['preventAiLearning'] as bool? ?? false,
-      hideOnlineStatus: json['hideOnlineStatus'] as bool? ?? false,
-      isExplorable: json['isExplorable'] as bool? ?? false,
-      isDeleted: json['isDeleted'] as bool? ?? false,
-      injectFeaturedNote: json['injectFeaturedNote'] as bool? ?? false,
-      receiveAnnouncementEmail:
-          json['receiveAnnouncementEmail'] as bool? ?? false,
-      alwaysMarkNsfw: json['alwaysMarkNsfw'] as bool? ?? false,
-      autoSensitive: json['autoSensitive'] as bool? ?? false,
-      carefulBot: json['carefulBot'] as bool? ?? false,
-      autoAcceptFollowed: json['autoAcceptFollowed'] as bool? ?? false,
-      chatScope: json['chatScope'] as String?,
-      canChat: json['canChat'] as bool? ?? false,
-      hasUnreadSpecifiedNotes:
-          json['hasUnreadSpecifiedNotes'] as bool? ?? false,
-      hasUnreadMentions: json['hasUnreadMentions'] as bool? ?? false,
-      hasUnreadChatMessages: json['hasUnreadChatMessages'] as bool? ?? false,
-      hasUnreadAnnouncement: json['hasUnreadAnnouncement'] as bool? ?? false,
-      hasUnreadAntenna: json['hasUnreadAntenna'] as bool? ?? false,
-      hasUnreadChannel: json['hasUnreadChannel'] as bool? ?? false,
-      hasUnreadNotification: json['hasUnreadNotification'] as bool? ?? false,
-      hasPendingReceivedFollowRequest:
-          json['hasPendingReceivedFollowRequest'] as bool? ?? false,
-      unreadNotificationsCount:
-          (json['unreadNotificationsCount'] as num?)?.toInt() ?? 0,
-      mutedWords: (json['mutedWords'] as List<dynamic>?)
-          ?.map((e) => (e as List<dynamic>).map((e) => e as String).toList())
-          .toList(),
-      hardMutedWords: (json['hardMutedWords'] as List<dynamic>?)
-          ?.map((e) => (e as List<dynamic>).map((e) => e as String).toList())
-          .toList(),
-      mutedInstances: (json['mutedInstances'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      mutingNotificationTypes:
-          (json['mutingNotificationTypes'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList(),
-      notificationRecieveConfig:
-          json['notificationRecieveConfig'] as Map<String, dynamic>?,
-      emailNotificationTypes: (json['emailNotificationTypes'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      achievements: (json['achievements'] as List<dynamic>?)
-          ?.map((e) => e as Map<String, dynamic>)
-          .toList(),
-      loggedInDays: (json['loggedInDays'] as num?)?.toInt() ?? 0,
-      policies: json['policies'] as Map<String, dynamic>?,
-      twoFactorBackupCodesStock: json['twoFactorBackupCodesStock'] as String?,
-      email: json['email'] as String?,
-      emailVerified: json['emailVerified'] as bool? ?? false,
-      moderationNote: json['moderationNote'] as String?,
-      isLimited: json['isLimited'] as bool? ?? false,
-      mutualLinkSections: (json['mutualLinkSections'] as List<dynamic>?)
-          ?.map((e) => e as Map<String, dynamic>)
-          .toList(),
-      pinnedPage: json['pinnedPage'] as Map<String, dynamic>?,
-    );
+  id: json['id'] as String,
+  username: json['username'] as String,
+  name: json['name'] as String? ?? '',
+  host: json['host'] as String?,
+  avatarUrl: json['avatarUrl'] as String?,
+  avatarBlurhash: json['avatarBlurhash'] as String?,
+  isBot: json['isBot'] as bool? ?? false,
+  isCat: json['isCat'] as bool? ?? false,
+  emojis:
+      (json['emojis'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ) ??
+      {},
+  onlineStatus: $enumDecodeNullable(
+    _$MisskeyOnlineStatusEnumMap,
+    json['onlineStatus'],
+    unknownValue: MisskeyOnlineStatus.unknown,
+  ),
+  createdAt: const SafeDateTimeConverter().fromJson(
+    json['createdAt'] as String?,
+  ),
+  description: json['description'] as String?,
+  followersCount: (json['followersCount'] as num?)?.toInt() ?? 0,
+  followingCount: (json['followingCount'] as num?)?.toInt() ?? 0,
+  notesCount: (json['notesCount'] as num?)?.toInt() ?? 0,
+  isLocked: json['isLocked'] as bool? ?? false,
+  isSuspended: json['isSuspended'] as bool? ?? false,
+  isSilenced: json['isSilenced'] as bool? ?? false,
+  pinnedNoteIds: (json['pinnedNoteIds'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  pinnedNotes: (json['pinnedNotes'] as List<dynamic>?)
+      ?.map((e) => MisskeyNote.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  bannerUrl: json['bannerUrl'] as String?,
+  bannerBlurhash: json['bannerBlurhash'] as String?,
+  fields:
+      (json['fields'] as List<dynamic>?)
+          ?.map((e) => MisskeyUserField.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  isFollowing: json['isFollowing'] as bool?,
+  isFollowed: json['isFollowed'] as bool?,
+  hasPendingFollowRequestFromYou:
+      json['hasPendingFollowRequestFromYou'] as bool?,
+  hasPendingFollowRequestToYou: json['hasPendingFollowRequestToYou'] as bool?,
+  isBlocking: json['isBlocking'] as bool?,
+  isBlocked: json['isBlocked'] as bool?,
+  isMuted: json['isMuted'] as bool?,
+  isRenoteMuted: json['isRenoteMuted'] as bool?,
+  avatarDecorations: (json['avatarDecorations'] as List<dynamic>?)
+      ?.map((e) => MisskeyAvatarDecoration.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  requireSigninToViewContents:
+      json['requireSigninToViewContents'] as bool? ?? false,
+  makeNotesFollowersOnlyBefore: (json['makeNotesFollowersOnlyBefore'] as num?)
+      ?.toInt(),
+  makeNotesHiddenBefore: (json['makeNotesHiddenBefore'] as num?)?.toInt(),
+  instance: json['instance'] == null
+      ? null
+      : MisskeyUserInstance.fromJson(json['instance'] as Map<String, dynamic>),
+  badgeRoles: (json['badgeRoles'] as List<dynamic>?)
+      ?.map((e) => MisskeyBadgeRole.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  url: json['url'] as String?,
+  uri: json['uri'] as String?,
+  movedTo: json['movedTo'] as String?,
+  alsoKnownAs: (json['alsoKnownAs'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  updatedAt: const SafeDateTimeConverter().fromJson(
+    json['updatedAt'] as String?,
+  ),
+  lastFetchedAt: const SafeDateTimeConverter().fromJson(
+    json['lastFetchedAt'] as String?,
+  ),
+  location: json['location'] as String?,
+  birthday: json['birthday'] as String?,
+  lang: json['lang'] as String?,
+  verifiedLinks: (json['verifiedLinks'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  publicReactions: json['publicReactions'] as bool? ?? false,
+  followingVisibility: json['followingVisibility'] as String?,
+  followersVisibility: json['followersVisibility'] as String?,
+  roles: (json['roles'] as List<dynamic>?)
+      ?.map((e) => MisskeyRoleLite.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  memo: json['memo'] as String?,
+  notify: json['notify'] as String?,
+  withReplies: json['withReplies'] as bool? ?? false,
+  twoFactorEnabled: json['twoFactorEnabled'] as bool? ?? false,
+  usePasswordLessLogin: json['usePasswordLessLogin'] as bool? ?? false,
+  securityKeys: json['securityKeys'] as bool? ?? false,
+  isAdmin: json['isAdmin'] as bool? ?? false,
+  isModerator: json['isModerator'] as bool? ?? false,
+  pinnedPageId: json['pinnedPageId'] as String?,
+  avatarId: json['avatarId'] as String?,
+  bannerId: json['bannerId'] as String?,
+  followedMessage: json['followedMessage'] as String?,
+  noCrawle: json['noCrawle'] as bool? ?? false,
+  preventAiLearning: json['preventAiLearning'] as bool? ?? false,
+  hideOnlineStatus: json['hideOnlineStatus'] as bool? ?? false,
+  isExplorable: json['isExplorable'] as bool? ?? false,
+  isDeleted: json['isDeleted'] as bool? ?? false,
+  injectFeaturedNote: json['injectFeaturedNote'] as bool? ?? false,
+  receiveAnnouncementEmail: json['receiveAnnouncementEmail'] as bool? ?? false,
+  alwaysMarkNsfw: json['alwaysMarkNsfw'] as bool? ?? false,
+  autoSensitive: json['autoSensitive'] as bool? ?? false,
+  carefulBot: json['carefulBot'] as bool? ?? false,
+  autoAcceptFollowed: json['autoAcceptFollowed'] as bool? ?? false,
+  chatScope: json['chatScope'] as String?,
+  canChat: json['canChat'] as bool? ?? false,
+  hasUnreadSpecifiedNotes: json['hasUnreadSpecifiedNotes'] as bool? ?? false,
+  hasUnreadMentions: json['hasUnreadMentions'] as bool? ?? false,
+  hasUnreadChatMessages: json['hasUnreadChatMessages'] as bool? ?? false,
+  hasUnreadAnnouncement: json['hasUnreadAnnouncement'] as bool? ?? false,
+  hasUnreadAntenna: json['hasUnreadAntenna'] as bool? ?? false,
+  hasUnreadChannel: json['hasUnreadChannel'] as bool? ?? false,
+  hasUnreadNotification: json['hasUnreadNotification'] as bool? ?? false,
+  hasPendingReceivedFollowRequest:
+      json['hasPendingReceivedFollowRequest'] as bool? ?? false,
+  unreadNotificationsCount:
+      (json['unreadNotificationsCount'] as num?)?.toInt() ?? 0,
+  mutedWords: (json['mutedWords'] as List<dynamic>?)
+      ?.map((e) => (e as List<dynamic>).map((e) => e as String).toList())
+      .toList(),
+  hardMutedWords: (json['hardMutedWords'] as List<dynamic>?)
+      ?.map((e) => (e as List<dynamic>).map((e) => e as String).toList())
+      .toList(),
+  mutedInstances: (json['mutedInstances'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  mutingNotificationTypes: (json['mutingNotificationTypes'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  notificationRecieveConfig:
+      json['notificationRecieveConfig'] as Map<String, dynamic>?,
+  emailNotificationTypes: (json['emailNotificationTypes'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  achievements: (json['achievements'] as List<dynamic>?)
+      ?.map((e) => e as Map<String, dynamic>)
+      .toList(),
+  loggedInDays: (json['loggedInDays'] as num?)?.toInt() ?? 0,
+  policies: json['policies'] as Map<String, dynamic>?,
+  twoFactorBackupCodesStock: json['twoFactorBackupCodesStock'] as String?,
+  email: json['email'] as String?,
+  emailVerified: json['emailVerified'] as bool? ?? false,
+  moderationNote: json['moderationNote'] as String?,
+  isLimited: json['isLimited'] as bool? ?? false,
+  mutualLinkSections: (json['mutualLinkSections'] as List<dynamic>?)
+      ?.map((e) => e as Map<String, dynamic>)
+      .toList(),
+  pinnedPage: json['pinnedPage'] as Map<String, dynamic>?,
+);
 
-Map<String, dynamic> _$MisskeyUserToJson(MisskeyUser instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'username': instance.username,
-      'name': instance.name,
-      'host': instance.host,
-      'avatarUrl': instance.avatarUrl,
-      'avatarBlurhash': instance.avatarBlurhash,
-      'isBot': instance.isBot,
-      'isCat': instance.isCat,
-      'emojis': instance.emojis,
-      'onlineStatus': _$MisskeyOnlineStatusEnumMap[instance.onlineStatus],
-      'createdAt': const SafeDateTimeConverter().toJson(instance.createdAt),
-      'description': instance.description,
-      'followersCount': instance.followersCount,
-      'followingCount': instance.followingCount,
-      'notesCount': instance.notesCount,
-      'isLocked': instance.isLocked,
-      'isSuspended': instance.isSuspended,
-      'isSilenced': instance.isSilenced,
-      'pinnedNoteIds': instance.pinnedNoteIds,
-      'pinnedNotes': instance.pinnedNotes?.map((e) => e.toJson()).toList(),
-      'bannerUrl': instance.bannerUrl,
-      'bannerBlurhash': instance.bannerBlurhash,
-      'fields': instance.fields?.map((e) => e.toJson()).toList(),
-      'isFollowing': instance.isFollowing,
-      'isFollowed': instance.isFollowed,
-      'hasPendingFollowRequestFromYou': instance.hasPendingFollowRequestFromYou,
-      'hasPendingFollowRequestToYou': instance.hasPendingFollowRequestToYou,
-      'isBlocking': instance.isBlocking,
-      'isBlocked': instance.isBlocked,
-      'isMuted': instance.isMuted,
-      'isRenoteMuted': instance.isRenoteMuted,
-      'avatarDecorations':
-          instance.avatarDecorations?.map((e) => e.toJson()).toList(),
-      'requireSigninToViewContents': instance.requireSigninToViewContents,
-      'makeNotesFollowersOnlyBefore': instance.makeNotesFollowersOnlyBefore,
-      'makeNotesHiddenBefore': instance.makeNotesHiddenBefore,
-      'instance': instance.instance?.toJson(),
-      'badgeRoles': instance.badgeRoles?.map((e) => e.toJson()).toList(),
-      'url': instance.url,
-      'uri': instance.uri,
-      'movedTo': instance.movedTo,
-      'alsoKnownAs': instance.alsoKnownAs,
-      'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
-      'lastFetchedAt':
-          const SafeDateTimeConverter().toJson(instance.lastFetchedAt),
-      'location': instance.location,
-      'birthday': instance.birthday,
-      'lang': instance.lang,
-      'verifiedLinks': instance.verifiedLinks,
-      'publicReactions': instance.publicReactions,
-      'followingVisibility': instance.followingVisibility,
-      'followersVisibility': instance.followersVisibility,
-      'roles': instance.roles?.map((e) => e.toJson()).toList(),
-      'memo': instance.memo,
-      'notify': instance.notify,
-      'withReplies': instance.withReplies,
-      'twoFactorEnabled': instance.twoFactorEnabled,
-      'usePasswordLessLogin': instance.usePasswordLessLogin,
-      'securityKeys': instance.securityKeys,
-      'isAdmin': instance.isAdmin,
-      'isModerator': instance.isModerator,
-      'pinnedPageId': instance.pinnedPageId,
-      'avatarId': instance.avatarId,
-      'bannerId': instance.bannerId,
-      'followedMessage': instance.followedMessage,
-      'noCrawle': instance.noCrawle,
-      'preventAiLearning': instance.preventAiLearning,
-      'hideOnlineStatus': instance.hideOnlineStatus,
-      'isExplorable': instance.isExplorable,
-      'isDeleted': instance.isDeleted,
-      'injectFeaturedNote': instance.injectFeaturedNote,
-      'receiveAnnouncementEmail': instance.receiveAnnouncementEmail,
-      'alwaysMarkNsfw': instance.alwaysMarkNsfw,
-      'autoSensitive': instance.autoSensitive,
-      'carefulBot': instance.carefulBot,
-      'autoAcceptFollowed': instance.autoAcceptFollowed,
-      'chatScope': instance.chatScope,
-      'canChat': instance.canChat,
-      'hasUnreadSpecifiedNotes': instance.hasUnreadSpecifiedNotes,
-      'hasUnreadMentions': instance.hasUnreadMentions,
-      'hasUnreadChatMessages': instance.hasUnreadChatMessages,
-      'hasUnreadAnnouncement': instance.hasUnreadAnnouncement,
-      'hasUnreadAntenna': instance.hasUnreadAntenna,
-      'hasUnreadChannel': instance.hasUnreadChannel,
-      'hasUnreadNotification': instance.hasUnreadNotification,
-      'hasPendingReceivedFollowRequest':
-          instance.hasPendingReceivedFollowRequest,
-      'unreadNotificationsCount': instance.unreadNotificationsCount,
-      'mutedWords': instance.mutedWords,
-      'hardMutedWords': instance.hardMutedWords,
-      'mutedInstances': instance.mutedInstances,
-      'mutingNotificationTypes': instance.mutingNotificationTypes,
-      'notificationRecieveConfig': instance.notificationRecieveConfig,
-      'emailNotificationTypes': instance.emailNotificationTypes,
-      'achievements': instance.achievements,
-      'loggedInDays': instance.loggedInDays,
-      'policies': instance.policies,
-      'twoFactorBackupCodesStock': instance.twoFactorBackupCodesStock,
-      'email': instance.email,
-      'emailVerified': instance.emailVerified,
-      'moderationNote': instance.moderationNote,
-      'isLimited': instance.isLimited,
-      'mutualLinkSections': instance.mutualLinkSections,
-      'pinnedPage': instance.pinnedPage,
-    };
+Map<String, dynamic> _$MisskeyUserToJson(
+  MisskeyUser instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'username': instance.username,
+  'name': instance.name,
+  'host': instance.host,
+  'avatarUrl': instance.avatarUrl,
+  'avatarBlurhash': instance.avatarBlurhash,
+  'isBot': instance.isBot,
+  'isCat': instance.isCat,
+  'emojis': instance.emojis,
+  'onlineStatus': _$MisskeyOnlineStatusEnumMap[instance.onlineStatus],
+  'createdAt': const SafeDateTimeConverter().toJson(instance.createdAt),
+  'description': instance.description,
+  'followersCount': instance.followersCount,
+  'followingCount': instance.followingCount,
+  'notesCount': instance.notesCount,
+  'isLocked': instance.isLocked,
+  'isSuspended': instance.isSuspended,
+  'isSilenced': instance.isSilenced,
+  'pinnedNoteIds': instance.pinnedNoteIds,
+  'pinnedNotes': instance.pinnedNotes?.map((e) => e.toJson()).toList(),
+  'bannerUrl': instance.bannerUrl,
+  'bannerBlurhash': instance.bannerBlurhash,
+  'fields': instance.fields?.map((e) => e.toJson()).toList(),
+  'isFollowing': instance.isFollowing,
+  'isFollowed': instance.isFollowed,
+  'hasPendingFollowRequestFromYou': instance.hasPendingFollowRequestFromYou,
+  'hasPendingFollowRequestToYou': instance.hasPendingFollowRequestToYou,
+  'isBlocking': instance.isBlocking,
+  'isBlocked': instance.isBlocked,
+  'isMuted': instance.isMuted,
+  'isRenoteMuted': instance.isRenoteMuted,
+  'avatarDecorations': instance.avatarDecorations
+      ?.map((e) => e.toJson())
+      .toList(),
+  'requireSigninToViewContents': instance.requireSigninToViewContents,
+  'makeNotesFollowersOnlyBefore': instance.makeNotesFollowersOnlyBefore,
+  'makeNotesHiddenBefore': instance.makeNotesHiddenBefore,
+  'instance': instance.instance?.toJson(),
+  'badgeRoles': instance.badgeRoles?.map((e) => e.toJson()).toList(),
+  'url': instance.url,
+  'uri': instance.uri,
+  'movedTo': instance.movedTo,
+  'alsoKnownAs': instance.alsoKnownAs,
+  'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
+  'lastFetchedAt': const SafeDateTimeConverter().toJson(instance.lastFetchedAt),
+  'location': instance.location,
+  'birthday': instance.birthday,
+  'lang': instance.lang,
+  'verifiedLinks': instance.verifiedLinks,
+  'publicReactions': instance.publicReactions,
+  'followingVisibility': instance.followingVisibility,
+  'followersVisibility': instance.followersVisibility,
+  'roles': instance.roles?.map((e) => e.toJson()).toList(),
+  'memo': instance.memo,
+  'notify': instance.notify,
+  'withReplies': instance.withReplies,
+  'twoFactorEnabled': instance.twoFactorEnabled,
+  'usePasswordLessLogin': instance.usePasswordLessLogin,
+  'securityKeys': instance.securityKeys,
+  'isAdmin': instance.isAdmin,
+  'isModerator': instance.isModerator,
+  'pinnedPageId': instance.pinnedPageId,
+  'avatarId': instance.avatarId,
+  'bannerId': instance.bannerId,
+  'followedMessage': instance.followedMessage,
+  'noCrawle': instance.noCrawle,
+  'preventAiLearning': instance.preventAiLearning,
+  'hideOnlineStatus': instance.hideOnlineStatus,
+  'isExplorable': instance.isExplorable,
+  'isDeleted': instance.isDeleted,
+  'injectFeaturedNote': instance.injectFeaturedNote,
+  'receiveAnnouncementEmail': instance.receiveAnnouncementEmail,
+  'alwaysMarkNsfw': instance.alwaysMarkNsfw,
+  'autoSensitive': instance.autoSensitive,
+  'carefulBot': instance.carefulBot,
+  'autoAcceptFollowed': instance.autoAcceptFollowed,
+  'chatScope': instance.chatScope,
+  'canChat': instance.canChat,
+  'hasUnreadSpecifiedNotes': instance.hasUnreadSpecifiedNotes,
+  'hasUnreadMentions': instance.hasUnreadMentions,
+  'hasUnreadChatMessages': instance.hasUnreadChatMessages,
+  'hasUnreadAnnouncement': instance.hasUnreadAnnouncement,
+  'hasUnreadAntenna': instance.hasUnreadAntenna,
+  'hasUnreadChannel': instance.hasUnreadChannel,
+  'hasUnreadNotification': instance.hasUnreadNotification,
+  'hasPendingReceivedFollowRequest': instance.hasPendingReceivedFollowRequest,
+  'unreadNotificationsCount': instance.unreadNotificationsCount,
+  'mutedWords': instance.mutedWords,
+  'hardMutedWords': instance.hardMutedWords,
+  'mutedInstances': instance.mutedInstances,
+  'mutingNotificationTypes': instance.mutingNotificationTypes,
+  'notificationRecieveConfig': instance.notificationRecieveConfig,
+  'emailNotificationTypes': instance.emailNotificationTypes,
+  'achievements': instance.achievements,
+  'loggedInDays': instance.loggedInDays,
+  'policies': instance.policies,
+  'twoFactorBackupCodesStock': instance.twoFactorBackupCodesStock,
+  'email': instance.email,
+  'emailVerified': instance.emailVerified,
+  'moderationNote': instance.moderationNote,
+  'isLimited': instance.isLimited,
+  'mutualLinkSections': instance.mutualLinkSections,
+  'pinnedPage': instance.pinnedPage,
+};
 
 const _$MisskeyOnlineStatusEnumMap = {
   MisskeyOnlineStatus.unknown: 'unknown',
@@ -285,32 +286,29 @@ MisskeyUserField _$MisskeyUserFieldFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyUserFieldToJson(MisskeyUserField instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'value': instance.value,
-    };
+    <String, dynamic>{'name': instance.name, 'value': instance.value};
 
 MisskeyAvatarDecoration _$MisskeyAvatarDecorationFromJson(
-        Map<String, dynamic> json) =>
-    MisskeyAvatarDecoration(
-      id: json['id'] as String,
-      angle: (json['angle'] as num?)?.toDouble(),
-      flipH: json['flipH'] as bool?,
-      url: json['url'] as String,
-      offsetX: (json['offsetX'] as num?)?.toDouble(),
-      offsetY: (json['offsetY'] as num?)?.toDouble(),
-    );
+  Map<String, dynamic> json,
+) => MisskeyAvatarDecoration(
+  id: json['id'] as String,
+  angle: (json['angle'] as num?)?.toDouble(),
+  flipH: json['flipH'] as bool?,
+  url: json['url'] as String,
+  offsetX: (json['offsetX'] as num?)?.toDouble(),
+  offsetY: (json['offsetY'] as num?)?.toDouble(),
+);
 
 Map<String, dynamic> _$MisskeyAvatarDecorationToJson(
-        MisskeyAvatarDecoration instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'angle': instance.angle,
-      'flipH': instance.flipH,
-      'url': instance.url,
-      'offsetX': instance.offsetX,
-      'offsetY': instance.offsetY,
-    };
+  MisskeyAvatarDecoration instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'angle': instance.angle,
+  'flipH': instance.flipH,
+  'url': instance.url,
+  'offsetX': instance.offsetX,
+  'offsetY': instance.offsetY,
+};
 
 MisskeyUserInstance _$MisskeyUserInstanceFromJson(Map<String, dynamic> json) =>
     MisskeyUserInstance(
@@ -323,15 +321,15 @@ MisskeyUserInstance _$MisskeyUserInstanceFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyUserInstanceToJson(
-        MisskeyUserInstance instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'softwareName': instance.softwareName,
-      'softwareVersion': instance.softwareVersion,
-      'iconUrl': instance.iconUrl,
-      'faviconUrl': instance.faviconUrl,
-      'themeColor': instance.themeColor,
-    };
+  MisskeyUserInstance instance,
+) => <String, dynamic>{
+  'name': instance.name,
+  'softwareName': instance.softwareName,
+  'softwareVersion': instance.softwareVersion,
+  'iconUrl': instance.iconUrl,
+  'faviconUrl': instance.faviconUrl,
+  'themeColor': instance.themeColor,
+};
 
 MisskeyBadgeRole _$MisskeyBadgeRoleFromJson(Map<String, dynamic> json) =>
     MisskeyBadgeRole(

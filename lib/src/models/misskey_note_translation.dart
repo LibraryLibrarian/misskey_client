@@ -5,10 +5,7 @@ part 'misskey_note_translation.g.dart';
 /// A note translation result (`/api/notes/translate`).
 @JsonSerializable()
 class MisskeyNoteTranslation {
-  const MisskeyNoteTranslation({
-    required this.sourceLang,
-    required this.text,
-  });
+  const MisskeyNoteTranslation({required this.sourceLang, required this.text});
 
   factory MisskeyNoteTranslation.fromJson(Map<String, dynamic> json) =>
       _$MisskeyNoteTranslationFromJson(json);

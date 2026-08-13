@@ -10,11 +10,13 @@ MisskeyNoteDraft _$MisskeyNoteDraftFromJson(Map<String, dynamic> json) =>
     MisskeyNoteDraft(
       id: json['id'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt:
-          const SafeDateTimeConverter().fromJson(json['updatedAt'] as String?),
+      updatedAt: const SafeDateTimeConverter().fromJson(
+        json['updatedAt'] as String?,
+      ),
       userId: json['userId'] as String,
       visibility: json['visibility'] as String?,
-      visibleUserIds: (json['visibleUserIds'] as List<dynamic>?)
+      visibleUserIds:
+          (json['visibleUserIds'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
@@ -26,7 +28,8 @@ MisskeyNoteDraft _$MisskeyNoteDraftFromJson(Map<String, dynamic> json) =>
       renoteId: json['renoteId'] as String?,
       channelId: json['channelId'] as String?,
       text: json['text'] as String?,
-      fileIds: (json['fileIds'] as List<dynamic>?)
+      fileIds:
+          (json['fileIds'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],

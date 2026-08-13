@@ -44,15 +44,18 @@ MisskeyQueueStats _$MisskeyQueueStatsFromJson(Map<String, dynamic> json) =>
       objectStorage: json['objectStorage'] == null
           ? null
           : MisskeyQueueCount.fromJson(
-              json['objectStorage'] as Map<String, dynamic>),
+              json['objectStorage'] as Map<String, dynamic>,
+            ),
       userWebhookDeliver: json['userWebhookDeliver'] == null
           ? null
           : MisskeyQueueCount.fromJson(
-              json['userWebhookDeliver'] as Map<String, dynamic>),
+              json['userWebhookDeliver'] as Map<String, dynamic>,
+            ),
       systemWebhookDeliver: json['systemWebhookDeliver'] == null
           ? null
           : MisskeyQueueCount.fromJson(
-              json['systemWebhookDeliver'] as Map<String, dynamic>),
+              json['systemWebhookDeliver'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$MisskeyQueueStatsToJson(MisskeyQueueStats instance) =>
@@ -73,12 +76,12 @@ MisskeyQueueMetrics _$MisskeyQueueMetricsFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$MisskeyQueueMetricsToJson(
-        MisskeyQueueMetrics instance) =>
-    <String, dynamic>{
-      'meta': instance.meta,
-      'data': instance.data,
-      'count': instance.count,
-    };
+  MisskeyQueueMetrics instance,
+) => <String, dynamic>{
+  'meta': instance.meta,
+  'data': instance.data,
+  'count': instance.count,
+};
 
 MisskeyQueueInfo _$MisskeyQueueInfoFromJson(Map<String, dynamic> json) =>
     MisskeyQueueInfo(
@@ -91,11 +94,13 @@ MisskeyQueueInfo _$MisskeyQueueInfoFromJson(Map<String, dynamic> json) =>
       completedMetrics: json['completedMetrics'] == null
           ? null
           : MisskeyQueueMetrics.fromJson(
-              json['completedMetrics'] as Map<String, dynamic>),
+              json['completedMetrics'] as Map<String, dynamic>,
+            ),
       failedMetrics: json['failedMetrics'] == null
           ? null
           : MisskeyQueueMetrics.fromJson(
-              json['failedMetrics'] as Map<String, dynamic>),
+              json['failedMetrics'] as Map<String, dynamic>,
+            ),
       db: json['db'] as Map<String, dynamic>?,
     );
 

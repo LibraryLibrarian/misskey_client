@@ -5,10 +5,7 @@ part 'misskey_registry_scope.g.dart';
 /// Registry scope and domain information.
 @JsonSerializable()
 class MisskeyRegistryScope {
-  const MisskeyRegistryScope({
-    required this.scopes,
-    this.domain,
-  });
+  const MisskeyRegistryScope({required this.scopes, this.domain});
 
   factory MisskeyRegistryScope.fromJson(Map<String, dynamic> json) =>
       _$MisskeyRegistryScopeFromJson(json);

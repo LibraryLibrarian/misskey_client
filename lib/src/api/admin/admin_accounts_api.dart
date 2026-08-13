@@ -32,7 +32,7 @@ class AdminAccountsApi {
       body: <String, dynamic>{
         'username': username,
         'password': password,
-        if (setupPassword != null) 'setupPassword': setupPassword,
+        'setupPassword': ?setupPassword,
       },
     );
     return MisskeyAdminCreatedAccount.fromJson(res);
@@ -43,9 +43,9 @@ class AdminAccountsApi {
   /// Requires administrator privileges. Pass the target user ID in
   /// [userId]. The deletion is processed asynchronously on the server.
   Future<void> delete({required String userId}) => http.send<Object?>(
-        '/admin/accounts/delete',
-        body: <String, dynamic>{'userId': userId},
-      );
+    '/admin/accounts/delete',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Finds a local user by email address
   /// (`/api/admin/accounts/find-by-email`).

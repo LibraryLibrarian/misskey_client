@@ -7,9 +7,7 @@ part 'endpoint_info.g.dart';
 /// Detailed information about an API endpoint from `/api/endpoint`.
 @JsonSerializable()
 class EndpointInfo {
-  const EndpointInfo({
-    required this.params,
-  });
+  const EndpointInfo({required this.params});
 
   factory EndpointInfo.fromJson(Map<String, dynamic> json) =>
       _$EndpointInfoFromJson(json);

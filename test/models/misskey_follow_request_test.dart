@@ -12,9 +12,7 @@ void main() {
       final file = File('test/fixtures/follow_requests.json');
       final jsonList = jsonDecode(file.readAsStringSync()) as List<dynamic>;
       list = jsonList
-          .map(
-            (e) => MisskeyFollowRequest.fromJson(e as Map<String, dynamic>),
-          )
+          .map((e) => MisskeyFollowRequest.fromJson(e as Map<String, dynamic>))
           .toList();
     });
 

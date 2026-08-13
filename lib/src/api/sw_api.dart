@@ -32,7 +32,7 @@ class SwApi {
       'endpoint': endpoint,
       'auth': auth,
       'publickey': publickey,
-      if (sendReadMessage != null) 'sendReadMessage': sendReadMessage,
+      'sendReadMessage': ?sendReadMessage,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/sw/register',
@@ -47,9 +47,7 @@ class SwApi {
   Future<void> unregister({required String endpoint}) async {
     await http.send<void>(
       '/sw/unregister',
-      body: <String, dynamic>{
-        'endpoint': endpoint,
-      },
+      body: <String, dynamic>{'endpoint': endpoint},
       options: const RequestOptions(idempotent: true),
     );
   }
@@ -64,9 +62,7 @@ class SwApi {
   }) async {
     final res = await http.send<Map<String, dynamic>?>(
       '/sw/show-registration',
-      body: <String, dynamic>{
-        'endpoint': endpoint,
-      },
+      body: <String, dynamic>{'endpoint': endpoint},
       options: const RequestOptions(idempotent: true),
     );
     if (res == null) return null;
@@ -86,7 +82,7 @@ class SwApi {
   }) async {
     final body = <String, dynamic>{
       'endpoint': endpoint,
-      if (sendReadMessage != null) 'sendReadMessage': sendReadMessage,
+      'sendReadMessage': ?sendReadMessage,
     };
     final res = await http.send<Map<String, dynamic>>(
       '/sw/update-registration',

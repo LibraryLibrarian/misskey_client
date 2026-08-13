@@ -7,13 +7,7 @@ part of 'endpoint_param.dart';
 // **************************************************************************
 
 EndpointParam _$EndpointParamFromJson(Map<String, dynamic> json) =>
-    EndpointParam(
-      name: json['name'] as String,
-      type: json['type'] as String,
-    );
+    EndpointParam(name: json['name'] as String, type: json['type'] as String);
 
 Map<String, dynamic> _$EndpointParamToJson(EndpointParam instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'type': instance.type,
-    };
+    <String, dynamic>{'name': instance.name, 'type': instance.type};
