@@ -6,7 +6,20 @@ on:
     tags: ['v*']
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Verify release version
+        run: dart run tool/verify_release.dart "${GITHUB_REF_NAME#v}"
+
   publish:
+    needs: verify
     permissions:
       id-token: write
     uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
