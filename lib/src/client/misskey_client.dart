@@ -109,6 +109,14 @@ class MisskeyClient {
   @internal
   final MisskeyHttp http;
 
+  /// The base URL of the Misskey server this client connects to.
+  ///
+  /// Returns the URL passed as [MisskeyClientConfig.baseUrl] as-is, without
+  /// the `/api` suffix that is appended internally. Useful for packages built
+  /// on top of a [MisskeyClient] that need to identify which server it
+  /// targets, for example to scope a per-server cache.
+  Uri get baseUrl => http.baseUrl;
+
   /// Account and profile management API.
   late final AccountApi account;
 

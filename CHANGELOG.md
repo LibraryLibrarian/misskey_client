@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `MisskeyClient.baseUrl`, exposing the configured server URL so that packages built on top of a client can identify which server it targets
+
 ## [1.0.0-beta.5] - 2026-08-14
 
 ### Removed
