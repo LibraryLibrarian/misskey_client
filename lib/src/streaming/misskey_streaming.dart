@@ -12,9 +12,12 @@ import 'internal/streaming_uri_builder.dart';
 import 'streaming_config.dart';
 import 'streaming_connection_state.dart';
 import 'streaming_message.dart';
+import 'streaming_subscription.dart';
 
 /// A reusable connection to the Misskey Streaming API.
 class MisskeyStreaming {
+  static const int _maximumSubscriptions = 32;
+
   /// Creates a Misskey Streaming API client.
   factory MisskeyStreaming({
     required Uri baseUrl,
@@ -68,6 +71,7 @@ class MisskeyStreaming {
       StreamController<MisskeyStreamingException>.broadcast();
   final StreamController<MisskeyStreamingMessage> _messageController =
       StreamController<MisskeyStreamingMessage>.broadcast();
+  final Map<String, _SubscriptionEntry> _subscriptions = {};
 
   MisskeyStreamingConnectionState _state =
       MisskeyStreamingConnectionState.disconnected;
@@ -75,6 +79,7 @@ class MisskeyStreaming {
   bool _isDisposed = false;
   int _generation = 0;
   int _reconnectAttempts = 0;
+  int _nextSubscriptionId = 0;
   _ActiveConnection? _connection;
   Future<void>? _connectFuture;
   int? _connectFutureGeneration;
@@ -93,6 +98,65 @@ class MisskeyStreaming {
 
   /// Decoded raw Streaming API messages.
   Stream<MisskeyStreamingMessage> get messages => _messageController.stream;
+
+  /// Subscribes to a raw Misskey Streaming API channel.
+  ///
+  /// When connected, the returned future completes after the server sends a
+  /// `connected` acknowledgement. When disconnected, the definition is kept
+  /// locally and sent after the next successful connection.
+  Future<MisskeyStreamingSubscription> subscribeRaw({
+    required String channel,
+    Map<String, Object?> params = const {},
+    String? id,
+  }) async {
+    _ensureNotDisposed();
+    if (channel.isEmpty) {
+      throw const MisskeyStreamingSubscriptionException(
+        message: 'Streaming channel must not be empty',
+        operation: 'subscribe',
+      );
+    }
+    if (id != null && id.isEmpty) {
+      throw const MisskeyStreamingSubscriptionException(
+        message: 'Streaming subscription ID must not be empty',
+        operation: 'subscribe',
+      );
+    }
+    if (id != null && _subscriptions.containsKey(id)) {
+      throw MisskeyStreamingSubscriptionException(
+        message: 'Streaming subscription ID is already in use',
+        operation: 'subscribe',
+        context: {'subscriptionId': id},
+      );
+    }
+    if (_subscriptions.length >= _maximumSubscriptions) {
+      throw MisskeyStreamingSubscriptionException(
+        message: 'Streaming subscription limit reached',
+        operation: 'subscribe',
+        context: {'maximum': _maximumSubscriptions},
+      );
+    }
+
+    final subscriptionId = id ?? _generateSubscriptionId();
+    final entry = _SubscriptionEntry(
+      id: subscriptionId,
+      channel: channel,
+      params: Map.unmodifiable(params),
+    );
+    entry.subscription = MisskeyStreamingSubscription(
+      id: subscriptionId,
+      channel: channel,
+      params: entry.params,
+      messages: entry.messageController.stream,
+      onUnsubscribe: () => _unsubscribeSubscription(subscriptionId),
+    );
+    _subscriptions[subscriptionId] = entry;
+
+    if (isConnected) {
+      _sendSubscription(entry);
+    }
+    return entry.ready.future;
+  }
 
   /// Whether the WebSocket is open and ready to send messages.
   bool get isConnected => _state == MisskeyStreamingConnectionState.connected;
@@ -131,6 +195,7 @@ class MisskeyStreaming {
 
     _wantsConnection = false;
     _cancelReconnectTimer();
+    _pauseSubscriptionAcknowledgements();
     _generation++;
     _connectFuture = null;
     _connectFutureGeneration = null;
@@ -150,6 +215,7 @@ class MisskeyStreaming {
     _ensureNotDisposed();
     _wantsConnection = false;
     _cancelReconnectTimer();
+    _pauseSubscriptionAcknowledgements();
     final stopGeneration = ++_generation;
     _connectFuture = null;
     _connectFutureGeneration = null;
@@ -183,6 +249,7 @@ class MisskeyStreaming {
     _isDisposed = true;
     _wantsConnection = false;
     _cancelReconnectTimer();
+    final subscriptionEntries = _disposeSubscriptions();
     _generation++;
     _connectFuture = null;
     _connectFutureGeneration = null;
@@ -195,20 +262,29 @@ class MisskeyStreaming {
     }
     _setState(MisskeyStreamingConnectionState.disposed);
 
-    final future = _performDispose(connection);
+    final future = _performDispose(connection, subscriptionEntries);
     _disposeFuture = future;
     return future;
   }
 
-  Future<void> _performDispose(_ActiveConnection? connection) async {
+  Future<void> _performDispose(
+    _ActiveConnection? connection,
+    List<_SubscriptionEntry> subscriptionEntries,
+  ) async {
     try {
       if (connection != null) {
         await _releaseConnection(connection, waitForSocket: connection.ready);
       }
     } finally {
-      await _messageController.close();
-      await _errorController.close();
-      await _stateController.close();
+      try {
+        await Future.wait(
+          subscriptionEntries.map((entry) => entry.messageController.close()),
+        );
+      } finally {
+        await _messageController.close();
+        await _errorController.close();
+        await _stateController.close();
+      }
     }
   }
 
@@ -290,6 +366,7 @@ class MisskeyStreaming {
       connection.ready = true;
       _reconnectAttempts = 0;
       _setState(MisskeyStreamingConnectionState.connected);
+      _restoreSubscriptions();
       _logInfo('Connected to Misskey Streaming API');
     } catch (error, stackTrace) {
       if (!_isCurrentIntent(generation)) {
@@ -314,6 +391,222 @@ class MisskeyStreaming {
   }
 
   Future<String?> _resolveToken() async => _tokenProvider?.call();
+
+  String _generateSubscriptionId() {
+    String candidate;
+    do {
+      candidate = 'subscription-${++_nextSubscriptionId}';
+    } while (_subscriptions.containsKey(candidate));
+    return candidate;
+  }
+
+  void _restoreSubscriptions() {
+    for (final entry in List<_SubscriptionEntry>.of(_subscriptions.values)) {
+      _sendSubscription(entry);
+    }
+  }
+
+  void _sendSubscription(_SubscriptionEntry entry) {
+    final connection = _connection;
+    if (!isConnected ||
+        connection == null ||
+        !connection.ready ||
+        entry.sentGeneration == connection.generation) {
+      return;
+    }
+
+    final generation = connection.generation;
+    entry
+      ..sentGeneration = generation
+      ..acknowledgementTimer?.cancel()
+      ..acknowledgementTimer = Timer(
+        config.subscriptionTimeout,
+        () => _handleSubscriptionTimeout(entry, generation),
+      );
+
+    try {
+      connection.socket.add(
+        jsonEncode({
+          'type': 'connect',
+          'body': {
+            'channel': entry.channel,
+            'id': entry.id,
+            'params': entry.params,
+            'pong': true,
+          },
+        }),
+      );
+    } catch (error, stackTrace) {
+      _handleSubscriptionSendFailure(entry, error, stackTrace);
+    }
+  }
+
+  void _handleSubscriptionSendFailure(
+    _SubscriptionEntry entry,
+    Object error,
+    StackTrace stackTrace,
+  ) {
+    entry
+      ..acknowledgementTimer?.cancel()
+      ..acknowledgementTimer = null
+      ..sentGeneration = null;
+    final exception = MisskeyStreamingSubscriptionException(
+      message: 'Could not send Streaming subscription request',
+      cause: error,
+      stackTrace: stackTrace,
+      operation: 'subscribe',
+      context: {'subscriptionId': entry.id, 'channel': entry.channel},
+    );
+
+    if (!entry.ready.isCompleted) {
+      if (identical(_subscriptions[entry.id], entry)) {
+        _subscriptions.remove(entry.id);
+      }
+      unawaited(entry.messageController.close());
+      entry.ready.completeError(exception, stackTrace);
+    } else {
+      _emitError(exception);
+    }
+  }
+
+  void _handleSubscriptionTimeout(_SubscriptionEntry entry, int generation) {
+    if (entry.sentGeneration != generation ||
+        !identical(_subscriptions[entry.id], entry)) {
+      return;
+    }
+    entry.acknowledgementTimer = null;
+    final exception = MisskeyStreamingTimeoutException(
+      message: 'Streaming subscription acknowledgement timed out',
+      operation: 'subscribe',
+      timeout: config.subscriptionTimeout,
+      context: {'subscriptionId': entry.id, 'channel': entry.channel},
+    );
+
+    if (!entry.ready.isCompleted) {
+      _subscriptions.remove(entry.id);
+      try {
+        _sendUnsubscribeFrame(entry.id);
+      } catch (_) {
+        // タイムアウト後のロールバック送信失敗は元の例外を優先する
+      }
+      unawaited(entry.messageController.close());
+      entry.ready.completeError(exception, StackTrace.current);
+    } else {
+      _emitError(exception);
+    }
+  }
+
+  void _handleSubscriptionProtocolMessage(MisskeyStreamingMessage message) {
+    if (message.type != 'connected') {
+      return;
+    }
+
+    final body = message.body;
+    if (body is! Map<Object?, Object?>) {
+      throw const MisskeyStreamingProtocolException(
+        message: 'Streaming connected acknowledgement body must be an object',
+        operation: 'acknowledgeSubscription',
+      );
+    }
+    final id = body['id'];
+    if (id is! String || id.isEmpty) {
+      throw const MisskeyStreamingProtocolException(
+        message: 'Streaming connected acknowledgement ID is invalid',
+        operation: 'acknowledgeSubscription',
+      );
+    }
+
+    final entry = _subscriptions[id];
+    final connection = _connection;
+    if (entry == null ||
+        connection == null ||
+        entry.sentGeneration != connection.generation) {
+      return;
+    }
+
+    entry
+      ..acknowledgementTimer?.cancel()
+      ..acknowledgementTimer = null;
+    if (!entry.ready.isCompleted) {
+      entry.ready.complete(entry.subscription);
+    }
+  }
+
+  Future<void> _unsubscribeSubscription(String id) async {
+    final entry = _subscriptions.remove(id);
+    if (entry == null) {
+      return;
+    }
+
+    entry
+      ..acknowledgementTimer?.cancel()
+      ..acknowledgementTimer = null
+      ..sentGeneration = null;
+
+    MisskeyStreamingSubscriptionException? exception;
+    try {
+      _sendUnsubscribeFrame(id);
+    } catch (error, stackTrace) {
+      exception = MisskeyStreamingSubscriptionException(
+        message: 'Could not send Streaming unsubscribe request',
+        cause: error,
+        stackTrace: stackTrace,
+        operation: 'unsubscribe',
+        context: {'subscriptionId': id, 'channel': entry.channel},
+      );
+    } finally {
+      await entry.messageController.close();
+    }
+
+    if (exception != null) {
+      throw exception;
+    }
+  }
+
+  void _sendUnsubscribeFrame(String id) {
+    final connection = _connection;
+    if (!isConnected || connection == null || !connection.ready) {
+      return;
+    }
+    connection.socket.add(
+      jsonEncode({
+        'type': 'disconnect',
+        'body': {'id': id},
+      }),
+    );
+  }
+
+  void _pauseSubscriptionAcknowledgements() {
+    for (final entry in _subscriptions.values) {
+      entry
+        ..acknowledgementTimer?.cancel()
+        ..acknowledgementTimer = null
+        ..sentGeneration = null;
+    }
+  }
+
+  List<_SubscriptionEntry> _disposeSubscriptions() {
+    final entries = List<_SubscriptionEntry>.of(_subscriptions.values);
+    _subscriptions.clear();
+    final stackTrace = StackTrace.current;
+    for (final entry in entries) {
+      entry
+        ..acknowledgementTimer?.cancel()
+        ..acknowledgementTimer = null
+        ..sentGeneration = null;
+      if (!entry.ready.isCompleted) {
+        entry.ready.completeError(
+          MisskeyStreamingSubscriptionException(
+            message: 'Streaming client was disposed before subscription ACK',
+            operation: 'subscribe',
+            context: {'subscriptionId': entry.id, 'channel': entry.channel},
+          ),
+          stackTrace,
+        );
+      }
+    }
+    return entries;
+  }
 
   void _handleMessage(_ActiveConnection connection, Object? data) {
     if (!_isCurrentConnection(connection) || _isDisposed) {
@@ -353,7 +646,9 @@ class MisskeyStreaming {
         }
         raw[key] = entry.value;
       }
-      _messageController.add(MisskeyStreamingMessage.fromJson(raw));
+      final message = MisskeyStreamingMessage.fromJson(raw);
+      _messageController.add(message);
+      _handleSubscriptionProtocolMessage(message);
     } catch (error, stackTrace) {
       final exception = error is MisskeyStreamingException
           ? error
@@ -393,6 +688,7 @@ class MisskeyStreaming {
     }
 
     connection.terminationHandled = true;
+    _pauseSubscriptionAcknowledgements();
     _connection = null;
     final beforeReadyError =
         error ??
@@ -425,6 +721,7 @@ class MisskeyStreaming {
     if (!_isCurrentIntent(generation)) {
       return;
     }
+    _pauseSubscriptionAcknowledgements();
     _setState(MisskeyStreamingConnectionState.disconnected);
     _emitError(exception);
     if (automaticAttempt) {
@@ -610,6 +907,25 @@ class MisskeyStreaming {
       throw StateError('MisskeyStreaming has been disposed');
     }
   }
+}
+
+final class _SubscriptionEntry {
+  _SubscriptionEntry({
+    required this.id,
+    required this.channel,
+    required this.params,
+  });
+
+  final String id;
+  final String channel;
+  final Map<String, Object?> params;
+  final StreamController<MisskeyStreamingMessage> messageController =
+      StreamController<MisskeyStreamingMessage>.broadcast();
+  final Completer<MisskeyStreamingSubscription> ready =
+      Completer<MisskeyStreamingSubscription>();
+  late final MisskeyStreamingSubscription subscription;
+  Timer? acknowledgementTimer;
+  int? sentGeneration;
 }
 
 final class _ActiveConnection {

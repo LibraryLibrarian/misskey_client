@@ -64,6 +64,7 @@ export 'src/streaming/misskey_streaming.dart';
 export 'src/streaming/streaming_config.dart';
 export 'src/streaming/streaming_connection_state.dart';
 export 'src/streaming/streaming_message.dart';
+export 'src/streaming/streaming_subscription.dart';
 export 'src/models/account/misskey_registry_detail.dart';
 export 'src/models/account/misskey_registry_scope.dart';
 export 'src/models/account/misskey_signin_history.dart';
