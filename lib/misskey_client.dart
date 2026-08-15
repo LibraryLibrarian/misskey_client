@@ -60,6 +60,7 @@ export 'src/exception/misskey_client_exception.dart';
 export 'src/internal/optional.dart';
 export 'src/logging/function_logger.dart';
 export 'src/logging/logger.dart';
+export 'src/streaming/misskey_streaming.dart';
 export 'src/streaming/streaming_config.dart';
 export 'src/streaming/streaming_connection_state.dart';
 export 'src/streaming/streaming_message.dart';
