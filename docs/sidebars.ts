@@ -4,6 +4,8 @@ const sidebars: SidebarsConfig = {
   docsSidebar: [
     'getting-started',
     'authentication',
+    'streaming',
+    'migration-from-misskey-streaming',
     'pagination',
     'error-handling',
     {

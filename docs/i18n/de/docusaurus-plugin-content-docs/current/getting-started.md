@@ -97,6 +97,7 @@ client.pages         // Seitenverwaltung
 client.renoteMute    // Renote-Stummschaltungsverwaltung
 client.roles         // Rollenverwaltung
 client.sw            // Service Worker Push-Benachrichtigungsregistrierung
+client.streaming     // Echtzeit-Timelines, Benachrichtigungen und Note-Updates
 client.users         // Benutzersuche, Folgelisten, Benutzerlisten
 ```
 
@@ -134,6 +135,8 @@ Weitere Informationen finden Sie unter [Logging](./advanced/logging.md).
 ## Naechste Schritte
 
 - [Authentifizierung](./authentication.md) — Token-basierte Authentifizierung und MiAuth-Ablauf
+- [Streaming API](./streaming.md) — Echtzeit-Channels, Events und Lebenszyklus
+- [Migration von misskey_streaming](./migration-from-misskey-streaming.md) — Migration des eigenständigen Pakets
 - [Fehlerbehandlung](./error-handling.md) — Ausnahmehierarchie und Abfangmuster
 - [Notizen](./api/notes.md) — Notizen erstellen und abrufen
 - [Drive-Upload](./advanced/drive-upload.md) — Dateien in Drive hochladen
