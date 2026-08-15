@@ -18,93 +18,100 @@ void main() {
     return;
   }
 
-  test(
-    'connects, subscribes, receives a note, and captures its deletion',
-    () async {
-      final client = env.createMisskeyClient();
-      final streaming = MisskeyStreaming.withConnector(
-        baseUrl: Uri.parse(env.misskeyBaseUrl),
-        tokenProvider: () => env.misskeyUserToken,
-        config: MisskeyStreamingConfig(enableAutoReconnect: false),
-        connector: (uri) =>
-            _connectWithRootCa(uri: uri, rootCaPath: env.rootCaPath),
+  // 同一の検証をサーバーバージョンごとに実行し、挙動差分を検出する。
+  for (final instance in env.misskeyInstances) {
+    _runStreamingTest(env, instance);
+  }
+}
+
+void _runStreamingTest(E2eEnv env, MisskeyInstanceEnv instance) {
+  test('connects, subscribes, receives a note, and captures its deletion '
+      '(${instance.label})', () async {
+    final client = env.createMisskeyClientFor(instance);
+    final streaming = MisskeyStreaming.withConnector(
+      baseUrl: Uri.parse(instance.baseUrl),
+      tokenProvider: () => instance.userToken,
+      config: MisskeyStreamingConfig(enableAutoReconnect: false),
+      connector: (uri) =>
+          _connectWithRootCa(uri: uri, rootCaPath: env.rootCaPath),
+    );
+    final streamingErrors = <MisskeyStreamingException>[];
+    final errorSubscription = streaming.errors.listen(streamingErrors.add);
+    MisskeyStreamingSubscription? timeline;
+    MisskeyStreamingSubscription? captureBarrier;
+    String? noteId;
+    var noteDeleted = false;
+
+    try {
+      await streaming.connect();
+      expect(streaming.state, MisskeyStreamingConnectionState.connected);
+
+      // subscribeの完了はserverのconnected ACKを待つ。
+      timeline = await streaming.subscribe(
+        const MisskeyStreamingChannel.homeTimeline(),
       );
-      final streamingErrors = <MisskeyStreamingException>[];
-      final errorSubscription = streaming.errors.listen(streamingErrors.add);
-      MisskeyStreamingSubscription? timeline;
-      MisskeyStreamingSubscription? captureBarrier;
-      String? noteId;
-      var noteDeleted = false;
+      expect(timeline.isActive, isTrue);
 
-      try {
-        await streaming.connect();
-        expect(streaming.state, MisskeyStreamingConnectionState.connected);
+      final marker = 'e2e streaming ${DateTime.now().microsecondsSinceEpoch}';
+      final streamedNoteFuture = timeline.notes
+          .firstWhere((note) => note.text == marker)
+          .timeout(const Duration(seconds: 60));
+      final created = await retryOnRateLimit(
+        () => client.notes.create(text: marker),
+      );
+      noteId = created.id;
 
-        // subscribeの完了はserverのconnected ACKを待つ。
-        timeline = await streaming.subscribe(
-          const MisskeyStreamingChannel.homeTimeline(),
-        );
-        expect(timeline.isActive, isTrue);
+      final streamedNote = await streamedNoteFuture;
+      expect(streamedNote.id, created.id);
+      expect(streamedNote.text, marker);
 
-        final marker = 'e2e streaming ${DateTime.now().microsecondsSinceEpoch}';
-        final streamedNoteFuture = timeline.notes
-            .firstWhere((note) => note.text == marker)
-            .timeout(const Duration(seconds: 30));
-        final created = await client.notes.create(text: marker);
-        noteId = created.id;
+      timeline.captureNote(created.id);
 
-        final streamedNote = await streamedNoteFuture;
-        expect(streamedNote.id, created.id);
-        expect(streamedNote.text, marker);
+      // subNoteにはACKがないため、同一socketの後続connected ACKを
+      // capture登録完了の順序barrierとして利用する。
+      captureBarrier = await streaming.subscribe(
+        const MisskeyStreamingChannel.localTimeline(),
+      );
 
-        timeline.captureNote(created.id);
+      final deletedEventFuture = timeline.events
+          .where((event) => event is MisskeyNoteDeletedEvent)
+          .cast<MisskeyNoteDeletedEvent>()
+          .firstWhere((event) => event.noteId == created.id)
+          .timeout(const Duration(seconds: 60));
+      await retryOnRateLimit(() => client.notes.delete(noteId: created.id));
+      noteDeleted = true;
 
-        // subNoteにはACKがないため、同一socketの後続connected ACKを
-        // capture登録完了の順序barrierとして利用する。
-        captureBarrier = await streaming.subscribe(
-          const MisskeyStreamingChannel.localTimeline(),
-        );
+      final deletedEvent = await deletedEventFuture;
+      expect(deletedEvent.noteId, created.id);
+      expect(deletedEvent.deletedAt, isNotNull);
 
-        final deletedEventFuture = timeline.events
-            .where((event) => event is MisskeyNoteDeletedEvent)
-            .cast<MisskeyNoteDeletedEvent>()
-            .firstWhere((event) => event.noteId == created.id)
-            .timeout(const Duration(seconds: 30));
-        await client.notes.delete(noteId: created.id);
-        noteDeleted = true;
+      timeline.uncaptureNote(created.id);
+      await captureBarrier.unsubscribe();
+      await timeline.unsubscribe();
+      expect(captureBarrier.isActive, isFalse);
+      expect(timeline.isActive, isFalse);
 
-        final deletedEvent = await deletedEventFuture;
-        expect(deletedEvent.noteId, created.id);
-        expect(deletedEvent.deletedAt, isNotNull);
-
-        timeline.uncaptureNote(created.id);
-        await captureBarrier.unsubscribe();
-        await timeline.unsubscribe();
-        expect(captureBarrier.isActive, isFalse);
-        expect(timeline.isActive, isFalse);
-
-        await streaming.disconnect();
-        expect(streaming.state, MisskeyStreamingConnectionState.disconnected);
-        expect(streamingErrors, isEmpty);
-      } finally {
-        if (!noteDeleted && noteId != null) {
-          try {
-            await client.notes.delete(noteId: noteId);
-          } on MisskeyNotFoundException {
-            // 削除要求が成功した後に応答だけ失敗した場合は既に存在しない。
-          } on MisskeyRateLimitException {
-            // E2E環境のrate limit時は既存cleanup規約に合わせて許容する。
-          }
-        }
-        await errorSubscription.cancel();
+      await streaming.disconnect();
+      expect(streaming.state, MisskeyStreamingConnectionState.disconnected);
+      expect(streamingErrors, isEmpty);
+    } finally {
+      if (!noteDeleted && noteId != null) {
         try {
-          await streaming.dispose();
-        } finally {
-          await client.dispose();
+          await client.notes.delete(noteId: noteId);
+        } on MisskeyNotFoundException {
+          // 削除要求が成功した後に応答だけ失敗した場合は既に存在しない。
+        } on MisskeyRateLimitException {
+          // E2E環境のrate limit時は既存cleanup規約に合わせて許容する。
         }
       }
-    },
-  );
+      await errorSubscription.cancel();
+      try {
+        await streaming.dispose();
+      } finally {
+        await client.dispose();
+      }
+    }
+  });
 }
 
 StreamingSocket _connectWithRootCa({
