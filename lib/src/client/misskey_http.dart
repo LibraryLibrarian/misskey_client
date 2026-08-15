@@ -54,6 +54,9 @@ class MisskeyHttp {
 
   late final Dio _dio;
 
+  /// Permanently closes the underlying HTTP transport.
+  void close() => _dio.close(force: true);
+
   /// Sends an HTTP request to the given [path].
   ///
   /// The [path] should be relative to `/api` (e.g. `/notes/create`).
