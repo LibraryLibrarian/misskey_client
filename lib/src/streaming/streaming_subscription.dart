@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:meta/meta.dart';
 
+import '../models/misskey_note.dart';
+import '../models/misskey_notification.dart';
+import 'streaming_event.dart';
 import 'streaming_message.dart';
 
 /// A handle for a Misskey Streaming API channel subscription.
@@ -13,12 +16,20 @@ class MisskeyStreamingSubscription {
     required this.channel,
     required Map<String, Object?> params,
     required Stream<MisskeyStreamingMessage> messages,
+    required Stream<MisskeyStreamingEvent> events,
     required Future<void> Function() onUnsubscribe,
     required bool Function() onIsActive,
     required void Function(String noteId) onCaptureNote,
     required void Function(String noteId) onUncaptureNote,
   }) : params = Map.unmodifiable(params),
        _messages = messages,
+       _events = events,
+       _notes = events
+           .where((event) => event is MisskeyNoteEvent)
+           .map((event) => (event as MisskeyNoteEvent).note),
+       _notifications = events
+           .where((event) => event is MisskeyNotificationEvent)
+           .map((event) => (event as MisskeyNotificationEvent).notification),
        _onUnsubscribe = onUnsubscribe,
        _onIsActive = onIsActive,
        _onCaptureNote = onCaptureNote,
@@ -37,6 +48,9 @@ class MisskeyStreamingSubscription {
   final Map<String, Object?> params;
 
   final Stream<MisskeyStreamingMessage> _messages;
+  final Stream<MisskeyStreamingEvent> _events;
+  final Stream<MisskeyNote> _notes;
+  final Stream<MisskeyNotification> _notifications;
   final Future<void> Function() _onUnsubscribe;
   final bool Function() _onIsActive;
   final void Function(String noteId) _onCaptureNote;
@@ -45,6 +59,15 @@ class MisskeyStreamingSubscription {
 
   /// Inner channel and captured note events routed to this subscription.
   Stream<MisskeyStreamingMessage> get messages => _messages;
+
+  /// Typed events decoded from [messages].
+  Stream<MisskeyStreamingEvent> get events => _events;
+
+  /// Notes extracted from [events].
+  Stream<MisskeyNote> get notes => _notes;
+
+  /// Notifications extracted from [events].
+  Stream<MisskeyNotification> get notifications => _notifications;
 
   /// Whether this subscription is still registered with the client.
   bool get isActive => _onIsActive();

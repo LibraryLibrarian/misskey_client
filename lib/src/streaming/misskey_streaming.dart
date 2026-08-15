@@ -7,11 +7,13 @@ import 'package:meta/meta.dart';
 import '../client/token_provider.dart';
 import '../exception/misskey_client_exception.dart';
 import '../logging/logger.dart';
+import 'internal/streaming_event_decoder.dart';
 import 'internal/streaming_socket.dart';
 import 'internal/streaming_uri_builder.dart';
 import 'streaming_channel.dart';
 import 'streaming_config.dart';
 import 'streaming_connection_state.dart';
+import 'streaming_event.dart';
 import 'streaming_message.dart';
 import 'streaming_subscription.dart';
 
@@ -177,6 +179,7 @@ class MisskeyStreaming {
       channel: channel,
       params: entry.params,
       messages: entry.messageController.stream,
+      events: entry.eventController.stream,
       onUnsubscribe: () async {
         await _unsubscribeSubscription(subscriptionId);
       },
@@ -389,7 +392,7 @@ class MisskeyStreaming {
     } finally {
       try {
         await Future.wait(
-          subscriptionEntries.map((entry) => entry.messageController.close()),
+          subscriptionEntries.map((entry) => entry.closeControllers()),
         );
       } finally {
         await _messageController.close();
@@ -579,7 +582,7 @@ class MisskeyStreaming {
       if (identical(_subscriptions[entry.id], entry)) {
         _subscriptions.remove(entry.id);
       }
-      unawaited(entry.messageController.close());
+      unawaited(entry.closeControllers());
       entry.ready.completeError(exception, stackTrace);
     } else {
       _emitError(exception);
@@ -609,7 +612,7 @@ class MisskeyStreaming {
       } catch (_) {
         // タイムアウト後のロールバック送信失敗は元の例外を優先する
       }
-      unawaited(entry.messageController.close());
+      unawaited(entry.closeControllers());
       entry.ready.completeError(exception, StackTrace.current);
     } else {
       try {
@@ -682,7 +685,8 @@ class MisskeyStreaming {
         }
         final entry = _subscriptions[subscriptionId];
         if (entry != null) {
-          entry.messageController.add(
+          _deliverSubscriptionMessage(
+            entry,
             MisskeyStreamingMessage(
               type: eventType,
               body: body['body'],
@@ -714,7 +718,8 @@ class MisskeyStreaming {
         for (final subscriptionId in List<String>.of(subscriptionIds)) {
           final entry = _subscriptions[subscriptionId];
           if (entry != null) {
-            entry.messageController.add(
+            _deliverSubscriptionMessage(
+              entry,
               MisskeyStreamingMessage(
                 type: eventType,
                 body: body['body'],
@@ -727,6 +732,16 @@ class MisskeyStreaming {
       default:
         return;
     }
+  }
+
+  void _deliverSubscriptionMessage(
+    _SubscriptionEntry entry,
+    MisskeyStreamingMessage message,
+  ) {
+    entry.messageController.add(message);
+    entry.eventController.add(
+      decodeStreamingEvent(channelName: entry.channel, message: message),
+    );
   }
 
   Map<Object?, Object?> _requireRoutingBody(
@@ -917,7 +932,7 @@ class MisskeyStreaming {
         context: {'subscriptionId': id, 'channel': entry.channel},
       );
     } finally {
-      await entry.messageController.close();
+      await entry.closeControllers();
     }
 
     if (exception != null) {
@@ -1297,12 +1312,20 @@ final class _SubscriptionEntry {
   final Map<String, Object?> params;
   final StreamController<MisskeyStreamingMessage> messageController =
       StreamController<MisskeyStreamingMessage>.broadcast();
+  final StreamController<MisskeyStreamingEvent> eventController =
+      StreamController<MisskeyStreamingEvent>.broadcast();
   final Completer<MisskeyStreamingSubscription> ready =
       Completer<MisskeyStreamingSubscription>();
   late final MisskeyStreamingSubscription subscription;
   final Set<String> capturedNoteIds = {};
   Timer? acknowledgementTimer;
   int? sentGeneration;
+  Future<void>? _closeFuture;
+
+  Future<void> closeControllers() => _closeFuture ??= Future.wait([
+    messageController.close(),
+    eventController.close(),
+  ]);
 }
 
 final class _ActiveConnection {
