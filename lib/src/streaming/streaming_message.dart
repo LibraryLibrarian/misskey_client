@@ -27,7 +27,7 @@ class MisskeyStreamingMessage {
     return MisskeyStreamingMessage(type: type, body: json['body'], raw: json);
   }
 
-  /// The top-level Streaming API message type.
+  /// The outer wire type, or the normalized event type for routed messages.
   final String type;
 
   /// The message payload.

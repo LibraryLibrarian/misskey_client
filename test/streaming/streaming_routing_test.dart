@@ -131,6 +131,66 @@ void main() {
       await client.dispose();
     });
 
+    test('rolls back a failed explicit note uncapture', () async {
+      final socket = FakeRoutingSocket()..completeReady();
+      final client = createRoutingClient([socket]);
+      await client.connect();
+      final subscription = await subscribeAndAcknowledge(
+        client,
+        socket,
+        'home',
+      );
+      subscription.captureNote('note-1');
+      socket.failingTypes.add('unsubNote');
+
+      expect(
+        () => subscription.uncaptureNote('note-1'),
+        throwsA(
+          isA<MisskeyStreamingSubscriptionException>().having(
+            (error) => error.operation,
+            'operation',
+            'uncaptureNote',
+          ),
+        ),
+      );
+      expect(messagesOfType(socket, 'unsubNote'), isEmpty);
+
+      socket.failingTypes.clear();
+      subscription.uncaptureNote('note-1');
+      expect(messagesOfType(socket, 'unsubNote'), hasLength(1));
+
+      await client.dispose();
+    });
+
+    test('terminates the socket when capture cleanup cannot be sent', () async {
+      final socket = FakeRoutingSocket()..completeReady();
+      final client = createRoutingClient([socket]);
+      final errors = <MisskeyStreamingException>[];
+      final errorSubscription = client.errors.listen(errors.add);
+      await client.connect();
+      final subscription = await subscribeAndAcknowledge(
+        client,
+        socket,
+        'home',
+      );
+      subscription.captureNote('note-1');
+      socket.failingTypes.add('unsubNote');
+
+      await subscription.unsubscribe();
+      await flushEvents();
+
+      expect(client.state, MisskeyStreamingConnectionState.disconnected);
+      expect(socket.closeCalls, 1);
+      expect(errors, [
+        isA<MisskeyStreamingSubscriptionException>()
+            .having((error) => error.operation, 'operation', 'uncaptureNote')
+            .having((error) => error.context?['noteId'], 'noteId', 'note-1'),
+      ]);
+
+      await errorSubscription.cancel();
+      await client.dispose();
+    });
+
     test(
       'cleans captures and exposes ID and channel unsubscribe APIs',
       () async {
@@ -305,10 +365,13 @@ List<Map<String, Object?>> messagesOfType(
 Map<String, Object?> bodyOf(Map<String, Object?> message) =>
     (message['body']! as Map<Object?, Object?>).cast<String, Object?>();
 
+Future<void> flushEvents() => Future<void>.delayed(Duration.zero);
+
 final class FakeRoutingSocket implements StreamingSocket {
   final Completer<void> _ready = Completer<void>();
   final StreamController<Object?> _messages = StreamController<Object?>();
   final List<Map<String, Object?>> sent = [];
+  final Set<String> failingTypes = {};
   int closeCalls = 0;
 
   @override
@@ -326,7 +389,11 @@ final class FakeRoutingSocket implements StreamingSocket {
   @override
   void add(String data) {
     final decoded = jsonDecode(data)! as Map<Object?, Object?>;
-    sent.add(decoded.cast<String, Object?>());
+    final message = decoded.cast<String, Object?>();
+    if (failingTypes.contains(message['type'])) {
+      throw StateError('Could not send ${message['type']}');
+    }
+    sent.add(message);
   }
 
   @override

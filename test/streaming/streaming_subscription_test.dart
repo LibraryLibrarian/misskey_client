@@ -59,9 +59,11 @@ void main() {
     });
 
     test('tombstones a timed out ID and disconnects its late ACK', () async {
-      final socket = FakeSubscriptionSocket()..completeReady();
+      final firstSocket = FakeSubscriptionSocket()..completeReady();
+      final secondSocket = FakeSubscriptionSocket()..completeReady();
       final client = createSubscriptionClient([
-        socket,
+        firstSocket,
+        secondSocket,
       ], subscriptionTimeout: const Duration(milliseconds: 5));
       await client.connect();
 
@@ -78,7 +80,7 @@ void main() {
         ),
       );
 
-      socket.emitConnected('home');
+      firstSocket.emitConnected('home');
       await flushEvents();
 
       await expectLater(
@@ -96,15 +98,26 @@ void main() {
         channel: 'localTimeline',
         id: 'replacement',
       );
-      socket.emitConnected('replacement');
+      firstSocket.emitConnected('replacement');
       final replacement = await replacementFuture;
       expect(replacement.channel, 'localTimeline');
       expect(
-        socket.sent.where((message) => message['type'] == 'disconnect'),
+        firstSocket.sent.where((message) => message['type'] == 'disconnect'),
         hasLength(2),
       );
 
       await replacement.unsubscribe();
+      await client.disconnect();
+      await client.connect();
+
+      final reusedFuture = client.subscribeRaw(
+        channel: 'globalTimeline',
+        id: 'home',
+      );
+      secondSocket.emitConnected('home');
+      final reused = await reusedFuture;
+      expect(reused.id, 'home');
+
       await client.dispose();
     });
 
@@ -168,7 +181,7 @@ void main() {
     });
 
     test(
-      'removes an existing definition when a resubscribe ACK times out',
+      'keeps an existing definition when a resubscribe ACK times out',
       () async {
         final firstSocket = FakeSubscriptionSocket()..completeReady();
         final secondSocket = FakeSubscriptionSocket()..completeReady();
@@ -202,15 +215,76 @@ void main() {
         expect(secondSocket.sent.map((message) => message['type']), [
           'connect',
           'subNote',
-          'unsubNote',
           'disconnect',
         ]);
-        await messagesDone;
-        expect(subscription.isActive, isFalse);
+        expect(subscription.isActive, isTrue);
+
+        secondSocket.emitConnected('home');
+        await flushEvents();
+        expect(secondSocket.sent.map((message) => message['type']), [
+          'connect',
+          'subNote',
+          'disconnect',
+          'disconnect',
+        ]);
 
         await client.disconnect();
         await client.connect();
-        expect(thirdSocket.sent, isEmpty);
+        expect(thirdSocket.sent.map((message) => message['type']), [
+          'connect',
+          'subNote',
+        ]);
+        thirdSocket.emitConnected('home');
+        await flushEvents();
+        expect(subscription.isActive, isTrue);
+
+        await client.dispose();
+        await messagesDone;
+      },
+    );
+
+    test(
+      'keeps an existing definition after a resubscribe send failure',
+      () async {
+        final firstSocket = FakeSubscriptionSocket()..completeReady();
+        final secondSocket = FakeSubscriptionSocket()
+          ..completeReady()
+          ..onAdd = (message) {
+            if (message['type'] == 'connect') {
+              throw StateError('connect send failed');
+            }
+          };
+        final thirdSocket = FakeSubscriptionSocket()..completeReady();
+        final client = createSubscriptionClient([
+          firstSocket,
+          secondSocket,
+          thirdSocket,
+        ]);
+        await client.connect();
+
+        final subscriptionFuture = client.subscribeRaw(
+          channel: 'homeTimeline',
+          id: 'home',
+        );
+        firstSocket.emitConnected('home');
+        final subscription = await subscriptionFuture;
+        final sendError = client.errors.firstWhere(
+          (error) =>
+              error is MisskeyStreamingSubscriptionException &&
+              error.operation == 'subscribe',
+        );
+
+        await client.disconnect();
+        await client.connect();
+        expect(await sendError, isA<MisskeyStreamingSubscriptionException>());
+        expect(subscription.isActive, isTrue);
+
+        await client.disconnect();
+        await client.connect();
+        expect(thirdSocket.sent.map((message) => message['type']), ['connect']);
+        thirdSocket.emitConnected('home');
+        await flushEvents();
+        expect(subscription.isActive, isTrue);
 
         await client.dispose();
       },

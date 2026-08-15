@@ -73,7 +73,7 @@ class MisskeyStreaming {
   final StreamController<MisskeyStreamingMessage> _messageController =
       StreamController<MisskeyStreamingMessage>.broadcast();
   final Map<String, _SubscriptionEntry> _subscriptions = {};
-  final Set<String> _usedSubscriptionIds = {};
+  final Set<String> _subscriptionIdTombstones = {};
   final Map<String, Set<String>> _noteCaptureSubscriptions = {};
 
   MisskeyStreamingConnectionState _state =
@@ -148,9 +148,11 @@ class MisskeyStreaming {
         operation: 'subscribe',
       );
     }
-    if (id != null && _usedSubscriptionIds.contains(id)) {
+    if (id != null &&
+        (_subscriptions.containsKey(id) ||
+            _subscriptionIdTombstones.contains(id))) {
       throw MisskeyStreamingSubscriptionException(
-        message: 'Streaming subscription ID has already been used',
+        message: 'Streaming subscription ID is already in use',
         operation: 'subscribe',
         context: {'subscriptionId': id},
       );
@@ -164,7 +166,6 @@ class MisskeyStreaming {
     }
 
     final subscriptionId = id ?? _generateSubscriptionId();
-    _usedSubscriptionIds.add(subscriptionId);
     late final _SubscriptionEntry entry;
     entry = _SubscriptionEntry(
       id: subscriptionId,
@@ -303,6 +304,7 @@ class MisskeyStreaming {
     _wantsConnection = false;
     _cancelReconnectTimer();
     _pauseSubscriptionAcknowledgements();
+    _subscriptionIdTombstones.clear();
     _generation++;
     _connectFuture = null;
     _connectFutureGeneration = null;
@@ -323,6 +325,7 @@ class MisskeyStreaming {
     _wantsConnection = false;
     _cancelReconnectTimer();
     _pauseSubscriptionAcknowledgements();
+    _subscriptionIdTombstones.clear();
     final stopGeneration = ++_generation;
     _connectFuture = null;
     _connectFutureGeneration = null;
@@ -357,6 +360,7 @@ class MisskeyStreaming {
     _wantsConnection = false;
     _cancelReconnectTimer();
     final subscriptionEntries = _disposeSubscriptions();
+    _subscriptionIdTombstones.clear();
     _generation++;
     _connectFuture = null;
     _connectFutureGeneration = null;
@@ -399,6 +403,7 @@ class MisskeyStreaming {
     required bool reconnecting,
     required bool automaticAttempt,
   }) {
+    _subscriptionIdTombstones.clear();
     final generation = ++_generation;
     _setState(
       reconnecting
@@ -503,7 +508,8 @@ class MisskeyStreaming {
     String candidate;
     do {
       candidate = 'subscription-${++_nextSubscriptionId}';
-    } while (_usedSubscriptionIds.contains(candidate));
+    } while (_subscriptions.containsKey(candidate) ||
+        _subscriptionIdTombstones.contains(candidate));
     return candidate;
   }
 
@@ -555,10 +561,12 @@ class MisskeyStreaming {
     Object error,
     StackTrace stackTrace,
   ) {
+    final sentGeneration = entry.sentGeneration;
     entry
       ..acknowledgementTimer?.cancel()
       ..acknowledgementTimer = null
       ..sentGeneration = null;
+    _tombstoneSubscriptionId(entry.id, sentGeneration);
     final exception = MisskeyStreamingSubscriptionException(
       message: 'Could not send Streaming subscription request',
       cause: error,
@@ -574,16 +582,6 @@ class MisskeyStreaming {
       unawaited(entry.messageController.close());
       entry.ready.completeError(exception, stackTrace);
     } else {
-      if (identical(_subscriptions[entry.id], entry)) {
-        _subscriptions.remove(entry.id);
-      }
-      _clearEntryCaptures(entry, sendFrames: true);
-      try {
-        _sendUnsubscribeFrame(entry.id);
-      } catch (_) {
-        // 元の送信失敗通知を優先する
-      }
-      unawaited(entry.messageController.close());
       _emitError(exception);
     }
   }
@@ -593,7 +591,10 @@ class MisskeyStreaming {
         !identical(_subscriptions[entry.id], entry)) {
       return;
     }
-    entry.acknowledgementTimer = null;
+    entry
+      ..acknowledgementTimer = null
+      ..sentGeneration = null;
+    _tombstoneSubscriptionId(entry.id, generation);
     final exception = MisskeyStreamingTimeoutException(
       message: 'Streaming subscription acknowledgement timed out',
       operation: 'subscribe',
@@ -611,14 +612,11 @@ class MisskeyStreaming {
       unawaited(entry.messageController.close());
       entry.ready.completeError(exception, StackTrace.current);
     } else {
-      _subscriptions.remove(entry.id);
-      _clearEntryCaptures(entry, sendFrames: true);
       try {
         _sendUnsubscribeFrame(entry.id);
       } catch (_) {
         // ACKタイムアウト通知を優先する
       }
-      unawaited(entry.messageController.close());
       _emitError(exception);
     }
   }
@@ -643,12 +641,13 @@ class MisskeyStreaming {
       );
     }
 
+    if (_subscriptionIdTombstones.contains(id)) {
+      _sendUnsubscribeFrame(id);
+      return;
+    }
     final entry = _subscriptions[id];
     final connection = _connection;
     if (entry == null) {
-      if (_usedSubscriptionIds.contains(id)) {
-        _sendUnsubscribeFrame(id);
-      }
       return;
     }
     if (connection == null || entry.sentGeneration != connection.generation) {
@@ -778,19 +777,21 @@ class MisskeyStreaming {
 
   void _uncaptureNote(_SubscriptionEntry entry, String noteId) {
     _validateCaptureRequest(entry, noteId, operation: 'uncaptureNote');
-    if (!entry.capturedNoteIds.remove(noteId)) {
+    if (!entry.capturedNoteIds.contains(noteId)) {
       return;
     }
 
     final subscriptionIds = _noteCaptureSubscriptions[noteId];
-    if (subscriptionIds == null) {
+    if (subscriptionIds == null || !subscriptionIds.contains(entry.id)) {
+      entry.capturedNoteIds.remove(noteId);
       return;
     }
-    subscriptionIds.remove(entry.id);
-    if (subscriptionIds.isNotEmpty) {
+    if (subscriptionIds.length > 1) {
+      entry.capturedNoteIds.remove(noteId);
+      subscriptionIds.remove(entry.id);
       return;
     }
-    _noteCaptureSubscriptions.remove(noteId);
+
     try {
       _sendCaptureFrame('unsubNote', noteId);
     } catch (error, stackTrace) {
@@ -802,6 +803,9 @@ class MisskeyStreaming {
         context: {'subscriptionId': entry.id, 'noteId': noteId},
       );
     }
+    entry.capturedNoteIds.remove(noteId);
+    subscriptionIds.remove(entry.id);
+    _noteCaptureSubscriptions.remove(noteId);
   }
 
   void _validateCaptureRequest(
@@ -829,6 +833,7 @@ class MisskeyStreaming {
     _SubscriptionEntry entry, {
     required bool sendFrames,
   }) {
+    MisskeyStreamingSubscriptionException? firstException;
     for (final noteId in List<String>.of(entry.capturedNoteIds)) {
       entry.capturedNoteIds.remove(noteId);
       final subscriptionIds = _noteCaptureSubscriptions[noteId];
@@ -844,16 +849,22 @@ class MisskeyStreaming {
         try {
           _sendCaptureFrame('unsubNote', noteId);
         } catch (error, stackTrace) {
-          _emitError(
-            MisskeyStreamingSubscriptionException(
-              message: 'Could not send Streaming note uncapture request',
-              cause: error,
-              stackTrace: stackTrace,
-              operation: 'uncaptureNote',
-              context: {'subscriptionId': entry.id, 'noteId': noteId},
-            ),
+          firstException ??= MisskeyStreamingSubscriptionException(
+            message: 'Could not send Streaming note uncapture request',
+            cause: error,
+            stackTrace: stackTrace,
+            operation: 'uncaptureNote',
+            context: {'subscriptionId': entry.id, 'noteId': noteId},
           );
         }
+      }
+    }
+    if (firstException != null) {
+      final connection = _connection;
+      if (connection != null) {
+        _terminateConnection(connection, error: firstException);
+      } else {
+        _emitError(firstException);
       }
     }
   }
@@ -877,6 +888,7 @@ class MisskeyStreaming {
       return false;
     }
 
+    _tombstoneSubscriptionId(entry.id, entry.sentGeneration);
     entry
       ..acknowledgementTimer?.cancel()
       ..acknowledgementTimer = null
@@ -945,7 +957,8 @@ class MisskeyStreaming {
       entry
         ..acknowledgementTimer?.cancel()
         ..acknowledgementTimer = null
-        ..sentGeneration = null;
+        ..sentGeneration = null
+        ..capturedNoteIds.clear();
       if (!entry.ready.isCompleted) {
         entry.ready.completeError(
           MisskeyStreamingSubscriptionException(
@@ -958,6 +971,15 @@ class MisskeyStreaming {
       }
     }
     return entries;
+  }
+
+  void _tombstoneSubscriptionId(String id, int? sentGeneration) {
+    final connection = _connection;
+    if (connection != null &&
+        connection.ready &&
+        sentGeneration == connection.generation) {
+      _subscriptionIdTombstones.add(id);
+    }
   }
 
   void _handleMessage(_ActiveConnection connection, Object? data) {
@@ -1043,6 +1065,7 @@ class MisskeyStreaming {
     connection.terminationHandled = true;
     _pauseSubscriptionAcknowledgements();
     _connection = null;
+    _subscriptionIdTombstones.clear();
     final beforeReadyError =
         error ??
         const MisskeyStreamingConnectionException(
