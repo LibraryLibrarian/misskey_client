@@ -73,6 +73,8 @@ class MisskeyStreaming {
   final StreamController<MisskeyStreamingMessage> _messageController =
       StreamController<MisskeyStreamingMessage>.broadcast();
   final Map<String, _SubscriptionEntry> _subscriptions = {};
+  final Set<String> _usedSubscriptionIds = {};
+  final Map<String, Set<String>> _noteCaptureSubscriptions = {};
 
   MisskeyStreamingConnectionState _state =
       MisskeyStreamingConnectionState.disconnected;
@@ -146,9 +148,9 @@ class MisskeyStreaming {
         operation: 'subscribe',
       );
     }
-    if (id != null && _subscriptions.containsKey(id)) {
+    if (id != null && _usedSubscriptionIds.contains(id)) {
       throw MisskeyStreamingSubscriptionException(
-        message: 'Streaming subscription ID is already in use',
+        message: 'Streaming subscription ID has already been used',
         operation: 'subscribe',
         context: {'subscriptionId': id},
       );
@@ -162,7 +164,9 @@ class MisskeyStreaming {
     }
 
     final subscriptionId = id ?? _generateSubscriptionId();
-    final entry = _SubscriptionEntry(
+    _usedSubscriptionIds.add(subscriptionId);
+    late final _SubscriptionEntry entry;
+    entry = _SubscriptionEntry(
       id: subscriptionId,
       channel: channel,
       params: Map.unmodifiable(params),
@@ -172,7 +176,12 @@ class MisskeyStreaming {
       channel: channel,
       params: entry.params,
       messages: entry.messageController.stream,
-      onUnsubscribe: () => _unsubscribeSubscription(subscriptionId),
+      onUnsubscribe: () async {
+        await _unsubscribeSubscription(subscriptionId);
+      },
+      onIsActive: () => identical(_subscriptions[subscriptionId], entry),
+      onCaptureNote: (noteId) => _captureNote(entry, noteId),
+      onUncaptureNote: (noteId) => _uncaptureNote(entry, noteId),
     );
     _subscriptions[subscriptionId] = entry;
 
@@ -180,6 +189,32 @@ class MisskeyStreaming {
       _sendSubscription(entry);
     }
     return entry.ready.future;
+  }
+
+  /// Removes the subscription identified by [subscriptionId].
+  ///
+  /// Returns whether an active local definition was removed.
+  Future<bool> unsubscribe(String subscriptionId) async {
+    _ensureNotDisposed();
+    return _unsubscribeSubscription(subscriptionId);
+  }
+
+  /// Removes all subscriptions for [channelName].
+  ///
+  /// Returns the number of active local definitions that were removed.
+  Future<int> unsubscribeChannel(String channelName) async {
+    _ensureNotDisposed();
+    final ids = _subscriptions.values
+        .where((entry) => entry.channel == channelName)
+        .map((entry) => entry.id)
+        .toList(growable: false);
+    var removed = 0;
+    for (final id in ids) {
+      if (await _unsubscribeSubscription(id)) {
+        removed++;
+      }
+    }
+    return removed;
   }
 
   static const Set<String> _sharedChannelNames = {
@@ -437,8 +472,8 @@ class MisskeyStreaming {
       }
       connection.ready = true;
       _reconnectAttempts = 0;
-      _setState(MisskeyStreamingConnectionState.connected);
       _restoreSubscriptions();
+      _setState(MisskeyStreamingConnectionState.connected);
       _logInfo('Connected to Misskey Streaming API');
     } catch (error, stackTrace) {
       if (!_isCurrentIntent(generation)) {
@@ -468,7 +503,7 @@ class MisskeyStreaming {
     String candidate;
     do {
       candidate = 'subscription-${++_nextSubscriptionId}';
-    } while (_subscriptions.containsKey(candidate));
+    } while (_usedSubscriptionIds.contains(candidate));
     return candidate;
   }
 
@@ -476,12 +511,14 @@ class MisskeyStreaming {
     for (final entry in List<_SubscriptionEntry>.of(_subscriptions.values)) {
       _sendSubscription(entry);
     }
+    for (final noteId in List<String>.of(_noteCaptureSubscriptions.keys)) {
+      _sendCaptureFrame('subNote', noteId);
+    }
   }
 
   void _sendSubscription(_SubscriptionEntry entry) {
     final connection = _connection;
-    if (!isConnected ||
-        connection == null ||
+    if (connection == null ||
         !connection.ready ||
         entry.sentGeneration == connection.generation) {
       return;
@@ -537,6 +574,16 @@ class MisskeyStreaming {
       unawaited(entry.messageController.close());
       entry.ready.completeError(exception, stackTrace);
     } else {
+      if (identical(_subscriptions[entry.id], entry)) {
+        _subscriptions.remove(entry.id);
+      }
+      _clearEntryCaptures(entry, sendFrames: true);
+      try {
+        _sendUnsubscribeFrame(entry.id);
+      } catch (_) {
+        // 元の送信失敗通知を優先する
+      }
+      unawaited(entry.messageController.close());
       _emitError(exception);
     }
   }
@@ -564,6 +611,14 @@ class MisskeyStreaming {
       unawaited(entry.messageController.close());
       entry.ready.completeError(exception, StackTrace.current);
     } else {
+      _subscriptions.remove(entry.id);
+      _clearEntryCaptures(entry, sendFrames: true);
+      try {
+        _sendUnsubscribeFrame(entry.id);
+      } catch (_) {
+        // ACKタイムアウト通知を優先する
+      }
+      unawaited(entry.messageController.close());
       _emitError(exception);
     }
   }
@@ -590,9 +645,13 @@ class MisskeyStreaming {
 
     final entry = _subscriptions[id];
     final connection = _connection;
-    if (entry == null ||
-        connection == null ||
-        entry.sentGeneration != connection.generation) {
+    if (entry == null) {
+      if (_usedSubscriptionIds.contains(id)) {
+        _sendUnsubscribeFrame(id);
+      }
+      return;
+    }
+    if (connection == null || entry.sentGeneration != connection.generation) {
       return;
     }
 
@@ -604,16 +663,235 @@ class MisskeyStreaming {
     }
   }
 
-  Future<void> _unsubscribeSubscription(String id) async {
+  void _routeSubscriptionMessage(MisskeyStreamingMessage message) {
+    switch (message.type) {
+      case 'channel':
+        final body = _requireRoutingBody(message, envelopeType: 'channel');
+        final subscriptionId = body['id'];
+        final eventType = body['type'];
+        if (subscriptionId is! String || subscriptionId.isEmpty) {
+          throw const MisskeyStreamingProtocolException(
+            message: 'Streaming channel message subscription ID is invalid',
+            operation: 'routeMessage',
+          );
+        }
+        if (eventType is! String || eventType.isEmpty) {
+          throw const MisskeyStreamingProtocolException(
+            message: 'Streaming channel event type is invalid',
+            operation: 'routeMessage',
+          );
+        }
+        final entry = _subscriptions[subscriptionId];
+        if (entry != null) {
+          entry.messageController.add(
+            MisskeyStreamingMessage(
+              type: eventType,
+              body: body['body'],
+              raw: message.raw,
+              subscriptionId: subscriptionId,
+            ),
+          );
+        }
+      case 'noteUpdated':
+        final body = _requireRoutingBody(message, envelopeType: 'noteUpdated');
+        final noteId = body['id'];
+        final eventType = body['type'];
+        if (noteId is! String || noteId.isEmpty) {
+          throw const MisskeyStreamingProtocolException(
+            message: 'Streaming noteUpdated note ID is invalid',
+            operation: 'routeMessage',
+          );
+        }
+        if (eventType is! String || eventType.isEmpty) {
+          throw const MisskeyStreamingProtocolException(
+            message: 'Streaming noteUpdated event type is invalid',
+            operation: 'routeMessage',
+          );
+        }
+        final subscriptionIds = _noteCaptureSubscriptions[noteId];
+        if (subscriptionIds == null) {
+          return;
+        }
+        for (final subscriptionId in List<String>.of(subscriptionIds)) {
+          final entry = _subscriptions[subscriptionId];
+          if (entry != null) {
+            entry.messageController.add(
+              MisskeyStreamingMessage(
+                type: eventType,
+                body: body['body'],
+                raw: message.raw,
+                subscriptionId: subscriptionId,
+              ),
+            );
+          }
+        }
+      default:
+        return;
+    }
+  }
+
+  Map<Object?, Object?> _requireRoutingBody(
+    MisskeyStreamingMessage message, {
+    required String envelopeType,
+  }) {
+    final body = message.body;
+    if (body is! Map<Object?, Object?>) {
+      throw MisskeyStreamingProtocolException(
+        message: 'Streaming $envelopeType message body must be an object',
+        operation: 'routeMessage',
+      );
+    }
+    return body;
+  }
+
+  void _captureNote(_SubscriptionEntry entry, String noteId) {
+    _validateCaptureRequest(entry, noteId, operation: 'captureNote');
+    if (!entry.capturedNoteIds.add(noteId)) {
+      return;
+    }
+
+    final subscriptionIds = _noteCaptureSubscriptions.putIfAbsent(
+      noteId,
+      () => <String>{},
+    );
+    final shouldSend = subscriptionIds.isEmpty;
+    subscriptionIds.add(entry.id);
+    if (!shouldSend) {
+      return;
+    }
+
+    try {
+      _sendCaptureFrame('subNote', noteId);
+    } catch (error, stackTrace) {
+      subscriptionIds.remove(entry.id);
+      _noteCaptureSubscriptions.remove(noteId);
+      entry.capturedNoteIds.remove(noteId);
+      throw MisskeyStreamingSubscriptionException(
+        message: 'Could not send Streaming note capture request',
+        cause: error,
+        stackTrace: stackTrace,
+        operation: 'captureNote',
+        context: {'subscriptionId': entry.id, 'noteId': noteId},
+      );
+    }
+  }
+
+  void _uncaptureNote(_SubscriptionEntry entry, String noteId) {
+    _validateCaptureRequest(entry, noteId, operation: 'uncaptureNote');
+    if (!entry.capturedNoteIds.remove(noteId)) {
+      return;
+    }
+
+    final subscriptionIds = _noteCaptureSubscriptions[noteId];
+    if (subscriptionIds == null) {
+      return;
+    }
+    subscriptionIds.remove(entry.id);
+    if (subscriptionIds.isNotEmpty) {
+      return;
+    }
+    _noteCaptureSubscriptions.remove(noteId);
+    try {
+      _sendCaptureFrame('unsubNote', noteId);
+    } catch (error, stackTrace) {
+      throw MisskeyStreamingSubscriptionException(
+        message: 'Could not send Streaming note uncapture request',
+        cause: error,
+        stackTrace: stackTrace,
+        operation: 'uncaptureNote',
+        context: {'subscriptionId': entry.id, 'noteId': noteId},
+      );
+    }
+  }
+
+  void _validateCaptureRequest(
+    _SubscriptionEntry entry,
+    String noteId, {
+    required String operation,
+  }) {
+    if (!identical(_subscriptions[entry.id], entry)) {
+      throw MisskeyStreamingSubscriptionException(
+        message: 'Streaming subscription is no longer active',
+        operation: operation,
+        context: {'subscriptionId': entry.id},
+      );
+    }
+    if (noteId.trim().isEmpty) {
+      throw MisskeyStreamingSubscriptionException(
+        message: 'Streaming note ID must not be empty',
+        operation: operation,
+        context: {'subscriptionId': entry.id},
+      );
+    }
+  }
+
+  void _clearEntryCaptures(
+    _SubscriptionEntry entry, {
+    required bool sendFrames,
+  }) {
+    for (final noteId in List<String>.of(entry.capturedNoteIds)) {
+      entry.capturedNoteIds.remove(noteId);
+      final subscriptionIds = _noteCaptureSubscriptions[noteId];
+      if (subscriptionIds == null) {
+        continue;
+      }
+      subscriptionIds.remove(entry.id);
+      if (subscriptionIds.isNotEmpty) {
+        continue;
+      }
+      _noteCaptureSubscriptions.remove(noteId);
+      if (sendFrames) {
+        try {
+          _sendCaptureFrame('unsubNote', noteId);
+        } catch (error, stackTrace) {
+          _emitError(
+            MisskeyStreamingSubscriptionException(
+              message: 'Could not send Streaming note uncapture request',
+              cause: error,
+              stackTrace: stackTrace,
+              operation: 'uncaptureNote',
+              context: {'subscriptionId': entry.id, 'noteId': noteId},
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  void _sendCaptureFrame(String type, String noteId) {
+    final connection = _connection;
+    if (connection == null || !connection.ready) {
+      return;
+    }
+    connection.socket.add(
+      jsonEncode({
+        'type': type,
+        'body': {'id': noteId},
+      }),
+    );
+  }
+
+  Future<bool> _unsubscribeSubscription(String id) async {
     final entry = _subscriptions.remove(id);
     if (entry == null) {
-      return;
+      return false;
     }
 
     entry
       ..acknowledgementTimer?.cancel()
       ..acknowledgementTimer = null
       ..sentGeneration = null;
+    _clearEntryCaptures(entry, sendFrames: true);
+    if (!entry.ready.isCompleted) {
+      entry.ready.completeError(
+        MisskeyStreamingSubscriptionException(
+          message: 'Streaming subscription was removed before its ACK',
+          operation: 'unsubscribe',
+          context: {'subscriptionId': id, 'channel': entry.channel},
+        ),
+        StackTrace.current,
+      );
+    }
 
     MisskeyStreamingSubscriptionException? exception;
     try {
@@ -633,11 +911,12 @@ class MisskeyStreaming {
     if (exception != null) {
       throw exception;
     }
+    return true;
   }
 
   void _sendUnsubscribeFrame(String id) {
     final connection = _connection;
-    if (!isConnected || connection == null || !connection.ready) {
+    if (connection == null || !connection.ready) {
       return;
     }
     connection.socket.add(
@@ -660,6 +939,7 @@ class MisskeyStreaming {
   List<_SubscriptionEntry> _disposeSubscriptions() {
     final entries = List<_SubscriptionEntry>.of(_subscriptions.values);
     _subscriptions.clear();
+    _noteCaptureSubscriptions.clear();
     final stackTrace = StackTrace.current;
     for (final entry in entries) {
       entry
@@ -721,6 +1001,7 @@ class MisskeyStreaming {
       final message = MisskeyStreamingMessage.fromJson(raw);
       _messageController.add(message);
       _handleSubscriptionProtocolMessage(message);
+      _routeSubscriptionMessage(message);
     } catch (error, stackTrace) {
       final exception = error is MisskeyStreamingException
           ? error
@@ -996,6 +1277,7 @@ final class _SubscriptionEntry {
   final Completer<MisskeyStreamingSubscription> ready =
       Completer<MisskeyStreamingSubscription>();
   late final MisskeyStreamingSubscription subscription;
+  final Set<String> capturedNoteIds = {};
   Timer? acknowledgementTimer;
   int? sentGeneration;
 }

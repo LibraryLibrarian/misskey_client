@@ -10,6 +10,7 @@ class MisskeyStreamingMessage {
     required this.type,
     required this.body,
     required Map<String, Object?> raw,
+    this.subscriptionId,
   }) : raw = Map.unmodifiable(raw);
 
   /// Decodes a Streaming API message envelope.
@@ -36,4 +37,10 @@ class MisskeyStreamingMessage {
 
   /// The complete decoded message envelope.
   final Map<String, Object?> raw;
+
+  /// The subscription that received this normalized event, if any.
+  ///
+  /// Messages from `MisskeyStreaming.messages` preserve the outer wire
+  /// envelope and therefore do not have a subscription identifier.
+  final String? subscriptionId;
 }

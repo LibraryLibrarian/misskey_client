@@ -38,6 +38,7 @@ void main() {
       final subscription = await subscriptionFuture;
       expect(subscription.id, 'home');
       expect(subscription.channel, 'homeTimeline');
+      expect(subscription.channelName, 'homeTimeline');
       expect(subscription.params, {'withRenotes': true, 'withFiles': false});
 
       final messagesDone = expectLater(subscription.messages, emitsDone);
@@ -57,7 +58,7 @@ void main() {
       await client.dispose();
     });
 
-    test('rolls back a timed out request and ignores its late ACK', () async {
+    test('tombstones a timed out ID and disconnects its late ACK', () async {
       final socket = FakeSubscriptionSocket()..completeReady();
       final client = createSubscriptionClient([
         socket,
@@ -80,16 +81,27 @@ void main() {
       socket.emitConnected('home');
       await flushEvents();
 
+      await expectLater(
+        client.subscribeRaw(channel: 'localTimeline', id: 'home'),
+        throwsA(
+          isA<MisskeyStreamingSubscriptionException>().having(
+            (error) => error.context?['subscriptionId'],
+            'used ID',
+            'home',
+          ),
+        ),
+      );
+
       final replacementFuture = client.subscribeRaw(
         channel: 'localTimeline',
-        id: 'home',
+        id: 'replacement',
       );
-      socket.emitConnected('home');
+      socket.emitConnected('replacement');
       final replacement = await replacementFuture;
       expect(replacement.channel, 'localTimeline');
       expect(
         socket.sent.where((message) => message['type'] == 'disconnect'),
-        hasLength(1),
+        hasLength(2),
       );
 
       await replacement.unsubscribe();
@@ -156,7 +168,7 @@ void main() {
     });
 
     test(
-      'retains an existing definition when a resubscribe ACK times out',
+      'removes an existing definition when a resubscribe ACK times out',
       () async {
         final firstSocket = FakeSubscriptionSocket()..completeReady();
         final secondSocket = FakeSubscriptionSocket()..completeReady();
@@ -174,6 +186,8 @@ void main() {
         );
         firstSocket.emitConnected('home');
         final subscription = await subscriptionFuture;
+        final messagesDone = expectLater(subscription.messages, emitsDone);
+        subscription.captureNote('note-1');
 
         final timeoutFuture = client.errors.firstWhere(
           (error) =>
@@ -185,15 +199,18 @@ void main() {
         final timeout = await timeoutFuture.timeout(const Duration(seconds: 1));
 
         expect(timeout, isA<MisskeyStreamingTimeoutException>());
-        expect(secondSocket.sent, hasLength(1));
+        expect(secondSocket.sent.map((message) => message['type']), [
+          'connect',
+          'subNote',
+          'unsubNote',
+          'disconnect',
+        ]);
+        await messagesDone;
+        expect(subscription.isActive, isFalse);
 
         await client.disconnect();
         await client.connect();
-        expect(thirdSocket.sent, hasLength(1));
-        expect(thirdSocket.sent.single, firstSocket.sent.single);
-        thirdSocket.emitConnected('home');
-        await flushEvents();
-        expect(subscription.id, 'home');
+        expect(thirdSocket.sent, isEmpty);
 
         await client.dispose();
       },

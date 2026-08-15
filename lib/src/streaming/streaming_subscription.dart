@@ -14,9 +14,15 @@ class MisskeyStreamingSubscription {
     required Map<String, Object?> params,
     required Stream<MisskeyStreamingMessage> messages,
     required Future<void> Function() onUnsubscribe,
+    required bool Function() onIsActive,
+    required void Function(String noteId) onCaptureNote,
+    required void Function(String noteId) onUncaptureNote,
   }) : params = Map.unmodifiable(params),
        _messages = messages,
-       _onUnsubscribe = onUnsubscribe;
+       _onUnsubscribe = onUnsubscribe,
+       _onIsActive = onIsActive,
+       _onCaptureNote = onCaptureNote,
+       _onUncaptureNote = onUncaptureNote;
 
   /// The connection-local identifier used to route channel messages.
   final String id;
@@ -24,15 +30,34 @@ class MisskeyStreamingSubscription {
   /// The raw Misskey Streaming API channel name.
   final String channel;
 
+  /// The raw Misskey Streaming API channel name.
+  String get channelName => channel;
+
   /// The parameters sent when connecting to [channel].
   final Map<String, Object?> params;
 
   final Stream<MisskeyStreamingMessage> _messages;
   final Future<void> Function() _onUnsubscribe;
+  final bool Function() _onIsActive;
+  final void Function(String noteId) _onCaptureNote;
+  final void Function(String noteId) _onUncaptureNote;
   Future<void>? _unsubscribeFuture;
 
-  /// Raw messages routed to this subscription.
+  /// Inner channel and captured note events routed to this subscription.
   Stream<MisskeyStreamingMessage> get messages => _messages;
+
+  /// Whether this subscription is still registered with the client.
+  bool get isActive => _onIsActive();
+
+  /// Starts receiving `noteUpdated` events for [noteId].
+  ///
+  /// Repeated calls for the same note and subscription are idempotent.
+  void captureNote(String noteId) => _onCaptureNote(noteId);
+
+  /// Stops receiving `noteUpdated` events for [noteId].
+  ///
+  /// Repeated calls for a note that is not captured are idempotent.
+  void uncaptureNote(String noteId) => _onUncaptureNote(noteId);
 
   /// Removes this subscription and releases its local resources.
   ///
