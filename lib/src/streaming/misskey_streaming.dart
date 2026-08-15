@@ -9,6 +9,7 @@ import '../exception/misskey_client_exception.dart';
 import '../logging/logger.dart';
 import 'internal/streaming_socket.dart';
 import 'internal/streaming_uri_builder.dart';
+import 'streaming_channel.dart';
 import 'streaming_config.dart';
 import 'streaming_connection_state.dart';
 import 'streaming_message.dart';
@@ -108,6 +109,29 @@ class MisskeyStreaming {
     required String channel,
     Map<String, Object?> params = const {},
     String? id,
+  }) => _subscribe(channel: channel, params: params, id: id);
+
+  /// Subscribes to an official Misskey Streaming API channel.
+  Future<MisskeyStreamingSubscription> subscribe(
+    MisskeyStreamingChannel channel,
+  ) async {
+    final params = channel.params;
+    _validateTypedChannel(channel.name, params);
+    if (_sharedChannelNames.contains(channel.name) &&
+        _subscriptions.values.any((entry) => entry.channel == channel.name)) {
+      throw MisskeyStreamingSubscriptionException(
+        message: 'Shared Streaming channel is already subscribed',
+        operation: 'subscribe',
+        context: {'channel': channel.name},
+      );
+    }
+    return _subscribe(channel: channel.name, params: params);
+  }
+
+  Future<MisskeyStreamingSubscription> _subscribe({
+    required String channel,
+    required Map<String, Object?> params,
+    String? id,
   }) async {
     _ensureNotDisposed();
     if (channel.isEmpty) {
@@ -156,6 +180,54 @@ class MisskeyStreaming {
       _sendSubscription(entry);
     }
     return entry.ready.future;
+  }
+
+  static const Set<String> _sharedChannelNames = {
+    'main',
+    'drive',
+    'serverStats',
+    'queueStats',
+    'admin',
+    'reversi',
+  };
+
+  void _validateTypedChannel(String channel, Map<String, Object?> params) {
+    final requiredParameter = switch (channel) {
+      'userList' => 'listId',
+      'roleTimeline' => 'roleId',
+      'antenna' => 'antennaId',
+      'channel' => 'channelId',
+      'reversiGame' => 'gameId',
+      'chatUser' => 'otherId',
+      'chatRoom' => 'roomId',
+      _ => null,
+    };
+    if (requiredParameter != null) {
+      final id = params[requiredParameter];
+      if (id is! String || id.trim().isEmpty) {
+        throw MisskeyStreamingSubscriptionException(
+          message: 'Streaming channel ID must not be empty',
+          operation: 'subscribe',
+          context: {'channel': channel, 'parameter': requiredParameter},
+        );
+      }
+    }
+
+    if (channel == 'hashtag') {
+      final q = params['q'];
+      if (q is! List<List<String>> ||
+          q.isEmpty ||
+          q.any(
+            (condition) =>
+                condition.isEmpty || condition.any((tag) => tag.trim().isEmpty),
+          )) {
+        throw MisskeyStreamingSubscriptionException(
+          message: 'Hashtag conditions must contain non-empty tags',
+          operation: 'subscribe',
+          context: {'channel': channel, 'parameter': 'q'},
+        );
+      }
+    }
   }
 
   /// Whether the WebSocket is open and ready to send messages.
