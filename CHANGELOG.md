@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.7] - 2026-08-16
+
 ### Added
 
 - Integrated Misskey Streaming API access through the lazily created `MisskeyClient.streaming` property, sharing the client's base URL, token provider, logger, and log setting (issue #30)
