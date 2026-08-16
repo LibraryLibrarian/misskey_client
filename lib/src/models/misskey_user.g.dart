@@ -131,12 +131,12 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
       json['hasPendingReceivedFollowRequest'] as bool? ?? false,
   unreadNotificationsCount:
       (json['unreadNotificationsCount'] as num?)?.toInt() ?? 0,
-  mutedWords: (json['mutedWords'] as List<dynamic>?)
-      ?.map((e) => (e as List<dynamic>).map((e) => e as String).toList())
-      .toList(),
-  hardMutedWords: (json['hardMutedWords'] as List<dynamic>?)
-      ?.map((e) => (e as List<dynamic>).map((e) => e as String).toList())
-      .toList(),
+  mutedWords: const MutedWordListConverter().fromJson(
+    json['mutedWords'] as List?,
+  ),
+  hardMutedWords: const MutedWordListConverter().fromJson(
+    json['hardMutedWords'] as List?,
+  ),
   mutedInstances: (json['mutedInstances'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
@@ -254,8 +254,10 @@ Map<String, dynamic> _$MisskeyUserToJson(
   'hasUnreadNotification': instance.hasUnreadNotification,
   'hasPendingReceivedFollowRequest': instance.hasPendingReceivedFollowRequest,
   'unreadNotificationsCount': instance.unreadNotificationsCount,
-  'mutedWords': instance.mutedWords,
-  'hardMutedWords': instance.hardMutedWords,
+  'mutedWords': const MutedWordListConverter().toJson(instance.mutedWords),
+  'hardMutedWords': const MutedWordListConverter().toJson(
+    instance.hardMutedWords,
+  ),
   'mutedInstances': instance.mutedInstances,
   'mutingNotificationTypes': instance.mutingNotificationTypes,
   'notificationRecieveConfig': instance.notificationRecieveConfig,

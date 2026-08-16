@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** Replaced the dynamic and nested-list word-mute APIs with the type-safe `MutedWordKeywords` / `MutedWordRegex` sealed union across authenticated-user reads, admin user details, and `AccountApi.update()`, with `MutedWordUnknown` preserving unrecognized fork-specific values instead of failing the entire response (issue #53)
+
 ## [1.0.0-beta.7] - 2026-08-16
 
 ### Added

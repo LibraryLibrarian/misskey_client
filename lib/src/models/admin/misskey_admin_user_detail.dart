@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../json_converters.dart';
 import '../misskey_role.dart';
+import '../muted_word.dart';
 
 part 'misskey_admin_user_detail.g.dart';
 
@@ -76,8 +77,9 @@ class MisskeyAdminUserDetail {
   /// Whether announcement emails are received.
   final bool? receiveAnnouncementEmail;
 
-  /// Muted word patterns (each entry is a string or a list of strings).
-  final List<dynamic>? mutedWords;
+  /// The word-mute conditions, each represented by keywords or a regex.
+  @MutedWordListConverter()
+  final List<MutedWord>? mutedWords;
 
   /// Muted instance hosts.
   final List<String>? mutedInstances;
