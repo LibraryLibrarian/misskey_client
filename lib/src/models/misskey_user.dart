@@ -589,8 +589,9 @@ class MisskeyUser with _$MisskeyUser {
 }
 
 /// A custom profile field.
+@freezed
 @JsonSerializable()
-class MisskeyUserField {
+class MisskeyUserField with _$MisskeyUserField {
   const MisskeyUserField({required this.name, required this.value});
 
   factory MisskeyUserField.fromJson(Map<String, dynamic> json) =>
@@ -599,15 +600,18 @@ class MisskeyUserField {
   Map<String, dynamic> toJson() => _$MisskeyUserFieldToJson(this);
 
   /// The field label.
+  @override
   final String name;
 
   /// The field value.
+  @override
   final String value;
 }
 
 /// An avatar decoration.
+@freezed
 @JsonSerializable()
-class MisskeyAvatarDecoration {
+class MisskeyAvatarDecoration with _$MisskeyAvatarDecoration {
   const MisskeyAvatarDecoration({
     required this.id,
     this.angle,
@@ -623,27 +627,34 @@ class MisskeyAvatarDecoration {
   Map<String, dynamic> toJson() => _$MisskeyAvatarDecorationToJson(this);
 
   /// The unique identifier of this decoration.
+  @override
   final String id;
 
   /// The rotation angle in radians.
+  @override
   final double? angle;
 
   /// Whether the decoration is horizontally flipped.
+  @override
   final bool? flipH;
 
   /// The image URL of this decoration.
+  @override
   final String url;
 
   /// The horizontal offset.
+  @override
   final double? offsetX;
 
   /// The vertical offset.
+  @override
   final double? offsetY;
 }
 
 /// Instance information for a remote user.
+@freezed
 @JsonSerializable()
-class MisskeyUserInstance {
+class MisskeyUserInstance with _$MisskeyUserInstance {
   const MisskeyUserInstance({
     this.name,
     this.softwareName,
@@ -659,27 +670,34 @@ class MisskeyUserInstance {
   Map<String, dynamic> toJson() => _$MisskeyUserInstanceToJson(this);
 
   /// The display name of the instance.
+  @override
   final String? name;
 
   /// The software name (e.g. `misskey`, `mastodon`).
+  @override
   final String? softwareName;
 
   /// The software version string.
+  @override
   final String? softwareVersion;
 
   /// The instance icon URL.
+  @override
   final String? iconUrl;
 
   /// The instance favicon URL.
+  @override
   final String? faviconUrl;
 
   /// The theme color of the instance.
+  @override
   final String? themeColor;
 }
 
 /// A badge role.
+@freezed
 @JsonSerializable()
-class MisskeyBadgeRole {
+class MisskeyBadgeRole with _$MisskeyBadgeRole {
   const MisskeyBadgeRole({required this.name, this.iconUrl, this.displayOrder});
 
   factory MisskeyBadgeRole.fromJson(Map<String, dynamic> json) =>
@@ -688,19 +706,23 @@ class MisskeyBadgeRole {
   Map<String, dynamic> toJson() => _$MisskeyBadgeRoleToJson(this);
 
   /// The name of this badge role.
+  @override
   final String name;
 
   /// The icon URL.
+  @override
   final String? iconUrl;
 
   /// The display order.
   @JsonKey(defaultValue: 0)
+  @override
   final int? displayOrder;
 }
 
 /// A lightweight role representation.
+@freezed
 @JsonSerializable()
-class MisskeyRoleLite {
+class MisskeyRoleLite with _$MisskeyRoleLite {
   const MisskeyRoleLite({
     required this.id,
     required this.name,
@@ -718,29 +740,37 @@ class MisskeyRoleLite {
   Map<String, dynamic> toJson() => _$MisskeyRoleLiteToJson(this);
 
   /// The unique identifier of this role.
+  @override
   final String id;
 
   /// The name of this role.
+  @override
   final String name;
 
   /// The theme color.
+  @override
   final String? color;
 
   /// The icon URL.
+  @override
   final String? iconUrl;
 
   /// The description of this role.
+  @override
   final String? description;
 
   /// Whether this role has moderator privileges.
   @JsonKey(defaultValue: false)
+  @override
   final bool? isModerator;
 
   /// Whether this role has administrator privileges.
   @JsonKey(defaultValue: false)
+  @override
   final bool? isAdministrator;
 
   /// The display order.
   @JsonKey(defaultValue: 0)
+  @override
   final int? displayOrder;
 }

@@ -297,4 +297,954 @@ case _:
 
 }
 
+
+/// @nodoc
+mixin _$MisskeyUserField {
+
+ String get name; String get value;
+/// Create a copy of MisskeyUserField
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MisskeyUserFieldCopyWith<MisskeyUserField> get copyWith => _$MisskeyUserFieldCopyWithImpl<MisskeyUserField>(this as MisskeyUserField, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyUserField&&(identical(other.name, name) || other.name == name)&&(identical(other.value, value) || other.value == value));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,value);
+
+@override
+String toString() {
+  return 'MisskeyUserField(name: $name, value: $value)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MisskeyUserFieldCopyWith<$Res>  {
+  factory $MisskeyUserFieldCopyWith(MisskeyUserField value, $Res Function(MisskeyUserField) _then) = _$MisskeyUserFieldCopyWithImpl;
+@useResult
+$Res call({
+ String name, String value
+});
+
+
+
+
+}
+/// @nodoc
+class _$MisskeyUserFieldCopyWithImpl<$Res>
+    implements $MisskeyUserFieldCopyWith<$Res> {
+  _$MisskeyUserFieldCopyWithImpl(this._self, this._then);
+
+  final MisskeyUserField _self;
+  final $Res Function(MisskeyUserField) _then;
+
+/// Create a copy of MisskeyUserField
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? value = null,}) {
+  return _then(MisskeyUserField(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MisskeyUserField].
+extension MisskeyUserFieldPatterns on MisskeyUserField {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+
+}
+
+
+/// @nodoc
+mixin _$MisskeyAvatarDecoration {
+
+ String get id; double? get angle; bool? get flipH; String get url; double? get offsetX; double? get offsetY;
+/// Create a copy of MisskeyAvatarDecoration
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MisskeyAvatarDecorationCopyWith<MisskeyAvatarDecoration> get copyWith => _$MisskeyAvatarDecorationCopyWithImpl<MisskeyAvatarDecoration>(this as MisskeyAvatarDecoration, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyAvatarDecoration&&(identical(other.id, id) || other.id == id)&&(identical(other.angle, angle) || other.angle == angle)&&(identical(other.flipH, flipH) || other.flipH == flipH)&&(identical(other.url, url) || other.url == url)&&(identical(other.offsetX, offsetX) || other.offsetX == offsetX)&&(identical(other.offsetY, offsetY) || other.offsetY == offsetY));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,angle,flipH,url,offsetX,offsetY);
+
+@override
+String toString() {
+  return 'MisskeyAvatarDecoration(id: $id, angle: $angle, flipH: $flipH, url: $url, offsetX: $offsetX, offsetY: $offsetY)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MisskeyAvatarDecorationCopyWith<$Res>  {
+  factory $MisskeyAvatarDecorationCopyWith(MisskeyAvatarDecoration value, $Res Function(MisskeyAvatarDecoration) _then) = _$MisskeyAvatarDecorationCopyWithImpl;
+@useResult
+$Res call({
+ String id, double? angle, bool? flipH, String url, double? offsetX, double? offsetY
+});
+
+
+
+
+}
+/// @nodoc
+class _$MisskeyAvatarDecorationCopyWithImpl<$Res>
+    implements $MisskeyAvatarDecorationCopyWith<$Res> {
+  _$MisskeyAvatarDecorationCopyWithImpl(this._self, this._then);
+
+  final MisskeyAvatarDecoration _self;
+  final $Res Function(MisskeyAvatarDecoration) _then;
+
+/// Create a copy of MisskeyAvatarDecoration
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? angle = freezed,Object? flipH = freezed,Object? url = null,Object? offsetX = freezed,Object? offsetY = freezed,}) {
+  return _then(MisskeyAvatarDecoration(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,angle: freezed == angle ? _self.angle : angle // ignore: cast_nullable_to_non_nullable
+as double?,flipH: freezed == flipH ? _self.flipH : flipH // ignore: cast_nullable_to_non_nullable
+as bool?,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,offsetX: freezed == offsetX ? _self.offsetX : offsetX // ignore: cast_nullable_to_non_nullable
+as double?,offsetY: freezed == offsetY ? _self.offsetY : offsetY // ignore: cast_nullable_to_non_nullable
+as double?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MisskeyAvatarDecoration].
+extension MisskeyAvatarDecorationPatterns on MisskeyAvatarDecoration {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+
+}
+
+
+/// @nodoc
+mixin _$MisskeyUserInstance {
+
+ String? get name; String? get softwareName; String? get softwareVersion; String? get iconUrl; String? get faviconUrl; String? get themeColor;
+/// Create a copy of MisskeyUserInstance
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MisskeyUserInstanceCopyWith<MisskeyUserInstance> get copyWith => _$MisskeyUserInstanceCopyWithImpl<MisskeyUserInstance>(this as MisskeyUserInstance, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyUserInstance&&(identical(other.name, name) || other.name == name)&&(identical(other.softwareName, softwareName) || other.softwareName == softwareName)&&(identical(other.softwareVersion, softwareVersion) || other.softwareVersion == softwareVersion)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl)&&(identical(other.faviconUrl, faviconUrl) || other.faviconUrl == faviconUrl)&&(identical(other.themeColor, themeColor) || other.themeColor == themeColor));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,softwareName,softwareVersion,iconUrl,faviconUrl,themeColor);
+
+@override
+String toString() {
+  return 'MisskeyUserInstance(name: $name, softwareName: $softwareName, softwareVersion: $softwareVersion, iconUrl: $iconUrl, faviconUrl: $faviconUrl, themeColor: $themeColor)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MisskeyUserInstanceCopyWith<$Res>  {
+  factory $MisskeyUserInstanceCopyWith(MisskeyUserInstance value, $Res Function(MisskeyUserInstance) _then) = _$MisskeyUserInstanceCopyWithImpl;
+@useResult
+$Res call({
+ String? name, String? softwareName, String? softwareVersion, String? iconUrl, String? faviconUrl, String? themeColor
+});
+
+
+
+
+}
+/// @nodoc
+class _$MisskeyUserInstanceCopyWithImpl<$Res>
+    implements $MisskeyUserInstanceCopyWith<$Res> {
+  _$MisskeyUserInstanceCopyWithImpl(this._self, this._then);
+
+  final MisskeyUserInstance _self;
+  final $Res Function(MisskeyUserInstance) _then;
+
+/// Create a copy of MisskeyUserInstance
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? softwareName = freezed,Object? softwareVersion = freezed,Object? iconUrl = freezed,Object? faviconUrl = freezed,Object? themeColor = freezed,}) {
+  return _then(MisskeyUserInstance(
+name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,softwareName: freezed == softwareName ? _self.softwareName : softwareName // ignore: cast_nullable_to_non_nullable
+as String?,softwareVersion: freezed == softwareVersion ? _self.softwareVersion : softwareVersion // ignore: cast_nullable_to_non_nullable
+as String?,iconUrl: freezed == iconUrl ? _self.iconUrl : iconUrl // ignore: cast_nullable_to_non_nullable
+as String?,faviconUrl: freezed == faviconUrl ? _self.faviconUrl : faviconUrl // ignore: cast_nullable_to_non_nullable
+as String?,themeColor: freezed == themeColor ? _self.themeColor : themeColor // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MisskeyUserInstance].
+extension MisskeyUserInstancePatterns on MisskeyUserInstance {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+
+}
+
+
+/// @nodoc
+mixin _$MisskeyBadgeRole {
+
+ String get name; String? get iconUrl; int? get displayOrder;
+/// Create a copy of MisskeyBadgeRole
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MisskeyBadgeRoleCopyWith<MisskeyBadgeRole> get copyWith => _$MisskeyBadgeRoleCopyWithImpl<MisskeyBadgeRole>(this as MisskeyBadgeRole, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyBadgeRole&&(identical(other.name, name) || other.name == name)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl)&&(identical(other.displayOrder, displayOrder) || other.displayOrder == displayOrder));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,iconUrl,displayOrder);
+
+@override
+String toString() {
+  return 'MisskeyBadgeRole(name: $name, iconUrl: $iconUrl, displayOrder: $displayOrder)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MisskeyBadgeRoleCopyWith<$Res>  {
+  factory $MisskeyBadgeRoleCopyWith(MisskeyBadgeRole value, $Res Function(MisskeyBadgeRole) _then) = _$MisskeyBadgeRoleCopyWithImpl;
+@useResult
+$Res call({
+ String name, String? iconUrl, int? displayOrder
+});
+
+
+
+
+}
+/// @nodoc
+class _$MisskeyBadgeRoleCopyWithImpl<$Res>
+    implements $MisskeyBadgeRoleCopyWith<$Res> {
+  _$MisskeyBadgeRoleCopyWithImpl(this._self, this._then);
+
+  final MisskeyBadgeRole _self;
+  final $Res Function(MisskeyBadgeRole) _then;
+
+/// Create a copy of MisskeyBadgeRole
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? iconUrl = freezed,Object? displayOrder = freezed,}) {
+  return _then(MisskeyBadgeRole(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,iconUrl: freezed == iconUrl ? _self.iconUrl : iconUrl // ignore: cast_nullable_to_non_nullable
+as String?,displayOrder: freezed == displayOrder ? _self.displayOrder : displayOrder // ignore: cast_nullable_to_non_nullable
+as int?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MisskeyBadgeRole].
+extension MisskeyBadgeRolePatterns on MisskeyBadgeRole {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+
+}
+
+
+/// @nodoc
+mixin _$MisskeyRoleLite {
+
+ String get id; String get name; String? get color; String? get iconUrl; String? get description; bool? get isModerator; bool? get isAdministrator; int? get displayOrder;
+/// Create a copy of MisskeyRoleLite
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MisskeyRoleLiteCopyWith<MisskeyRoleLite> get copyWith => _$MisskeyRoleLiteCopyWithImpl<MisskeyRoleLite>(this as MisskeyRoleLite, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyRoleLite&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl)&&(identical(other.description, description) || other.description == description)&&(identical(other.isModerator, isModerator) || other.isModerator == isModerator)&&(identical(other.isAdministrator, isAdministrator) || other.isAdministrator == isAdministrator)&&(identical(other.displayOrder, displayOrder) || other.displayOrder == displayOrder));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,color,iconUrl,description,isModerator,isAdministrator,displayOrder);
+
+@override
+String toString() {
+  return 'MisskeyRoleLite(id: $id, name: $name, color: $color, iconUrl: $iconUrl, description: $description, isModerator: $isModerator, isAdministrator: $isAdministrator, displayOrder: $displayOrder)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MisskeyRoleLiteCopyWith<$Res>  {
+  factory $MisskeyRoleLiteCopyWith(MisskeyRoleLite value, $Res Function(MisskeyRoleLite) _then) = _$MisskeyRoleLiteCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, String? color, String? iconUrl, String? description, bool? isModerator, bool? isAdministrator, int? displayOrder
+});
+
+
+
+
+}
+/// @nodoc
+class _$MisskeyRoleLiteCopyWithImpl<$Res>
+    implements $MisskeyRoleLiteCopyWith<$Res> {
+  _$MisskeyRoleLiteCopyWithImpl(this._self, this._then);
+
+  final MisskeyRoleLite _self;
+  final $Res Function(MisskeyRoleLite) _then;
+
+/// Create a copy of MisskeyRoleLite
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? color = freezed,Object? iconUrl = freezed,Object? description = freezed,Object? isModerator = freezed,Object? isAdministrator = freezed,Object? displayOrder = freezed,}) {
+  return _then(MisskeyRoleLite(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,color: freezed == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
+as String?,iconUrl: freezed == iconUrl ? _self.iconUrl : iconUrl // ignore: cast_nullable_to_non_nullable
+as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,isModerator: freezed == isModerator ? _self.isModerator : isModerator // ignore: cast_nullable_to_non_nullable
+as bool?,isAdministrator: freezed == isAdministrator ? _self.isAdministrator : isAdministrator // ignore: cast_nullable_to_non_nullable
+as bool?,displayOrder: freezed == displayOrder ? _self.displayOrder : displayOrder // ignore: cast_nullable_to_non_nullable
+as int?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MisskeyRoleLite].
+extension MisskeyRoleLitePatterns on MisskeyRoleLite {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(){
+final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>() {final _that = this;
+switch (_that) {
+case _:
+  return null;
+
+}
+}
+
+}
+
 // dart format on

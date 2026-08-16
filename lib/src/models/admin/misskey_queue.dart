@@ -1,5 +1,6 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'misskey_queue.freezed.dart';
 part 'misskey_queue.g.dart';
 
 /// Job counts per state for a queue.
@@ -7,8 +8,9 @@ part 'misskey_queue.g.dart';
 /// Note: the API documentation only lists `waiting`, `active`, `completed`,
 /// `failed`, and `delayed`, but Misskey 2026.5.1 additionally returns
 /// `paused`, `prioritized`, and `waiting-children`.
+@freezed
 @JsonSerializable()
-class MisskeyQueueCount {
+class MisskeyQueueCount with _$MisskeyQueueCount {
   const MisskeyQueueCount({
     this.waiting,
     this.active,
@@ -26,34 +28,43 @@ class MisskeyQueueCount {
   Map<String, dynamic> toJson() => _$MisskeyQueueCountToJson(this);
 
   /// The number of jobs waiting to be processed.
+  @override
   final num? waiting;
 
   /// The number of jobs currently being processed.
+  @override
   final num? active;
 
   /// The number of completed jobs.
+  @override
   final num? completed;
 
   /// The number of failed jobs.
+  @override
   final num? failed;
 
   /// The number of delayed jobs.
+  @override
   final num? delayed;
 
   /// The number of paused jobs.
+  @override
   final num? paused;
 
   /// The number of prioritized jobs.
+  @override
   final num? prioritized;
 
   /// The number of jobs waiting for their child jobs.
   @JsonKey(name: 'waiting-children')
+  @override
   final num? waitingChildren;
 }
 
 /// Aggregated job counts returned by `/api/admin/queue/stats`.
+@freezed
 @JsonSerializable()
-class MisskeyQueueStats {
+class MisskeyQueueStats with _$MisskeyQueueStats {
   const MisskeyQueueStats({
     this.deliver,
     this.inbox,
@@ -69,27 +80,34 @@ class MisskeyQueueStats {
   Map<String, dynamic> toJson() => _$MisskeyQueueStatsToJson(this);
 
   /// Counts for the ActivityPub delivery queue.
+  @override
   final MisskeyQueueCount? deliver;
 
   /// Counts for the ActivityPub inbox queue.
+  @override
   final MisskeyQueueCount? inbox;
 
   /// Counts for the database queue.
+  @override
   final MisskeyQueueCount? db;
 
   /// Counts for the object storage queue.
+  @override
   final MisskeyQueueCount? objectStorage;
 
   /// Counts for the user webhook delivery queue.
+  @override
   final MisskeyQueueCount? userWebhookDeliver;
 
   /// Counts for the system webhook delivery queue.
+  @override
   final MisskeyQueueCount? systemWebhookDeliver;
 }
 
 /// Throughput metrics for a queue.
+@freezed
 @JsonSerializable()
-class MisskeyQueueMetrics {
+class MisskeyQueueMetrics with _$MisskeyQueueMetrics {
   const MisskeyQueueMetrics({this.meta, this.data, this.count});
 
   factory MisskeyQueueMetrics.fromJson(Map<String, dynamic> json) =>
@@ -98,18 +116,22 @@ class MisskeyQueueMetrics {
   Map<String, dynamic> toJson() => _$MisskeyQueueMetricsToJson(this);
 
   /// Metadata about the sampling window (`count`, `prevTS`, `prevCount`).
+  @override
   final Map<String, dynamic>? meta;
 
   /// The per-minute sample values.
+  @override
   final List<num>? data;
 
   /// The total count.
+  @override
   final num? count;
 }
 
 /// A queue summary returned by `/api/admin/queue/queues`.
+@freezed
 @JsonSerializable()
-class MisskeyQueueInfo {
+class MisskeyQueueInfo with _$MisskeyQueueInfo {
   const MisskeyQueueInfo({
     required this.name,
     this.qualifiedName,
@@ -149,31 +171,39 @@ class MisskeyQueueInfo {
   Map<String, dynamic> toJson() => _$MisskeyQueueInfoToJson(this);
 
   /// The queue name (e.g. `deliver`, `inbox`, `db`).
+  @override
   final String name;
 
   /// The fully qualified queue name, when returned by the endpoint.
+  @override
   final String? qualifiedName;
 
   /// The job counts per state.
+  @override
   final MisskeyQueueCount? counts;
 
   /// Whether the queue is paused.
+  @override
   final bool? isPaused;
 
   /// Throughput metrics for completed jobs.
+  @override
   final MisskeyQueueMetrics? completedMetrics;
 
   /// Throughput metrics for failed jobs.
+  @override
   final MisskeyQueueMetrics? failedMetrics;
 
   /// Redis server information, returned only by
   /// `/api/admin/queue/queue-stats`.
+  @override
   final Map<String, dynamic>? db;
 }
 
 /// A job in a queue (`/api/admin/queue/jobs`, `/api/admin/queue/show-job`).
+@freezed
 @JsonSerializable()
-class MisskeyQueueJob {
+class MisskeyQueueJob with _$MisskeyQueueJob {
   const MisskeyQueueJob({
     required this.id,
     required this.name,
@@ -198,57 +228,72 @@ class MisskeyQueueJob {
   Map<String, dynamic> toJson() => _$MisskeyQueueJobToJson(this);
 
   /// The job ID.
+  @override
   final String id;
 
   /// The job name (for delivery jobs this is the destination host).
+  @override
   final String name;
 
   /// The job payload.
+  @override
   final Map<String, dynamic>? data;
 
   /// The job options.
+  @override
   final Map<String, dynamic>? opts;
 
   /// The epoch timestamp (ms) when the job was enqueued.
+  @override
   final num? timestamp;
 
   /// The epoch timestamp (ms) when processing started.
+  @override
   final num? processedOn;
 
   /// The worker that processed the job.
+  @override
   final String? processedBy;
 
   /// The epoch timestamp (ms) when processing finished.
+  @override
   final num? finishedOn;
 
   /// The job progress.
   ///
   /// Typed as `dynamic` because the server returns a number in practice
   /// even though the API documentation declares an object.
+  @override
   final dynamic progress;
 
   /// The number of attempts made.
+  @override
   final num? attempts;
 
   /// The delay in milliseconds.
+  @override
   final num? delay;
 
   /// The failure reason, if the job failed.
   ///
   /// The API documentation marks this as required, but the server omits
   /// it for successful jobs.
+  @override
   final String? failedReason;
 
   /// The failure stack trace.
+  @override
   final List<String>? stacktrace;
 
   /// The value returned by the job.
   ///
   /// Typed as `dynamic` because the server returns a string in practice
   /// even though the API documentation declares an object.
+  @override
   final dynamic returnValue;
 
   /// Whether the job has failed.
+  @override
   final bool? isFailed;
 }
 
