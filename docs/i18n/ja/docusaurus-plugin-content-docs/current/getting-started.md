@@ -19,7 +19,7 @@ slug: /
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.6
+  misskey_client: ^1.0.0-beta.7
 ```
 
 その後、依存関係を取得します。
