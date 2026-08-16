@@ -1,5 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../raw_meta_payload.dart';
+
+part 'misskey_admin_meta.freezed.dart';
 part 'misskey_admin_meta.g.dart';
 
 /// Response model for the Misskey `/api/admin/meta` endpoint.
@@ -8,8 +11,9 @@ part 'misskey_admin_meta.g.dart';
 /// commonly used moderation / federation / registration fields while
 /// retaining the full response in [raw] (following the same pattern
 /// as `Meta`).
+@freezed
 @JsonSerializable()
-class MisskeyAdminMeta {
+class MisskeyAdminMeta with _$MisskeyAdminMeta {
   const MisskeyAdminMeta({
     this.maintainerName,
     this.maintainerEmail,
@@ -46,7 +50,7 @@ class MisskeyAdminMeta {
     this.enableRecaptcha,
     this.enableTurnstile,
     this.swPublicKey,
-    this.raw = const <String, dynamic>{},
+    this.raw = const RawMetaPayload.empty(),
   });
 
   factory MisskeyAdminMeta.fromJson(Map<String, dynamic> json) {
@@ -88,118 +92,154 @@ class MisskeyAdminMeta {
       enableRecaptcha: instance.enableRecaptcha,
       enableTurnstile: instance.enableTurnstile,
       swPublicKey: instance.swPublicKey,
-      raw: json,
+      raw: RawMetaPayload(Map<String, dynamic>.from(json)),
     );
   }
 
   /// The maintainer's name.
+  @override
   final String? maintainerName;
 
   /// The maintainer's contact email.
+  @override
   final String? maintainerEmail;
 
   /// The instance name.
+  @override
   final String? name;
 
   /// The instance description.
+  @override
   final String? description;
 
   /// The languages supported by the instance.
+  @override
   final List<String>? langs;
 
   /// The Terms of Service URL.
+  @override
   final String? tosUrl;
 
   /// The privacy policy URL.
+  @override
   final String? privacyPolicyUrl;
 
   /// The impressum URL.
+  @override
   final String? impressumUrl;
 
   /// The inquiry URL.
+  @override
   final String? inquiryUrl;
 
   /// The source code repository URL.
+  @override
   final String? repositoryUrl;
 
   /// The feedback URL.
+  @override
   final String? feedbackUrl;
 
   /// Whether new user registration is disabled.
+  @override
   final bool? disableRegistration;
 
   /// Whether email is required for sign-up.
+  @override
   final bool? emailRequiredForSignup;
 
   /// Whether email delivery is enabled.
+  @override
   final bool? enableEmail;
 
   /// Whether the service worker is enabled.
+  @override
   final bool? enableServiceWorker;
 
   /// Whether IP address logging is enabled.
+  @override
   final bool? enableIpLogging;
 
   /// Whether active email validation is enabled.
+  @override
   final bool? enableActiveEmailValidation;
 
   /// Whether remote files are cached locally.
+  @override
   final bool? cacheRemoteFiles;
 
   /// Whether remote sensitive files are cached locally.
+  @override
   final bool? cacheRemoteSensitiveFiles;
 
   /// The federation mode (`all`, `specified`, or `none`).
+  @override
   final String? federation;
 
   /// Hosts allowed to federate when [federation] is `specified`.
+  @override
   final List<String>? federationHosts;
 
   /// Blocked federation hosts.
+  @override
   final List<String>? blockedHosts;
 
   /// Silenced federation hosts.
+  @override
   final List<String>? silencedHosts;
 
   /// Media-silenced federation hosts.
+  @override
   final List<String>? mediaSilencedHosts;
 
   /// Sensitive word patterns.
+  @override
   final List<String>? sensitiveWords;
 
   /// Prohibited word patterns.
+  @override
   final List<String>? prohibitedWords;
 
   /// Hashtags hidden from trends.
+  @override
   final List<String>? hiddenTags;
 
   /// Email domains banned from sign-up.
+  @override
   final List<String>? bannedEmailDomains;
 
   /// Usernames reserved by the instance.
+  @override
   final List<String>? preservedUsernames;
 
   /// The proxy account's user ID.
+  @override
   final String? proxyAccountId;
 
   /// The number of notes displayed per ad insertion.
+  @override
   final int? notesPerOneAd;
 
   /// Whether hCaptcha is enabled.
+  @override
   final bool? enableHcaptcha;
 
   /// Whether reCAPTCHA is enabled.
+  @override
   final bool? enableRecaptcha;
 
   /// Whether Turnstile is enabled.
+  @override
   final bool? enableTurnstile;
 
   /// The service worker VAPID public key.
+  @override
   final String? swPublicKey;
 
   /// A map holding all response JSON fields, including ones not typed above.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  final Map<String, dynamic> raw;
+  final RawMetaPayload raw;
 
   Map<String, dynamic> toJson() => _$MisskeyAdminMetaToJson(this);
 }
