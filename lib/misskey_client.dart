@@ -126,6 +126,7 @@ export 'src/models/misskey_renote_muting.dart';
 export 'src/models/misskey_role.dart';
 export 'src/models/misskey_role_user.dart';
 export 'src/models/misskey_user.dart';
+export 'src/models/muted_word.dart';
 export 'src/models/server/avatar_decoration.dart';
 export 'src/models/server/emoji_detailed.dart';
 export 'src/models/server/endpoint_info.dart';

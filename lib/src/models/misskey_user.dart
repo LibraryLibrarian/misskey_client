@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'json_converters.dart';
 import 'misskey_note.dart';
+import 'muted_word.dart';
 
 part 'misskey_user.g.dart';
 
@@ -429,13 +430,13 @@ class MisskeyUser {
   @JsonKey(defaultValue: 0)
   final int? unreadNotificationsCount;
 
-  /// The list of muted word groups. Each group is a list of keywords
-  /// (AND condition).
-  final List<List<String>>? mutedWords;
+  /// The word-mute conditions, each represented by keywords or a regex.
+  @MutedWordListConverter()
+  final List<MutedWord>? mutedWords;
 
-  /// The list of hard-muted word groups. Each group is a list of keywords
-  /// (AND condition).
-  final List<List<String>>? hardMutedWords;
+  /// The hard word-mute conditions, each represented by keywords or a regex.
+  @MutedWordListConverter()
+  final List<MutedWord>? hardMutedWords;
 
   /// The list of muted instance hostnames.
   final List<String>? mutedInstances;

@@ -10,7 +10,10 @@
   "carefulBot": false,
   "injectFeaturedNote": true,
   "receiveAnnouncementEmail": true,
-  "mutedWords": [],
+  "mutedWords": [
+    ["misskey", "client"],
+    "/spam/i"
+  ],
   "mutedInstances": [],
   "notificationRecieveConfig": {},
   "isModerator": false,
