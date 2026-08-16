@@ -1,7 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'json_converters.dart';
 
+part 'misskey_note_draft_poll.freezed.dart';
 part 'misskey_note_draft_poll.g.dart';
 
 /// A poll attached to a note draft.
@@ -10,8 +11,9 @@ part 'misskey_note_draft_poll.g.dart';
 /// published note. A draft only stores what was typed into the composer, so
 /// its choices are plain strings with no vote counts, and the deadline may be
 /// expressed as a relative duration that has not been resolved yet.
+@freezed
 @JsonSerializable()
-class MisskeyNoteDraftPoll {
+class MisskeyNoteDraftPoll with _$MisskeyNoteDraftPoll {
   const MisskeyNoteDraftPoll({
     required this.choices,
     this.multiple,
@@ -26,17 +28,21 @@ class MisskeyNoteDraftPoll {
 
   /// The poll choices, as plain text.
   @JsonKey(defaultValue: <String>[])
+  @override
   final List<String> choices;
 
   /// Whether multiple choices can be selected.
   @JsonKey(defaultValue: false)
+  @override
   final bool? multiple;
 
   /// The absolute expiration date and time, when one was set.
   @SafeDateTimeConverter()
+  @override
   final DateTime? expiresAt;
 
   /// The expiration period in milliseconds, relative to the time the draft is
   /// posted, when a relative deadline was set instead of [expiresAt].
+  @override
   final int? expiredAfter;
 }

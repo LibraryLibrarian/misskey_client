@@ -173,6 +173,71 @@ void main() {
       expect(first.raw['forkSetting'], 'a');
     });
 
+    test('DriveCapacityInfo supports value equality and copyWith', () {
+      const first = DriveCapacityInfo(capacity: 1024, usage: 256);
+      const second = DriveCapacityInfo(capacity: 1024, usage: 256);
+      final copied = first.copyWith(usage: 512);
+
+      expect(first, second);
+      expect(first.hashCode, second.hashCode);
+      expect(copied.capacity, first.capacity);
+      expect(copied.usage, 512);
+      expect(copied, isNot(first));
+      expect(
+        first.toString(),
+        'DriveCapacityInfo(Usage: 256.00 B / 1024.00 B (25.0%))',
+      );
+    });
+
+    test('MisskeyHashtagTrend supports value equality and copyWith', () {
+      const first = MisskeyHashtagTrend(
+        tag: 'dart',
+        chart: [1, 2, 3],
+        usersCount: 4,
+      );
+      const second = MisskeyHashtagTrend(
+        tag: 'dart',
+        chart: [1, 2, 3],
+        usersCount: 4,
+      );
+      final copied = first.copyWith(usersCount: 5);
+
+      expect(first, second);
+      expect(first.hashCode, second.hashCode);
+      expect(copied.tag, first.tag);
+      expect(copied.chart, first.chart);
+      expect(copied.usersCount, 5);
+      expect(copied, isNot(first));
+    });
+
+    test('MisskeySwRegistration supports value equality and copyWith', () {
+      const first = MisskeySwRegistration(
+        state: 'subscribed',
+        key: 'key',
+        userId: 'user-id',
+        endpoint: 'https://example.com/push',
+        sendReadMessage: true,
+      );
+      const second = MisskeySwRegistration(
+        state: 'subscribed',
+        key: 'key',
+        userId: 'user-id',
+        endpoint: 'https://example.com/push',
+        sendReadMessage: true,
+      );
+      final copied = first.copyWith(endpoint: 'https://example.com/new-push');
+
+      expect(first, second);
+      expect(first.hashCode, second.hashCode);
+      expect(copied.state, first.state);
+      expect(copied.userId, first.userId);
+      expect(copied.sendReadMessage, first.sendReadMessage);
+      expect(copied.endpoint, 'https://example.com/new-push');
+      expect(copied, isNot(first));
+      expect(first.isNewSubscription, isTrue);
+      expect(first.isAlreadySubscribed, isFalse);
+    });
+
     test('raw equality does not revisit payload values', () {
       final firstProbe = _HashProbe();
       final secondProbe = _HashProbe();
