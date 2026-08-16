@@ -136,3 +136,82 @@ class MisskeyNetworkException extends MisskeyClientException {
   /// The underlying exception that caused this error.
   final Object? cause;
 }
+
+/// Base class for exceptions thrown by the Misskey Streaming API client.
+sealed class MisskeyStreamingException extends MisskeyClientException {
+  const MisskeyStreamingException({
+    required String message,
+    this.cause,
+    this.stackTrace,
+    this.operation,
+    this.context,
+  }) : super(message);
+
+  /// The underlying exception that caused this error.
+  final Object? cause;
+
+  /// The stack trace associated with [cause].
+  final StackTrace? stackTrace;
+
+  /// The streaming operation that failed.
+  final String? operation;
+
+  /// Additional structured information about the failure.
+  final Map<String, Object?>? context;
+
+  @override
+  String toString() =>
+      '${super.toString()}'
+      '${operation != null ? ' operation=$operation' : ''}';
+}
+
+/// An exception thrown when a Streaming API connection fails.
+final class MisskeyStreamingConnectionException
+    extends MisskeyStreamingException {
+  const MisskeyStreamingConnectionException({
+    super.message = 'Streaming connection failed',
+    super.cause,
+    super.stackTrace,
+    super.operation,
+    super.context,
+  });
+}
+
+/// An exception thrown when a Streaming API operation times out.
+final class MisskeyStreamingTimeoutException extends MisskeyStreamingException {
+  const MisskeyStreamingTimeoutException({
+    super.message = 'Streaming operation timed out',
+    super.cause,
+    super.stackTrace,
+    super.operation,
+    super.context,
+    this.timeout,
+  });
+
+  /// The timeout used by the failed operation.
+  final Duration? timeout;
+}
+
+/// An exception thrown for an invalid Streaming API message or state.
+final class MisskeyStreamingProtocolException
+    extends MisskeyStreamingException {
+  const MisskeyStreamingProtocolException({
+    super.message = 'Invalid Streaming API protocol message',
+    super.cause,
+    super.stackTrace,
+    super.operation,
+    super.context,
+  });
+}
+
+/// An exception thrown when a Streaming API subscription fails.
+final class MisskeyStreamingSubscriptionException
+    extends MisskeyStreamingException {
+  const MisskeyStreamingSubscriptionException({
+    super.message = 'Streaming subscription failed',
+    super.cause,
+    super.stackTrace,
+    super.operation,
+    super.context,
+  });
+}

@@ -97,6 +97,7 @@ client.pages         // Gestion des pages
 client.renoteMute    // Gestion de la mise en sourdine des renotes
 client.roles         // Gestion des rôles
 client.sw            // Enregistrement des notifications push Service Worker
+client.streaming     // Fils, notifications et mises à jour de Notes en temps réel
 client.users         // Recherche d'utilisateurs, listes d'abonnements, listes d'utilisateurs
 ```
 
@@ -134,6 +135,8 @@ Consultez [Journalisation](./advanced/logging.md) pour plus de détails.
 ## Étapes suivantes
 
 - [Authentification](./authentication.md) — Authentification par jeton et flux MiAuth
+- [API Streaming](./streaming.md) — Channels, événements et cycle de vie en temps réel
+- [Migration depuis misskey_streaming](./migration-from-misskey-streaming.md) — Migration du package autonome
 - [Gestion des erreurs](./error-handling.md) — Hiérarchie des exceptions et modèles de capture
 - [Notes](./api/notes.md) — Créer et récupérer des notes
 - [Téléversement Drive](./advanced/drive-upload.md) — Téléverser des fichiers vers le Drive

@@ -97,6 +97,7 @@ client.pages         // 페이지 관리
 client.renoteMute    // 리노트 뮤트 관리
 client.roles         // 역할 관리
 client.sw            // 서비스 워커 푸시 알림 등록
+client.streaming     // 실시간 타임라인, 알림 및 노트 업데이트
 client.users         // 사용자 검색, 팔로우 목록, 사용자 목록
 ```
 
@@ -134,6 +135,8 @@ final client = MisskeyClient(
 ## 다음 단계
 
 - [인증](./authentication.md) — 토큰 기반 인증 및 MiAuth 흐름
+- [Streaming API](./streaming.md) — 실시간 채널, 이벤트 및 수명 주기
+- [misskey_streaming에서 마이그레이션](./migration-from-misskey-streaming.md) — 독립형 패키지 마이그레이션
 - [오류 처리](./error-handling.md) — 예외 계층 구조 및 catch 패턴
 - [노트](./api/notes.md) — 노트 작성 및 조회
 - [드라이브 업로드](./advanced/drive-upload.md) — 드라이브에 파일 업로드

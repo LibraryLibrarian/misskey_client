@@ -42,6 +42,8 @@ import '../api/roles_api.dart';
 import '../api/sw_api.dart';
 import '../api/users/users_api.dart';
 import '../logging/logger.dart';
+import '../streaming/misskey_streaming.dart';
+import '../streaming/streaming_config.dart';
 import 'misskey_client_config.dart';
 import 'misskey_http.dart';
 import 'token_provider.dart';
@@ -52,12 +54,16 @@ class MisskeyClient {
   ///
   /// Pass [httpClientAdapter] to customize the underlying HTTP transport
   /// (e.g. trusting a private CA in test environments, or proxying).
+  /// Pass [streamingConfig] to customize Streaming API connection and
+  /// reconnection behavior.
   MisskeyClient({
     required MisskeyClientConfig config,
     TokenProvider? tokenProvider,
     Logger? logger,
     HttpClientAdapter? httpClientAdapter,
-  }) : http = MisskeyHttp(
+    MisskeyStreamingConfig? streamingConfig,
+  }) : _streamingConfig = streamingConfig,
+       http = MisskeyHttp(
          config: config,
          tokenProvider: tokenProvider,
          logger: logger,
@@ -109,6 +115,11 @@ class MisskeyClient {
   @internal
   final MisskeyHttp http;
 
+  final MisskeyStreamingConfig? _streamingConfig;
+  MisskeyStreaming? _streaming;
+  Future<void>? _disposeFuture;
+  bool _isDisposed = false;
+
   /// The base URL of the Misskey server this client connects to.
   ///
   /// Returns the URL passed as [MisskeyClientConfig.baseUrl] as-is, without
@@ -116,6 +127,48 @@ class MisskeyClient {
   /// on top of a [MisskeyClient] that need to identify which server it
   /// targets, for example to scope a per-server cache.
   Uri get baseUrl => http.baseUrl;
+
+  /// The lazily created Streaming API client.
+  ///
+  /// The HTTP and Streaming clients share the server URL, token provider,
+  /// logger, and logging setting. Access after [dispose] has started throws a
+  /// [StateError].
+  MisskeyStreaming get streaming {
+    if (_isDisposed) {
+      throw StateError('MisskeyClient has been disposed');
+    }
+    return _streaming ??= MisskeyStreaming(
+      baseUrl: http.baseUrl,
+      tokenProvider: http.tokenProvider,
+      config: _streamingConfig,
+      logger: http.logger,
+      enableLog: http.config.enableLog,
+    );
+  }
+
+  /// Permanently releases the Streaming and HTTP client resources.
+  ///
+  /// Calling this method concurrently or repeatedly returns the same future.
+  /// The Streaming client is not created when it has not been accessed.
+  Future<void> dispose() {
+    final currentFuture = _disposeFuture;
+    if (currentFuture != null) {
+      return currentFuture;
+    }
+
+    _isDisposed = true;
+    final future = _performDispose();
+    _disposeFuture = future;
+    return future;
+  }
+
+  Future<void> _performDispose() async {
+    try {
+      await _streaming?.dispose();
+    } finally {
+      http.close();
+    }
+  }
 
   /// Account and profile management API.
   late final AccountApi account;
