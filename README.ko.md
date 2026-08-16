@@ -13,6 +13,7 @@
 - 최대 재시도 횟수를 설정할 수 있는 자동 재시도
 - 망라적 오류 처리를 위한 sealed 예외 클래스 계층 구조
 - `json_serializable`로 생성된 강타입 요청 및 응답 모델
+- 타입 지정 채널, 이벤트, 자동 재연결을 제공하는 통합 Streaming API
 - 교체 가능한 `Logger` 인터페이스를 통한 유연한 로깅
 - 순수 Dart — Flutter 의존성 불필요
 
@@ -22,7 +23,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.6
+  misskey_client: ^1.0.0-beta.7
 ```
 
 그런 다음 실행합니다:
@@ -85,7 +86,52 @@ void main() async {
 | `renoteMute` | 리노트 뮤트 |
 | `roles` | 역할 할당 |
 | `sw` | 푸시 알림(Service Worker) |
+| `streaming` | 실시간 타임라인, 알림 및 캡처한 노트 업데이트 |
 | `users` | 사용자 검색, 리스트, 관계, 업적 |
+
+## Streaming API
+
+지연 생성되는 `client.streaming` 연결은 클라이언트의 서버, 토큰 제공자, 로거를 공유합니다. 타입 지정 `MisskeyStreamingChannel`로 구독하고 애플리케이션에 맞게 디코딩된 `notes` / `notifications`, 타입 지정 `events`, 또는 정보를 보존하는 `messages`를 선택하세요.
+
+```dart
+Future<void> streamHomeTimeline() async {
+  final client = MisskeyClient(
+    config: MisskeyClientConfig(
+      baseUrl: Uri.parse('https://misskey.example.com'),
+    ),
+    tokenProvider: () => 'YOUR_ACCESS_TOKEN',
+    streamingConfig: MisskeyStreamingConfig(maxReconnectAttempts: 5),
+  );
+
+  await client.streaming.connect();
+  final home = await client.streaming.subscribe(
+    const MisskeyStreamingChannel.homeTimeline(
+      withRenotes: true,
+      withFiles: false,
+    ),
+  );
+
+  final notesSubscription = home.notes.listen((note) {
+    print(note.text);
+  });
+  final eventsSubscription = home.events.listen((event) {
+    if (event is MisskeyNoteReactedEvent) {
+      print('${event.noteId}: ${event.reaction}');
+    }
+  });
+
+  // 알려진 노트를 캡처하여 리액션, 삭제 및 투표 업데이트를 수신합니다.
+  home.captureNote('NOTE_ID');
+
+  await notesSubscription.cancel();
+  await eventsSubscription.cancel();
+  home.uncaptureNote('NOTE_ID');
+  await home.unsubscribe();
+  await client.dispose();
+}
+```
+
+포크 전용 채널에는 `subscribeRaw(channel: ..., params: ...)`를 사용하세요. 같은 구독 핸들을 반환하며 `messages` 스트림도 포함합니다. 재사용 가능한 연결은 `connect()`, `disconnect()`, `reconnect()`로 제어하고 `dispose()`로 완전히 종료합니다. 연결 상태는 `state`와 `stateChanges`, 비동기 오류는 `errors`에서 확인할 수 있습니다.
 
 ## 인증
 
@@ -179,6 +225,10 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 ### 저수준 HTTP 접근
 
 `MisskeyHttpClient.send<T>()`에 해당하는 저수준 API는 공개하지 않습니다. `misskey_client`는 25개의 API 도메인을 지원하므로 타입 지정 메서드를 사용하세요. 필요한 엔드포인트가 구현되어 있지 않다면 타입 지정 API에 추가할 수 있도록 GitHub issue로 알려 주세요.
+
+## misskey_streaming에서 마이그레이션
+
+Streaming이 이제 `misskey_client`에 통합되었습니다. 독립형 `misskey_streaming` 패키지의 의존성, 구성, 구독, 이벤트, 노트 캡처 및 수명 주기 대응은 [마이그레이션 가이드](MIGRATION_FROM_MISSKEY_STREAMING.md)를 참조하세요.
 
 ## 문서
 

@@ -12,6 +12,7 @@
 - 最大リトライ回数を設定可能な自動リトライ試行
 - 網羅的なエラーハンドリングのための sealed 例外クラス階層
 - `json_serializable` で生成された厳密に型付けされたリクエスト・レスポンスモデル
+- 型付きチャンネル・イベント・自動再接続を備えた統合 Streaming API
 - 差し替え可能な `Logger` インターフェースによる柔軟なロギング
 - pure Dart — Flutter への依存なし
 
@@ -21,7 +22,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.6
+  misskey_client: ^1.0.0-beta.7
 ```
 
 その後、以下を実行します：
@@ -84,7 +85,52 @@ void main() async {
 | `renoteMute` | リノートミュート |
 | `roles` | ロールの割り当て |
 | `sw` | プッシュ通知（Service Worker） |
+| `streaming` | リアルタイムのタイムライン、通知、キャプチャしたノートの更新 |
 | `users` | ユーザー検索、リスト、関係、アチーブメント |
+
+## Streaming API
+
+遅延生成される `client.streaming` 接続は、クライアントのサーバー、トークンプロバイダー、ロガーを共有します。型付きの `MisskeyStreamingChannel` で購読し、用途に応じてデコード済みの `notes` / `notifications`、型付きの `events`、または情報を保持した `messages` を利用できます。
+
+```dart
+Future<void> streamHomeTimeline() async {
+  final client = MisskeyClient(
+    config: MisskeyClientConfig(
+      baseUrl: Uri.parse('https://misskey.example.com'),
+    ),
+    tokenProvider: () => 'YOUR_ACCESS_TOKEN',
+    streamingConfig: MisskeyStreamingConfig(maxReconnectAttempts: 5),
+  );
+
+  await client.streaming.connect();
+  final home = await client.streaming.subscribe(
+    const MisskeyStreamingChannel.homeTimeline(
+      withRenotes: true,
+      withFiles: false,
+    ),
+  );
+
+  final notesSubscription = home.notes.listen((note) {
+    print(note.text);
+  });
+  final eventsSubscription = home.events.listen((event) {
+    if (event is MisskeyNoteReactedEvent) {
+      print('${event.noteId}: ${event.reaction}');
+    }
+  });
+
+  // 既知のノートをキャプチャし、リアクション・削除・投票の更新を受信します。
+  home.captureNote('NOTE_ID');
+
+  await notesSubscription.cancel();
+  await eventsSubscription.cancel();
+  home.uncaptureNote('NOTE_ID');
+  await home.unsubscribe();
+  await client.dispose();
+}
+```
+
+フォーク固有のチャンネルには `subscribeRaw(channel: ..., params: ...)` を使用します。戻り値は同じ購読ハンドルで、`messages` ストリームも利用できます。再利用可能な接続は `connect()`、`disconnect()`、`reconnect()` で制御し、`dispose()` で完全に終了します。接続状態は `state` / `stateChanges`、非同期エラーは `errors` から取得できます。
 
 ## 認証
 
@@ -178,6 +224,10 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 ### 低レベル HTTP アクセス
 
 `MisskeyHttpClient.send<T>()` に相当する低レベル API は公開しません。`misskey_client` は25の API ドメインを網羅しているため、型付きメソッドを使用してください。必要なエンドポイントが未実装の場合は、型付き API に追加できるよう GitHub issue で報告してください。
+
+## misskey_streaming からの移行
+
+Streaming は `misskey_client` に統合されました。独立パッケージ `misskey_streaming` からの依存関係、設定、購読、イベント、ノートキャプチャ、ライフサイクルの対応については、[移行ガイド](MIGRATION_FROM_MISSKEY_STREAMING.md)を参照してください。
 
 ## ドキュメント
 

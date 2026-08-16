@@ -19,7 +19,7 @@ slug: /
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.6
+  misskey_client: ^1.0.0-beta.7
 ```
 
 その後、依存関係を取得します。
@@ -69,6 +69,7 @@ print(meta.version);
 | `client.drive` | ファイルストレージ |
 | `client.notifications` | 通知の取得と管理 |
 | `client.meta` | サーバーメタ情報 |
+| `client.streaming` | リアルタイムのタイムライン、通知、ノート更新 |
 
 すべてのAPIはHTTP POSTで通信します。トークンはリクエストボディの `i` フィールドとして送信されます。
 
@@ -88,6 +89,8 @@ final config = MisskeyClientConfig(
 ## 次のステップ
 
 - [認証](./authentication) - TokenProviderとAuthModeの使い方
+- [Streaming API](./streaming) - リアルタイムチャンネル、イベント、ライフサイクル
+- [misskey_streamingからの移行](./migration-from-misskey-streaming) - 旧パッケージからの移行
 - [エラーハンドリング](./error-handling) - 例外の種類と対処法
 - [ノートAPI](./api/notes) - ノートの操作
 - [ドライブアップロード](./advanced/drive-upload) - ファイルのアップロード

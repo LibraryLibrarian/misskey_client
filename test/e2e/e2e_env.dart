@@ -5,6 +5,25 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:misskey_client/misskey_client.dart';
 
+/// A single Misskey server provided by the E2E environment.
+///
+/// The environment runs more than one Misskey version so that behavioral
+/// differences between releases can be verified by the same test bodies.
+class MisskeyInstanceEnv {
+  const MisskeyInstanceEnv({
+    required this.baseUrl,
+    required this.adminToken,
+    required this.userToken,
+  });
+
+  final String baseUrl;
+  final String adminToken;
+  final String userToken;
+
+  /// The host name, used to label parameterized test cases.
+  String get label => Uri.parse(baseUrl).host;
+}
+
 /// Connection settings for the local closed-federation E2E environment
 /// (`fediverse_e2e`).
 ///
@@ -16,6 +35,7 @@ class E2eEnv {
     required this.misskeyBaseUrl,
     required this.misskeyAdminToken,
     required this.misskeyUserToken,
+    required this.misskeyInstances,
     required this.mastodonBaseUrl,
     required this.mastodonAdminToken,
     required this.mastodonUserToken,
@@ -30,6 +50,13 @@ class E2eEnv {
   final String misskeyBaseUrl;
   final String misskeyAdminToken;
   final String misskeyUserToken;
+
+  /// Every Misskey server available, starting with the default one.
+  ///
+  /// Additional servers appear only when the environment defines them, so
+  /// version-parameterized tests degrade to the default server alone.
+  final List<MisskeyInstanceEnv> misskeyInstances;
+
   final String mastodonBaseUrl;
   final String mastodonAdminToken;
   final String mastodonUserToken;
@@ -78,10 +105,35 @@ class E2eEnv {
       return null;
     }
 
+    final misskeyInstances = <MisskeyInstanceEnv>[
+      MisskeyInstanceEnv(
+        baseUrl: misskeyBaseUrl,
+        adminToken: misskeyAdminToken,
+        userToken: misskeyUserToken,
+      ),
+    ];
+    // 追加バージョンは環境が提供する場合のみ有効化し、
+    // 未導入の環境ではデフォルト1台だけでテストが成立するようにする。
+    final extraBaseUrl = map['MISSKEY_2026_7_BASE_URL'];
+    final extraAdminToken = map['MISSKEY_2026_7_ADMIN_TOKEN'];
+    final extraUserToken = map['MISSKEY_2026_7_USER_TOKEN'];
+    if (extraBaseUrl != null &&
+        extraAdminToken != null &&
+        extraUserToken != null) {
+      misskeyInstances.add(
+        MisskeyInstanceEnv(
+          baseUrl: extraBaseUrl,
+          adminToken: extraAdminToken,
+          userToken: extraUserToken,
+        ),
+      );
+    }
+
     return E2eEnv._(
       misskeyBaseUrl: misskeyBaseUrl,
       misskeyAdminToken: misskeyAdminToken,
       misskeyUserToken: misskeyUserToken,
+      misskeyInstances: misskeyInstances,
       mastodonBaseUrl: mastodonBaseUrl,
       mastodonAdminToken: mastodonAdminToken,
       mastodonUserToken: mastodonUserToken,
@@ -102,14 +154,41 @@ class E2eEnv {
   ///
   /// Uses the admin token when [admin] is `true`, the regular user token
   /// otherwise.
-  MisskeyClient createMisskeyClient({bool admin = false}) => MisskeyClient(
+  MisskeyClient createMisskeyClient({bool admin = false}) =>
+      createMisskeyClientFor(misskeyInstances.first, admin: admin);
+
+  /// Creates a [MisskeyClient] connected to [instance].
+  MisskeyClient createMisskeyClientFor(
+    MisskeyInstanceEnv instance, {
+    bool admin = false,
+  }) => MisskeyClient(
     config: MisskeyClientConfig(
-      baseUrl: Uri.parse(misskeyBaseUrl),
+      baseUrl: Uri.parse(instance.baseUrl),
       timeout: const Duration(seconds: 30),
     ),
-    tokenProvider: () => admin ? misskeyAdminToken : misskeyUserToken,
+    tokenProvider: () => admin ? instance.adminToken : instance.userToken,
     httpClientAdapter: createHttpClientAdapter(),
   );
+}
+
+/// Runs [action], retrying while the server reports a rate limit.
+///
+/// Every suite shares one Misskey instance, so a write can be rejected with
+/// HTTP 429 even though the request itself is valid. Honors the
+/// server-suggested delay when present.
+Future<T> retryOnRateLimit<T>(
+  Future<T> Function() action, {
+  int maxAttempts = 5,
+  Duration initialDelay = const Duration(seconds: 2),
+}) async {
+  for (var attempt = 1; ; attempt++) {
+    try {
+      return await action();
+    } on MisskeyRateLimitException catch (e) {
+      if (attempt >= maxAttempts) rethrow;
+      await Future<void>.delayed(e.retryAfter ?? initialDelay * attempt);
+    }
+  }
 }
 
 /// Polls [probe] until it returns non-null, or fails after [timeout].

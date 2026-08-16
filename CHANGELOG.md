@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.7] - 2026-08-16
+
+### Added
+
+- Integrated Misskey Streaming API access through the lazily created `MisskeyClient.streaming` property, sharing the client's base URL, token provider, logger, and log setting (issue #30)
+- Added reusable Streaming connection lifecycle and observability through `connect()`, `disconnect()`, `reconnect()`, `dispose()`, `state`, `stateChanges`, and typed `errors`, with configurable acknowledgement timeouts and automatic reconnection
+- Added typed definitions for all 18 official Streaming channels, acknowledgement-backed subscription handles, automatic resubscription, a 32-subscription limit, and `subscribeRaw()` for fork-specific channels
+- Added raw `MisskeyStreamingMessage` delivery, typed note and notification streams, typed captured-note update events, and lossless `MisskeyUnknownEvent` fallback
+- Added subscription-scoped note capture with reference-counted `captureNote()` / `uncaptureNote()` handling across reconnections
+- Added a migration guide from the standalone `misskey_streaming` package and Streaming documentation in all six README and Docusaurus languages
+- Added an opt-in Streaming E2E test suite covering connection, typed timeline delivery, captured-note updates, and cleanup against a configured Misskey server
+
+### Changed
+
+- `MisskeyClient.dispose()` now idempotently disposes an initialized Streaming connection before closing the HTTP transport
+
 ## [1.0.0-beta.6] - 2026-08-14
 
 ### Added

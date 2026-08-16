@@ -23,7 +23,7 @@ misskey_client 是一个纯 Dart 编写的 Misskey API 客户端库。
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.6
+  misskey_client: ^1.0.0-beta.7
 ```
 
 然后获取依赖：
@@ -97,6 +97,7 @@ client.pages         // 页面管理
 client.renoteMute    // 转发静音管理
 client.roles         // 角色管理
 client.sw            // Service Worker 推送通知注册
+client.streaming     // 实时时间线、通知和帖子更新
 client.users         // 用户搜索、关注列表、用户列表
 ```
 
@@ -134,6 +135,8 @@ final client = MisskeyClient(
 ## 下一步
 
 - [认证](./authentication.md) — 基于令牌的认证与 MiAuth 流程
+- [Streaming API](./streaming.md) — 实时频道、事件和生命周期
+- [从misskey_streaming迁移](./migration-from-misskey-streaming.md) — 独立包迁移
 - [错误处理](./error-handling.md) — 异常层级与捕获模式
 - [笔记](./api/notes.md) — 创建和获取笔记
 - [网盘上传](./advanced/drive-upload.md) — 向网盘上传文件

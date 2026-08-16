@@ -13,6 +13,7 @@ Une bibliothèque cliente Dart pure pour l'API [Misskey](https://misskey-hub.net
 - Réessai automatique avec un nombre maximum de tentatives configurable
 - Hiérarchie d'exceptions scellées pour une gestion exhaustive des erreurs
 - Modèles de requête et de réponse fortement typés générés avec `json_serializable`
+- API Streaming intégrée avec Channels et événements typés, et reconnexion automatique
 - Journalisation configurable via une interface `Logger` interchangeable
 - Dart pur — aucune dépendance Flutter requise
 
@@ -22,7 +23,7 @@ Ajoutez le package à votre `pubspec.yaml` :
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.6
+  misskey_client: ^1.0.0-beta.7
 ```
 
 Puis exécutez :
@@ -85,7 +86,52 @@ void main() async {
 | `renoteMute` | Silencieux de Renotes |
 | `roles` | Attributions de rôles |
 | `sw` | Notifications push (Service Worker) |
+| `streaming` | Fils d'actualité, notifications et mises à jour de Notes capturées en temps réel |
 | `users` | Recherche d'utilisateurs, listes, relations, succès |
+
+## API Streaming
+
+La connexion `client.streaming`, créée à la demande, partage le serveur, le fournisseur de jeton et le logger du client. Abonnez-vous avec un `MisskeyStreamingChannel` typé et choisissez le niveau adapté : `notes` et `notifications` décodées, `events` typés ou `messages` sans perte d'information.
+
+```dart
+Future<void> streamHomeTimeline() async {
+  final client = MisskeyClient(
+    config: MisskeyClientConfig(
+      baseUrl: Uri.parse('https://misskey.example.com'),
+    ),
+    tokenProvider: () => 'YOUR_ACCESS_TOKEN',
+    streamingConfig: MisskeyStreamingConfig(maxReconnectAttempts: 5),
+  );
+
+  await client.streaming.connect();
+  final home = await client.streaming.subscribe(
+    const MisskeyStreamingChannel.homeTimeline(
+      withRenotes: true,
+      withFiles: false,
+    ),
+  );
+
+  final notesSubscription = home.notes.listen((note) {
+    print(note.text);
+  });
+  final eventsSubscription = home.events.listen((event) {
+    if (event is MisskeyNoteReactedEvent) {
+      print('${event.noteId}: ${event.reaction}');
+    }
+  });
+
+  // Capturer une Note connue pour recevoir les Reactions, suppressions et votes.
+  home.captureNote('NOTE_ID');
+
+  await notesSubscription.cancel();
+  await eventsSubscription.cancel();
+  home.uncaptureNote('NOTE_ID');
+  await home.unsubscribe();
+  await client.dispose();
+}
+```
+
+Utilisez `subscribeRaw(channel: ..., params: ...)` pour les Channels propres à un fork. La méthode renvoie le même handle de souscription, avec le flux `messages`. `connect()`, `disconnect()` et `reconnect()` contrôlent une connexion réutilisable ; `dispose()` y met fin définitivement. Les états de connexion sont accessibles via `state` et `stateChanges`, tandis que les erreurs asynchrones sont signalées via `errors`.
 
 ## Authentification
 
@@ -179,6 +225,10 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 ### Accès HTTP de bas niveau
 
 L'équivalent de bas niveau de `MisskeyHttpClient.send<T>()` n'est pas public. `misskey_client` couvre 25 domaines d'API ; utilisez donc les méthodes typées. Si un point de terminaison nécessaire manque, veuillez le signaler dans une issue GitHub afin qu'il soit ajouté à l'API typée.
+
+## Migration depuis misskey_streaming
+
+Streaming est désormais intégré à `misskey_client`. Consultez le [guide de migration](MIGRATION_FROM_MISSKEY_STREAMING.md) pour la correspondance des dépendances, de la configuration, des souscriptions, des événements, de la capture de Notes et du cycle de vie depuis le package autonome `misskey_streaming`.
 
 ## Documentation
 
