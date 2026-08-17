@@ -207,7 +207,7 @@ class MetaApi {
     final meta = _cached;
     if (meta == null) return false;
     final parts = keyPath.split('.');
-    dynamic cursor = meta.raw;
+    dynamic cursor = meta.raw.json;
     for (final p in parts) {
       if (cursor is Map && cursor.containsKey(p)) {
         cursor = cursor[p];

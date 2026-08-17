@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** Added value equality (`==` / `hashCode`) and `copyWith` to all 97 models through the completed Freezed migration (issue #55)
+- **Breaking:** Changed `Meta.raw` and `MisskeyAdminMeta.raw` from `Map<String, dynamic>` to `RawMetaPayload`. Existing reads such as `meta.raw['key']` remain supported by `operator []`, while `containsKey`, `values`, and assignment to a `Map` variable now require the `.json` map. `RawMetaPayload` keeps a deeply immutable snapshot, also fixing the missing defensive copy for `MisskeyAdminMeta.raw` (issue #42)
 - **Breaking:** Replaced the dynamic and nested-list word-mute APIs with the type-safe `MutedWordKeywords` / `MutedWordRegex` sealed union across authenticated-user reads, admin user details, and `AccountApi.update()`, with `MutedWordUnknown` preserving unrecognized fork-specific values instead of failing the entire response (issue #53)
 
 ## [1.0.0-beta.7] - 2026-08-16

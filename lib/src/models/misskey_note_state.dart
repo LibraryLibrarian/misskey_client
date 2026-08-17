@@ -1,10 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'misskey_note_state.freezed.dart';
 part 'misskey_note_state.g.dart';
 
 /// The authenticated user's state for a note (`/api/notes/state`).
+@freezed
 @JsonSerializable()
-class MisskeyNoteState {
+class MisskeyNoteState with _$MisskeyNoteState {
   const MisskeyNoteState({
     required this.isFavorited,
     required this.isMutedThread,
@@ -17,9 +19,11 @@ class MisskeyNoteState {
 
   /// Whether the note is favorited.
   @JsonKey(defaultValue: false)
+  @override
   final bool isFavorited;
 
   /// Whether the thread is muted.
   @JsonKey(defaultValue: false)
+  @override
   final bool isMutedThread;
 }
