@@ -16,6 +16,10 @@ void main() {
     root.deleteSync(recursive: true);
   });
 
+  test('readPubspecVersion returns the validated package version', () {
+    expect(readPubspecVersion(root), '1.0.0-beta.3');
+  });
+
   test('bumpVersion updates all version references and CHANGELOG', () {
     final updatedPaths = bumpVersion(
       root,
