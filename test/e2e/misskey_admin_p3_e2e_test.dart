@@ -111,6 +111,36 @@ void main() {
       final files = await admin.adminDrive.files(limit: 100, origin: 'local');
       expect(files.map((f) => f.id), contains(uploaded.id));
 
+      final uploadedAt = uploaded.createdAt.millisecondsSinceEpoch;
+      expect(uploaded.userId, isNotNull);
+      final inCreationWindow = await admin.adminDrive.files(
+        limit: 100,
+        userId: uploaded.userId,
+        sinceDate: uploadedAt - const Duration(minutes: 1).inMilliseconds,
+        untilDate: uploadedAt + const Duration(minutes: 1).inMilliseconds,
+      );
+      expect(inCreationWindow.map((file) => file.id), contains(uploaded.id));
+
+      final afterCreationWindow = await admin.adminDrive.files(
+        limit: 100,
+        userId: uploaded.userId,
+        sinceDate: uploadedAt + const Duration(minutes: 1).inMilliseconds,
+      );
+      expect(
+        afterCreationWindow.map((file) => file.id),
+        isNot(contains(uploaded.id)),
+      );
+
+      final beforeCreationWindow = await admin.adminDrive.files(
+        limit: 100,
+        userId: uploaded.userId,
+        untilDate: uploadedAt - const Duration(minutes: 1).inMilliseconds,
+      );
+      expect(
+        beforeCreationWindow.map((file) => file.id),
+        isNot(contains(uploaded.id)),
+      );
+
       final shown = await admin.adminDrive.showFile(fileId: uploaded.id);
       expect(shown['id'], uploaded.id);
       // admin専用のモデレーション向けフィールド

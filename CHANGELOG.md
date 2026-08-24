@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Exposed schema-defined Unix-millisecond `sinceDate` / `untilDate` arguments on eight Admin list APIs covering abuse reports, ads, announcements, avatar decorations, drive files, local and remote emoji, and moderation logs. The current upstream avatar-decoration handler accepts but ignores its pagination arguments (issue #24)
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed

@@ -263,12 +263,15 @@ class AdminApi {
   ///
   /// Requires moderator privileges. Use [limit] (1-100, default 10) to
   /// cap the number of results and [sinceId] / [untilId] for
-  /// cursor-based pagination. [type] filters by action type, [userId] by
-  /// the moderator who performed the action, and [search] by keyword.
+  /// cursor-based pagination. [sinceDate] / [untilDate] paginate by Unix
+  /// timestamp in milliseconds. [type] filters by action type, [userId]
+  /// by the moderator who performed the action, and [search] by keyword.
   Future<List<MisskeyModerationLog>> showModerationLogs({
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
     String? type,
     String? userId,
     String? search,
@@ -279,6 +282,8 @@ class AdminApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
         'type': ?type,
         'userId': ?userId,
         'search': ?search,
