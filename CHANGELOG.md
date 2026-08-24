@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added typed public metadata fields, including effective role policies, feature flags, client options, advertisements, upload limits, federation/search enums with unknown-value fallbacks, branding URLs, CAPTCHA settings, and Sentry configuration (issue #10)
+- Added `MisskeyRolePolicies` for effective policies on `Meta`, `MisskeyAdminMeta`, `MisskeyUser`, and `MisskeyAdminUserDetail`, preserving newer and fork-specific policy keys through its immutable `raw` payload (issue #10)
+- Added `MisskeyRolePolicyOverride` for the structurally different `{ useDefault, priority, value }` entries returned by `MisskeyRole.policies` (issue #10)
+
+### Changed
+
+- **Breaking:** Replaced dynamic policy maps with `MisskeyRolePolicies` on effective-policy responses and with typed `MisskeyRolePolicyOverride` entries on role definitions (issue #10)
+
+### Notes
+
+- `MisskeyUser.unreadAnnouncements` and `securityKeysList`, originally mentioned by issue #10, remain intentionally out of scope because their model and fixture work is tracked separately by issue #21
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed

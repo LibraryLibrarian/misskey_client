@@ -152,7 +152,9 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
       ?.map((e) => e as Map<String, dynamic>)
       .toList(),
   loggedInDays: (json['loggedInDays'] as num?)?.toInt() ?? 0,
-  policies: json['policies'] as Map<String, dynamic>?,
+  policies: json['policies'] == null
+      ? null
+      : MisskeyRolePolicies.fromJson(json['policies'] as Map<String, dynamic>),
   twoFactorBackupCodesStock: json['twoFactorBackupCodesStock'] as String?,
   email: json['email'] as String?,
   emailVerified: json['emailVerified'] as bool? ?? false,
@@ -264,7 +266,7 @@ Map<String, dynamic> _$MisskeyUserToJson(
   'emailNotificationTypes': instance.emailNotificationTypes,
   'achievements': instance.achievements,
   'loggedInDays': instance.loggedInDays,
-  'policies': instance.policies,
+  'policies': instance.policies?.toJson(),
   'twoFactorBackupCodesStock': instance.twoFactorBackupCodesStock,
   'email': instance.email,
   'emailVerified': instance.emailVerified,

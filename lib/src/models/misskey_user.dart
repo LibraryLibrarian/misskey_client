@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'json_converters.dart';
 import 'misskey_note.dart';
+import 'misskey_role_policies.dart';
 import 'muted_word.dart';
 
 part 'misskey_user.freezed.dart';
@@ -553,9 +554,9 @@ class MisskeyUser with _$MisskeyUser {
   @JsonKey(defaultValue: 0)
   final int? loggedInDays;
 
-  /// The policy map applied to this user.
+  /// The effective role policies applied to this user.
   @override
-  final Map<String, dynamic>? policies;
+  final MisskeyRolePolicies? policies;
 
   /// The stock status of two-factor backup codes.
   @override
