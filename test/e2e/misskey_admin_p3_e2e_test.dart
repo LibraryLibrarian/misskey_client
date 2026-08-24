@@ -109,13 +109,17 @@ void main() {
       addTearDown(() => alice.drive.files.delete(fileId: uploaded.id));
 
       final files = await admin.adminDrive.files(limit: 100, origin: 'local');
-      expect(files.map((f) => f.id), contains(uploaded.id));
+      final moderationFile = files.singleWhere(
+        (file) => file.id == uploaded.id,
+      );
 
-      final uploadedAt = uploaded.createdAt.millisecondsSinceEpoch;
-      expect(uploaded.userId, isNotNull);
+      // create応答ではuserIdが省略され得るため、Admin一覧のmoderation viewを基準にする。
+      expect(moderationFile.userId, isNotNull);
+      final ownerId = moderationFile.userId!;
+      final uploadedAt = moderationFile.createdAt.millisecondsSinceEpoch;
       final inCreationWindow = await admin.adminDrive.files(
         limit: 100,
-        userId: uploaded.userId,
+        userId: ownerId,
         sinceDate: uploadedAt - const Duration(minutes: 1).inMilliseconds,
         untilDate: uploadedAt + const Duration(minutes: 1).inMilliseconds,
       );
@@ -123,7 +127,7 @@ void main() {
 
       final afterCreationWindow = await admin.adminDrive.files(
         limit: 100,
-        userId: uploaded.userId,
+        userId: ownerId,
         sinceDate: uploadedAt + const Duration(minutes: 1).inMilliseconds,
       );
       expect(
@@ -133,7 +137,7 @@ void main() {
 
       final beforeCreationWindow = await admin.adminDrive.files(
         limit: 100,
-        userId: uploaded.userId,
+        userId: ownerId,
         untilDate: uploadedAt - const Duration(minutes: 1).inMilliseconds,
       );
       expect(
