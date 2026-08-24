@@ -2,13 +2,13 @@
 
 # misskey_client
 
-面向 [Misskey](https://misskey-hub.net/) API 的纯 Dart 客户端库。提供对 25 个 API 域的强类型访问，内置认证、重试逻辑和结构化错误处理。
+面向 [Misskey](https://misskey-hub.net/) API 的纯 Dart 客户端库。提供对 26 个 API 域的强类型访问，内置认证、重试逻辑和结构化错误处理。
 
 > **Beta 版本**: API 实现已完成，但测试覆盖率较低。响应模型和方法签名可能会根据测试结果进行调整。详情请参阅 [CHANGELOG](CHANGELOG.md)。
 
 ## 特性
 
-- 覆盖 25 个 Misskey API 域（帖子、网盘、用户、频道、聊天等）
+- 覆盖 26 个 Misskey API 域（帖子、网盘、用户、频道、聊天等）
 - 通过可插拔的 `TokenProvider` 回调实现基于令牌的认证
 - 可配置最大重试次数的自动重试
 - 用于穷举式错误处理的密封异常类层次结构
@@ -63,6 +63,7 @@ void main() async {
 | 属性 | 说明 |
 |---|---|
 | `account` | 账号与个人资料管理、注册表、双重认证、Webhook |
+| `accountLifecycle` | 注册验证、密码重置、邮箱验证 |
 | `announcements` | 服务器公告 |
 | `antennas` | 天线（基于关键词的订阅源）管理 |
 | `ap` | ActivityPub 工具 |
@@ -224,7 +225,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 低级 HTTP 访问
 
-与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 25 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub issue 报告，以便将其加入强类型 API。
+与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 26 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub issue 报告，以便将其加入强类型 API。
 
 ## 从 misskey_streaming 迁移
 

@@ -62,6 +62,7 @@ void main() async {
 | プロパティ | 説明 |
 |---|---|
 | `account` | アカウント・プロフィール管理、レジストリ、二段階認証、Webhook |
+| `accountLifecycle` | サインアップ検証、パスワードリセット、メールアドレス認証 |
 | `announcements` | サーバーのお知らせ |
 | `antennas` | アンテナ（キーワードベースのフィード）管理 |
 | `ap` | ActivityPub ユーティリティ |
@@ -223,7 +224,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 低レベル HTTP アクセス
 
-`MisskeyHttpClient.send<T>()` に相当する低レベル API は公開しません。`misskey_client` は25の API ドメインを網羅しているため、型付きメソッドを使用してください。必要なエンドポイントが未実装の場合は、型付き API に追加できるよう GitHub issue で報告してください。
+`MisskeyHttpClient.send<T>()` に相当する低レベル API は公開しません。`misskey_client` は26の API ドメインを網羅しているため、型付きメソッドを使用してください。必要なエンドポイントが未実装の場合は、型付き API に追加できるよう GitHub issue で報告してください。
 
 ## misskey_streaming からの移行
 

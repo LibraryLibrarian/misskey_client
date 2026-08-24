@@ -32,6 +32,20 @@ void main() {
   });
 
   group('admin emoji', () {
+    test('listV2 returns a consistent read-only page', () async {
+      final result = await admin.adminEmoji.listV2(
+        query: const MisskeyAdminEmojiListQuery(hostType: 'all'),
+        limit: 10,
+        page: 1,
+        sortKeys: const ['-id'],
+      );
+
+      expect(result.emojis, hasLength(result.count));
+      expect(result.count, lessThanOrEqualTo(10));
+      expect(result.allCount, greaterThanOrEqualTo(result.count));
+      expect(result.allPages, greaterThanOrEqualTo(0));
+    });
+
     test('add -> list -> update -> bulk ops -> delete round trip', () async {
       final suffix = DateTime.now().millisecondsSinceEpoch;
       final name = 'e2e_emoji_$suffix';

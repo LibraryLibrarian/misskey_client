@@ -9,7 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added E2E scenarios for `AdminApi.sendEmail`, `AdminEmojiApi.copy`, and `AdminCaptchaApi.save`, plus an Analyzer AST-based fail-closed coverage audit that classifies all 99 Admin methods as E2E-invoked or explicitly excluded with a destructive-operation reason. The email scenario runs conditionally when Misskey SMTP is preconfigured for Mailpit and otherwise skips without changing shared instance metadata (issue #25)
+- Added E2E scenarios for `AdminApi.sendEmail`, `AdminEmojiApi.copy`, and `AdminCaptchaApi.save`, plus an Analyzer AST-based fail-closed coverage audit that classifies all 100 Admin methods as E2E-invoked or explicitly excluded with a destructive-operation reason. The email scenario runs conditionally when Misskey SMTP is preconfigured for Mailpit and otherwise skips without changing shared instance metadata (issue #25)
+- Added the unauthenticated `AccountLifecycleApi` for username and email availability, password-reset requests and completion, and email verification (issue #11)
+- Added typed query, detailed emoji, role summary, and paginated response models for `AdminEmojiApi.listV2` (`/api/v2/admin/emoji/list`) (issue #11)
+
+### Changed
+
+- Redacted authentication tokens and account-lifecycle credentials from HTTP debug request logs without modifying transmitted request bodies (issue #11)
+
+### Notes
+
+- Reversi, Bubble Game, and the server-internal `test` / `reset-db` endpoints are deliberately unsupported. Legacy app/session authentication is deferred pending coordination with `misskey_auth`; the remaining specialized utility endpoints are deferred as lower priority. See [Endpoint support policy](ENDPOINT_SUPPORT.md) (issue #11)
 
 ## [1.0.0-beta.8] - 2026-08-25
 

@@ -5,7 +5,7 @@ import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:test/test.dart';
 
-const _expectedAdminMethodCount = 99;
+const _expectedAdminMethodCount = 100;
 
 const _clientAccessors = <String, String>{
   'AdminApi': 'admin',
@@ -119,8 +119,8 @@ void main() {
     );
     expect(
       methods.length - excludedAdminE2eMethods.length,
-      87,
-      reason: '99件の内訳はE2E呼び出し87件・理由付き除外12件です',
+      88,
+      reason: '100件の内訳はE2E呼び出し88件・理由付き除外12件です',
     );
   });
 

@@ -4,6 +4,7 @@ import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
 import '../../internal/request_body.dart';
+import '../../models/admin/misskey_admin_emoji_list.dart';
 import '../../models/server/emoji_detailed.dart';
 
 /// Provides custom emoji management admin APIs (`/api/admin/emoji/*`).
@@ -159,6 +160,40 @@ class AdminEmojiApi {
         .whereType<Map<String, dynamic>>()
         .map(EmojiDetailed.fromJson)
         .toList();
+  }
+
+  /// Fetches custom emojis with the v2 admin search and pagination API
+  /// (`/api/v2/admin/emoji/list`).
+  ///
+  /// Requires the `canManageCustomEmojis` role policy. [query] contains the
+  /// field filters. Use ID or Unix-millisecond date cursors, [limit] (1-100),
+  /// and [page] for pagination. [sortKeys] accepts the upstream `+field` /
+  /// `-field` sort keys and defaults to `-id` when omitted.
+  Future<MisskeyAdminEmojiListResult> listV2({
+    MisskeyAdminEmojiListQuery? query,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+    int? limit,
+    int? page,
+    List<String>? sortKeys,
+  }) async {
+    final res = await http.send<Map<String, dynamic>>(
+      '/v2/admin/emoji/list',
+      body: <String, dynamic>{
+        'query': ?query?.toJson(),
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
+        'limit': ?limit,
+        'page': ?page,
+        'sortKeys': ?sortKeys,
+      },
+      options: const RequestOptions(idempotent: true),
+    );
+    return MisskeyAdminEmojiListResult.fromJson(res);
   }
 
   /// Copies a remote custom emoji to the local instance

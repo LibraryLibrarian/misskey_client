@@ -2,13 +2,13 @@
 
 # misskey_client
 
-Eine reine Dart-Clientbibliothek für die [Misskey](https://misskey-hub.net/) API. Bietet typisierten Zugriff auf 25 API-Domänen mit integrierter Authentifizierung, Wiederholungslogik und strukturierter Fehlerbehandlung.
+Eine reine Dart-Clientbibliothek für die [Misskey](https://misskey-hub.net/) API. Bietet typisierten Zugriff auf 26 API-Domänen mit integrierter Authentifizierung, Wiederholungslogik und strukturierter Fehlerbehandlung.
 
 > **Beta**: Die API-Implementierung ist abgeschlossen, die Testabdeckung ist jedoch minimal. Response-Modelle und Methodensignaturen können sich auf Basis von Testergebnissen ändern. Siehe [CHANGELOG](CHANGELOG.md) für Details.
 
 ## Funktionen
 
-- Abdeckung von 25 Misskey-API-Domänen (Notes, Drive, Benutzer, Channels, Chat und mehr)
+- Abdeckung von 26 Misskey-API-Domänen (Notes, Drive, Benutzer, Channels, Chat und mehr)
 - Token-basierte Authentifizierung über einen austauschbaren `TokenProvider`-Callback
 - Automatische Wiederholung mit konfigurierbarer maximaler Anzahl von Versuchen
 - Versiegelte Ausnahmeklassenhierarchie für erschöpfende Fehlerbehandlung
@@ -63,6 +63,7 @@ void main() async {
 | Eigenschaft | Beschreibung |
 |---|---|
 | `account` | Konto- und Profilverwaltung, Registry, 2FA, Webhooks |
+| `accountLifecycle` | Registrierungsprüfung, Passwortzurücksetzung, E-Mail-Verifizierung |
 | `announcements` | Server-Ankündigungen |
 | `antennas` | Antennen-Verwaltung (stichwortbasierte Feeds) |
 | `ap` | ActivityPub-Hilfsfunktionen |
@@ -224,7 +225,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### Low-Level-HTTP-Zugriff
 
-Das Low-Level-Gegenstück zu `MisskeyHttpClient.send<T>()` ist nicht öffentlich. `misskey_client` deckt 25 API-Domänen ab; verwenden Sie daher die typisierten Methoden. Falls ein benötigter Endpunkt fehlt, melden Sie ihn bitte in einem GitHub-Issue, damit er der typisierten API hinzugefügt werden kann.
+Das Low-Level-Gegenstück zu `MisskeyHttpClient.send<T>()` ist nicht öffentlich. `misskey_client` deckt 26 API-Domänen ab; verwenden Sie daher die typisierten Methoden. Falls ein benötigter Endpunkt fehlt, melden Sie ihn bitte in einem GitHub-Issue, damit er der typisierten API hinzugefügt werden kann.
 
 ## Migration von misskey_streaming
 
