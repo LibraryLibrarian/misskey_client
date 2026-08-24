@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `AdminApi.updateMeta(extra:)` for passing newer upstream or fork-specific instance settings that do not yet have typed parameters (issue #23)
+
+### Removed
+
+- **Breaking:** Removed the ineffective typed `proxyAccountId` parameter from `AdminApi.updateMeta()`. Current upstream Misskey does not accept that setting on `/admin/update-meta`; callers targeting an older version or compatible fork may send it through `extra` only after confirming server support (issue #9)
+
+### Fixed
+
+- `AdminApi.updateMeta()` now treats an invocation without settings as a no-op instead of sending an empty update that current upstream Misskey rejects with a 500 response
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed
