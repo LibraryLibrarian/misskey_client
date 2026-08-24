@@ -23,7 +23,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.7
+  misskey_client: ^1.0.0-beta.8
 ```
 
 然后运行：
