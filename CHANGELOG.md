@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added cached runtime endpoint capability detection through `MetaApi.isEndpointAvailable()` and `MetaApi.getEndpoints(refresh: ...)`, with refresh support, in-flight request deduplication, deduplicated results, and compatibility guidance in all six READMEs (issue #41)
+
+### Changed
+
+- Added the explicit `MetaApi.hasMetaKey()` name for metadata key-presence checks and deprecated the ambiguous `supports()` alias; key presence does not interpret a boolean metadata value or indicate endpoint availability (issue #41)
+- **Breaking:** `MetaApi.getEndpoints()` now returns an unmodifiable list instead of a mutable list so callers cannot mutate a value that represents the cached endpoint snapshot (issue #41)
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed
