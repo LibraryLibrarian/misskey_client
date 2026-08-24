@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Documented migration from the unpublished `misskey_api_kit` predecessor and the local-only `misskey_drive` package in all six READMEs (issue #31)
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed

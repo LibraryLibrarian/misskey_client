@@ -210,6 +210,15 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | 이름이 같은 클래스 |
 | `kReleaseMode` / `kDebugMode` | 공개 API에 포함하지 않음(아래 참조) |
 
+### misskey_api_kit 및 misskey_drive에서 마이그레이션
+
+`misskey_api_kit`는 배포되지 않은 이전 패키지이고, `misskey_drive`는 로컬 전용 패키지였습니다. 해당 의존성을 제거하고 `MisskeyApiKitClient`와 `MisskeyDriveClient` 인스턴스를 따로 만드는 대신 하나의 `MisskeyClient`를 생성하세요.
+
+- `MisskeyApiKitClient`의 `account`, `notes`, `notifications`, `channels`, `users` 진입점을 `MisskeyClient`의 같은 이름을 가진 속성으로 교체하세요.
+- `MisskeyDriveClient.files`, `.folders`, `.stats`를 `client.drive.files`, `client.drive.folders`, `client.drive.stats`로 교체하세요.
+
+이는 그대로 교체할 수 있는 호환 API가 아닙니다. 일부 메서드 이름이 변경되었고 이전에 원시 `Map<String, dynamic>` 값이었던 많은 응답은 이제 타입 지정 모델을 사용하지만, 여전히 원시 map을 반환하는 API도 있습니다. [API 참조](https://librarylibrarian.github.io/misskey_client/)를 확인하여 각 호출을 마이그레이션하세요.
+
 ### MisskeyApiException 이름 충돌
 
 두 패키지 모두 `MisskeyApiException`을 정의하지만 클래스의 내용과 상속 관계가 다릅니다. `misskey_api_core` 버전은 단순 클래스인 반면, `misskey_client` 버전은 `MisskeyClientException`을 상속하며 `statusCode`가 필수입니다. 마이그레이션 중 두 패키지를 함께 import할 때는 접두사를 사용하여 충돌을 피하세요:

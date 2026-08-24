@@ -210,6 +210,15 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | Classes portant les mêmes noms |
 | `kReleaseMode` / `kDebugMode` | Non inclus dans l'API publique ; voir ci-dessous |
 
+### Migration depuis misskey_api_kit et misskey_drive
+
+`misskey_api_kit` était un prédécesseur non publié, et `misskey_drive` était un package réservé à un usage local. Supprimez ces dépendances et créez un seul `MisskeyClient` au lieu d'instances distinctes de `MisskeyApiKitClient` et `MisskeyDriveClient`.
+
+- Remplacez les points d'entrée `account`, `notes`, `notifications`, `channels` et `users` de `MisskeyApiKitClient` par les propriétés de même nom de `MisskeyClient`.
+- Remplacez `MisskeyDriveClient.files`, `.folders` et `.stats` par `client.drive.files`, `client.drive.folders` et `client.drive.stats`.
+
+Il ne s'agit pas d'un remplacement direct : certaines méthodes ont été renommées, et de nombreuses réponses qui étaient auparavant des valeurs `Map<String, dynamic>` brutes utilisent maintenant des modèles typés, tandis que certaines API renvoient toujours des maps brutes. Migrez chaque appel en vous reportant à la [référence de l'API](https://librarylibrarian.github.io/misskey_client/).
+
 ### Conflit de nom MisskeyApiException
 
 Les deux packages définissent `MisskeyApiException`, mais les classes ont un contenu différent et aucune relation d'héritage. La version de `misskey_api_core` est une classe simple, tandis que celle de `misskey_client` étend `MisskeyClientException` et exige un `statusCode`. Lorsque les deux packages sont importés pendant la migration, utilisez un préfixe pour éviter le conflit :
