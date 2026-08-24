@@ -16,6 +16,9 @@ MisskeyChatRoomMember _$MisskeyChatRoomMemberFromJson(
       ? null
       : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
   roomId: json['roomId'] as String,
+  room: json['room'] == null
+      ? null
+      : MisskeyChatRoom.fromJson(json['room'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$MisskeyChatRoomMemberToJson(
@@ -26,4 +29,5 @@ Map<String, dynamic> _$MisskeyChatRoomMemberToJson(
   'userId': instance.userId,
   'user': instance.user?.toJson(),
   'roomId': instance.roomId,
+  'room': instance.room?.toJson(),
 };

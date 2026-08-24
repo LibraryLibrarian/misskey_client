@@ -52,6 +52,22 @@ void main() {
       expect(notes.first.id, isNotEmpty);
     });
 
+    test('parses and round-trips the optional hasPoll flag', () {
+      final file = File('test/fixtures/notes_show_poll.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final note = MisskeyNote.fromJson(json);
+
+      expect(note.hasPoll, isTrue);
+      expect(note.toJson()['hasPoll'], isTrue);
+    });
+
+    test('keeps hasPoll null when the field is absent', () {
+      final file = File('test/fixtures/notes_show.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+
+      expect(MisskeyNote.fromJson(json).hasPoll, isNull);
+    });
+
     test('handles null optional fields correctly', () {
       final file = File('test/fixtures/notes_show.json');
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;

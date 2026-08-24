@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `MisskeyNote.hasPoll` and the conditionally populated `MisskeyChatRoomMember.room` field. The room is currently included by `chat/rooms/joining` and omitted by `chat/rooms/members` (issue #22)
+- Added immutable raw access to the schema-undeclared `MisskeyUserRelation.following` entity through `RawUserRelationFollowing`. The payload remains untyped because the current database-entity wire shape differs from `MisskeyFollowing` and is not covered by the official response contract (issue #22)
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed

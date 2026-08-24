@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyUserRelation {
 
- String get id; bool get isFollowing; bool get hasPendingFollowRequestFromYou; bool get hasPendingFollowRequestToYou; bool get isFollowed; bool get isBlocking; bool get isBlocked; bool get isMuted; bool get isRenoteMuted;
+ String get id; RawUserRelationFollowing? get following; bool get isFollowing; bool get hasPendingFollowRequestFromYou; bool get hasPendingFollowRequestToYou; bool get isFollowed; bool get isBlocking; bool get isBlocked; bool get isMuted; bool get isRenoteMuted;
 /// Create a copy of MisskeyUserRelation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $MisskeyUserRelationCopyWith<MisskeyUserRelation> get copyWith => _$MisskeyUserR
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyUserRelation&&(identical(other.id, id) || other.id == id)&&(identical(other.isFollowing, isFollowing) || other.isFollowing == isFollowing)&&(identical(other.hasPendingFollowRequestFromYou, hasPendingFollowRequestFromYou) || other.hasPendingFollowRequestFromYou == hasPendingFollowRequestFromYou)&&(identical(other.hasPendingFollowRequestToYou, hasPendingFollowRequestToYou) || other.hasPendingFollowRequestToYou == hasPendingFollowRequestToYou)&&(identical(other.isFollowed, isFollowed) || other.isFollowed == isFollowed)&&(identical(other.isBlocking, isBlocking) || other.isBlocking == isBlocking)&&(identical(other.isBlocked, isBlocked) || other.isBlocked == isBlocked)&&(identical(other.isMuted, isMuted) || other.isMuted == isMuted)&&(identical(other.isRenoteMuted, isRenoteMuted) || other.isRenoteMuted == isRenoteMuted));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyUserRelation&&(identical(other.id, id) || other.id == id)&&(identical(other.following, following) || other.following == following)&&(identical(other.isFollowing, isFollowing) || other.isFollowing == isFollowing)&&(identical(other.hasPendingFollowRequestFromYou, hasPendingFollowRequestFromYou) || other.hasPendingFollowRequestFromYou == hasPendingFollowRequestFromYou)&&(identical(other.hasPendingFollowRequestToYou, hasPendingFollowRequestToYou) || other.hasPendingFollowRequestToYou == hasPendingFollowRequestToYou)&&(identical(other.isFollowed, isFollowed) || other.isFollowed == isFollowed)&&(identical(other.isBlocking, isBlocking) || other.isBlocking == isBlocking)&&(identical(other.isBlocked, isBlocked) || other.isBlocked == isBlocked)&&(identical(other.isMuted, isMuted) || other.isMuted == isMuted)&&(identical(other.isRenoteMuted, isRenoteMuted) || other.isRenoteMuted == isRenoteMuted));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,isFollowing,hasPendingFollowRequestFromYou,hasPendingFollowRequestToYou,isFollowed,isBlocking,isBlocked,isMuted,isRenoteMuted);
+int get hashCode => Object.hash(runtimeType,id,following,isFollowing,hasPendingFollowRequestFromYou,hasPendingFollowRequestToYou,isFollowed,isBlocking,isBlocked,isMuted,isRenoteMuted);
 
 @override
 String toString() {
-  return 'MisskeyUserRelation(id: $id, isFollowing: $isFollowing, hasPendingFollowRequestFromYou: $hasPendingFollowRequestFromYou, hasPendingFollowRequestToYou: $hasPendingFollowRequestToYou, isFollowed: $isFollowed, isBlocking: $isBlocking, isBlocked: $isBlocked, isMuted: $isMuted, isRenoteMuted: $isRenoteMuted)';
+  return 'MisskeyUserRelation(id: $id, following: $following, isFollowing: $isFollowing, hasPendingFollowRequestFromYou: $hasPendingFollowRequestFromYou, hasPendingFollowRequestToYou: $hasPendingFollowRequestToYou, isFollowed: $isFollowed, isBlocking: $isBlocking, isBlocked: $isBlocked, isMuted: $isMuted, isRenoteMuted: $isRenoteMuted)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyUserRelationCopyWith<$Res>  {
   factory $MisskeyUserRelationCopyWith(MisskeyUserRelation value, $Res Function(MisskeyUserRelation) _then) = _$MisskeyUserRelationCopyWithImpl;
 @useResult
 $Res call({
- String id, bool isFollowing, bool hasPendingFollowRequestFromYou, bool hasPendingFollowRequestToYou, bool isFollowed, bool isBlocking, bool isBlocked, bool isMuted, bool isRenoteMuted
+ String id, RawUserRelationFollowing? following, bool isFollowing, bool hasPendingFollowRequestFromYou, bool hasPendingFollowRequestToYou, bool isFollowed, bool isBlocking, bool isBlocked, bool isMuted, bool isRenoteMuted
 });
 
 
@@ -63,10 +63,11 @@ class _$MisskeyUserRelationCopyWithImpl<$Res>
 
 /// Create a copy of MisskeyUserRelation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? isFollowing = null,Object? hasPendingFollowRequestFromYou = null,Object? hasPendingFollowRequestToYou = null,Object? isFollowed = null,Object? isBlocking = null,Object? isBlocked = null,Object? isMuted = null,Object? isRenoteMuted = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? following = freezed,Object? isFollowing = null,Object? hasPendingFollowRequestFromYou = null,Object? hasPendingFollowRequestToYou = null,Object? isFollowed = null,Object? isBlocking = null,Object? isBlocked = null,Object? isMuted = null,Object? isRenoteMuted = null,}) {
   return _then(MisskeyUserRelation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,isFollowing: null == isFollowing ? _self.isFollowing : isFollowing // ignore: cast_nullable_to_non_nullable
+as String,following: freezed == following ? _self.following : following // ignore: cast_nullable_to_non_nullable
+as RawUserRelationFollowing?,isFollowing: null == isFollowing ? _self.isFollowing : isFollowing // ignore: cast_nullable_to_non_nullable
 as bool,hasPendingFollowRequestFromYou: null == hasPendingFollowRequestFromYou ? _self.hasPendingFollowRequestFromYou : hasPendingFollowRequestFromYou // ignore: cast_nullable_to_non_nullable
 as bool,hasPendingFollowRequestToYou: null == hasPendingFollowRequestToYou ? _self.hasPendingFollowRequestToYou : hasPendingFollowRequestToYou // ignore: cast_nullable_to_non_nullable
 as bool,isFollowed: null == isFollowed ? _self.isFollowed : isFollowed // ignore: cast_nullable_to_non_nullable
