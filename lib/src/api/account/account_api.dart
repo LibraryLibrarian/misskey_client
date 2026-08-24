@@ -7,8 +7,10 @@ import '../../internal/request_body.dart';
 import '../../models/account/misskey_signin_history.dart';
 import '../../models/gallery/misskey_gallery_like.dart';
 import '../../models/gallery/misskey_gallery_post.dart';
+import '../../models/json_converters.dart';
 import '../../models/misskey_note_favorite.dart';
 import '../../models/misskey_user.dart';
+import '../../models/muted_word.dart';
 import 'registry_api.dart';
 import 'two_factor_api.dart';
 import 'webhooks_api.dart';
@@ -88,9 +90,11 @@ class AccountApi {
   /// Unix timestamp (ms) followers-only. [makeNotesHiddenBefore] hides notes
   /// before that timestamp. [pinnedPageId] pins the specified page ID.
   ///
-  /// [mutedWords] is a list where each element is either an AND-condition
-  /// string list or a regex string. [hardMutedWords] works similarly for
-  /// hard mutes. [mutedInstances] is a list of hostnames to mute.
+  /// [mutedWords] accepts [MutedWordKeywords] AND-condition groups and
+  /// [MutedWordRegex] patterns. [hardMutedWords] works similarly for hard
+  /// mutes. A [MutedWordUnknown] read from a fork can be passed through, but
+  /// upstream Misskey may reject its unrecognized shape. [mutedInstances] is
+  /// a list of hostnames to mute.
   /// [alsoKnownAs] holds URIs of alternate accounts (migration source,
   /// up to 10). [followedMessage] sets the message shown when followed
   /// (use `Optional.null_()` to clear it).
@@ -136,8 +140,8 @@ class AccountApi {
     Optional<int>? makeNotesFollowersOnlyBefore,
     Optional<int>? makeNotesHiddenBefore,
     Optional<String>? pinnedPageId,
-    List<dynamic>? mutedWords,
-    List<dynamic>? hardMutedWords,
+    List<MutedWord>? mutedWords,
+    List<MutedWord>? hardMutedWords,
     List<String>? mutedInstances,
     Map<String, Map<String, dynamic>>? notificationRecieveConfig,
     List<String>? emailNotificationTypes,
@@ -195,8 +199,14 @@ class AccountApi {
     );
     putOptional(body, 'makeNotesHiddenBefore', makeNotesHiddenBefore);
     putOptional(body, 'pinnedPageId', pinnedPageId);
-    if (mutedWords != null) body['mutedWords'] = mutedWords;
-    if (hardMutedWords != null) body['hardMutedWords'] = hardMutedWords;
+    if (mutedWords != null) {
+      body['mutedWords'] = const MutedWordListConverter().toJson(mutedWords);
+    }
+    if (hardMutedWords != null) {
+      body['hardMutedWords'] = const MutedWordListConverter().toJson(
+        hardMutedWords,
+      );
+    }
     if (mutedInstances != null) body['mutedInstances'] = mutedInstances;
     if (notificationRecieveConfig != null) {
       body['notificationRecieveConfig'] = notificationRecieveConfig;

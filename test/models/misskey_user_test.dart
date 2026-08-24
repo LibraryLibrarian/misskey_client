@@ -226,13 +226,106 @@ void main() {
       expect(user.hasPendingReceivedFollowRequest, false);
     });
 
-    test('parses muting config from i', () {
+    test('parses mixed word-mute conditions from i', () {
       final file = File('test/fixtures/i.json');
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       final user = MisskeyUser.fromJson(json);
 
-      expect(user.mutedWords, isEmpty);
+      expect(
+        user.mutedWords,
+        containsAllInOrder([
+          isA<MutedWordKeywords>().having((word) => word.keywords, 'keywords', [
+            'misskey',
+            'client',
+          ]),
+          isA<MutedWordRegex>().having(
+            (word) => word.pattern,
+            'pattern',
+            '/spam/i',
+          ),
+        ]),
+      );
+      expect(
+        user.hardMutedWords,
+        containsAllInOrder([
+          isA<MutedWordRegex>().having(
+            (word) => word.pattern,
+            'pattern',
+            '/spoiler/i',
+          ),
+          isA<MutedWordKeywords>().having((word) => word.keywords, 'keywords', [
+            'hard',
+            'mute',
+          ]),
+        ]),
+      );
       expect(user.mutedInstances, isEmpty);
+    });
+
+    test('round-trips mixed word-mute JSON shapes', () {
+      final file = File('test/fixtures/i.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      final encoded = user.toJson();
+      expect(encoded['mutedWords'], json['mutedWords']);
+      expect(encoded['hardMutedWords'], json['hardMutedWords']);
+
+      final reparsed = MisskeyUser.fromJson(encoded);
+      expect(reparsed.mutedWords, hasLength(2));
+      expect(reparsed.hardMutedWords, hasLength(2));
+    });
+
+    test('round-trips empty word-mute values without normalization', () {
+      final json =
+          jsonDecode(r'''
+        {
+          "id": "user-id",
+          "username": "alice",
+          "mutedWords": [[], [""], ""],
+          "hardMutedWords": []
+        }
+      ''')
+              as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(
+        user.mutedWords,
+        containsAllInOrder([
+          isA<MutedWordKeywords>().having(
+            (word) => word.keywords,
+            'keywords',
+            isEmpty,
+          ),
+          isA<MutedWordKeywords>().having((word) => word.keywords, 'keywords', [
+            '',
+          ]),
+          isA<MutedWordRegex>().having(
+            (word) => word.pattern,
+            'pattern',
+            isEmpty,
+          ),
+        ]),
+      );
+      expect(user.hardMutedWords, isEmpty);
+      expect(user.toJson()['mutedWords'], json['mutedWords']);
+      expect(user.toJson()['hardMutedWords'], json['hardMutedWords']);
+    });
+
+    test('preserves unrecognized word-mute element shapes', () {
+      final json =
+          jsonDecode(r'''
+        {
+          "id": "user-id",
+          "username": "alice",
+          "mutedWords": [42, ["valid", null], {"type": "fork"}, null]
+        }
+      ''')
+              as Map<String, dynamic>;
+      final user = MisskeyUser.fromJson(json);
+
+      expect(user.mutedWords, everyElement(isA<MutedWordUnknown>()));
+      expect(user.toJson()['mutedWords'], json['mutedWords']);
     });
 
     test('UserLite fields absent in notes/show default correctly', () {

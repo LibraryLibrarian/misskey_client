@@ -1,13 +1,15 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../json_converters.dart';
 import '../misskey_user.dart';
 
+part 'misskey_abuse_user_report.freezed.dart';
 part 'misskey_abuse_user_report.g.dart';
 
 /// An abuse report (element of the `/api/admin/abuse-user-reports` response).
+@freezed
 @JsonSerializable()
-class MisskeyAbuseUserReport {
+class MisskeyAbuseUserReport with _$MisskeyAbuseUserReport {
   const MisskeyAbuseUserReport({
     required this.id,
     this.createdAt,
@@ -30,42 +32,55 @@ class MisskeyAbuseUserReport {
   Map<String, dynamic> toJson() => _$MisskeyAbuseUserReportToJson(this);
 
   /// The report ID.
+  @override
   final String id;
 
   /// The date and time when the report was created.
   @SafeDateTimeConverter()
+  @override
   final DateTime? createdAt;
 
   /// The report comment written by the reporter.
+  @override
   final String comment;
 
   /// Whether the report has been resolved.
+  @override
   final bool resolved;
 
   /// The reporter's user ID.
+  @override
   final String? reporterId;
 
   /// The reported user's ID.
+  @override
   final String? targetUserId;
 
   /// The assigned moderator's user ID.
+  @override
   final String? assigneeId;
 
   /// The reporter.
+  @override
   final MisskeyUser? reporter;
 
   /// The reported user.
+  @override
   final MisskeyUser? targetUser;
 
   /// The assigned moderator.
+  @override
   final MisskeyUser? assignee;
 
   /// Whether the report was forwarded to the remote instance.
+  @override
   final bool? forwarded;
 
   /// The resolution kind (`accept`, `reject`, or `null`).
+  @override
   final String? resolvedAs;
 
   /// The moderation note visible only to moderators.
+  @override
   final String? moderationNote;
 }

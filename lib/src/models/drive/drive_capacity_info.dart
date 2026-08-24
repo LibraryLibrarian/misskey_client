@@ -1,10 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'drive_capacity_info.freezed.dart';
 part 'drive_capacity_info.g.dart';
 
 /// Drive storage capacity information for a user.
+@freezed
 @JsonSerializable()
-class DriveCapacityInfo {
+class DriveCapacityInfo with _$DriveCapacityInfo {
   const DriveCapacityInfo({required this.capacity, required this.usage});
 
   factory DriveCapacityInfo.fromJson(Map<String, dynamic> json) =>
@@ -13,9 +15,11 @@ class DriveCapacityInfo {
   Map<String, dynamic> toJson() => _$DriveCapacityInfoToJson(this);
 
   /// The maximum storage capacity allocated to the user, in bytes.
+  @override
   final int capacity;
 
   /// The current drive usage, in bytes.
+  @override
   final int usage;
 
   /// The available capacity, in bytes.

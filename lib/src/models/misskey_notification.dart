@@ -1,8 +1,9 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'misskey_note.dart';
 import 'misskey_user.dart';
 
+part 'misskey_notification.freezed.dart';
 part 'misskey_notification.g.dart';
 
 /// The type of a notification.
@@ -40,8 +41,9 @@ enum MisskeyNotificationType {
 }
 
 /// A Misskey notification.
+@freezed
 @JsonSerializable()
-class MisskeyNotification {
+class MisskeyNotification with _$MisskeyNotification {
   const MisskeyNotification({
     required this.id,
     required this.createdAt,
@@ -66,48 +68,63 @@ class MisskeyNotification {
   Map<String, dynamic> toJson() => _$MisskeyNotificationToJson(this);
 
   /// The unique identifier of this notification.
+  @override
   final String id;
 
   /// The date and time when this notification was created.
+  @override
   final DateTime createdAt;
 
   /// The type of this notification.
   @JsonKey(unknownEnumValue: MisskeyNotificationType.unknown)
+  @override
   final MisskeyNotificationType type;
 
   /// The ID of the user related to this notification.
+  @override
   final String? userId;
 
   /// The user related to this notification.
+  @override
   final MisskeyUser? user;
 
   /// The note related to this notification.
+  @override
   final MisskeyNote? note;
 
   /// The reaction string for reaction notifications.
+  @override
   final String? reaction;
 
   /// The achievement name for achievement notifications.
+  @override
   final String? achievement;
 
   /// The body text for app notifications.
+  @override
   final String? body;
 
   /// The header text for app notifications.
+  @override
   final String? header;
 
   /// The icon URL for app notifications.
+  @override
   final String? icon;
 
   /// The role information for role assignment notifications.
+  @override
   final dynamic role;
 
   /// The message for follow request accepted notifications.
+  @override
   final String? message;
 
   /// The list of reactions for grouped reaction notifications.
+  @override
   final List<dynamic>? reactions;
 
   /// The list of users for grouped renote notifications.
+  @override
   final List<MisskeyUser>? users;
 }

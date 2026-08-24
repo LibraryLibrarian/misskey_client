@@ -20,7 +20,9 @@ MisskeyAdminUserDetail _$MisskeyAdminUserDetailFromJson(
   carefulBot: json['carefulBot'] as bool?,
   injectFeaturedNote: json['injectFeaturedNote'] as bool?,
   receiveAnnouncementEmail: json['receiveAnnouncementEmail'] as bool?,
-  mutedWords: json['mutedWords'] as List<dynamic>?,
+  mutedWords: const MutedWordListConverter().fromJson(
+    json['mutedWords'] as List?,
+  ),
   mutedInstances: (json['mutedInstances'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
@@ -60,7 +62,7 @@ Map<String, dynamic> _$MisskeyAdminUserDetailToJson(
   'carefulBot': instance.carefulBot,
   'injectFeaturedNote': instance.injectFeaturedNote,
   'receiveAnnouncementEmail': instance.receiveAnnouncementEmail,
-  'mutedWords': instance.mutedWords,
+  'mutedWords': const MutedWordListConverter().toJson(instance.mutedWords),
   'mutedInstances': instance.mutedInstances,
   'notificationRecieveConfig': instance.notificationRecieveConfig,
   'isModerator': instance.isModerator,

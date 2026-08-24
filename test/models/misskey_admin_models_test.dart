@@ -87,6 +87,30 @@ void main() {
       expect(signin.id, isNotEmpty);
       expect(signin.success, isTrue);
     });
+
+    test('round-trips mixed word-mute JSON shapes', () {
+      final json = load();
+      final detail = MisskeyAdminUserDetail.fromJson(json);
+
+      expect(
+        detail.mutedWords,
+        containsAllInOrder([
+          isA<MutedWordKeywords>().having((word) => word.keywords, 'keywords', [
+            'misskey',
+            'client',
+          ]),
+          isA<MutedWordRegex>().having(
+            (word) => word.pattern,
+            'pattern',
+            '/spam/i',
+          ),
+        ]),
+      );
+
+      final encoded = detail.toJson();
+      expect(encoded['mutedWords'], json['mutedWords']);
+      expect(MisskeyAdminUserDetail.fromJson(encoded).mutedWords, hasLength(2));
+    });
   });
 
   group('MisskeyAdminCreatedAccount.fromJson', () {
