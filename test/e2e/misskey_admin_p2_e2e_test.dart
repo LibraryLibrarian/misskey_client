@@ -95,6 +95,76 @@ void main() {
       final remote = await admin.adminEmoji.listRemote(limit: 10);
       expect(remote.length, lessThanOrEqualTo(10));
     });
+
+    test('copy creates a local emoji and removes it afterwards', () async {
+      final remote = await admin.adminEmoji.listRemote(limit: 100);
+      final candidates = remote.where((emoji) => emoji.host != null);
+      expect(
+        candidates,
+        isNotEmpty,
+        reason: 'fediverse_e2eのworld生成後にremote emojiが必要です',
+      );
+      EmojiDetailed? target;
+      var exactLocalIdsBefore = <String>{};
+      for (final candidate in candidates) {
+        final exactLocalBefore = (await admin.adminEmoji.list(
+          query: candidate.name,
+          limit: 100,
+        )).where((emoji) => emoji.host == null && emoji.name == candidate.name);
+        final ids = exactLocalBefore.map((emoji) => emoji.id).toSet();
+        if (ids.isEmpty) {
+          target = candidate;
+          exactLocalIdsBefore = ids;
+          break;
+        }
+      }
+      expect(target, isNotNull, reason: '同名local emojiがまだ無いremote emojiが必要です');
+      final copyTarget = target!;
+
+      String? copiedId;
+      try {
+        copiedId = await admin.adminEmoji.copy(emojiId: copyTarget.id);
+        final copied = await admin.adminEmoji.list(
+          query: copyTarget.name,
+          limit: 100,
+        );
+        expect(copied.map((emoji) => emoji.id), contains(copiedId));
+        expect(
+          copied.singleWhere((emoji) => emoji.id == copiedId).host,
+          isNull,
+        );
+      } finally {
+        // 応答受信前にcopyが成功した場合も、事前に無かった同名local emojiを回収する。
+        final cleanupCandidates = await admin.adminEmoji.list(
+          query: copyTarget.name,
+          limit: 100,
+        );
+        for (final emoji in cleanupCandidates) {
+          final isNewExactLocal =
+              emoji.host == null &&
+              emoji.name == copyTarget.name &&
+              !exactLocalIdsBefore.contains(emoji.id);
+          final isKnownCopy = copiedId == null || emoji.id == copiedId;
+          if (isNewExactLocal && isKnownCopy) {
+            await admin.adminEmoji.delete(id: emoji.id);
+          }
+        }
+      }
+
+      final localAfter = await admin.adminEmoji.list(
+        query: copyTarget.name,
+        limit: 100,
+      );
+      expect(
+        localAfter.where(
+          (emoji) =>
+              emoji.host == null &&
+              emoji.name == copyTarget.name &&
+              !exactLocalIdsBefore.contains(emoji.id),
+        ),
+        isEmpty,
+      );
+    });
   });
 
   group('admin announcements', () {

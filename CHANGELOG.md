@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added E2E scenarios for `AdminApi.sendEmail`, `AdminEmojiApi.copy`, and `AdminCaptchaApi.save`, plus an Analyzer AST-based fail-closed coverage audit that classifies all 99 Admin methods as E2E-invoked or explicitly excluded with a destructive-operation reason. The email scenario runs conditionally when Misskey SMTP is preconfigured for Mailpit and otherwise skips without changing shared instance metadata (issue #25)
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed
