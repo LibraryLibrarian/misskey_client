@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added the typed `exportedEntity`, `fileId`, `invitation`, and `noteDraft` payloads to `MisskeyNotification`, including a forward-compatible fallback for unknown export entity types (issue #19)
+- Added the embedded `user`, `files`, `channel`, `renote`, and `reply` relationships to `MisskeyNoteDraft`; draft channels use a dedicated partial model matching the server response (issue #20)
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyNotification {
 
- String get id; DateTime get createdAt; MisskeyNotificationType get type; String? get userId; MisskeyUser? get user; MisskeyNote? get note; String? get reaction; String? get achievement; String? get body; String? get header; String? get icon; dynamic get role; String? get message; List<dynamic>? get reactions; List<MisskeyUser>? get users;
+ String get id; DateTime get createdAt; MisskeyNotificationType get type; String? get userId; MisskeyUser? get user; MisskeyNote? get note; String? get reaction; String? get achievement; String? get body; String? get header; String? get icon; dynamic get role; String? get message; List<dynamic>? get reactions; List<MisskeyUser>? get users; MisskeyUserExportableEntity? get exportedEntity; String? get fileId; MisskeyChatRoomInvitation? get invitation; MisskeyNoteDraft? get noteDraft;
 /// Create a copy of MisskeyNotification
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $MisskeyNotificationCopyWith<MisskeyNotification> get copyWith => _$MisskeyNotif
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyNotification&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.type, type) || other.type == type)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.user, user) || other.user == user)&&(identical(other.note, note) || other.note == note)&&(identical(other.reaction, reaction) || other.reaction == reaction)&&(identical(other.achievement, achievement) || other.achievement == achievement)&&(identical(other.body, body) || other.body == body)&&(identical(other.header, header) || other.header == header)&&(identical(other.icon, icon) || other.icon == icon)&&const DeepCollectionEquality().equals(other.role, role)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.reactions, reactions)&&const DeepCollectionEquality().equals(other.users, users));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyNotification&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.type, type) || other.type == type)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.user, user) || other.user == user)&&(identical(other.note, note) || other.note == note)&&(identical(other.reaction, reaction) || other.reaction == reaction)&&(identical(other.achievement, achievement) || other.achievement == achievement)&&(identical(other.body, body) || other.body == body)&&(identical(other.header, header) || other.header == header)&&(identical(other.icon, icon) || other.icon == icon)&&const DeepCollectionEquality().equals(other.role, role)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.reactions, reactions)&&const DeepCollectionEquality().equals(other.users, users)&&(identical(other.exportedEntity, exportedEntity) || other.exportedEntity == exportedEntity)&&(identical(other.fileId, fileId) || other.fileId == fileId)&&(identical(other.invitation, invitation) || other.invitation == invitation)&&(identical(other.noteDraft, noteDraft) || other.noteDraft == noteDraft));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createdAt,type,userId,user,note,reaction,achievement,body,header,icon,const DeepCollectionEquality().hash(role),message,const DeepCollectionEquality().hash(reactions),const DeepCollectionEquality().hash(users));
+int get hashCode => Object.hashAll([runtimeType,id,createdAt,type,userId,user,note,reaction,achievement,body,header,icon,const DeepCollectionEquality().hash(role),message,const DeepCollectionEquality().hash(reactions),const DeepCollectionEquality().hash(users),exportedEntity,fileId,invitation,noteDraft]);
 
 @override
 String toString() {
-  return 'MisskeyNotification(id: $id, createdAt: $createdAt, type: $type, userId: $userId, user: $user, note: $note, reaction: $reaction, achievement: $achievement, body: $body, header: $header, icon: $icon, role: $role, message: $message, reactions: $reactions, users: $users)';
+  return 'MisskeyNotification(id: $id, createdAt: $createdAt, type: $type, userId: $userId, user: $user, note: $note, reaction: $reaction, achievement: $achievement, body: $body, header: $header, icon: $icon, role: $role, message: $message, reactions: $reactions, users: $users, exportedEntity: $exportedEntity, fileId: $fileId, invitation: $invitation, noteDraft: $noteDraft)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyNotificationCopyWith<$Res>  {
   factory $MisskeyNotificationCopyWith(MisskeyNotification value, $Res Function(MisskeyNotification) _then) = _$MisskeyNotificationCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime createdAt, MisskeyNotificationType type, String? userId, MisskeyUser? user, MisskeyNote? note, String? reaction, String? achievement, String? body, String? header, String? icon, dynamic role, String? message, List<dynamic>? reactions, List<MisskeyUser>? users
+ String id, DateTime createdAt, MisskeyNotificationType type, String? userId, MisskeyUser? user, MisskeyNote? note, String? reaction, String? achievement, String? body, String? header, String? icon, dynamic role, String? message, List<dynamic>? reactions, List<MisskeyUser>? users, MisskeyUserExportableEntity? exportedEntity, String? fileId, MisskeyChatRoomInvitation? invitation, MisskeyNoteDraft? noteDraft
 });
 
 
@@ -63,7 +63,7 @@ class _$MisskeyNotificationCopyWithImpl<$Res>
 
 /// Create a copy of MisskeyNotification
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createdAt = null,Object? type = null,Object? userId = freezed,Object? user = freezed,Object? note = freezed,Object? reaction = freezed,Object? achievement = freezed,Object? body = freezed,Object? header = freezed,Object? icon = freezed,Object? role = freezed,Object? message = freezed,Object? reactions = freezed,Object? users = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createdAt = null,Object? type = null,Object? userId = freezed,Object? user = freezed,Object? note = freezed,Object? reaction = freezed,Object? achievement = freezed,Object? body = freezed,Object? header = freezed,Object? icon = freezed,Object? role = freezed,Object? message = freezed,Object? reactions = freezed,Object? users = freezed,Object? exportedEntity = freezed,Object? fileId = freezed,Object? invitation = freezed,Object? noteDraft = freezed,}) {
   return _then(MisskeyNotification(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -80,7 +80,11 @@ as String?,role: freezed == role ? _self.role : role // ignore: cast_nullable_to
 as dynamic,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,reactions: freezed == reactions ? _self.reactions : reactions // ignore: cast_nullable_to_non_nullable
 as List<dynamic>?,users: freezed == users ? _self.users : users // ignore: cast_nullable_to_non_nullable
-as List<MisskeyUser>?,
+as List<MisskeyUser>?,exportedEntity: freezed == exportedEntity ? _self.exportedEntity : exportedEntity // ignore: cast_nullable_to_non_nullable
+as MisskeyUserExportableEntity?,fileId: freezed == fileId ? _self.fileId : fileId // ignore: cast_nullable_to_non_nullable
+as String?,invitation: freezed == invitation ? _self.invitation : invitation // ignore: cast_nullable_to_non_nullable
+as MisskeyChatRoomInvitation?,noteDraft: freezed == noteDraft ? _self.noteDraft : noteDraft // ignore: cast_nullable_to_non_nullable
+as MisskeyNoteDraft?,
   ));
 }
 
