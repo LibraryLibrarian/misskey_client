@@ -35,6 +35,9 @@ final class ReleaseToolException implements Exception {
   String toString() => message;
 }
 
+/// Returns the package version declared in `pubspec.yaml` under [root].
+String readPubspecVersion(Directory root) => _readProject(root).version;
+
 /// Updates every release version reference under [root].
 ///
 /// All inputs are validated before any file is written. The returned paths are
