@@ -21,9 +21,9 @@ void main() async {
   print('Server: ${meta.name}');
   print('Version: ${meta.version}');
 
-  // Feature detection via dot-notation key path
-  if (client.meta.supports('policies.canInvite')) {
-    print('This server allows invitations.');
+  // 古いサーバーに存在しない可能性があるAPIは、エンドポイント一覧で判定する。
+  if (await client.meta.isEndpointAvailable(endpoint: 'notes/drafts/create')) {
+    print('This server provides note drafts.');
   }
 
   // -------------------------------------------------------

@@ -45,12 +45,20 @@ class AdminAvatarDecorationsApi {
   /// Fetches avatar decorations (`/api/admin/avatar-decorations/list`).
   ///
   /// Use [limit] (1-100, default 10) to cap the number of results and
-  /// [sinceId] / [untilId] for cursor-based pagination. Pass [userId] to
-  /// list only decorations available to that user.
+  /// [sinceId] / [untilId] for cursor-based pagination. [sinceDate] /
+  /// [untilDate] paginate by Unix timestamp in milliseconds. Pass [userId]
+  /// to list only decorations available to that user.
+  ///
+  /// The current upstream Misskey handler accepts these pagination parameters
+  /// in its schema but ignores them, so they do not presently affect results
+  /// on upstream Misskey. They remain available for compatible forks and
+  /// future upstream implementations.
   Future<List<MisskeyAdminAvatarDecoration>> list({
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
     String? userId,
   }) async {
     final res = await http.send<List<dynamic>>(
@@ -59,6 +67,8 @@ class AdminAvatarDecorationsApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
         'userId': ?userId,
       },
       options: const RequestOptions(idempotent: true),

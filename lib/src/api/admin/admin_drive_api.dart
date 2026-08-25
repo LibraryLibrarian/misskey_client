@@ -16,13 +16,16 @@ class AdminDriveApi {
   /// Fetches drive files across all users (`/api/admin/drive/files`).
   ///
   /// Use [limit] (1-100, default 10) to cap the number of results and
-  /// [sinceId] / [untilId] for cursor-based pagination. [userId] filters
-  /// by owner, [type] by MIME type (e.g. `image/*`), [origin] by origin
-  /// (`combined`, `local`, `remote`), and [hostname] by remote host.
+  /// [sinceId] / [untilId] for cursor-based pagination. [sinceDate] /
+  /// [untilDate] paginate by Unix timestamp in milliseconds. [userId]
+  /// filters by owner, [type] by MIME type (e.g. `image/*`), [origin] by
+  /// origin (`combined`, `local`, `remote`), and [hostname] by remote host.
   Future<List<MisskeyDriveFile>> files({
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
     String? userId,
     String? type,
     String? origin,
@@ -34,6 +37,8 @@ class AdminDriveApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
         'userId': ?userId,
         'type': ?type,
         'origin': ?origin,

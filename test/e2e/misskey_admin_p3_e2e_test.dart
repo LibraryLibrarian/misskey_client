@@ -110,7 +110,41 @@ void main() {
       addTearDown(() => alice.drive.files.delete(fileId: uploaded.id));
 
       final files = await admin.adminDrive.files(limit: 100, origin: 'local');
-      expect(files.map((f) => f.id), contains(uploaded.id));
+      final moderationFile = files.singleWhere(
+        (file) => file.id == uploaded.id,
+      );
+
+      // create応答ではuserIdが省略され得るため、Admin一覧のmoderation viewを基準にする。
+      expect(moderationFile.userId, isNotNull);
+      final ownerId = moderationFile.userId!;
+      final uploadedAt = moderationFile.createdAt.millisecondsSinceEpoch;
+      final inCreationWindow = await admin.adminDrive.files(
+        limit: 100,
+        userId: ownerId,
+        sinceDate: uploadedAt - const Duration(minutes: 1).inMilliseconds,
+        untilDate: uploadedAt + const Duration(minutes: 1).inMilliseconds,
+      );
+      expect(inCreationWindow.map((file) => file.id), contains(uploaded.id));
+
+      final afterCreationWindow = await admin.adminDrive.files(
+        limit: 100,
+        userId: ownerId,
+        sinceDate: uploadedAt + const Duration(minutes: 1).inMilliseconds,
+      );
+      expect(
+        afterCreationWindow.map((file) => file.id),
+        isNot(contains(uploaded.id)),
+      );
+
+      final beforeCreationWindow = await admin.adminDrive.files(
+        limit: 100,
+        userId: ownerId,
+        untilDate: uploadedAt - const Duration(minutes: 1).inMilliseconds,
+      );
+      expect(
+        beforeCreationWindow.map((file) => file.id),
+        isNot(contains(uploaded.id)),
+      );
 
       final shown = await admin.adminDrive.showFile(fileId: uploaded.id);
       expect(shown['id'], uploaded.id);
