@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `MisskeyNote.hasPoll` and the conditionally populated `MisskeyChatRoomMember.room` field. The room is currently included by `chat/rooms/joining` and omitted by `chat/rooms/members` (issue #22)
+- Added immutable raw access to the schema-undeclared `MisskeyUserRelation.following` entity through `RawUserRelationFollowing`. The payload remains untyped because the current database-entity wire shape differs from `MisskeyFollowing` and is not covered by the official response contract (issue #22)
 - Added E2E scenarios for `AdminApi.sendEmail`, `AdminEmojiApi.copy`, and `AdminCaptchaApi.save`, plus an Analyzer AST-based fail-closed coverage audit that classifies all 100 Admin methods as E2E-invoked or explicitly excluded with a destructive-operation reason. The email scenario runs conditionally when Misskey SMTP is preconfigured for Mailpit and otherwise skips without changing shared instance metadata (issue #25)
 - Added the unauthenticated `AccountLifecycleApi` for username and email availability, password-reset requests and completion, and email verification (issue #11)
 - Added typed query, detailed emoji, role summary, and paginated response models for `AdminEmojiApi.listV2` (`/api/v2/admin/emoji/list`) (issue #11)

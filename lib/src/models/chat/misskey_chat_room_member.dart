@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../misskey_user.dart';
+import 'misskey_chat_room.dart';
 
 part 'misskey_chat_room_member.freezed.dart';
 part 'misskey_chat_room_member.g.dart';
@@ -15,6 +16,7 @@ class MisskeyChatRoomMember with _$MisskeyChatRoomMember {
     required this.userId,
     this.user,
     required this.roomId,
+    this.room,
   });
 
   factory MisskeyChatRoomMember.fromJson(Map<String, dynamic> json) =>
@@ -41,4 +43,11 @@ class MisskeyChatRoomMember with _$MisskeyChatRoomMember {
   /// The ID of the room the member belongs to.
   @override
   final String roomId;
+
+  /// The room populated for membership-list responses.
+  ///
+  /// Misskey currently includes this in `/api/chat/rooms/joining`, while
+  /// `/api/chat/rooms/members` omits it.
+  @override
+  final MisskeyChatRoom? room;
 }
