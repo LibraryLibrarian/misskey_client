@@ -88,6 +88,24 @@ void main() async {
 | `streaming` | リアルタイムのタイムライン、通知、キャプチャしたノートの更新 |
 | `users` | ユーザー検索、リスト、関係、アチーブメント |
 
+## サーバー互換性
+
+接続先は古い Misskey のままの場合や、API 構成が異なるフォークの場合があります。`Meta.version` の比較より、実行時のエンドポイント列挙を優先してください。フォークのバージョン文字列は Misskey のリリースと比較できるとは限りませんが、`/api/endpoints` はそのサーバーが実際に公開している API を示します。
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // /api/ は付けません。
+);
+
+if (canCreateDrafts) {
+  // 下書き機能を表示または呼び出します。
+}
+```
+
+エンドポイント一覧はメモリにキャッシュされます。サーバー更新後や最新状態が必要な場合は `isEndpointAvailable()` または `getEndpoints()` に `refresh: true` を指定してください。列挙結果は事前判定用のスナップショットであり、呼び出し成功を保証しません。判定後にサーバーが変化する可能性があるため、実際の呼び出しでは引き続き `MisskeyNotFoundException` を処理してください。フォークで `/api/endpoints` 自体が利用できない、または失敗する場合は、目的の API を直接呼び出して 404 を処理します。ただし、404 だけでは「エンドポイントがない」のか「リソースがない」のか区別できない場合があります。
+
+`hasMetaKey('features.x')` はメタデータのキーが存在するかだけを確認します。値が `false` でも `true` を返すため、エンドポイント判定の代わりには使用しないでください。
+
 ## Streaming API
 
 遅延生成される `client.streaming` 接続は、クライアントのサーバー、トークンプロバイダー、ロガーを共有します。型付きの `MisskeyStreamingChannel` で購読し、用途に応じてデコード済みの `notes` / `notifications`、型付きの `events`、または情報を保持した `messages` を利用できます。
