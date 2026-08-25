@@ -101,6 +101,9 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
   twoFactorEnabled: json['twoFactorEnabled'] as bool? ?? false,
   usePasswordLessLogin: json['usePasswordLessLogin'] as bool? ?? false,
   securityKeys: json['securityKeys'] as bool? ?? false,
+  securityKeysList: (json['securityKeysList'] as List<dynamic>?)
+      ?.map((e) => MisskeySecurityKey.fromJson(e as Map<String, dynamic>))
+      .toList(),
   isAdmin: json['isAdmin'] as bool? ?? false,
   isModerator: json['isModerator'] as bool? ?? false,
   pinnedPageId: json['pinnedPageId'] as String?,
@@ -124,6 +127,9 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
   hasUnreadMentions: json['hasUnreadMentions'] as bool? ?? false,
   hasUnreadChatMessages: json['hasUnreadChatMessages'] as bool? ?? false,
   hasUnreadAnnouncement: json['hasUnreadAnnouncement'] as bool? ?? false,
+  unreadAnnouncements: (json['unreadAnnouncements'] as List<dynamic>?)
+      ?.map((e) => MisskeyAnnouncement.fromJson(e as Map<String, dynamic>))
+      .toList(),
   hasUnreadAntenna: json['hasUnreadAntenna'] as bool? ?? false,
   hasUnreadChannel: json['hasUnreadChannel'] as bool? ?? false,
   hasUnreadNotification: json['hasUnreadNotification'] as bool? ?? false,
@@ -152,7 +158,9 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
       ?.map((e) => e as Map<String, dynamic>)
       .toList(),
   loggedInDays: (json['loggedInDays'] as num?)?.toInt() ?? 0,
-  policies: json['policies'] as Map<String, dynamic>?,
+  policies: json['policies'] == null
+      ? null
+      : MisskeyRolePolicies.fromJson(json['policies'] as Map<String, dynamic>),
   twoFactorBackupCodesStock: json['twoFactorBackupCodesStock'] as String?,
   email: json['email'] as String?,
   emailVerified: json['emailVerified'] as bool? ?? false,
@@ -226,6 +234,9 @@ Map<String, dynamic> _$MisskeyUserToJson(
   'twoFactorEnabled': instance.twoFactorEnabled,
   'usePasswordLessLogin': instance.usePasswordLessLogin,
   'securityKeys': instance.securityKeys,
+  'securityKeysList': instance.securityKeysList
+      ?.map((e) => e.toJson())
+      .toList(),
   'isAdmin': instance.isAdmin,
   'isModerator': instance.isModerator,
   'pinnedPageId': instance.pinnedPageId,
@@ -249,6 +260,9 @@ Map<String, dynamic> _$MisskeyUserToJson(
   'hasUnreadMentions': instance.hasUnreadMentions,
   'hasUnreadChatMessages': instance.hasUnreadChatMessages,
   'hasUnreadAnnouncement': instance.hasUnreadAnnouncement,
+  'unreadAnnouncements': instance.unreadAnnouncements
+      ?.map((e) => e.toJson())
+      .toList(),
   'hasUnreadAntenna': instance.hasUnreadAntenna,
   'hasUnreadChannel': instance.hasUnreadChannel,
   'hasUnreadNotification': instance.hasUnreadNotification,
@@ -264,7 +278,7 @@ Map<String, dynamic> _$MisskeyUserToJson(
   'emailNotificationTypes': instance.emailNotificationTypes,
   'achievements': instance.achievements,
   'loggedInDays': instance.loggedInDays,
-  'policies': instance.policies,
+  'policies': instance.policies?.toJson(),
   'twoFactorBackupCodesStock': instance.twoFactorBackupCodesStock,
   'email': instance.email,
   'emailVerified': instance.emailVerified,

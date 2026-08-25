@@ -90,6 +90,24 @@ void main() async {
 | `streaming` | 실시간 타임라인, 알림 및 캡처한 노트 업데이트 |
 | `users` | 사용자 검색, 리스트, 관계, 업적 |
 
+## 서버 호환성
+
+서버가 이전 Misskey 버전을 사용하거나 API 구성이 다른 포크를 실행할 수 있습니다. `Meta.version` 비교보다 런타임 엔드포인트 열거를 우선하세요. 포크의 버전 문자열은 Misskey 릴리스와 직접 비교할 수 없는 경우가 있지만, `/api/endpoints`는 해당 서버가 실제로 제공한다고 알리는 API를 반환합니다.
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // /api/ 접두사를 붙이지 않습니다.
+);
+
+if (canCreateDrafts) {
+  // 초안 기능을 표시하거나 호출합니다.
+}
+```
+
+엔드포인트 목록은 메모리에 캐시됩니다. 서버 업그레이드 후 또는 최신 스냅샷이 필요할 때 `isEndpointAvailable()`이나 `getEndpoints()`에 `refresh: true`를 전달하세요. 열거 결과는 사전 확인용 힌트일 뿐 성공을 보장하지 않습니다. 확인 후 서버가 바뀔 수 있으므로 실제 호출에서도 `MisskeyNotFoundException`을 처리해야 합니다. 포크에서 `/api/endpoints` 자체를 사용할 수 없거나 요청이 실패하면 대상 API를 직접 호출하고 404를 처리하세요. 404만으로는 엔드포인트 부재와 리소스 부재를 구분하지 못할 수 있습니다.
+
+`hasMetaKey('features.x')`는 메타데이터 키의 존재 여부만 확인합니다. 값이 `false`여도 `true`를 반환하므로 엔드포인트 감지를 대신하는 용도로 사용하면 안 됩니다.
+
 ## Streaming API
 
 지연 생성되는 `client.streaming` 연결은 클라이언트의 서버, 토큰 제공자, 로거를 공유합니다. 타입 지정 `MisskeyStreamingChannel`로 구독하고 애플리케이션에 맞게 디코딩된 `notes` / `notifications`, 타입 지정 `events`, 또는 정보를 보존하는 `messages`를 선택하세요.

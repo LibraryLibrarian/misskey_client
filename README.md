@@ -90,6 +90,24 @@ void main() async {
 | `streaming` | Real-time timelines, notifications, and captured note updates |
 | `users` | User search, lists, relations, achievements |
 
+## Server compatibility
+
+Servers can lag behind current Misskey or run a fork with a different API surface. Prefer runtime endpoint enumeration over comparing `Meta.version`: fork version strings are not necessarily comparable with Misskey releases, while `/api/endpoints` reports what that server actually advertises.
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // No /api/ prefix.
+);
+
+if (canCreateDrafts) {
+  // Show or call the draft feature.
+}
+```
+
+The endpoint list is cached in memory. Pass `refresh: true` to `isEndpointAvailable()` or `getEndpoints()` after a server upgrade or when you need a fresh snapshot. Enumeration is a preflight hint, not a guarantee: the server can change after the check, so still handle `MisskeyNotFoundException` when calling the endpoint. If `/api/endpoints` itself is unavailable or fails on a fork, fall back to calling the desired API and handling its 404; a 404 alone may be ambiguous between an absent endpoint and an absent resource.
+
+`hasMetaKey('features.x')` only checks whether a metadata key exists. It returns `true` even when that key's value is `false`, so do not use metadata key presence as a substitute for endpoint detection.
+
 ## Streaming API
 
 The lazily created `client.streaming` connection shares the client's server, token provider, and logger. Subscribe with a typed `MisskeyStreamingChannel` and choose the level that fits your application: decoded `notes` and `notifications`, typed `events`, or lossless `messages`.

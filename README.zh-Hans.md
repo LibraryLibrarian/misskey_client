@@ -90,6 +90,24 @@ void main() async {
 | `streaming` | 实时时间线、通知和已捕获帖子的更新 |
 | `users` | 用户搜索、列表、关系、成就 |
 
+## 服务器兼容性
+
+服务器可能仍在运行旧版 Misskey，也可能使用 API 表面不同的分支版本。请优先在运行时枚举端点，而不是比较 `Meta.version`：分支版本字符串未必能与 Misskey 版本直接比较，而 `/api/endpoints` 会报告该服务器实际公开的 API。
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // 不要添加 /api/ 前缀。
+);
+
+if (canCreateDrafts) {
+  // 显示或调用草稿功能。
+}
+```
+
+端点列表会缓存在内存中。服务器升级后或需要最新快照时，请向 `isEndpointAvailable()` 或 `getEndpoints()` 传入 `refresh: true`。枚举结果只是调用前的提示，并不保证后续调用成功；检查后服务器仍可能发生变化，因此调用端点时仍应处理 `MisskeyNotFoundException`。如果某个分支不支持 `/api/endpoints` 或该请求失败，请直接调用目标 API 并处理其 404；仅凭 404 可能无法区分“端点不存在”和“资源不存在”。
+
+`hasMetaKey('features.x')` 只检查元数据键是否存在。即使该键的值为 `false`，它也会返回 `true`，因此不要用元数据键存在性代替端点检测。
+
 ## Streaming API
 
 延迟创建的 `client.streaming` 连接会共享客户端的服务器、令牌提供器和日志记录器。使用强类型 `MisskeyStreamingChannel` 进行订阅，并按应用需求选择已解码的 `notes` / `notifications`、强类型 `events` 或保留完整信息的 `messages`。

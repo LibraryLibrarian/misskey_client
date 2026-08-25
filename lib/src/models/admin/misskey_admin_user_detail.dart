@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../json_converters.dart';
 import '../misskey_role.dart';
+import '../misskey_role_policies.dart';
 import '../muted_word.dart';
 
 part 'misskey_admin_user_detail.freezed.dart';
@@ -135,7 +136,7 @@ class MisskeyAdminUserDetail with _$MisskeyAdminUserDetail {
 
   /// The effective role policies for this user.
   @override
-  final Map<String, dynamic>? policies;
+  final MisskeyRolePolicies? policies;
 
   /// The roles assigned to this user.
   @override

@@ -43,6 +43,24 @@ void main() {
       expect(restored.description, isNull);
     });
 
+    test('updateMeta extra updates and restores an untyped setting', () async {
+      final before = await admin.admin.meta();
+      final original = before.raw['enableFanoutTimeline'] as bool;
+      final changed = !original;
+
+      try {
+        await admin.admin.updateMeta(extra: {'enableFanoutTimeline': changed});
+        final updated = await admin.admin.meta();
+        expect(updated.raw['enableFanoutTimeline'], changed);
+      } finally {
+        // インスタンス全体の設定なので、検証失敗時も必ず元の値に戻す。
+        await admin.admin.updateMeta(extra: {'enableFanoutTimeline': original});
+      }
+
+      final restored = await admin.admin.meta();
+      expect(restored.raw['enableFanoutTimeline'], original);
+    });
+
     test('serverInfo returns software versions', () async {
       final info = await admin.admin.serverInfo();
       expect(info.node, startsWith('v'));
