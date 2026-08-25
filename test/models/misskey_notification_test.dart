@@ -118,4 +118,106 @@ void main() {
       expect(notification.type, MisskeyNotificationType.unknown);
     });
   });
+
+  group('MisskeyNotification.fromJson - required type payloads', () {
+    late Map<String, dynamic> fixture;
+    late List<MisskeyNotification> notifications;
+
+    setUpAll(() {
+      fixture =
+          jsonDecode(
+                File(
+                  'test/fixtures/notifications_schema_examples.json',
+                ).readAsStringSync(),
+              )
+              as Map<String, dynamic>;
+      notifications = (fixture['notifications'] as List<dynamic>)
+          .map((e) => MisskeyNotification.fromJson(e as Map<String, dynamic>))
+          .toList();
+    });
+
+    test('fixture records its schema-derived, non-live provenance', () {
+      final provenance = fixture['provenance'] as Map<String, dynamic>;
+
+      expect(provenance['kind'], 'upstream-schema-derived-example');
+      expect(provenance['liveServerCaptured'], isFalse);
+      expect(
+        provenance['upstreamCommit'],
+        '0b49119a3fb93e7be3a611831d64a1fcbb78e44e',
+      );
+    });
+
+    test('deserializes an export-completed payload', () {
+      final notification = notifications.firstWhere(
+        (value) => value.type == MisskeyNotificationType.exportCompleted,
+      );
+
+      expect(notification.type, MisskeyNotificationType.exportCompleted);
+      expect(
+        notification.exportedEntity,
+        MisskeyUserExportableEntity.customEmoji,
+      );
+      expect(notification.fileId, 'file-export-1');
+    });
+
+    test(
+      'falls back for a future export entity without losing the file ID',
+      () {
+        final notification = MisskeyNotification.fromJson({
+          'id': 'notification-future-export',
+          'createdAt': '2026-08-25T00:00:00.000Z',
+          'type': 'exportCompleted',
+          'exportedEntity': 'futureEntity',
+          'fileId': 'file-2',
+        });
+
+        expect(
+          notification.exportedEntity,
+          MisskeyUserExportableEntity.unknown,
+        );
+        expect(notification.fileId, 'file-2');
+      },
+    );
+
+    test('deserializes a chat-room invitation payload', () {
+      final notification = notifications.firstWhere(
+        (value) =>
+            value.type == MisskeyNotificationType.chatRoomInvitationReceived,
+      );
+
+      expect(
+        notification.type,
+        MisskeyNotificationType.chatRoomInvitationReceived,
+      );
+      expect(notification.invitation?.id, 'invitation-1');
+      expect(notification.invitation?.roomId, 'room-1');
+      expect(notification.invitation?.user?.username, 'inviter');
+      expect(notification.invitation?.room?.name, 'Schema example room');
+    });
+
+    test('deserializes a failed scheduled-note draft payload', () {
+      final notification = notifications.firstWhere(
+        (value) =>
+            value.type == MisskeyNotificationType.scheduledNotePostFailed,
+      );
+
+      expect(
+        notification.type,
+        MisskeyNotificationType.scheduledNotePostFailed,
+      );
+      expect(notification.noteDraft?.id, 'draft-failed-1');
+      expect(notification.noteDraft?.user?.username, 'author');
+      expect(notification.noteDraft?.files, isEmpty);
+    });
+
+    test('round-trips every schema-derived notification payload', () {
+      for (final notification in notifications) {
+        expect(
+          MisskeyNotification.fromJson(notification.toJson()),
+          notification,
+          reason: notification.type.name,
+        );
+      }
+    });
+  });
 }

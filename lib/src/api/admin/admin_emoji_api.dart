@@ -109,12 +109,15 @@ class AdminEmojiApi {
   ///
   /// Use [query] to filter by name, [limit] (1-100, default 10) to cap
   /// the number of results, and [sinceId] / [untilId] for cursor-based
-  /// pagination.
+  /// pagination. [sinceDate] / [untilDate] paginate by Unix timestamp in
+  /// milliseconds.
   Future<List<EmojiDetailed>> list({
     String? query,
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
   }) async {
     final res = await http.send<List<dynamic>>(
       '/admin/emoji/list',
@@ -123,6 +126,8 @@ class AdminEmojiApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
       },
       options: const RequestOptions(idempotent: true),
     );
@@ -136,13 +141,16 @@ class AdminEmojiApi {
   ///
   /// Use [host] to filter by the remote host, [query] to filter by name,
   /// [limit] (1-100, default 10) to cap the number of results, and
-  /// [sinceId] / [untilId] for cursor-based pagination.
+  /// [sinceId] / [untilId] for cursor-based pagination. [sinceDate] /
+  /// [untilDate] paginate by Unix timestamp in milliseconds.
   Future<List<EmojiDetailed>> listRemote({
     String? query,
     String? host,
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
   }) async {
     final res = await http.send<List<dynamic>>(
       '/admin/emoji/list-remote',
@@ -152,6 +160,8 @@ class AdminEmojiApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
       },
       options: const RequestOptions(idempotent: true),
     );
