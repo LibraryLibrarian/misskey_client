@@ -229,6 +229,15 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | 同名类 |
 | `kReleaseMode` / `kDebugMode` | 不属于公共 API；详见下文 |
 
+### 从 misskey_api_kit 和 misskey_drive 迁移
+
+`misskey_api_kit` 是未发布的前身包，`misskey_drive` 是仅供本地使用的包。请移除这些依赖，并创建一个 `MisskeyClient`，而不是分别创建 `MisskeyApiKitClient` 和 `MisskeyDriveClient`。
+
+- 将 `MisskeyApiKitClient` 的 `account`、`notes`、`notifications`、`channels` 和 `users` 入口替换为 `MisskeyClient` 上的同名属性。
+- 将 `MisskeyDriveClient.files`、`.folders` 和 `.stats` 替换为 `client.drive.files`、`client.drive.folders` 和 `client.drive.stats`。
+
+这并非可直接替换的兼容 API：部分方法已重命名，许多原先以原始 `Map<String, dynamic>` 返回的响应现在使用类型化模型，但仍有一些 API 返回原始 map。请对照 [API 参考](https://librarylibrarian.github.io/misskey_client/)逐个迁移调用。
+
 ### MisskeyApiException 名称冲突
 
 两个包都定义了 `MisskeyApiException`，但类的内容和继承关系不同。`misskey_api_core` 版本是简单类，而 `misskey_client` 版本继承 `MisskeyClientException`，并且必须提供 `statusCode`。迁移期间同时导入两个包时，请使用前缀避免冲突：
