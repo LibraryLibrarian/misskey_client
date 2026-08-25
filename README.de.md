@@ -229,12 +229,11 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | Klassen mit denselben Namen |
 | `kReleaseMode` / `kDebugMode` | Nicht Teil der öffentlichen API; siehe unten |
 
-### Migration von misskey_api_kit und misskey_drive
+### Migration von misskey_api_kit
 
-`misskey_api_kit` war ein unveröffentlichter Vorgänger, und `misskey_drive` war ein ausschließlich lokal verwendetes Paket. Entfernen Sie diese Abhängigkeiten und erstellen Sie einen einzigen `MisskeyClient`, anstatt separate Instanzen von `MisskeyApiKitClient` und `MisskeyDriveClient` zu verwenden.
+`misskey_api_kit` war ein unveröffentlichter Vorgänger. Entfernen Sie diese Abhängigkeit und verwenden Sie einen einzigen `MisskeyClient` anstelle einer separaten `MisskeyApiKitClient`-Instanz.
 
 - Ersetzen Sie die Einstiegspunkte `account`, `notes`, `notifications`, `channels` und `users` von `MisskeyApiKitClient` durch die gleichnamigen Eigenschaften von `MisskeyClient`.
-- Ersetzen Sie `MisskeyDriveClient.files`, `.folders` und `.stats` durch `client.drive.files`, `client.drive.folders` und `client.drive.stats`.
 
 Dies ist kein direkter Ersatz: Einige Methoden wurden umbenannt, und viele Antworten, die zuvor untypisierte `Map<String, dynamic>`-Werte waren, verwenden jetzt typisierte Modelle, während einige APIs weiterhin untypisierte Maps zurückgeben. Migrieren Sie jeden Aufruf anhand der [API-Referenz](https://librarylibrarian.github.io/misskey_client/).
 

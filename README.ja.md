@@ -228,12 +228,11 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | 同名クラス |
 | `kReleaseMode` / `kDebugMode` | 公開 API に含めない（下記参照） |
 
-### misskey_api_kit と misskey_drive からの移行
+### misskey_api_kit からの移行
 
-`misskey_api_kit` はパッケージレジストリに公開されていない前身パッケージ、`misskey_drive` はローカル専用パッケージでした。これらの依存関係を削除し、`MisskeyApiKitClient` と `MisskeyDriveClient` を個別に作成する代わりに、単一の `MisskeyClient` を作成してください。
+`misskey_api_kit` はパッケージレジストリに公開されていない前身パッケージです。この依存関係を削除し、個別の `MisskeyApiKitClient` の代わりに単一の `MisskeyClient` を使用してください。
 
 - `MisskeyApiKitClient` の `account`、`notes`、`notifications`、`channels`、`users` の各エントリーポイントは、`MisskeyClient` の同名プロパティに置き換えます。
-- `MisskeyDriveClient.files`、`.folders`、`.stats` は、`client.drive.files`、`client.drive.folders`、`client.drive.stats` に置き換えます。
 
 これはそのまま置き換えられる互換 API ではありません。一部のメソッド名は変更され、以前は raw の `Map<String, dynamic>` だったレスポンスの多くは型付きモデルになっていますが、raw map を返す API も残っています。[API リファレンス](https://librarylibrarian.github.io/misskey_client/)を参照し、呼び出し単位で移行してください。
 
