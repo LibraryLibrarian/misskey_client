@@ -2,6 +2,7 @@
 library;
 
 export 'src/api/account/account_api.dart';
+export 'src/api/account_lifecycle_api.dart';
 export 'src/api/account/registry_api.dart';
 export 'src/api/account/two_factor_api.dart';
 export 'src/api/account/webhooks_api.dart';
@@ -67,17 +68,20 @@ export 'src/streaming/streaming_connection_state.dart';
 export 'src/streaming/streaming_event.dart';
 export 'src/streaming/streaming_message.dart';
 export 'src/streaming/streaming_subscription.dart';
+export 'src/models/account/misskey_email_address_availability.dart';
 export 'src/models/account/misskey_registry_detail.dart';
 export 'src/models/account/misskey_registry_scope.dart';
 export 'src/models/account/misskey_signin_history.dart';
 export 'src/models/account/misskey_totp_registration.dart';
 export 'src/models/account/misskey_webhook.dart';
+export 'src/models/account/misskey_username_availability.dart';
 export 'src/models/admin/misskey_abuse_report_notification_recipient.dart';
 export 'src/models/admin/misskey_abuse_user_report.dart';
 export 'src/models/admin/misskey_ad.dart';
 export 'src/models/admin/misskey_admin_announcement.dart';
 export 'src/models/admin/misskey_admin_avatar_decoration.dart';
 export 'src/models/admin/misskey_admin_created_account.dart';
+export 'src/models/admin/misskey_admin_emoji_list.dart';
 export 'src/models/admin/misskey_admin_meta.dart';
 export 'src/models/admin/misskey_admin_server_info.dart';
 export 'src/models/admin/misskey_admin_user_detail.dart';

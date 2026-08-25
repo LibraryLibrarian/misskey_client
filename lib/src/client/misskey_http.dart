@@ -6,7 +6,6 @@ import 'package:retry/retry.dart';
 import '../exception/misskey_client_exception.dart';
 import '../internal/dio_error_handler.dart';
 import '../logging/logger.dart';
-import '../logging/package_logger.dart';
 import 'constants.dart';
 import 'misskey_client_config.dart';
 import 'request_options.dart' as ro;
@@ -88,7 +87,10 @@ class MisskeyHttp {
             headers: options.headers.isEmpty
                 ? null
                 : Map<String, dynamic>.from(options.headers),
-            extra: {'authMode': options.authMode.name},
+            extra: {
+              'authMode': options.authMode.name,
+              'redactedBodyFields': options.redactedBodyFields,
+            },
           );
           final res = await _dio.request<dynamic>(
             path.startsWith('/') ? path : '/$path',
@@ -102,7 +104,7 @@ class MisskeyHttp {
         retryIf: (e) => _shouldRetry(e, options.idempotent),
         onRetry: (e) {
           if (config.enableLog && kDebugMode) {
-            clientLog.w('[HTTP RETRY] due to: $e');
+            logger.warn('[HTTP RETRY] due to: $e');
           }
         },
       );
@@ -185,8 +187,9 @@ class _MisskeyInterceptor extends Interceptor {
     }
 
     if (enableLog && kDebugMode) {
-      clientLog.d(
-        '[HTTP REQ] ${options.method} ${options.uri} data=${options.data}',
+      logger.debug(
+        '[HTTP REQ] ${options.method} ${options.uri} '
+        'data=${_redactRequestData(options.data, options.extra)}',
       );
     }
 
@@ -199,7 +202,7 @@ class _MisskeyInterceptor extends Interceptor {
     ResponseInterceptorHandler handler,
   ) {
     if (enableLog && kDebugMode) {
-      clientLog.d(
+      logger.debug(
         '[HTTP RES] ${response.statusCode} ${response.requestOptions.uri}',
       );
     }
@@ -215,15 +218,39 @@ class _MisskeyInterceptor extends Interceptor {
           (statusCode == 401 || statusCode == 403 || statusCode == 404);
 
       if (isExpectedClientError) {
-        clientLog.d('[HTTP ERR] ${err.requestOptions.uri} status=$statusCode');
+        logger.debug('[HTTP ERR] ${err.requestOptions.uri} status=$statusCode');
       } else {
-        clientLog.e(
+        logger.error(
           '[HTTP ERR] ${err.requestOptions.uri}',
-          error: err,
-          stackTrace: err.stackTrace,
+          err,
+          err.stackTrace,
         );
       }
     }
     super.onError(err, handler);
   }
+}
+
+Object? _redactRequestData(Object? data, Map<String, dynamic> extra) {
+  if (data is FormData) return '<multipart/form-data>';
+  final configured = extra['redactedBodyFields'];
+  final fields = <String>{'i', if (configured is Set<String>) ...configured};
+  return _redactValue(data, fields);
+}
+
+Object? _redactValue(Object? value, Set<String> fields) {
+  if (value is Map) {
+    return value.map<Object?, Object?>(
+      (key, nested) => MapEntry(
+        key,
+        key is String && fields.contains(key)
+            ? '<redacted>'
+            : _redactValue(nested, fields),
+      ),
+    );
+  }
+  if (value is Iterable) {
+    return value.map((nested) => _redactValue(nested, fields)).toList();
+  }
+  return value;
 }

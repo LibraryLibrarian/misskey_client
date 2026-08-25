@@ -1,0 +1,28 @@
+{
+  "emojis": [
+    {
+      "id": "emoji-v2-1",
+      "updatedAt": "2026-08-25T00:00:00.000Z",
+      "name": "party_blob",
+      "host": null,
+      "publicUrl": "https://misskey.example.com/files/party.webp",
+      "originalUrl": "https://misskey.example.com/files/party-original.png",
+      "uri": null,
+      "type": "image/webp",
+      "aliases": ["party", "blob"],
+      "category": "reactions",
+      "license": "CC0",
+      "localOnly": false,
+      "isSensitive": false,
+      "roleIdsThatCanBeUsedThisEmojiAsReaction": [
+        {
+          "id": "role-1",
+          "name": "Members"
+        }
+      ]
+    }
+  ],
+  "count": 1,
+  "allCount": 3,
+  "allPages": 3
+}

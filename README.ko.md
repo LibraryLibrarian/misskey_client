@@ -2,13 +2,13 @@
 
 # misskey_client
 
-[Misskey](https://misskey-hub.net/) API를 위한 순수 Dart 클라이언트 라이브러리입니다. 25개의 API 도메인에 대한 타입 안전 접근을 제공하며, 인증, 재시도 로직, 구조화된 오류 처리를 내장하고 있습니다.
+[Misskey](https://misskey-hub.net/) API를 위한 순수 Dart 클라이언트 라이브러리입니다. 26개의 API 도메인에 대한 타입 안전 접근을 제공하며, 인증, 재시도 로직, 구조화된 오류 처리를 내장하고 있습니다.
 
 > **베타**: API 구현은 완료되었으나 테스트 커버리지가 최소한입니다. 테스트 결과에 따라 응답 모델 및 메서드 시그니처가 변경될 수 있습니다. 자세한 내용은 [CHANGELOG](CHANGELOG.md)를 참조하세요.
 
 ## 기능
 
-- 25개의 Misskey API 도메인 지원 (노트, 드라이브, 사용자, 채널, 채팅 등)
+- 26개의 Misskey API 도메인 지원 (노트, 드라이브, 사용자, 채널, 채팅 등)
 - 교체 가능한 `TokenProvider` 콜백을 통한 토큰 기반 인증
 - 최대 재시도 횟수를 설정할 수 있는 자동 재시도
 - 망라적 오류 처리를 위한 sealed 예외 클래스 계층 구조
@@ -63,6 +63,7 @@ void main() async {
 | 속성 | 설명 |
 |---|---|
 | `account` | 계정 및 프로필 관리, 레지스트리, 2단계 인증, 웹훅 |
+| `accountLifecycle` | 가입 검증, 비밀번호 재설정, 이메일 인증 |
 | `announcements` | 서버 공지사항 |
 | `antennas` | 안테나(키워드 기반 피드) 관리 |
 | `ap` | ActivityPub 유틸리티 |
@@ -242,7 +243,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 저수준 HTTP 접근
 
-`MisskeyHttpClient.send<T>()`에 해당하는 저수준 API는 공개하지 않습니다. `misskey_client`는 25개의 API 도메인을 지원하므로 타입 지정 메서드를 사용하세요. 필요한 엔드포인트가 구현되어 있지 않다면 타입 지정 API에 추가할 수 있도록 GitHub issue로 알려 주세요.
+`MisskeyHttpClient.send<T>()`에 해당하는 저수준 API는 공개하지 않습니다. `misskey_client`는 26개의 API 도메인을 지원하므로 타입 지정 메서드를 사용하세요. 필요한 엔드포인트가 구현되어 있지 않다면 타입 지정 API에 추가할 수 있도록 GitHub issue로 알려 주세요.
 
 ## misskey_streaming에서 마이그레이션
 

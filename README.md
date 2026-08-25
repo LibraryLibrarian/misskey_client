@@ -2,13 +2,13 @@
 
 # misskey_client
 
-A pure Dart client library for the [Misskey](https://misskey-hub.net/) API. Provides typed access to 25 API domains with built-in authentication, retry logic, and structured error handling.
+A pure Dart client library for the [Misskey](https://misskey-hub.net/) API. Provides typed access to 26 API domains with built-in authentication, retry logic, and structured error handling.
 
 > **Beta**: API implementation is complete but test coverage is minimal. Response models and method signatures may change based on test findings. See the [changelog](CHANGELOG.md) for details.
 
 ## Features
 
-- Covers 25 Misskey API domains (Notes, Drive, Users, Channels, Chat, and more)
+- Covers 26 Misskey API domains (Notes, Drive, Users, Channels, Chat, and more)
 - Token-based authentication via a pluggable `TokenProvider` callback
 - Automatic retry with configurable maximum attempts
 - Sealed exception hierarchy for exhaustive error handling
@@ -63,6 +63,7 @@ void main() async {
 | Property | Description |
 |---|---|
 | `account` | Account and profile management, registry, 2FA, webhooks |
+| `accountLifecycle` | Sign-up validation, password reset, email verification |
 | `announcements` | Server announcements |
 | `antennas` | Antenna (keyword-based feed) management |
 | `ap` | ActivityPub utilities |
@@ -242,7 +243,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### Low-level HTTP access
 
-The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 25 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub issue so it can be added to the typed API.
+The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 26 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub issue so it can be added to the typed API.
 
 ## Migrating from misskey_streaming
 
@@ -251,6 +252,7 @@ Streaming is now integrated into `misskey_client`. See the [migration guide](MIG
 ## Documentation
 
 - API reference: https://librarylibrarian.github.io/misskey_client/
+- [Endpoint support policy](ENDPOINT_SUPPORT.md)
 - pub.dev page: https://pub.dev/packages/misskey_client
 - GitHub: https://github.com/LibraryLibrarian/misskey_client
 
