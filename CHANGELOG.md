@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added typed public metadata fields, including effective role policies, feature flags, client options, advertisements, upload limits, federation/search enums with unknown-value fallbacks, branding URLs, CAPTCHA settings, and Sentry configuration (issue #10)
 - Added `MisskeyRolePolicies` for effective policies on `Meta`, `MisskeyAdminMeta`, `MisskeyUser`, and `MisskeyAdminUserDetail`, preserving newer and fork-specific policy keys through its immutable `raw` payload (issue #10)
 - Added `MisskeyRolePolicyOverride` for the structurally different `{ useDefault, priority, value }` entries returned by `MisskeyRole.policies` (issue #10)
+- Added `MisskeyUser.unreadAnnouncements` and `securityKeysList`, including the typed `MisskeySecurityKey` element model, while preserving the distinction between absent MeDetailed-only fields and present empty lists (issue #21)
 - Exposed schema-defined Unix-millisecond `sinceDate` / `untilDate` arguments on eight Admin list APIs covering abuse reports, ads, announcements, avatar decorations, drive files, local and remote emoji, and moderation logs. The current upstream avatar-decoration handler accepts but ignores its pagination arguments (issue #24)
 - Added cached runtime endpoint capability detection through `MetaApi.isEndpointAvailable()` and `MetaApi.getEndpoints(refresh: ...)`, with refresh support, in-flight request deduplication, deduplicated results, and compatibility guidance in all six READMEs (issue #41)
 - Added the typed `exportedEntity`, `fileId`, `invitation`, and `noteDraft` payloads to `MisskeyNotification`, including a forward-compatible fallback for unknown export entity types (issue #19)
@@ -31,10 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `AdminApi.updateMeta()` now treats an invocation without settings as a no-op instead of sending an empty update that current upstream Misskey rejects with a 500 response
-
-### Notes
-
-- `MisskeyUser.unreadAnnouncements` and `securityKeysList`, originally mentioned by issue #10, remain intentionally out of scope because their model and fixture work is tracked separately by issue #21
 
 ## [1.0.0-beta.8] - 2026-08-25
 
