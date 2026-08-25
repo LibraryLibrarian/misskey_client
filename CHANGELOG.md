@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Exposed schema-defined Unix-millisecond `sinceDate` / `untilDate` arguments on eight Admin list APIs covering abuse reports, ads, announcements, avatar decorations, drive files, local and remote emoji, and moderation logs. The current upstream avatar-decoration handler accepts but ignores its pagination arguments (issue #24)
 - Added cached runtime endpoint capability detection through `MetaApi.isEndpointAvailable()` and `MetaApi.getEndpoints(refresh: ...)`, with refresh support, in-flight request deduplication, deduplicated results, and compatibility guidance in all six READMEs (issue #41)
 - Added the typed `exportedEntity`, `fileId`, `invitation`, and `noteDraft` payloads to `MisskeyNotification`, including a forward-compatible fallback for unknown export entity types (issue #19)
 - Added the embedded `user`, `files`, `channel`, `renote`, and `reply` relationships to `MisskeyNoteDraft`; draft channels use a dedicated partial model matching the server response (issue #20)
