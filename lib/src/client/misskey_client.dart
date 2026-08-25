@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
 import '../api/account/account_api.dart';
+import '../api/account_lifecycle_api.dart';
 import '../api/admin/admin_abuse_reports_api.dart';
 import '../api/admin/admin_accounts_api.dart';
 import '../api/admin/admin_ad_api.dart';
@@ -70,6 +71,7 @@ class MisskeyClient {
          httpClientAdapter: httpClientAdapter,
        ) {
     account = AccountApi(http: http);
+    accountLifecycle = AccountLifecycleApi(http: http);
     admin = AdminApi(http: http);
     adminAbuseReports = AdminAbuseReportsApi(http: http);
     adminAccounts = AdminAccountsApi(http: http);
@@ -172,6 +174,9 @@ class MisskeyClient {
 
   /// Account and profile management API.
   late final AccountApi account;
+
+  /// Unauthenticated sign-up, password-reset, and email-verification API.
+  late final AccountLifecycleApi accountLifecycle;
 
   /// Core admin API (instance settings, user moderation).
   late final AdminApi admin;

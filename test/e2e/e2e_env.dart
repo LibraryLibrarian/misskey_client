@@ -39,6 +39,9 @@ class E2eEnv {
     required this.mastodonBaseUrl,
     required this.mastodonAdminToken,
     required this.mastodonUserToken,
+    required this.mailpitBaseUrl,
+    required this.mailpitSmtpHost,
+    required this.mailpitSmtpPort,
     required this.rootCaPath,
   });
 
@@ -60,6 +63,17 @@ class E2eEnv {
   final String mastodonBaseUrl;
   final String mastodonAdminToken;
   final String mastodonUserToken;
+
+  /// Mailpit HTTP API URL as seen by the Dart test process.
+  ///
+  /// The default fediverse_e2e host mapping is `http://localhost:8025`.
+  final String mailpitBaseUrl;
+
+  /// Mailpit SMTP host as seen by the Misskey container.
+  final String mailpitSmtpHost;
+
+  /// Mailpit SMTP port as seen by the Misskey container.
+  final int mailpitSmtpPort;
 
   /// Path to the self-signed root CA that the E2E servers use.
   final String rootCaPath;
@@ -105,6 +119,23 @@ class E2eEnv {
       return null;
     }
 
+    final mailpitBaseUrl =
+        Platform.environment['MAILPIT_BASE_URL'] ??
+        map['MAILPIT_BASE_URL'] ??
+        'http://localhost:8025';
+    final mailpitSmtpHost =
+        Platform.environment['MAILPIT_SMTP_HOST'] ??
+        map['MAILPIT_SMTP_HOST'] ??
+        'mailpit';
+    final mailpitSmtpPort = int.tryParse(
+      Platform.environment['MAILPIT_SMTP_PORT'] ??
+          map['MAILPIT_SMTP_PORT'] ??
+          '1025',
+    );
+    if (mailpitSmtpPort == null) {
+      return null;
+    }
+
     final misskeyInstances = <MisskeyInstanceEnv>[
       MisskeyInstanceEnv(
         baseUrl: misskeyBaseUrl,
@@ -137,6 +168,9 @@ class E2eEnv {
       mastodonBaseUrl: mastodonBaseUrl,
       mastodonAdminToken: mastodonAdminToken,
       mastodonUserToken: mastodonUserToken,
+      mailpitBaseUrl: mailpitBaseUrl,
+      mailpitSmtpHost: mailpitSmtpHost,
+      mailpitSmtpPort: mailpitSmtpPort,
       rootCaPath: caPath,
     );
   }

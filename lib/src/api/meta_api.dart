@@ -15,8 +15,8 @@ import '../models/server/server_info.dart';
 
 /// Provides server metadata API endpoints (`/api/meta`).
 ///
-/// Caches results in memory so that subsequent calls skip the network request.
-/// Use [supports] to detect server capabilities via dot-notation key paths.
+/// Caches metadata and endpoint enumeration results in memory so that
+/// subsequent calls skip the network request.
 class MetaApi {
   /// Creates an instance that operates the metadata API using [http].
   MetaApi({required this.http});
@@ -26,6 +26,8 @@ class MetaApi {
   final MisskeyHttp http;
 
   Meta? _cached;
+  Set<String>? _cachedEndpoints;
+  Future<List<String>>? _endpointsRequest;
 
   /// Retrieves server metadata (`/api/meta`).
   ///
@@ -89,13 +91,75 @@ class MetaApi {
   }
 
   /// Retrieves all available endpoint names (`/api/endpoints`).
-  Future<List<String>> getEndpoints() async {
+  ///
+  /// Set [refresh] to `true` to bypass a completed cache entry. Concurrent
+  /// requests share the same in-flight HTTP request, including refreshes.
+  /// Duplicate endpoint names returned by the server are removed and the
+  /// returned list cannot be modified.
+  ///
+  /// A failed request is not cached. If a refresh fails, the previous cache
+  /// entry remains available to later calls without [refresh].
+  Future<List<String>> getEndpoints({bool refresh = false}) async {
+    final pending = _endpointsRequest;
+    if (pending != null) return pending;
+    if (!refresh && _cachedEndpoints != null) {
+      return List<String>.unmodifiable(_cachedEndpoints!);
+    }
+
+    final request = _fetchEndpoints();
+    _endpointsRequest = request;
+    try {
+      return await request;
+    } finally {
+      if (identical(_endpointsRequest, request)) {
+        _endpointsRequest = null;
+      }
+    }
+  }
+
+  Future<List<String>> _fetchEndpoints() async {
     final res = await http.send<List<dynamic>>(
       '/endpoints',
       body: const <String, dynamic>{},
       options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
-    return res.cast<String>();
+    final endpoints = <String>{};
+    for (final value in res) {
+      if (value is! String || !_isValidEndpointName(value)) {
+        throw const FormatException(
+          'The /api/endpoints response contains an invalid endpoint name.',
+        );
+      }
+      endpoints.add(value);
+    }
+    _cachedEndpoints = Set<String>.unmodifiable(endpoints);
+    return List<String>.unmodifiable(endpoints);
+  }
+
+  /// Whether [endpoint] is advertised by the server's `/api/endpoints` list.
+  ///
+  /// Use the canonical endpoint name without the `/api/` prefix, for example
+  /// `notes/drafts/create`. Invalid names throw [ArgumentError].
+  ///
+  /// This is the recommended preflight check for endpoints that may be absent
+  /// on older Misskey versions or forks. It is still a snapshot: callers must
+  /// handle an HTTP 404 when invoking the endpoint, especially if the server
+  /// configuration or software changes after this check.
+  ///
+  /// Set [refresh] to `true` to refresh the endpoint cache first.
+  Future<bool> isEndpointAvailable({
+    required String endpoint,
+    bool refresh = false,
+  }) async {
+    if (!_isValidEndpointName(endpoint)) {
+      throw ArgumentError.value(
+        endpoint,
+        'endpoint',
+        'Use a canonical endpoint name such as notes/drafts/create.',
+      );
+    }
+    final endpoints = await getEndpoints(refresh: refresh);
+    return endpoints.contains(endpoint);
   }
 
   /// Retrieves parameter information for a specific endpoint (`/api/endpoint`).
@@ -198,17 +262,21 @@ class MetaApi {
         .toList();
   }
 
-  /// Performs a simple capability check against cached metadata.
+  /// Whether a key path exists in cached metadata.
   ///
   /// Specify a dot-separated key path in [keyPath] (e.g., `"features.miauth"`)
   /// and returns `true` if that key exists in [Meta.raw].
+  /// The value at that path is not interpreted, so a boolean value of `false`
+  /// still returns `true`.
   /// Always returns `false` if [getMeta] has not been called yet.
-  bool supports(String keyPath) {
+  bool hasMetaKey(String keyPath) {
     final meta = _cached;
     if (meta == null) return false;
+    if (keyPath.isEmpty) return false;
     final parts = keyPath.split('.');
     dynamic cursor = meta.raw.json;
     for (final p in parts) {
+      if (p.isEmpty) return false;
       if (cursor is Map && cursor.containsKey(p)) {
         cursor = cursor[p];
       } else {
@@ -216,5 +284,24 @@ class MetaApi {
       }
     }
     return true;
+  }
+
+  /// Whether a key path exists in cached metadata.
+  ///
+  /// This checks key presence only. It does not interpret the stored value as
+  /// a capability flag; use [isEndpointAvailable] for endpoint support.
+  @Deprecated(
+    'Use hasMetaKey for metadata key presence or isEndpointAvailable for '
+    'endpoint support.',
+  )
+  bool supports(String keyPath) => hasMetaKey(keyPath);
+
+  static bool _isValidEndpointName(String endpoint) {
+    return endpoint.isNotEmpty &&
+        endpoint.trim() == endpoint &&
+        !endpoint.startsWith('/') &&
+        !endpoint.endsWith('/') &&
+        !endpoint.contains('//') &&
+        !endpoint.contains(RegExp(r'[\s?#]'));
   }
 }

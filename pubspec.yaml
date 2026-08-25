@@ -3,7 +3,7 @@ version: 1.0.0-beta.8
 documentation: https://librarylibrarian.github.io/misskey_client/
 environment:
   sdk: ">=3.9.0 <4.0.0"
-description: A pure Dart client library for the Misskey API. Covers 25 API domains with token-based auth, automatic retry, and structured error handling.
+description: A pure Dart client library for the Misskey API. Covers 26 API domains with token-based auth, automatic retry, and structured error handling.
 dependencies:
   collection: ^1.19.1
   dio: ^5.11.0
@@ -14,6 +14,7 @@ dependencies:
   retry: ^3.1.2
   web_socket_channel: ^3.0.3
 dev_dependencies:
+  analyzer: ^10.2.0
   build_runner: ^2.15.1
   freezed: 3.2.5
   json_serializable: ^6.14.1
