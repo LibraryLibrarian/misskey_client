@@ -31,19 +31,15 @@ final fresh = await client.meta.getMeta(refresh: true);
 final lite = await client.meta.getMeta(detail: false);
 ```
 
-### 功能检测
+### 元数据键存在性
 
-在使用 `supports()` 前至少需要调用一次 `getMeta()`。它通过点分隔路径检查原始响应中的键：
+在使用 `hasMetaKey()` 前至少调用一次 `getMeta()`。它仅通过点分隔路径检查原始响应中是否存在键，不解释字段值；即使布尔值为 `false`，只要键存在也会返回 `true`：
 
 ```dart
 await client.meta.getMeta();
 
-if (client.meta.supports('features.miauth')) {
-  // 该服务器支持 MiAuth
-}
-
-if (client.meta.supports('policies.canInvite')) {
-  // 邀请功能已启用
+if (client.meta.hasMetaKey('features.miauth')) {
+  // 该键存在；请检查其值来判断是否启用。
 }
 ```
 
@@ -70,6 +66,11 @@ final timestamp = await client.meta.ping();
 // 所有端点名称
 final endpoints = await client.meta.getEndpoints();
 
+// 对较新服务器版本新增 API 的推荐预检查
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create',
+);
+
 // 特定端点的参数
 final info = await client.meta.getEndpoint(endpoint: 'notes/create');
 if (info != null) {
@@ -78,6 +79,8 @@ if (info != null) {
   }
 }
 ```
+
+端点枚举结果会被缓存；服务器升级后请传入 `refresh: true`。特别是对于使用独立版本字符串的分支，应优先枚举端点而不是比较 `Meta.version`。结果只是快照，因此实际调用时仍需处理 `MisskeyNotFoundException`。如果 `/api/endpoints` 本身不可用，请直接调用目标 API 并处理含义可能不明确的 404。
 
 ### 自定义表情
 

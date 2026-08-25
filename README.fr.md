@@ -89,6 +89,24 @@ void main() async {
 | `streaming` | Fils d'actualité, notifications et mises à jour de Notes capturées en temps réel |
 | `users` | Recherche d'utilisateurs, listes, relations, succès |
 
+## Compatibilité des serveurs
+
+Un serveur peut utiliser une ancienne version de Misskey ou un fork dont la surface d'API diffère. Préférez l'énumération des points de terminaison à l'exécution plutôt que la comparaison de `Meta.version` : les versions des forks ne sont pas nécessairement comparables aux versions de Misskey, tandis que `/api/endpoints` indique les API réellement annoncées par le serveur.
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // Sans préfixe /api/.
+);
+
+if (canCreateDrafts) {
+  // Afficher ou appeler la fonctionnalité de brouillons.
+}
+```
+
+La liste des points de terminaison est mise en cache en mémoire. Passez `refresh: true` à `isEndpointAvailable()` ou `getEndpoints()` après une mise à niveau du serveur ou pour obtenir un nouvel instantané. Cette énumération est une indication préalable, pas une garantie : le serveur peut changer après la vérification, donc gérez toujours `MisskeyNotFoundException` lors de l'appel. Si `/api/endpoints` n'est pas disponible ou échoue sur un fork, appelez directement l'API souhaitée et gérez sa réponse 404 ; une 404 seule peut être ambiguë entre un point de terminaison absent et une ressource absente.
+
+`hasMetaKey('features.x')` vérifie uniquement la présence d'une clé de métadonnées. Cette méthode renvoie `true` même si la valeur est `false` et ne doit donc pas remplacer la détection des points de terminaison.
+
 ## API Streaming
 
 La connexion `client.streaming`, créée à la demande, partage le serveur, le fournisseur de jeton et le logger du client. Abonnez-vous avec un `MisskeyStreamingChannel` typé et choisissez le niveau adapté : `notes` et `notifications` décodées, `events` typés ou `messages` sans perte d'information.

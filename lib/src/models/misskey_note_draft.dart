@@ -1,7 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'json_converters.dart';
+import 'misskey_drive_file.dart';
+import 'misskey_note.dart';
+import 'misskey_note_draft_channel.dart';
 import 'misskey_note_draft_poll.dart';
+import 'misskey_user.dart';
 
 part 'misskey_note_draft.freezed.dart';
 part 'misskey_note_draft.g.dart';
@@ -15,6 +19,7 @@ class MisskeyNoteDraft with _$MisskeyNoteDraft {
     required this.createdAt,
     required this.updatedAt,
     required this.userId,
+    this.user,
     this.visibility,
     this.visibleUserIds,
     this.cw,
@@ -26,6 +31,10 @@ class MisskeyNoteDraft with _$MisskeyNoteDraft {
     this.channelId,
     this.text,
     this.fileIds,
+    this.files,
+    this.channel,
+    this.renote,
+    this.reply,
     this.poll,
     this.scheduledAt,
     this.isActuallyScheduled,
@@ -52,6 +61,10 @@ class MisskeyNoteDraft with _$MisskeyNoteDraft {
   /// The ID of the user who owns this draft.
   @override
   final String userId;
+
+  /// The user who owns this draft.
+  @override
+  final MisskeyUser? user;
 
   /// The visibility scope (`public` / `home` / `followers` / `specified`).
   @override
@@ -99,6 +112,22 @@ class MisskeyNoteDraft with _$MisskeyNoteDraft {
   @JsonKey(defaultValue: <String>[])
   @override
   final List<String>? fileIds;
+
+  /// The files attached to this draft.
+  @override
+  final List<MisskeyDriveFile>? files;
+
+  /// The partial channel information embedded in this draft.
+  @override
+  final MisskeyNoteDraftChannel? channel;
+
+  /// The note renoted by this draft.
+  @override
+  final MisskeyNote? renote;
+
+  /// The note replied to by this draft.
+  @override
+  final MisskeyNote? reply;
 
   /// The poll attached to this draft.
   ///

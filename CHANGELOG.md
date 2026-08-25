@@ -10,6 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Exposed schema-defined Unix-millisecond `sinceDate` / `untilDate` arguments on eight Admin list APIs covering abuse reports, ads, announcements, avatar decorations, drive files, local and remote emoji, and moderation logs. The current upstream avatar-decoration handler accepts but ignores its pagination arguments (issue #24)
+- Added cached runtime endpoint capability detection through `MetaApi.isEndpointAvailable()` and `MetaApi.getEndpoints(refresh: ...)`, with refresh support, in-flight request deduplication, deduplicated results, and compatibility guidance in all six READMEs (issue #41)
+- Added the typed `exportedEntity`, `fileId`, `invitation`, and `noteDraft` payloads to `MisskeyNotification`, including a forward-compatible fallback for unknown export entity types (issue #19)
+- Added the embedded `user`, `files`, `channel`, `renote`, and `reply` relationships to `MisskeyNoteDraft`; draft channels use a dedicated partial model matching the server response (issue #20)
+- Added `AdminApi.updateMeta(extra:)` for passing newer upstream or fork-specific instance settings that do not yet have typed parameters (issue #23)
+
+### Changed
+
+- Added the explicit `MetaApi.hasMetaKey()` name for metadata key-presence checks and deprecated the ambiguous `supports()` alias; key presence does not interpret a boolean metadata value or indicate endpoint availability (issue #41)
+- **Breaking:** `MetaApi.getEndpoints()` now returns an unmodifiable list instead of a mutable list so callers cannot mutate a value that represents the cached endpoint snapshot (issue #41)
+
+### Removed
+
+- **Breaking:** Removed the ineffective typed `proxyAccountId` parameter from `AdminApi.updateMeta()`. Current upstream Misskey does not accept that setting on `/admin/update-meta`; callers targeting an older version or compatible fork may send it through `extra` only after confirming server support (issue #9)
+
+### Fixed
+
+- `AdminApi.updateMeta()` now treats an invocation without settings as a no-op instead of sending an empty update that current upstream Misskey rejects with a 500 response
 
 ## [1.0.0-beta.8] - 2026-08-25
 

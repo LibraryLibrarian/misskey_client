@@ -31,19 +31,15 @@ final fresh = await client.meta.getMeta(refresh: true);
 final lite = await client.meta.getMeta(detail: false);
 ```
 
-### 기능 감지
+### 메타데이터 키 존재 여부
 
-`supports()`를 사용하기 전에 `getMeta()`를 최소 한 번 호출해야 합니다. 점 표기법 경로를 사용하여 원시 응답의 키를 확인합니다:
+`hasMetaKey()`를 사용하기 전에 `getMeta()`를 최소 한 번 호출해야 합니다. 점 표기법 경로로 원시 응답에 키가 있는지만 확인합니다. 값은 해석하지 않으므로 불리언 값이 `false`여도 키가 있으면 `true`를 반환합니다:
 
 ```dart
 await client.meta.getMeta();
 
-if (client.meta.supports('features.miauth')) {
-  // 이 서버에서 MiAuth를 사용할 수 있습니다
-}
-
-if (client.meta.supports('policies.canInvite')) {
-  // 초대 기능이 활성화되어 있습니다
+if (client.meta.hasMetaKey('features.miauth')) {
+  // 키가 있습니다. 활성화 여부는 값을 확인하세요.
 }
 ```
 
@@ -70,6 +66,11 @@ final timestamp = await client.meta.ping();
 // 모든 엔드포인트 이름
 final endpoints = await client.meta.getEndpoints();
 
+// 최신 서버 버전에 추가된 API의 권장 사전 확인
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create',
+);
+
 // 특정 엔드포인트의 파라미터
 final info = await client.meta.getEndpoint(endpoint: 'notes/create');
 if (info != null) {
@@ -78,6 +79,8 @@ if (info != null) {
   }
 }
 ```
+
+엔드포인트 열거 결과는 캐시됩니다. 서버 업그레이드 후에는 `refresh: true`를 전달하세요. 자체 버전 문자열을 사용하는 포크가 있으므로 `Meta.version` 비교보다 열거를 우선합니다. 결과는 스냅샷일 뿐이므로 실제 호출에서는 계속 `MisskeyNotFoundException`을 처리해야 합니다. `/api/endpoints` 자체를 사용할 수 없다면 대상 API를 직접 호출하고 의미가 모호할 수 있는 404를 처리하세요.
 
 ### 커스텀 이모지
 
