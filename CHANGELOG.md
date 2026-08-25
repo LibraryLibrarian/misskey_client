@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added E2E scenarios for `AdminApi.sendEmail`, `AdminEmojiApi.copy`, and `AdminCaptchaApi.save`, plus an Analyzer AST-based fail-closed coverage audit that classifies all 99 Admin methods as E2E-invoked or explicitly excluded with a destructive-operation reason. The email scenario runs conditionally when Misskey SMTP is preconfigured for Mailpit and otherwise skips without changing shared instance metadata (issue #25)
 - Added typed public metadata fields, including effective role policies, feature flags, client options, advertisements, upload limits, federation/search enums with unknown-value fallbacks, branding URLs, CAPTCHA settings, and Sentry configuration (issue #10)
 - Added `MisskeyRolePolicies` for effective policies on `Meta`, `MisskeyAdminMeta`, `MisskeyUser`, and `MisskeyAdminUserDetail`, preserving newer and fork-specific policy keys through its immutable `raw` payload (issue #10)
 - Added `MisskeyRolePolicyOverride` for the structurally different `{ useDefault, priority, value }` entries returned by `MisskeyRole.policies` (issue #10)

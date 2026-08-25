@@ -3,6 +3,7 @@ library;
 
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
@@ -260,9 +261,125 @@ void main() {
       expect(captcha.mcaptcha, isNotNull);
       expect(captcha.hcaptcha!.siteKey, isNull);
     });
+
+    test('save provider none is idempotent and preserves settings', () async {
+      final before = await admin.adminCaptcha.current();
+      expect(
+        before.provider,
+        'none',
+        reason: '共有設定を安全に検証するためprovider: noneが必要です',
+      );
+      expect(before.hcaptcha?.siteKey, isNull);
+      expect(before.hcaptcha?.secretKey, isNull);
+      expect(before.mcaptcha?.siteKey, isNull);
+      expect(before.mcaptcha?.secretKey, isNull);
+      expect(before.mcaptcha?.instanceUrl, isNull);
+      expect(before.recaptcha?.siteKey, isNull);
+      expect(before.recaptcha?.secretKey, isNull);
+      expect(before.turnstile?.siteKey, isNull);
+      expect(before.turnstile?.secretKey, isNull);
+
+      try {
+        await admin.adminCaptcha.save(provider: 'none');
+        expect(await admin.adminCaptcha.current(), before);
+      } finally {
+        // provider: noneかつキー未設定という事前条件へ必ず戻す。
+        await admin.adminCaptcha.save(provider: 'none');
+      }
+      expect(await admin.adminCaptcha.current(), before);
+    });
   });
 
   group('admin misc', () {
+    test('sendEmail delivers the message to Mailpit', () async {
+      final settings = await admin.admin.meta();
+      final isMailpitConfigured =
+          settings.raw['enableEmail'] == true &&
+          settings.raw['smtpHost'] == env.mailpitSmtpHost &&
+          settings.raw['smtpPort'] == env.mailpitSmtpPort &&
+          settings.raw['smtpSecure'] == false;
+      if (!isMailpitConfigured) {
+        markTestSkipped(
+          'Misskey SMTP must be preconfigured for Mailpit: '
+          'enableEmail=true, smtpHost=${env.mailpitSmtpHost}, '
+          'smtpPort=${env.mailpitSmtpPort}, smtpSecure=false. '
+          'Shared admin/meta is not modified by this test.',
+        );
+        return;
+      }
+
+      final mailpit = Dio(
+        BaseOptions(
+          baseUrl: env.mailpitBaseUrl,
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+        ),
+      );
+      final suffix = DateTime.now().microsecondsSinceEpoch;
+      final subject = 'misskey_client e2e sendEmail $suffix';
+      const recipient = 'e2e-mailpit-recipient@example.test';
+      var mailpitReachable = false;
+      try {
+        // ホスト側からMailpit APIへ到達できることを送信前に確認する。
+        await mailpit.get<Object?>('/api/v1/info');
+        mailpitReachable = true;
+        await admin.admin.sendEmail(
+          to: recipient,
+          subject: subject,
+          text: 'Mailpit delivery marker: $suffix',
+        );
+
+        final message = await pollUntil<Map<String, dynamic>>(
+          () async {
+            final response = await mailpit.get<Map<String, dynamic>>(
+              '/api/v1/search',
+              queryParameters: {'query': 'subject:"$subject"', 'limit': 10},
+            );
+            final messages =
+                response.data?['messages'] as List<dynamic>? ?? const [];
+            for (final candidate
+                in messages.whereType<Map<String, dynamic>>()) {
+              if (candidate['Subject'] == subject) return candidate;
+            }
+            return null;
+          },
+          timeout: const Duration(seconds: 30),
+          interval: const Duration(seconds: 1),
+        );
+        final recipients = (message['To'] as List<dynamic>)
+            .whereType<Map<String, dynamic>>()
+            .map((address) => address['Address']);
+        expect(recipients, contains(recipient));
+      } finally {
+        try {
+          if (mailpitReachable) {
+            // 送信応答やpollが失敗した場合も、件名で生成メールだけを回収する。
+            final response = await mailpit.get<Map<String, dynamic>>(
+              '/api/v1/search',
+              queryParameters: {'query': 'subject:"$subject"', 'limit': 10},
+            );
+            final messages =
+                response.data?['messages'] as List<dynamic>? ?? const [];
+            final messageIds = messages
+                .whereType<Map<String, dynamic>>()
+                .where((message) => message['Subject'] == subject)
+                .map((message) => message['ID'])
+                .whereType<String>()
+                .toSet()
+                .toList();
+            if (messageIds.isNotEmpty) {
+              await mailpit.delete<Object?>(
+                '/api/v1/messages',
+                data: {'IDs': messageIds},
+              );
+            }
+          }
+        } finally {
+          mailpit.close(force: true);
+        }
+      }
+    });
+
     test('showModerationLogs returns recent actions', () async {
       final logs = await admin.admin.showModerationLogs(limit: 10);
       expect(logs, isNotEmpty);
