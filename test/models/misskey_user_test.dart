@@ -190,16 +190,15 @@ void main() {
       expect(user.canChat, true);
     });
 
-    test('parses policies map from users/show', () {
+    test('parses typed policies from users/show', () {
       final file = File('test/fixtures/users_show.json');
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       final user = MisskeyUser.fromJson(json);
 
       expect(user.policies, isNotNull);
-      expect(user.policies, isA<Map<String, dynamic>>());
-      // canCreateChannel はモデルに専用フィールドを持たないが、
-      // policies が動的Mapのため個別実装なしでアクセスできる
-      expect(user.policies!.containsKey('canCreateChannel'), isTrue);
+      expect(user.policies, isA<MisskeyRolePolicies>());
+      expect(user.policies!.canCreateChannel, isTrue);
+      expect(user.policies!.raw['canCreateChannel'], isTrue);
     });
 
     test('parses email fields from i', () {

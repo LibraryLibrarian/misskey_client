@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../misskey_role_policies.dart';
 import '../raw_meta_payload.dart';
 
 part 'misskey_admin_meta.freezed.dart';
@@ -35,6 +36,7 @@ class MisskeyAdminMeta with _$MisskeyAdminMeta {
     this.cacheRemoteFiles,
     this.cacheRemoteSensitiveFiles,
     this.federation,
+    this.policies,
     this.federationHosts,
     this.blockedHosts,
     this.silencedHosts,
@@ -53,48 +55,8 @@ class MisskeyAdminMeta with _$MisskeyAdminMeta {
     this.raw = const RawMetaPayload.empty(),
   });
 
-  factory MisskeyAdminMeta.fromJson(Map<String, dynamic> json) {
-    final instance = _$MisskeyAdminMetaFromJson(json);
-    // 全フィールドを保持しておき、型付けしていない設定値の参照を可能にする
-    return MisskeyAdminMeta(
-      maintainerName: instance.maintainerName,
-      maintainerEmail: instance.maintainerEmail,
-      name: instance.name,
-      description: instance.description,
-      langs: instance.langs,
-      tosUrl: instance.tosUrl,
-      privacyPolicyUrl: instance.privacyPolicyUrl,
-      impressumUrl: instance.impressumUrl,
-      inquiryUrl: instance.inquiryUrl,
-      repositoryUrl: instance.repositoryUrl,
-      feedbackUrl: instance.feedbackUrl,
-      disableRegistration: instance.disableRegistration,
-      emailRequiredForSignup: instance.emailRequiredForSignup,
-      enableEmail: instance.enableEmail,
-      enableServiceWorker: instance.enableServiceWorker,
-      enableIpLogging: instance.enableIpLogging,
-      enableActiveEmailValidation: instance.enableActiveEmailValidation,
-      cacheRemoteFiles: instance.cacheRemoteFiles,
-      cacheRemoteSensitiveFiles: instance.cacheRemoteSensitiveFiles,
-      federation: instance.federation,
-      federationHosts: instance.federationHosts,
-      blockedHosts: instance.blockedHosts,
-      silencedHosts: instance.silencedHosts,
-      mediaSilencedHosts: instance.mediaSilencedHosts,
-      sensitiveWords: instance.sensitiveWords,
-      prohibitedWords: instance.prohibitedWords,
-      hiddenTags: instance.hiddenTags,
-      bannedEmailDomains: instance.bannedEmailDomains,
-      preservedUsernames: instance.preservedUsernames,
-      proxyAccountId: instance.proxyAccountId,
-      notesPerOneAd: instance.notesPerOneAd,
-      enableHcaptcha: instance.enableHcaptcha,
-      enableRecaptcha: instance.enableRecaptcha,
-      enableTurnstile: instance.enableTurnstile,
-      swPublicKey: instance.swPublicKey,
-      raw: RawMetaPayload(Map<String, dynamic>.from(json)),
-    );
-  }
+  factory MisskeyAdminMeta.fromJson(Map<String, dynamic> json) =>
+      _$MisskeyAdminMetaFromJson(json);
 
   /// The maintainer's name.
   @override
@@ -176,6 +138,10 @@ class MisskeyAdminMeta with _$MisskeyAdminMeta {
   @override
   final String? federation;
 
+  /// The effective default role policies for the instance.
+  @override
+  final MisskeyRolePolicies? policies;
+
   /// Hosts allowed to federate when [federation] is `specified`.
   @override
   final List<String>? federationHosts;
@@ -238,8 +204,17 @@ class MisskeyAdminMeta with _$MisskeyAdminMeta {
 
   /// A map holding all response JSON fields, including ones not typed above.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(
+    includeToJson: false,
+    readValue: _readWholeObject,
+    fromJson: _rawFromJson,
+  )
   final RawMetaPayload raw;
 
   Map<String, dynamic> toJson() => _$MisskeyAdminMetaToJson(this);
+
+  static Object? _readWholeObject(Map<dynamic, dynamic> json, String _) => json;
+
+  static RawMetaPayload _rawFromJson(Object? json) =>
+      RawMetaPayload(Map<String, dynamic>.from(json! as Map));
 }
