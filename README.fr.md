@@ -2,13 +2,13 @@
 
 # misskey_client
 
-Une bibliothèque cliente Dart pure pour l'API [Misskey](https://misskey-hub.net/). Fournit un accès typé à 25 domaines d'API avec authentification intégrée, logique de réessai et gestion structurée des erreurs.
+Une bibliothèque cliente Dart pure pour l'API [Misskey](https://misskey-hub.net/). Fournit un accès typé à 26 domaines d'API avec authentification intégrée, logique de réessai et gestion structurée des erreurs.
 
 > **Bêta** : L'implémentation de l'API est complète mais la couverture de tests est minimale. Les modèles de réponse et les signatures de méthodes peuvent évoluer suite aux résultats des tests. Voir le [CHANGELOG](CHANGELOG.md) pour plus de détails.
 
 ## Fonctionnalités
 
-- Couverture de 25 domaines de l'API Misskey (Notes, Drive, utilisateurs, Channels, Chat, etc.)
+- Couverture de 26 domaines de l'API Misskey (Notes, Drive, utilisateurs, Channels, Chat, etc.)
 - Authentification par jeton via un callback `TokenProvider` interchangeable
 - Réessai automatique avec un nombre maximum de tentatives configurable
 - Hiérarchie d'exceptions scellées pour une gestion exhaustive des erreurs
@@ -63,6 +63,7 @@ void main() async {
 | Propriété | Description |
 |---|---|
 | `account` | Gestion du compte et du profil, registre, 2FA, webhooks |
+| `accountLifecycle` | Validation de l'inscription, réinitialisation du mot de passe, vérification de l'e-mail |
 | `announcements` | Annonces du serveur |
 | `antennas` | Gestion des antennes (flux basés sur des mots-clés) |
 | `ap` | Utilitaires ActivityPub |
@@ -88,6 +89,24 @@ void main() async {
 | `sw` | Notifications push (Service Worker) |
 | `streaming` | Fils d'actualité, notifications et mises à jour de Notes capturées en temps réel |
 | `users` | Recherche d'utilisateurs, listes, relations, succès |
+
+## Compatibilité des serveurs
+
+Un serveur peut utiliser une ancienne version de Misskey ou un fork dont la surface d'API diffère. Préférez l'énumération des points de terminaison à l'exécution plutôt que la comparaison de `Meta.version` : les versions des forks ne sont pas nécessairement comparables aux versions de Misskey, tandis que `/api/endpoints` indique les API réellement annoncées par le serveur.
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // Sans préfixe /api/.
+);
+
+if (canCreateDrafts) {
+  // Afficher ou appeler la fonctionnalité de brouillons.
+}
+```
+
+La liste des points de terminaison est mise en cache en mémoire. Passez `refresh: true` à `isEndpointAvailable()` ou `getEndpoints()` après une mise à niveau du serveur ou pour obtenir un nouvel instantané. Cette énumération est une indication préalable, pas une garantie : le serveur peut changer après la vérification, donc gérez toujours `MisskeyNotFoundException` lors de l'appel. Si `/api/endpoints` n'est pas disponible ou échoue sur un fork, appelez directement l'API souhaitée et gérez sa réponse 404 ; une 404 seule peut être ambiguë entre un point de terminaison absent et une ressource absente.
+
+`hasMetaKey('features.x')` vérifie uniquement la présence d'une clé de métadonnées. Cette méthode renvoie `true` même si la valeur est `false` et ne doit donc pas remplacer la détection des points de terminaison.
 
 ## API Streaming
 
@@ -233,7 +252,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### Accès HTTP de bas niveau
 
-L'équivalent de bas niveau de `MisskeyHttpClient.send<T>()` n'est pas public. `misskey_client` couvre 25 domaines d'API ; utilisez donc les méthodes typées. Si un point de terminaison nécessaire manque, veuillez le signaler dans une issue GitHub afin qu'il soit ajouté à l'API typée.
+L'équivalent de bas niveau de `MisskeyHttpClient.send<T>()` n'est pas public. `misskey_client` couvre 26 domaines d'API ; utilisez donc les méthodes typées. Si un point de terminaison nécessaire manque, veuillez le signaler dans une issue GitHub afin qu'il soit ajouté à l'API typée.
 
 ## Migration depuis misskey_streaming
 

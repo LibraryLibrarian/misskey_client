@@ -2,13 +2,13 @@
 
 # misskey_client
 
-面向 [Misskey](https://misskey-hub.net/) API 的纯 Dart 客户端库。提供对 25 个 API 域的强类型访问，内置认证、重试逻辑和结构化错误处理。
+面向 [Misskey](https://misskey-hub.net/) API 的纯 Dart 客户端库。提供对 26 个 API 域的强类型访问，内置认证、重试逻辑和结构化错误处理。
 
 > **Beta 版本**: API 实现已完成，但测试覆盖率较低。响应模型和方法签名可能会根据测试结果进行调整。详情请参阅 [CHANGELOG](CHANGELOG.md)。
 
 ## 特性
 
-- 覆盖 25 个 Misskey API 域（帖子、网盘、用户、频道、聊天等）
+- 覆盖 26 个 Misskey API 域（帖子、网盘、用户、频道、聊天等）
 - 通过可插拔的 `TokenProvider` 回调实现基于令牌的认证
 - 可配置最大重试次数的自动重试
 - 用于穷举式错误处理的密封异常类层次结构
@@ -63,6 +63,7 @@ void main() async {
 | 属性 | 说明 |
 |---|---|
 | `account` | 账号与个人资料管理、注册表、双重认证、Webhook |
+| `accountLifecycle` | 注册验证、密码重置、邮箱验证 |
 | `announcements` | 服务器公告 |
 | `antennas` | 天线（基于关键词的订阅源）管理 |
 | `ap` | ActivityPub 工具 |
@@ -88,6 +89,24 @@ void main() async {
 | `sw` | 推送通知（Service Worker） |
 | `streaming` | 实时时间线、通知和已捕获帖子的更新 |
 | `users` | 用户搜索、列表、关系、成就 |
+
+## 服务器兼容性
+
+服务器可能仍在运行旧版 Misskey，也可能使用 API 表面不同的分支版本。请优先在运行时枚举端点，而不是比较 `Meta.version`：分支版本字符串未必能与 Misskey 版本直接比较，而 `/api/endpoints` 会报告该服务器实际公开的 API。
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // 不要添加 /api/ 前缀。
+);
+
+if (canCreateDrafts) {
+  // 显示或调用草稿功能。
+}
+```
+
+端点列表会缓存在内存中。服务器升级后或需要最新快照时，请向 `isEndpointAvailable()` 或 `getEndpoints()` 传入 `refresh: true`。枚举结果只是调用前的提示，并不保证后续调用成功；检查后服务器仍可能发生变化，因此调用端点时仍应处理 `MisskeyNotFoundException`。如果某个分支不支持 `/api/endpoints` 或该请求失败，请直接调用目标 API 并处理其 404；仅凭 404 可能无法区分“端点不存在”和“资源不存在”。
+
+`hasMetaKey('features.x')` 只检查元数据键是否存在。即使该键的值为 `false`，它也会返回 `true`，因此不要用元数据键存在性代替端点检测。
 
 ## Streaming API
 
@@ -233,7 +252,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 低级 HTTP 访问
 
-与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 25 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub issue 报告，以便将其加入强类型 API。
+与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 26 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub issue 报告，以便将其加入强类型 API。
 
 ## 从 misskey_streaming 迁移
 

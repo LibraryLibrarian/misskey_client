@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'misskey_role_policies.dart';
+
 part 'misskey_role.freezed.dart';
 part 'misskey_role.g.dart';
 
@@ -102,7 +104,7 @@ class MisskeyRole with _$MisskeyRole {
 
   /// The policy overrides applied by this role.
   @override
-  final Map<String, dynamic>? policies;
+  final Map<String, MisskeyRolePolicyOverride>? policies;
 
   /// The conditional assignment formula (used when [target] is `conditional`).
   @override

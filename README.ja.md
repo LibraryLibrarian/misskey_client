@@ -62,6 +62,7 @@ void main() async {
 | プロパティ | 説明 |
 |---|---|
 | `account` | アカウント・プロフィール管理、レジストリ、二段階認証、Webhook |
+| `accountLifecycle` | サインアップ検証、パスワードリセット、メールアドレス認証 |
 | `announcements` | サーバーのお知らせ |
 | `antennas` | アンテナ（キーワードベースのフィード）管理 |
 | `ap` | ActivityPub ユーティリティ |
@@ -87,6 +88,24 @@ void main() async {
 | `sw` | プッシュ通知（Service Worker） |
 | `streaming` | リアルタイムのタイムライン、通知、キャプチャしたノートの更新 |
 | `users` | ユーザー検索、リスト、関係、アチーブメント |
+
+## サーバー互換性
+
+接続先は古い Misskey のままの場合や、API 構成が異なるフォークの場合があります。`Meta.version` の比較より、実行時のエンドポイント列挙を優先してください。フォークのバージョン文字列は Misskey のリリースと比較できるとは限りませんが、`/api/endpoints` はそのサーバーが実際に公開している API を示します。
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // /api/ は付けません。
+);
+
+if (canCreateDrafts) {
+  // 下書き機能を表示または呼び出します。
+}
+```
+
+エンドポイント一覧はメモリにキャッシュされます。サーバー更新後や最新状態が必要な場合は `isEndpointAvailable()` または `getEndpoints()` に `refresh: true` を指定してください。列挙結果は事前判定用のスナップショットであり、呼び出し成功を保証しません。判定後にサーバーが変化する可能性があるため、実際の呼び出しでは引き続き `MisskeyNotFoundException` を処理してください。フォークで `/api/endpoints` 自体が利用できない、または失敗する場合は、目的の API を直接呼び出して 404 を処理します。ただし、404 だけでは「エンドポイントがない」のか「リソースがない」のか区別できない場合があります。
+
+`hasMetaKey('features.x')` はメタデータのキーが存在するかだけを確認します。値が `false` でも `true` を返すため、エンドポイント判定の代わりには使用しないでください。
 
 ## Streaming API
 
@@ -232,7 +251,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 低レベル HTTP アクセス
 
-`MisskeyHttpClient.send<T>()` に相当する低レベル API は公開しません。`misskey_client` は25の API ドメインを網羅しているため、型付きメソッドを使用してください。必要なエンドポイントが未実装の場合は、型付き API に追加できるよう GitHub issue で報告してください。
+`MisskeyHttpClient.send<T>()` に相当する低レベル API は公開しません。`misskey_client` は26の API ドメインを網羅しているため、型付きメソッドを使用してください。必要なエンドポイントが未実装の場合は、型付き API に追加できるよう GitHub issue で報告してください。
 
 ## misskey_streaming からの移行
 

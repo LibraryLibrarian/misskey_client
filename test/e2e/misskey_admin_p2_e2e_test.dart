@@ -32,6 +32,20 @@ void main() {
   });
 
   group('admin emoji', () {
+    test('listV2 returns a consistent read-only page', () async {
+      final result = await admin.adminEmoji.listV2(
+        query: const MisskeyAdminEmojiListQuery(hostType: 'all'),
+        limit: 10,
+        page: 1,
+        sortKeys: const ['-id'],
+      );
+
+      expect(result.emojis, hasLength(result.count));
+      expect(result.count, lessThanOrEqualTo(10));
+      expect(result.allCount, greaterThanOrEqualTo(result.count));
+      expect(result.allPages, greaterThanOrEqualTo(0));
+    });
+
     test('add -> list -> update -> bulk ops -> delete round trip', () async {
       final suffix = DateTime.now().millisecondsSinceEpoch;
       final name = 'e2e_emoji_$suffix';
@@ -94,6 +108,84 @@ void main() {
       // 連合先の絵文字はキャッシュ状況に依存するため limit の遵守のみ固定する
       final remote = await admin.adminEmoji.listRemote(limit: 10);
       expect(remote.length, lessThanOrEqualTo(10));
+    });
+
+    test('copy creates a local emoji and removes it afterwards', () async {
+      final remote = await admin.adminEmoji.listRemote(limit: 100);
+      final candidates = remote.where((emoji) => emoji.host != null);
+      if (candidates.isEmpty) {
+        markTestSkipped(
+          'The E2E server has no cached remote emoji; copy requires a '
+          'pre-cached federated emoji.',
+        );
+        return;
+      }
+      EmojiDetailed? target;
+      var exactLocalIdsBefore = <String>{};
+      for (final candidate in candidates) {
+        final exactLocalBefore = (await admin.adminEmoji.list(
+          query: candidate.name,
+          limit: 100,
+        )).where((emoji) => emoji.host == null && emoji.name == candidate.name);
+        final ids = exactLocalBefore.map((emoji) => emoji.id).toSet();
+        if (ids.isEmpty) {
+          target = candidate;
+          exactLocalIdsBefore = ids;
+          break;
+        }
+      }
+      if (target == null) {
+        markTestSkipped(
+          'Every cached remote emoji has a conflicting local name; copy '
+          'requires a non-conflicting remote emoji.',
+        );
+        return;
+      }
+      final copyTarget = target;
+
+      String? copiedId;
+      try {
+        copiedId = await admin.adminEmoji.copy(emojiId: copyTarget.id);
+        final copied = await admin.adminEmoji.list(
+          query: copyTarget.name,
+          limit: 100,
+        );
+        expect(copied.map((emoji) => emoji.id), contains(copiedId));
+        expect(
+          copied.singleWhere((emoji) => emoji.id == copiedId).host,
+          isNull,
+        );
+      } finally {
+        // 応答受信前にcopyが成功した場合も、事前に無かった同名local emojiを回収する。
+        final cleanupCandidates = await admin.adminEmoji.list(
+          query: copyTarget.name,
+          limit: 100,
+        );
+        for (final emoji in cleanupCandidates) {
+          final isNewExactLocal =
+              emoji.host == null &&
+              emoji.name == copyTarget.name &&
+              !exactLocalIdsBefore.contains(emoji.id);
+          final isKnownCopy = copiedId == null || emoji.id == copiedId;
+          if (isNewExactLocal && isKnownCopy) {
+            await admin.adminEmoji.delete(id: emoji.id);
+          }
+        }
+      }
+
+      final localAfter = await admin.adminEmoji.list(
+        query: copyTarget.name,
+        limit: 100,
+      );
+      expect(
+        localAfter.where(
+          (emoji) =>
+              emoji.host == null &&
+              emoji.name == copyTarget.name &&
+              !exactLocalIdsBefore.contains(emoji.id),
+        ),
+        isEmpty,
+      );
     });
   });
 

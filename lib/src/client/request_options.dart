@@ -8,12 +8,14 @@ class RequestOptions {
   /// Set [idempotent] to `true` to enable automatic retries for this request
   /// (default: `false`). Use [contentType] to override the Content-Type header;
   /// Dio infers it automatically when omitted. Supply [headers] to attach
-  /// additional headers specific to this request.
+  /// additional headers specific to this request. [redactedBodyFields] lists
+  /// top-level request-body fields that must not appear in debug logs.
   const RequestOptions({
     this.authMode = AuthMode.required,
     this.idempotent = false,
     this.contentType,
     this.headers = const {},
+    this.redactedBodyFields = const {},
   });
 
   /// The authentication mode for this request.
@@ -35,4 +37,9 @@ class RequestOptions {
 
   /// Additional headers specific to this request.
   final Map<String, String> headers;
+
+  /// Top-level request-body fields replaced with `<redacted>` in debug logs.
+  ///
+  /// The authentication token field (`i`) is always redacted independently.
+  final Set<String> redactedBodyFields;
 }

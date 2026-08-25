@@ -23,7 +23,12 @@ MisskeyRole _$MisskeyRoleFromJson(Map<String, dynamic> json) => MisskeyRole(
   usersCount: (json['usersCount'] as num).toInt(),
   isAdministrator: json['isAdministrator'] as bool? ?? false,
   isModerator: json['isModerator'] as bool? ?? false,
-  policies: json['policies'] as Map<String, dynamic>?,
+  policies: (json['policies'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(
+      k,
+      MisskeyRolePolicyOverride.fromJson(e as Map<String, dynamic>),
+    ),
+  ),
   condFormula: json['condFormula'] as Map<String, dynamic>?,
   preserveAssignmentOnMoveAccount:
       json['preserveAssignmentOnMoveAccount'] as bool? ?? false,
@@ -48,7 +53,7 @@ Map<String, dynamic> _$MisskeyRoleToJson(
   'usersCount': instance.usersCount,
   'isAdministrator': instance.isAdministrator,
   'isModerator': instance.isModerator,
-  'policies': instance.policies,
+  'policies': instance.policies?.map((k, e) => MapEntry(k, e.toJson())),
   'condFormula': instance.condFormula,
   'preserveAssignmentOnMoveAccount': instance.preserveAssignmentOnMoveAccount,
 };
