@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Documented migration from the unpublished `misskey_api_kit` predecessor and the local-only `misskey_drive` package in all six READMEs (issue #31)
+- Documented migration from the unpublished `misskey_api_kit` predecessor in all six READMEs (issue #31)
 - Redacted authentication tokens and account-lifecycle credentials from HTTP debug request logs without modifying transmitted request bodies (issue #11)
 - **Breaking:** Replaced dynamic policy maps with `MisskeyRolePolicies` on effective-policy responses and with typed `MisskeyRolePolicyOverride` entries on role definitions (issue #10)
 - Added the explicit `MetaApi.hasMetaKey()` name for metadata key-presence checks and deprecated the ambiguous `supports()` alias; key presence does not interpret a boolean metadata value or indicate endpoint availability (issue #41)

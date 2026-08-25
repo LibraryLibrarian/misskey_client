@@ -229,12 +229,11 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | Classes with the same names |
 | `kReleaseMode` / `kDebugMode` | Not part of the public API; see below |
 
-### Migrating from misskey_api_kit and misskey_drive
+### Migrating from misskey_api_kit
 
-`misskey_api_kit` was an unpublished predecessor, and `misskey_drive` was a local-only package. Remove those dependencies and create a single `MisskeyClient` instead of separate `MisskeyApiKitClient` and `MisskeyDriveClient` instances.
+`misskey_api_kit` was an unpublished predecessor. Remove that dependency and use a single `MisskeyClient` instead of a separate `MisskeyApiKitClient` instance.
 
 - Replace the `account`, `notes`, `notifications`, `channels`, and `users` entry points from `MisskeyApiKitClient` with the properties of the same names on `MisskeyClient`.
-- Replace `MisskeyDriveClient.files`, `.folders`, and `.stats` with `client.drive.files`, `client.drive.folders`, and `client.drive.stats`.
 
 This is not a drop-in replacement: some methods have been renamed, and many responses that were raw `Map<String, dynamic>` values now use typed models, although some APIs still return raw maps. Migrate each call against the [API reference](https://librarylibrarian.github.io/misskey_client/).
 
