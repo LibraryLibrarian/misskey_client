@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed WebAssembly compatibility by using the web-safe `logger` entry point, without changing the logging API or output behavior
 - `AdminApi.updateMeta()` now treats an invocation without settings as a no-op instead of sending an empty update that current upstream Misskey rejects with a 500 response
 
 ### Notes
