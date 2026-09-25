@@ -1,6 +1,8 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/drive/folder_dissolver.dart' as folder_dissolver;
 import '../../internal/id_paginator.dart';
+import '../../models/drive/drive_folder_dissolve_result.dart';
 import '../../models/misskey_drive_file.dart';
 import 'drive_files_api.dart';
 import 'drive_folders_api.dart';
@@ -28,6 +30,31 @@ class DriveApi {
 
   /// Provides Drive statistics operations.
   final DriveStatsApi stats;
+
+  /// Moves a folder's direct files and subfolders to its parent or the root,
+  /// then deletes the now-empty folder.
+  ///
+  /// Misskey permits duplicate names, so this does not rename moved items. It
+  /// throws before any change if the folder, its contents, or the destination
+  /// parent (checked when moving files) cannot be read. After moves begin, it
+  /// returns their individual outcomes and deletes the source folder only when
+  /// every move succeeds. If file moves are not complete, subfolders and
+  /// deletion are skipped. Concurrent additions can make deletion fail with
+  /// `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported in the result. It
+  /// is safe to run again after a partial result.
+  ///
+  /// [concurrency] bounds parallel subfolder moves; files are moved sequentially
+  /// in chunks of 100. It must be positive or an [ArgumentError] is thrown
+  /// before any request is sent.
+  Future<DriveFolderDissolveResult> dissolveFolder({
+    required String folderId,
+    int concurrency = 4,
+  }) => folder_dissolver.dissolveFolder(
+    folderId: folderId,
+    concurrency: concurrency,
+    files: files,
+    folders: folders,
+  );
 
   /// Lazily retrieves all files across all folders in newest-first ID order.
   ///
