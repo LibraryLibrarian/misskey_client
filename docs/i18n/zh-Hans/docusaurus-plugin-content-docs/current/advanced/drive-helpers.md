@@ -20,7 +20,7 @@ title: 网盘辅助方法
 | `client.drive.streamAll()` | 所有文件夹中的文件 | `type` |
 
 ```dart
-// Every image in a folder
+// 文件夹中的所有图片
 await for (final file in client.drive.files.listAll(
   folderId: myFolderId,
   type: 'image/*',
@@ -28,7 +28,7 @@ await for (final file in client.drive.files.listAll(
   print('${file.name} (${file.size} bytes)');
 }
 
-// At most 500 files from the whole Drive
+// 从整个网盘获取最多 500 个文件
 final recent = await client.drive.streamAll(maxItems: 500).toList();
 ```
 
@@ -38,7 +38,7 @@ final recent = await client.drive.streamAll(maxItems: 500).toList();
 
 ```dart
 final files = await client.drive.files.listAll(folderId: myFolderId).toList();
-files.sort((a, b) => b.size.compareTo(a.size)); // Largest first
+files.sort((a, b) => b.size.compareTo(a.size)); // 最大的在前
 ```
 
 ### 页面大小和限制 {#page-size-and-limits}
@@ -109,7 +109,7 @@ for (final item in result.items) {
 final token = MisskeyCancellationToken();
 final future = client.drive.files.createMany(inputs, cancellation: token);
 
-// Later, for example when the user taps "Cancel"
+// 稍后，例如用户点击“取消”时
 token.cancel();
 
 final result = await future;
@@ -268,7 +268,7 @@ if (!result.isComplete) {
 :::
 
 ```dart
-// 1. Inspect the plan without deleting anything
+// 1. 检查计划，不删除任何内容
 final preview = await client.drive.deleteFolderRecursive(
   folderId: folderId,
   dryRun: true,
@@ -276,7 +276,7 @@ final preview = await client.drive.deleteFolderRecursive(
 final plan = preview.plan;
 print('${plan.fileCount} files, ${plan.folderCount} folders, ${plan.totalBytes} bytes');
 
-// 2. Delete
+// 2. 删除
 final result = await client.drive.deleteFolderRecursive(
   folderId: folderId,
   onProgress: (p) => print('${p.phase.name}: ${p.completed}/${p.total}'),
