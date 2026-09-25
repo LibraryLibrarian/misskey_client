@@ -153,15 +153,20 @@ final class DriveUploadPreflight {
   ///
   /// This constructor is public so applications can create snapshots for local
   /// tests without making API requests.
-  const DriveUploadPreflight({
-    this.policies,
+  DriveUploadPreflight({
+    MisskeyRolePolicies? policies,
     required this.capacity,
     this.bypassesPolicyLimits = false,
     this.instanceMaxFileSize,
-  });
+  }) : policies = _copyPolicies(policies),
+       _uploadableFileTypes = _copyUploadableFileTypes(
+         policies?.uploadableFileTypes,
+       );
 
   /// The effective role policies, if they were available.
   final MisskeyRolePolicies? policies;
+
+  final List<String>? _uploadableFileTypes;
 
   /// The Drive capacity snapshot.
   final DriveCapacityInfo capacity;
@@ -222,7 +227,7 @@ final class DriveUploadPreflight {
           }
         }
 
-        final allowedTypes = policies.uploadableFileTypes;
+        final allowedTypes = _uploadableFileTypes;
         if (mimeType != null &&
             allowedTypes != null &&
             !_isAllowedMimeType(mimeType, allowedTypes)) {
@@ -290,6 +295,20 @@ final class DriveUploadPreflight {
       'DriveUploadPreflight(policies: $policies, capacity: $capacity, '
       'bypassesPolicyLimits: $bypassesPolicyLimits, '
       'instanceMaxFileSize: $instanceMaxFileSize)';
+
+  static MisskeyRolePolicies? _copyPolicies(MisskeyRolePolicies? policies) {
+    if (policies == null) return null;
+    return policies.copyWith(
+      uploadableFileTypes: _copyUploadableFileTypes(
+        policies.uploadableFileTypes,
+      ),
+    );
+  }
+
+  static List<String>? _copyUploadableFileTypes(List<String>? allowedTypes) =>
+      allowedTypes == null
+      ? null
+      : UnmodifiableListView(List<String>.of(allowedTypes));
 }
 
 bool _isAllowedMimeType(String mimeType, List<String> allowedTypes) {

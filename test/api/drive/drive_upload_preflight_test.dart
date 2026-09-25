@@ -2,6 +2,7 @@ import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
 import '../../support/fake_drive_server.dart';
+import '../../support/scripted_http_adapter.dart';
 
 void main() {
   const megabyte = 1024 * 1024;
@@ -189,6 +190,31 @@ void main() {
       expect(check.issues.whereType<DriveUploadFileTooLarge>(), hasLength(2));
     });
 
+    test('defensively snapshots uploadable MIME type policies', () {
+      final allowedTypes = <String>['image/*'];
+      final policy = policies(uploadableFileTypes: allowedTypes);
+      final snapshot = preflight(policies: policy);
+
+      allowedTypes.add('video/*');
+      expect(
+        snapshot.check(size: 1, mimeType: 'video/mp4').issues.single,
+        isA<DriveUploadTypeNotAllowed>(),
+      );
+
+      expect(
+        () => snapshot.policies!.uploadableFileTypes!.add('video/*'),
+        throwsUnsupportedError,
+      );
+      expect(
+        snapshot
+            .afterUpload(1)
+            .check(size: 1, mimeType: 'video/mp4')
+            .issues
+            .single,
+        isA<DriveUploadTypeNotAllowed>(),
+      );
+    });
+
     test('exposes unmodifiable result lists', () {
       final snapshot = preflight(policies: policies());
       final typeCheck = snapshot.check(size: 1, mimeType: 'video/mp4');
@@ -261,6 +287,60 @@ void main() {
         await server.client.dispose();
       },
     );
+
+    test('propagates an API exception when the user request fails', () async {
+      final server = FakeDriveServer();
+      server.failWhen(
+        '/i',
+        (_) => true,
+        ScriptedResponse.error(400, code: 'USER_REQUEST_FAILED'),
+      );
+
+      await expectLater(
+        server.client.drive.getUploadPreflight(),
+        throwsA(isA<MisskeyApiException>()),
+      );
+      await server.client.dispose();
+    });
+
+    test(
+      'propagates an API exception when the capacity request fails',
+      () async {
+        final server = FakeDriveServer();
+        server.failWhen(
+          '/drive',
+          (_) => true,
+          ScriptedResponse.error(400, code: 'CAPACITY_REQUEST_FAILED'),
+        );
+
+        await expectLater(
+          server.client.drive.getUploadPreflight(),
+          throwsA(isA<MisskeyApiException>()),
+        );
+        await server.client.dispose();
+      },
+    );
+
+    test('propagates an API exception when both requests fail', () async {
+      final server = FakeDriveServer();
+      server
+        ..failWhen(
+          '/i',
+          (_) => true,
+          ScriptedResponse.error(400, code: 'USER_REQUEST_FAILED'),
+        )
+        ..failWhen(
+          '/drive',
+          (_) => true,
+          ScriptedResponse.error(400, code: 'CAPACITY_REQUEST_FAILED'),
+        );
+
+      await expectLater(
+        server.client.drive.getUploadPreflight(),
+        throwsA(isA<MisskeyApiException>()),
+      );
+      await server.client.dispose();
+    });
 
     test('recognizes an admin as bypassing role policy limits', () async {
       final server = FakeDriveServer(
