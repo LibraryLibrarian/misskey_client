@@ -14,6 +14,7 @@
 - 망라적 오류 처리를 위한 sealed 예외 클래스 계층 구조
 - `json_serializable`로 생성된 강타입 요청 및 응답 모델
 - 타입 지정 채널, 이벤트, 자동 재연결을 제공하는 통합 Streaming API
+- 자동 페이지네이션, 일괄 이동, 중복 제거 배치 업로드, 항목별 결과를 제공하는 재귀 폴더 작업을 위한 드라이브 헬퍼
 - 교체 가능한 `Logger` 인터페이스를 통한 유연한 로깅
 - 순수 Dart — Flutter 의존성 불필요
 
@@ -72,7 +73,7 @@ void main() async {
 | `charts` | 통계 차트 |
 | `chat` | 채팅룸과 메시지 |
 | `clips` | 클립 컬렉션 |
-| `drive` | 드라이브(파일 저장소), 파일, 폴더, 통계 |
+| `drive` | 드라이브(파일 저장소), 파일, 폴더, 통계; 전체 목록 조회, 일괄 이동, 배치 업로드, 폴더 트리 및 재귀 삭제 헬퍼 |
 | `federation` | 연합 인스턴스 정보 |
 | `flash` | Flash(Play) 스크립트 |
 | `following` | 팔로우 및 팔로우 요청 |
@@ -174,7 +175,7 @@ final client = MisskeyClient(
 
 ## 오류 처리
 
-모든 예외는 sealed 클래스 `MisskeyClientException`을 상속하므로 망라적 패턴 매칭이 가능합니다:
+API 및 전송 예외는 sealed 클래스 `MisskeyClientException`을 상속하므로 망라적 패턴 매칭이 가능합니다:
 
 ```dart
 try {
@@ -195,6 +196,8 @@ try {
   // 타임아웃, 연결 거부 등
 }
 ```
+
+헬퍼 API는 잘못된 인수에 대해 `ArgumentError`(요청 전), 사전 조건 미충족에 대해 `StateError`(예: 연결된 `main` 스트리밍 구독이 없는 `drive.uploadFromUrlAndWait()`), sealed 계층 외부의 `DriveFolderAmbiguousException`을 추가로 발생시킬 수 있습니다. 여러 항목을 변경하는 배치 헬퍼는 변경을 시작한 뒤 예외를 던지는 대신 각 항목의 결과를 `MisskeyBatchResult`로 보고합니다.
 
 ## 로깅
 

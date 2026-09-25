@@ -126,6 +126,22 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
+## 자동 페이지네이션 헬퍼
+
+일부 API는 위의 `untilId` 반복 처리를 대신 수행하고 지연 `Stream`을 반환하는 헬퍼를 제공합니다. 현재 드라이브 목록 헬퍼가 이에 해당합니다.
+
+- `client.drive.files.listAll()` — 한 폴더의 파일
+- `client.drive.folders.listAll()` — 한 상위 폴더의 폴더
+- `client.drive.streamAll()` — 모든 폴더의 파일
+
+```dart
+await for (final file in client.drive.files.listAll(pageSize: 100)) {
+  print(file.name);
+}
+```
+
+스트림을 listen할 때만 요청이 시작되며 구독을 취소하면 이후 요청이 중단됩니다. 결과는 항상 ID 최신순입니다. 일찍 끝내려면 `maxItems`를 사용하세요. 자세한 내용은 [드라이브 헬퍼](./advanced/drive-helpers.md#listing-everything)를 참조하세요.
+
 ## 페이지네이션을 지원하는 API
 
 목록을 반환하는 대부분의 API는 `sinceId`/`untilId`와 `limit`을 지원합니다:

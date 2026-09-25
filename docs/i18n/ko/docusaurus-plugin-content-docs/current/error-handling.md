@@ -28,6 +28,26 @@ MisskeyClientException (sealed)
 - `errorId` — Misskey 오류 유형을 식별하는 UUID
 - `endpoint` — 오류가 발생한 API 경로
 
+## 예외 계층 외부의 예외
+
+`MisskeyClientException`은 API 및 전송 오류를 다룹니다. [드라이브 헬퍼](./advanced/drive-helpers.md)와 같은 일부 헬퍼 API는 다음 예외도 발생시킬 수 있습니다.
+
+- `ArgumentError` — 잘못된 인수(예: 양수가 아닌 `concurrency` 또는 범위를 벗어난 `pageSize`). 요청을 보내기 전에 발생합니다.
+- `StateError` — 사전 조건 미충족. 예를 들어 연결된 `main` 스트리밍 구독 없이 `client.drive.uploadFromUrlAndWait()`을 호출한 경우입니다.
+- `DriveFolderAmbiguousException` — 여러 형제 폴더의 이름이 같을 때 `resolvePath()`와 `getOrCreate()`가 발생시킵니다. sealed 계층에 포함되지 않으므로 `on MisskeyClientException`으로 잡히지 않습니다.
+
+```dart
+try {
+  final folder = await client.drive.folders.resolvePath(['Photos', 'Trip']);
+} on DriveFolderAmbiguousException catch (e) {
+  print('${e.candidates.length} folders named "${e.name}"');
+} on MisskeyClientException catch (e) {
+  print('Error: $e');
+}
+```
+
+여러 항목을 변경하는 배치 헬퍼(예: `createMany()`, `moveBulkAll()`, `dissolveFolder()`, `deleteFolderRecursive()`)는 변경을 시작한 뒤 한 번에 예외를 던지지 않습니다. 대신 각 항목의 성공, 오류가 포함된 실패, 사유가 포함된 건너뜀을 보고하는 `MisskeyBatchResult`(또는 이를 포함한 결과)를 반환합니다. 대상 확인 실패와 같이 변경 전 발생한 오류는 계속 예외로 전달됩니다.
+
 ## 기본 catch 패턴
 
 ### 모든 오류 잡기
