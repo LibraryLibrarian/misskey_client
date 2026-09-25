@@ -78,7 +78,10 @@ class DriveApi {
   /// plan contains only files already listed; every planned file and folder is
   /// returned as skipped with `cancelled`, and no deletes are sent (even for a
   /// dry run). Tree traversal itself finishes before cancellation is observed.
-  /// The plan is a snapshot; concurrently added contents are not deleted.
+  /// Planning spans multiple requests and is not atomic: items added during
+  /// planning may be included. Only items absent from the completed plan are
+  /// excluded from deletion. A dry run does not freeze the targets of a later
+  /// non-dry-run call, which creates a new plan.
   /// Planned items are deleted even if they are moved elsewhere after planning.
   ///
   /// Misskey removes file database rows after responding to file deletion.
