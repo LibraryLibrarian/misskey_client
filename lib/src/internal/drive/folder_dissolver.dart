@@ -2,10 +2,10 @@ import 'package:meta/meta.dart';
 
 import '../../api/drive/drive_files_api.dart';
 import '../../api/drive/drive_folders_api.dart';
-import '../bounded_batch.dart';
 import '../../models/batch/misskey_batch_result.dart';
 import '../../models/drive/drive_folder_dissolve_result.dart';
 import '../../models/misskey_drive_folder.dart';
+import '../bounded_batch.dart';
 
 @internal
 Future<DriveFolderDissolveResult> dissolveFolder({
@@ -28,14 +28,28 @@ Future<DriveFolderDissolveResult> dissolveFolder({
     fileIds: fileIds,
     folderId: targetFolderId,
   );
-  final subfolderResults =
-      await runBounded<MisskeyDriveFolder, MisskeyDriveFolder>(
-        inputs: subfolderInputs,
-        concurrency: concurrency,
-        task: (subfolder, _) => targetFolderId == null
-            ? folders.update(folderId: subfolder.id, moveToRoot: true)
-            : folders.update(folderId: subfolder.id, parentId: targetFolderId),
-      );
+  final subfolderResults = fileResults.isComplete
+      ? await runBounded<MisskeyDriveFolder, MisskeyDriveFolder>(
+          inputs: subfolderInputs,
+          concurrency: concurrency,
+          stopReasonFor: stopOnRateLimit,
+          task: (subfolder, _) => targetFolderId == null
+              ? folders.update(folderId: subfolder.id, moveToRoot: true)
+              : folders.update(
+                  folderId: subfolder.id,
+                  parentId: targetFolderId,
+                ),
+        )
+      : MisskeyBatchResult<MisskeyDriveFolder, MisskeyDriveFolder>(
+          items: [
+            for (var index = 0; index < subfolderInputs.length; index++)
+              MisskeyBatchSkipped(
+                input: subfolderInputs[index],
+                index: index,
+                reason: MisskeyBatchSkipReason.dependencyFailed,
+              ),
+          ],
+        );
 
   late final MisskeyBatchItemResult<MisskeyDriveFolder, Null> deletion;
   if (fileResults.isComplete && subfolderResults.isComplete) {

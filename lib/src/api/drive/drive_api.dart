@@ -35,14 +35,17 @@ class DriveApi {
   /// then deletes the now-empty folder.
   ///
   /// Misskey permits duplicate names, so this does not rename moved items. It
-  /// throws before changing anything if the folder or its contents cannot be
-  /// read. After moves begin, it returns their individual outcomes and deletes
-  /// the source folder only when every move succeeds. Concurrent additions can
-  /// make deletion fail with `HAS_CHILD_FILES_OR_FOLDERS`; that failure is
-  /// reported in the result. It is safe to run again after a partial result.
+  /// throws before any change if the folder, its contents, or the destination
+  /// parent (checked when moving files) cannot be read. After moves begin, it
+  /// returns their individual outcomes and deletes the source folder only when
+  /// every move succeeds. If file moves are not complete, subfolders and
+  /// deletion are skipped. Concurrent additions can make deletion fail with
+  /// `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported in the result. It
+  /// is safe to run again after a partial result.
   ///
-  /// [concurrency] must be positive or an [ArgumentError] is thrown before any
-  /// request is sent.
+  /// [concurrency] bounds parallel subfolder moves; files are moved sequentially
+  /// in chunks of 100. It must be positive or an [ArgumentError] is thrown
+  /// before any request is sent.
   Future<DriveFolderDissolveResult> dissolveFolder({
     required String folderId,
     int concurrency = 4,
