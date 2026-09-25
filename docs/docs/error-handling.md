@@ -46,7 +46,7 @@ try {
 }
 ```
 
-Batch helpers that change many items (for example `createMany()`, `moveBulkAll()`, `dissolveFolder()`, and `deleteFolderRecursive()`) do not throw once changes have started. They return a `MisskeyBatchResult` (or a result containing one) that reports each item as a success, a failure with its error, or a skip with a reason. Errors that occur before any change, such as a failed destination check, are still thrown.
+Once batch helpers that change many items (for example `createMany()`, `moveBulkAll()`, `dissolveFolder()`, and `deleteFolderRecursive()`) have started making changes, individual operation failures are recorded in a `MisskeyBatchResult` (or a result containing one) as a failure with its error, or as a skip with a reason, instead of being thrown. Errors that occur before any change, such as a failed destination check, are still thrown. An error thrown by an `onProgress` callback while reporting a settled item is rethrown after in-flight work finishes, and completed changes are not rolled back.
 
 ## Basic catch patterns
 

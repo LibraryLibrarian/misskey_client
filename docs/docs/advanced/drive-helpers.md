@@ -67,7 +67,7 @@ final mp4s = await client.drive
 
 ## Batch results and cancellation
 
-Helpers that change many items do not throw once changes have started. Instead they return a `MisskeyBatchResult<I, T>` with one outcome per input, in input order:
+Once helpers that change many items have started making changes, the failure of an individual operation does not throw; it is recorded in a `MisskeyBatchResult<I, T>`, which holds one outcome per input, in input order. An error thrown by your own `onProgress` callback while reporting a settled item is different: new work stops and the error is rethrown after in-flight requests finish. Changes that already completed are not rolled back.
 
 | Type | Meaning | Fields |
 |---|---|---|
@@ -80,9 +80,9 @@ Helpers that change many items do not throw once changes have started. Instead t
 | Value | Meaning |
 |---|---|
 | `cancelled` | Cancellation was requested |
-| `rateLimited` | The server rate-limited a request |
-| `stoppedAfterError` | An earlier error stopped the batch |
-| `dependencyFailed` | A prerequisite operation did not succeed |
+| `rateLimited` | The server rate-limited a request (HTTP 429) in `createMany()`, `dissolveFolder()`, or `deleteFolderRecursive()` |
+| `stoppedAfterError` | An earlier error stopped the batch (`createMany()` with `stopOnError`, or any failed chunk in `moveBulkAll()`, including a 429) |
+| `dependencyFailed` | A prerequisite operation did not succeed (for example, dissolving after failed file moves, or deleting a folder whose contents were not deleted) |
 
 The result also offers `successes`, `failures`, `skipped`, and `isComplete` (true when every item succeeded, including an empty batch). Because `MisskeyBatchItemResult` is sealed, a `switch` over its items is exhaustive:
 
@@ -103,7 +103,7 @@ for (final item in result.items) {
 
 ### Cancellation
 
-`createMany()` and `deleteFolderRecursive()` accept a `MisskeyCancellationToken`. Cancellation is cooperative: it prevents new work from starting, but in-flight requests are not aborted and are awaited to completion. Items that were not started are reported as skipped with `cancelled`.
+`createMany()` and `deleteFolderRecursive()` accept a `MisskeyCancellationToken`. Cancellation is cooperative: it prevents new work from starting, but in-flight requests are not aborted and are awaited to completion. Items that were not started are generally reported as skipped with `cancelled`. In `deleteFolderRecursive()`, a folder whose `HAS_CHILD_FILES_OR_FOLDERS` retry is interrupted is reported as a failure instead, because its deletion was already attempted.
 
 ```dart
 final token = MisskeyCancellationToken();
@@ -361,7 +361,7 @@ print('${result.file.id}: ${result.outcome.name}');
 - `result.outcome` is `uploaded`, `reusedExisting`, or `movedExisting`. It is best-effort: a concurrent upload can win after the lookup, and such races are not always detectable.
 - Existing files keep their name and comment. `isSensitive: true` upgrades an existing non-sensitive file.
 - Pass `md5` (32 hexadecimal characters) to avoid hashing large inputs. Otherwise the hash is computed synchronously on the calling isolate (except with `uploadAnyway`).
-- With `reuseExisting`, a match means `folderId` is not validated, whereas a plain upload would fail for a nonexistent or foreign folder.
+- When an existing file matches, `folderId` is not validated, so a nonexistent or foreign folder does not cause an error with `reuseExisting`. A plain `create()` without `force` behaves the same way, because the server returns the match before looking up the folder.
 
 ### createMany
 
@@ -390,7 +390,7 @@ final result = await client.drive.files.createMany(
 - With `deduplicate`, each input is handled like `createDeduplicated()` with that policy. Identical inputs in the same batch form an ordered chain: each follower waits for its predecessor (occupying a worker) and uses its latest result according to the policy. With `moveExisting`, the file ends up in the last member's folder. A follower's filename, name, and comment are ignored, while `isSensitive` can only upgrade the file to `true`. If the predecessor fails or is skipped, a follower that is already running is skipped as `dependencyFailed`. With `uploadAnyway`, every input uploads independently.
 - Without `deduplicate`, the server can still return an existing file with the same content, but it is reported as `uploaded`.
 - `onProgress` receives a `DriveBatchUploadProgress` with item counts (`completedItems`, `succeededItems`, `failedItems`, `totalItems`) and the byte progress (`sent`, `total`) of the item at `itemIndex`.
-- Nothing is retried automatically. A network failure after the server stored a file is reported as a failure; rerunning is safe thanks to server-side deduplication.
+- Nothing is retried automatically. A network failure after the server stored a file is reported as a failure. Rerunning without `deduplicate`, or with `reuseExisting` or `moveExisting`, returns the stored file instead of creating another, because these uploads use server-side deduplication (`force: false`). With `uploadAnyway` (`force: true`), a rerun can create additional copies.
 - The input bytes are not copied; do not modify them until the batch completes.
 
 ## Waiting for URL uploads
@@ -435,4 +435,4 @@ Misskey's default per-user limits for the endpoints used by these helpers:
 | `drive/files/upload-from-url` | 60 per hour | `uploadFromUrlAndWait()` |
 | Listing, `show`, `find`, `update`, `delete`, `move-bulk` | No per-endpoint limit | All other helpers |
 
-Role rate-limit factors set by the server administrator scale these values. When a limit is hit, single-request helpers throw `MisskeyRateLimitException`, and batch helpers stop starting new work and report the remaining items as `rateLimited`.
+Role rate-limit factors set by the server administrator scale these values. When a limit is hit, single-request helpers throw `MisskeyRateLimitException`, and batch helpers stop starting new work. `createMany()`, `dissolveFolder()`, and `deleteFolderRecursive()` report the remaining items as `rateLimited`.

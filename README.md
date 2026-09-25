@@ -197,7 +197,7 @@ try {
 }
 ```
 
-Helper APIs can additionally throw `ArgumentError` for invalid arguments (before any request), `StateError` for unmet preconditions (such as `drive.uploadFromUrlAndWait()` without a connected `main` streaming subscription), and `DriveFolderAmbiguousException`, which is outside the sealed hierarchy. Batch helpers that change many items report per-item outcomes in a `MisskeyBatchResult` instead of throwing once changes have started.
+Helper APIs can additionally throw `ArgumentError` for invalid arguments (before any request), `StateError` for unmet preconditions (such as `drive.uploadFromUrlAndWait()` without a connected `main` streaming subscription), and `DriveFolderAmbiguousException`, which is outside the sealed hierarchy. Once batch helpers that change many items have started making changes, individual operation failures are recorded in a `MisskeyBatchResult` instead of being thrown; an error thrown by an `onProgress` callback while reporting a settled item is rethrown after in-flight work finishes, without rolling back completed changes.
 
 ## Logging
 
