@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:misskey_client/misskey_client.dart';
 import 'package:misskey_client/src/client/misskey_http.dart';
+import 'package:misskey_client/src/streaming/internal/subscription_connection.dart';
 import 'package:test/test.dart';
 
 import '../../support/drive_fixtures.dart';
@@ -90,9 +91,21 @@ void main() {
   test(
     'uses explicit subscription rather than first registered main',
     () async {
-      final second = await streaming.subscribeRaw(channel: 'main');
+      final secondSocket = FakeStreamingSocket();
+      final secondOwner = MisskeyStreaming.withConnector(
+        baseUrl: http.baseUrl,
+        connector: FakeStreamingConnector([secondSocket]).call,
+      );
+      addTearDown(secondOwner.dispose);
+      await secondOwner.connect();
+      final second = await secondOwner.subscribe(
+        MisskeyStreamingChannel.main(),
+      );
       adapter.on(path, (request) {
-        emit('explicit', 'second', subscriptionId: second.id);
+        secondSocket.emitChannel(second.id, 'urlUploadFinished', {
+          'marker': 'explicit',
+          'file': driveFileJson(id: 'second'),
+        });
         return ScriptedResponse.noContent();
       });
       expect(
@@ -300,10 +313,17 @@ void main() {
       events: const Stream.empty(),
       onUnsubscribe: () async {},
       onIsActive: () => mainSub.isActive,
-      onIsConnected: () => streaming.isConnected,
       onCaptureNote: (_) {},
       onUncaptureNote: (_) {},
     );
+    await expectLater(
+      drive.uploadFromUrlAndWait(url: url, mainSubscription: sub),
+      throwsStateError,
+    );
+    expect(adapter.requests, isEmpty);
+    expect(messages.hasListener, isFalse);
+    // 監視解除を検証できるストリームを、テスト用に接続済みの所有者へ登録する。
+    registerSubscriptionConnection(sub, () => streaming.isConnected);
     adapter.on(path, (request) {
       expect(messages.hasListener, isTrue);
       return ScriptedResponse.error(429, code: 'RATE_LIMIT_EXCEEDED');

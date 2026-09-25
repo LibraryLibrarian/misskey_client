@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import '../../api/drive/drive_files_api.dart';
 import '../../exception/misskey_client_exception.dart';
 import '../../models/misskey_drive_file.dart';
+import '../../streaming/internal/subscription_connection.dart';
 import '../../streaming/misskey_streaming.dart';
 import '../../streaming/streaming_subscription.dart';
 
@@ -47,7 +48,7 @@ Future<MisskeyDriveFile> uploadFromUrlAndWait({
       }
     }
   }
-  if (subscription == null || !subscription.isConnected) {
+  if (subscription == null || !isSubscriptionConnected(subscription)) {
     throw StateError('No connected main subscription; $guidance');
   }
   if (marker == '') {

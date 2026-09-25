@@ -10,6 +10,7 @@ import '../logging/logger.dart';
 import 'internal/streaming_event_decoder.dart';
 import 'internal/streaming_socket.dart';
 import 'internal/streaming_uri_builder.dart';
+import 'internal/subscription_connection.dart';
 import 'streaming_channel.dart';
 import 'streaming_config.dart';
 import 'streaming_connection_state.dart';
@@ -192,10 +193,10 @@ class MisskeyStreaming {
         await _unsubscribeSubscription(subscriptionId);
       },
       onIsActive: () => identical(_subscriptions[subscriptionId], entry),
-      onIsConnected: () => isConnected,
       onCaptureNote: (noteId) => _captureNote(entry, noteId),
       onUncaptureNote: (noteId) => _uncaptureNote(entry, noteId),
     );
+    registerSubscriptionConnection(entry.subscription, () => isConnected);
     _subscriptions[subscriptionId] = entry;
 
     if (isConnected) {

@@ -41,6 +41,8 @@ class DriveApi {
   /// `MisskeyStreamingChannel.main()` and connect the streaming client. Uses
   /// [mainSubscription] when supplied, otherwise the first registered main
   /// subscription. Never subscribes, connects, or disconnects automatically.
+  /// Subscriptions not created by [MisskeyStreaming] are treated as not
+  /// connected and cause a [StateError].
   ///
   /// The server sends no event on upload failure, so server-side failures
   /// surface only as a timeout. A timeout does not cancel the server-side
