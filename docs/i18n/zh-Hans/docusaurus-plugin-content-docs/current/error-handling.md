@@ -28,6 +28,26 @@ MisskeyClientException (sealed)
 - `errorId` — 标识 Misskey 错误类型的 UUID
 - `endpoint` — 发生错误的 API 路径
 
+## 层级之外的异常
+
+`MisskeyClientException` 涵盖 API 和传输错误。一些辅助 API（例如[网盘辅助方法](./advanced/drive-helpers.md)）还可能抛出：
+
+- `ArgumentError` — 参数无效（例如 `concurrency` 非正数或 `pageSize` 超出范围）。它会在发送任何请求前抛出。
+- `StateError` — 未满足前置条件，例如在没有已连接的 `main` 流式订阅时调用 `client.drive.uploadFromUrlAndWait()`。
+- `DriveFolderAmbiguousException` — 当多个同级文件夹同名时，由 `resolvePath()` 和 `getOrCreate()` 抛出。它不属于 sealed class 层级，因此 `on MisskeyClientException` 不会捕获它。
+
+```dart
+try {
+  final folder = await client.drive.folders.resolvePath(['Photos', 'Trip']);
+} on DriveFolderAmbiguousException catch (e) {
+  print('${e.candidates.length} folders named "${e.name}"');
+} on MisskeyClientException catch (e) {
+  print('Error: $e');
+}
+```
+
+会更改多个项目的批量辅助方法（例如 `createMany()`、`moveBulkAll()`、`dissolveFolder()` 和 `deleteFolderRecursive()`）在开始更改后不会抛出异常，而是返回 `MisskeyBatchResult`（或包含它的结果），逐项报告成功、带有错误的失败，或带有原因的跳过。更改开始前发生的错误（例如目标检查失败）仍会抛出。
+
 ## 基本捕获模式
 
 ### 捕获所有错误

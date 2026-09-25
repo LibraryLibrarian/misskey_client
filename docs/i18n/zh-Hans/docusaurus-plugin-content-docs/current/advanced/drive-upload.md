@@ -7,6 +7,8 @@ title: 网盘上传
 
 Misskey 的网盘是文件存储系统。所有附加到笔记的文件必须先上传到你的网盘。`client.drive` 外观对象暴露了 `files`、`folders` 和 `stats` 子 API。
 
+另请参阅[网盘辅助方法](./drive-helpers.md)，了解组合多个请求的操作，例如列出所有文件、批量移动、批量上传和递归删除文件夹。
+
 ## 上传文件
 
 ```dart
@@ -31,9 +33,11 @@ final driveFile = await client.drive.files.create(
   filename: 'nsfw.jpg',
   folderId: myFolderId,
   isSensitive: true,
-  force: true, // 即使存在同名文件也强制上传
+  force: true, // 即使存在相同内容的文件也强制上传
 );
 ```
+
+Misskey 按内容（MD5 哈希）而非名称进行去重。如果不设置 `force`，上传网盘中已存在的内容会返回已有文件，并忽略请求中的 `folderId`、`name` 和 `comment`。如需完全避免传输字节，请参阅[网盘辅助方法](./drive-helpers.md#creatededuplicated)中的 `createDeduplicated()`。
 
 ### 上传进度
 
@@ -58,7 +62,7 @@ await client.drive.files.uploadFromUrl(
 );
 ```
 
-这是一个即发即忘的端点；文件会异步出现在网盘中。
+这是一个即发即忘的端点；文件会异步出现在网盘中。`force` 的含义与 `create()` 相同。如需等待生成的文件，请使用[网盘辅助方法](./drive-helpers.md#waiting-for-url-uploads)中的 [`uploadFromUrlAndWait()`](./drive-helpers.md#waiting-for-url-uploads)。
 
 ## 将网盘文件附加到笔记
 
@@ -92,10 +96,12 @@ final files = await client.drive.files.list(
 final images = await client.drive.files.list(type: 'image/*');
 
 // 按大小降序排序
-final large = await client.drive.files.list(sort: '-size');
+final large = await client.drive.files.list(sort: '+size');
 ```
 
-`sort` 接受：`+createdAt`、`-createdAt`、`+name`、`-name`、`+size`、`-size`。
+`sort` 接受：`+createdAt`、`-createdAt`、`+name`、`-name`、`+size`、`-size`（`+` 表示降序）。
+
+只有 `+createdAt`（或不指定 `sort`）与 `untilId` 分页一致。其他排序会改变顺序，但游标仍按 ID 筛选，因此分页会漏项或重复。要列出所有文件，请使用 `listAll()` 并在本地排序；详情请参阅[网盘辅助方法](./drive-helpers.md#listing-everything)。
 
 ### 流（所有文件，不过滤文件夹）
 
@@ -134,7 +140,7 @@ final file = await client.drive.files.showByUrl('https://example.com/file.jpg');
 final updated = await client.drive.files.update(
   fileId: driveFile.id,
   name: 'new-name.jpg',
-  comment: 'Updated alt text',
+  comment: Optional('Updated alt text'), // Optional.null_() 可清除备注
   isSensitive: false,
 );
 ```

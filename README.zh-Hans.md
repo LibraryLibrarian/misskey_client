@@ -14,6 +14,7 @@
 - 用于穷举式错误处理的密封异常类层次结构
 - 使用 `json_serializable` 生成的强类型请求和响应模型
 - 集成 Streaming API，提供强类型频道、事件和自动重连
+- 网盘辅助方法支持自动分页、批量移动、带去重的批量上传，以及带逐项结果的递归文件夹操作
 - 通过可替换的 `Logger` 接口实现灵活日志记录
 - 纯 Dart — 无 Flutter 依赖
 
@@ -72,7 +73,7 @@ void main() async {
 | `charts` | 统计图表 |
 | `chat` | 聊天室与消息 |
 | `clips` | 便签集合 |
-| `drive` | 网盘（文件存储）、文件、文件夹、统计信息 |
+| `drive` | 网盘（文件存储）、文件、文件夹、统计信息；支持列出所有项目、批量移动、批量上传、遍历文件夹树和递归删除的辅助方法 |
 | `federation` | 联合实例信息 |
 | `flash` | Flash（Play）脚本 |
 | `following` | 关注与关注请求 |
@@ -174,7 +175,7 @@ final client = MisskeyClient(
 
 ## 错误处理
 
-所有异常都继承自密封类 `MisskeyClientException`，支持穷举式模式匹配：
+API 和传输异常都继承自密封类 `MisskeyClientException`，支持穷举式模式匹配：
 
 ```dart
 try {
@@ -195,6 +196,8 @@ try {
   // 超时、连接被拒绝等
 }
 ```
+
+辅助 API 还可能因参数无效（在发送请求前）抛出 `ArgumentError`，因前置条件未满足（例如未连接 main 流式订阅时调用 `drive.uploadFromUrlAndWait()`）抛出 `StateError`，也可能抛出不属于该密封层次结构的 `DriveFolderAmbiguousException`。对多个项目执行变更的批量辅助方法会通过 `MisskeyBatchResult` 报告每项结果，而不会在变更开始后统一抛出异常。
 
 ## 日志记录
 
