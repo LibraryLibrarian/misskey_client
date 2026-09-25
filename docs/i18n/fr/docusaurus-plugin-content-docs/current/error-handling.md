@@ -28,6 +28,26 @@ MisskeyClientException (sealed)
 - `errorId` — UUID identifiant le type d'erreur Misskey
 - `endpoint` — Le chemin de l'API où l'erreur s'est produite
 
+## Exceptions hors de la hiérarchie
+
+`MisskeyClientException` couvre les erreurs d’API et de transport. Certaines API d’assistance, comme les [assistants Drive](./advanced/drive-helpers.md), peuvent également lever :
+
+- `ArgumentError` — arguments invalides (par exemple une valeur `concurrency` non positive ou une `pageSize` hors limites). L’exception est levée avant l’envoi de toute requête.
+- `StateError` — préconditions non satisfaites, comme l’appel de `client.drive.uploadFromUrlAndWait()` sans abonnement de streaming `main` connecté.
+- `DriveFolderAmbiguousException` — levée par `resolvePath()` et `getOrCreate()` lorsque plusieurs dossiers frères portent le même nom. Elle ne fait pas partie de la hiérarchie scellée ; `on MisskeyClientException` ne l’intercepte donc pas.
+
+```dart
+try {
+  final folder = await client.drive.folders.resolvePath(['Photos', 'Trip']);
+} on DriveFolderAmbiguousException catch (e) {
+  print('${e.candidates.length} folders named "${e.name}"');
+} on MisskeyClientException catch (e) {
+  print('Error: $e');
+}
+```
+
+Les assistants par lots qui modifient plusieurs éléments (par exemple `createMany()`, `moveBulkAll()`, `dissolveFolder()` et `deleteFolderRecursive()`) ne lèvent pas d’exception une fois les modifications commencées. Ils renvoient un `MisskeyBatchResult` (ou un résultat qui en contient un) indiquant pour chaque élément s’il a réussi, échoué avec une erreur ou été ignoré avec une raison. Les erreurs survenant avant toute modification, comme l’échec de la vérification de destination, sont toujours levées.
+
 ## Modèles de capture de base
 
 ### Capturer toutes les erreurs

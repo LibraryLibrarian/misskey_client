@@ -14,6 +14,7 @@ Une bibliothèque cliente Dart pure pour l'API [Misskey](https://misskey-hub.net
 - Hiérarchie d'exceptions scellées pour une gestion exhaustive des erreurs
 - Modèles de requête et de réponse fortement typés générés avec `json_serializable`
 - API Streaming intégrée avec Channels et événements typés, et reconnexion automatique
+- Assistants Drive pour la pagination automatique, les déplacements en masse, les téléversements par lots avec déduplication et les opérations récursives sur les dossiers, avec des résultats par élément
 - Journalisation configurable via une interface `Logger` interchangeable
 - Dart pur — aucune dépendance Flutter requise
 
@@ -72,7 +73,7 @@ void main() async {
 | `charts` | Graphiques statistiques |
 | `chat` | Salons de Chat et messages |
 | `clips` | Collections de Clips |
-| `drive` | Drive (stockage de fichiers), fichiers, dossiers, statistiques |
+| `drive` | Drive (stockage de fichiers), fichiers, dossiers, statistiques ; assistants pour tout lister, déplacer en masse, téléverser par lots, parcourir les arborescences et supprimer récursivement |
 | `federation` | Informations sur les instances fédérées |
 | `flash` | Scripts Flash (Play) |
 | `following` | Abonnements et demandes d'abonnement |
@@ -174,7 +175,7 @@ Les points de terminaison nécessitant une authentification injectent le jeton a
 
 ## Gestion des erreurs
 
-Toutes les exceptions étendent la classe scellée `MisskeyClientException`, permettant un filtrage par correspondance de motifs exhaustif :
+Les exceptions d’API et de transport étendent la classe scellée `MisskeyClientException`, permettant un filtrage par correspondance de motifs exhaustif :
 
 ```dart
 try {
@@ -195,6 +196,8 @@ try {
   // Délai d'attente, connexion refusée, etc.
 }
 ```
+
+Les API d’assistance peuvent également lever `ArgumentError` pour des arguments invalides (avant toute requête), `StateError` lorsque des préconditions ne sont pas remplies (par exemple `drive.uploadFromUrlAndWait()` sans abonnement de streaming `main` connecté) et `DriveFolderAmbiguousException`, qui ne fait pas partie de la hiérarchie scellée. Les assistants par lots qui modifient plusieurs éléments renvoient les résultats de chaque élément dans un `MisskeyBatchResult` au lieu de lever une exception une fois les modifications commencées.
 
 ## Journalisation
 

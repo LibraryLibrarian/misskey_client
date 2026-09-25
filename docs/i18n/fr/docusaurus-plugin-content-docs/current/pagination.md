@@ -126,6 +126,22 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
+## Assistants de pagination automatique
+
+Certaines API proposent des assistants qui exécutent la boucle `untilId` ci-dessus et renvoient un `Stream` paresseux. Il s’agit actuellement des assistants de liste du Drive :
+
+- `client.drive.files.listAll()` — fichiers d’un dossier
+- `client.drive.folders.listAll()` — dossiers d’un dossier parent
+- `client.drive.streamAll()` — fichiers de tous les dossiers
+
+```dart
+await for (final file in client.drive.files.listAll(pageSize: 100)) {
+  print(file.name);
+}
+```
+
+Les requêtes ne commencent qu’à l’écoute du flux, et l’annulation de l’abonnement arrête les requêtes suivantes. Les résultats sont toujours classés par ID du plus récent au plus ancien ; utilisez `maxItems` pour arrêter plus tôt. Consultez [Assistants Drive](./advanced/drive-helpers.md#listing-everything) pour plus de détails.
+
 ## API prenant en charge la pagination
 
 La plupart des API renvoyant des listes prennent en charge `sinceId`/`untilId` et `limit` :

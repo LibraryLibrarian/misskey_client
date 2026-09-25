@@ -7,6 +7,8 @@ title: Téléversement Drive
 
 Le Drive de Misskey est le système de stockage de fichiers. Tous les fichiers joints aux notes doivent d'abord être téléversés vers votre Drive. La facade `client.drive` expose les sous-API `files`, `folders` et `stats`.
 
+Consultez également [Assistants Drive](./drive-helpers.md) pour les opérations regroupant plusieurs requêtes, comme la liste de tous les fichiers, les déplacements en masse, les téléversements par lots et la suppression récursive de dossiers.
+
 ## Téléverser un fichier
 
 ```dart
@@ -31,9 +33,11 @@ final driveFile = await client.drive.files.create(
   filename: 'nsfw.jpg',
   folderId: myFolderId,
   isSensitive: true,
-  force: true, // Upload even if a file with the same name exists
+  force: true, // Upload even if a file with the same content already exists
 );
 ```
+
+Misskey déduplique les téléversements par contenu (hachage MD5), et non par nom. Sans `force`, le téléversement d’un contenu déjà présent dans votre Drive renvoie le fichier existant, et les paramètres `folderId`, `name` et `comment` demandés sont ignorés. Pour éviter tout transfert des octets, consultez `createDeduplicated()` dans [Assistants Drive](./drive-helpers.md#creatededuplicated).
 
 ### Progression du téléversement
 
@@ -58,7 +62,7 @@ await client.drive.files.uploadFromUrl(
 );
 ```
 
-Il s'agit d'un point d'accès de type fire-and-forget ; le fichier apparaît dans le Drive de façon asynchrone.
+Il s'agit d'un point d'accès de type fire-and-forget ; le fichier apparaît dans le Drive de façon asynchrone. `force` a le même sens que pour `create()`. Pour attendre le fichier obtenu, utilisez [`uploadFromUrlAndWait()`](./drive-helpers.md#waiting-for-url-uploads).
 
 ## Joindre des fichiers Drive aux notes
 
@@ -92,10 +96,12 @@ final files = await client.drive.files.list(
 final images = await client.drive.files.list(type: 'image/*');
 
 // Sort by size descending
-final large = await client.drive.files.list(sort: '-size');
+final large = await client.drive.files.list(sort: '+size');
 ```
 
-`sort` accepte : `+createdAt`, `-createdAt`, `+name`, `-name`, `+size`, `-size`.
+`sort` accepte : `+createdAt`, `-createdAt`, `+name`, `-name`, `+size`, `-size` (`+` signifie décroissant).
+
+Seul `+createdAt` (ou l’absence de `sort`) est cohérent avec la pagination `untilId`. Les autres tris modifient l’ordre tandis que le curseur filtre toujours par ID ; des éléments peuvent donc être omis ou répétés. Pour lister tous les fichiers, utilisez `listAll()` et triez localement ; consultez [Assistants Drive](./drive-helpers.md#listing-everything).
 
 ### Flux (tous les fichiers, sans filtre de dossier)
 
@@ -134,7 +140,7 @@ final file = await client.drive.files.showByUrl('https://example.com/file.jpg');
 final updated = await client.drive.files.update(
   fileId: driveFile.id,
   name: 'new-name.jpg',
-  comment: 'Updated alt text',
+  comment: Optional('Updated alt text'), // Optional.null_() clears it
   isSensitive: false,
 );
 ```
