@@ -1,6 +1,9 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/bounded_batch.dart';
+import '../../internal/drive/usage_aggregator.dart';
 import '../../internal/id_paginator.dart';
+import '../../models/drive/drive_usage_summary.dart';
 import '../../models/misskey_drive_file.dart';
 import 'drive_files_api.dart';
 import 'drive_folders_api.dart';
@@ -56,6 +59,27 @@ class DriveApi {
       idOf: (item) => item.id,
       pageSize: pageSize,
       maxItems: maxItems,
+    );
+  }
+
+  /// Scans the whole Drive and aggregates file usage by folder and MIME type.
+  ///
+  /// This makes one `/drive/stream` request per 100 files and concurrently
+  /// retrieves the folder tree. It is not an atomic snapshot: concurrent Drive
+  /// changes can cause small inconsistencies, and [DriveUsageSummary.total] may
+  /// differ slightly from the usage reported by [DriveStatsApi.getCapacity].
+  /// [onProgress] is called after every scanned file with the cumulative count.
+  /// [concurrency] limits concurrent folder-tree requests and must be positive.
+  /// Invalid concurrency throws [ArgumentError] before any request is made.
+  Future<DriveUsageSummary> getUsageSummary({
+    int concurrency = 4,
+    void Function(int filesScanned)? onProgress,
+  }) {
+    validateConcurrency(concurrency);
+    return aggregateDriveUsage(
+      getTree: () => folders.getTree(concurrency: concurrency),
+      streamAll: streamAll,
+      onProgress: onProgress,
     );
   }
 
