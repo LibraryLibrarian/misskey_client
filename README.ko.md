@@ -197,7 +197,7 @@ try {
 }
 ```
 
-헬퍼 API는 잘못된 인수에 대해 `ArgumentError`(요청 전), 사전 조건 미충족에 대해 `StateError`(예: 연결된 `main` 스트리밍 구독이 없는 `drive.uploadFromUrlAndWait()`), sealed 계층 외부의 `DriveFolderAmbiguousException`을 추가로 발생시킬 수 있습니다. 여러 항목을 변경하는 배치 헬퍼는 변경을 시작한 뒤 예외를 던지는 대신 각 항목의 결과를 `MisskeyBatchResult`로 보고합니다.
+헬퍼 API는 잘못된 인수에 대해 `ArgumentError`(요청 전), 사전 조건 미충족에 대해 `StateError`(예: 연결된 `main` 스트리밍 구독이 없는 `drive.uploadFromUrlAndWait()`), sealed 계층 외부의 `DriveFolderAmbiguousException`을 추가로 발생시킬 수 있습니다. 여러 항목을 변경하는 배치 헬퍼가 변경을 시작한 뒤에는 개별 작업 실패를 예외로 던지는 대신 `MisskeyBatchResult`에 기록합니다. 정착된 항목을 보고하는 `onProgress` 콜백에서 발생한 오류는 진행 중인 작업이 끝난 뒤 다시 던져지며, 완료된 변경은 롤백되지 않습니다.
 
 ## 로깅
 

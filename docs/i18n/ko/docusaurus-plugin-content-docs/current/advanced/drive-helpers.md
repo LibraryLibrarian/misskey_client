@@ -15,9 +15,9 @@ title: 드라이브 헬퍼
 
 | 메서드 | 조회 항목 | 필터 |
 |---|---|---|
-| `client.drive.files.listAll()` | Files in one folder (root when `folderId` is omitted) | `folderId`, `type` |
-| `client.drive.folders.listAll()` | Folders in one parent folder (root when `folderId` is omitted) | `folderId` |
-| `client.drive.streamAll()` | Files in all folders | `type` |
+| `client.drive.files.listAll()` | 한 폴더의 파일 (`folderId` 생략 시 루트) | `folderId`, `type` |
+| `client.drive.folders.listAll()` | 한 상위 폴더의 폴더 (`folderId` 생략 시 루트) | `folderId` |
+| `client.drive.streamAll()` | 모든 폴더의 파일 | `type` |
 
 ```dart
 // 폴더의 모든 이미지
@@ -67,7 +67,7 @@ final mp4s = await client.drive
 
 ## 배치 결과 및 취소 {#batch-results-and-cancellation}
 
-여러 항목을 변경하는 헬퍼는 변경을 시작한 뒤 예외를 던지지 않습니다. 대신 입력 순서대로 입력마다 하나의 결과를 담은 `MisskeyBatchResult<I, T>`를 반환합니다.
+여러 항목을 변경하는 헬퍼는 변경을 시작한 뒤 개별 작업 실패를 예외로 던지지 않고, 입력 순서대로 입력마다 하나의 결과를 담은 `MisskeyBatchResult<I, T>`에 기록합니다. 정착된 항목을 보고하는 `onProgress` 콜백에서 사용자가 던진 오류는 다릅니다. 새 작업을 중단하고 진행 중 요청이 끝난 뒤 그 오류를 다시 던지며, 이미 완료된 변경은 롤백하지 않습니다.
 
 | 타입 | 의미 | 필드 |
 |---|---|---|
@@ -80,9 +80,9 @@ final mp4s = await client.drive
 | 값 | 의미 |
 |---|---|
 | `cancelled` | 취소 요청됨 |
-| `rateLimited` | 서버가 요청 속도를 제한함 |
-| `stoppedAfterError` | 앞선 오류로 배치 중단 |
-| `dependencyFailed` | 선행 작업 실패 |
+| `rateLimited` | `createMany()`, `dissolveFolder()`, `deleteFolderRecursive()`에서 서버가 요청을 제한함(HTTP 429) |
+| `stoppedAfterError` | 앞선 오류로 배치 중단 (`stopOnError`를 사용한 `createMany()` 또는 429를 포함한 `moveBulkAll()`의 청크 실패) |
+| `dependencyFailed` | 선행 작업 실패 (예: 파일 이동 실패 후 폴더 해체, 또는 내부 항목을 삭제하지 못한 폴더 삭제) |
 
 결과에는 `successes`, `failures`, `skipped`, `isComplete`도 포함됩니다(`isComplete`는 빈 배치를 포함해 모든 항목이 성공했을 때 true). `MisskeyBatchItemResult`는 sealed 타입이므로 항목에 대한 `switch`는 망라적입니다.
 
@@ -103,7 +103,7 @@ for (final item in result.items) {
 
 ### 취소 {#cancellation}
 
-`createMany()`와 `deleteFolderRecursive()`는 `MisskeyCancellationToken`을 받습니다. 취소는 협력 방식으로 동작하여 새 작업의 시작을 막지만, 진행 중인 요청을 중단하지 않고 완료될 때까지 기다립니다. 시작되지 않은 항목은 `cancelled` 사유로 건너뛴 것으로 보고됩니다.
+`createMany()`와 `deleteFolderRecursive()`는 `MisskeyCancellationToken`을 받습니다. 취소는 협력 방식으로 동작하여 새 작업의 시작을 막지만, 진행 중인 요청을 중단하지 않고 완료될 때까지 기다립니다. 시작되지 않은 항목은 일반적으로 `cancelled` 사유로 건너뛴 것으로 보고됩니다. `deleteFolderRecursive()`에서 `HAS_CHILD_FILES_OR_FOLDERS` 재시도가 취소로 중단된 폴더는 삭제를 이미 시도했으므로 실패로 보고됩니다.
 
 ```dart
 final token = MisskeyCancellationToken();
@@ -300,7 +300,7 @@ if (!result.isComplete) {
 - **부분 결과:** 계획한 내부 항목이 모두 성공하지 못한 폴더는 삭제를 시도하지 않으며 해당 상위 폴더도 마찬가지입니다. 이미 사라진 파일과 폴더는 삭제 성공으로 간주됩니다.
 - **요청 제한**에 도달하면 새 작업을 중단합니다.
 - **취소**는 협력 방식입니다. 계획 중 취소하면 아직 시작되지 않은 파일 목록 조회를 중단하고 모든 계획 항목을 `cancelled`로 건너뛴 것으로 반환하며 삭제 요청은 보내지 않습니다.
-- **`HAS_CHILD_FILES_OR_FOLDERS` 재시도:** Misskey는 삭제 요청에 응답한 뒤 파일 데이터베이스 행을 제거하므로 직후 폴더를 삭제하면 `HAS_CHILD_FILES_OR_FOLDERS` 오류가 발생할 수 있습니다. 계획된 하위 항목을 삭제한 폴더는 200ms부터 시작하는 지수 백오프로 최대 5회 재시도합니다. 다른 쓰기 실패는 재시도하지 않습니다.
+- **`HAS_CHILD_FILES_OR_FOLDERS` 재시도:** Misskey는 삭제 요청에 응답한 뒤 파일 데이터베이스 행을 제거하므로 직후 폴더를 삭제하면 `HAS_CHILD_FILES_OR_FOLDERS` 오류가 발생할 수 있습니다. 계획된 하위 항목을 삭제한 폴더는 이 오류에 대해 200ms부터 시작하는 지수 백오프로 재시도하며, 최초 시도를 포함해 총 시도 횟수는 최대 5회입니다. 다른 쓰기 실패는 재시도하지 않습니다.
 - `onProgress`에서 예외가 발생하면 아직 시작되지 않은 작업을 중지하고 진행 중 작업이 끝난 뒤 예외를 다시 던집니다. 앞서 수행한 삭제는 롤백할 수 없습니다.
 
 ## 업로드 {#uploading}
@@ -361,7 +361,7 @@ print('${result.file.id}: ${result.outcome.name}');
 - `result.outcome`은 `uploaded`, `reusedExisting`, `movedExisting` 중 하나입니다. 최선형 동작이며 조회 후 동시 업로드가 먼저 완료될 수 있고 이러한 경쟁 상태를 항상 감지할 수는 없습니다.
 - 기존 파일의 이름과 설명은 유지됩니다. `isSensitive: true`는 기존의 민감하지 않은 파일을 민감한 파일로 변경합니다.
 - 큰 입력의 해싱을 피하려면 `md5`(16진수 32자)를 전달하세요. 그렇지 않으면 호출 isolate에서 동기적으로 해시를 계산합니다(`uploadAnyway` 제외).
-- `reuseExisting`에서 일치 항목이 있으면 `folderId`를 검증하지 않습니다. 일반 업로드는 존재하지 않거나 다른 사용자의 폴더에서 실패합니다.
+- 기존 파일이 일치하면 `folderId`를 검증하지 않으므로 `reuseExisting`에서는 존재하지 않거나 다른 사용자의 폴더여도 오류가 발생하지 않습니다. `force`가 없는 일반 `create()`도 서버가 폴더를 조회하기 전에 일치 파일을 반환하므로 동일하게 동작합니다.
 
 ### createMany
 
@@ -390,7 +390,7 @@ final result = await client.drive.files.createMany(
 - `deduplicate`를 지정하면 각 입력은 해당 정책을 적용해 `createDeduplicated()`와 같이 처리됩니다. 같은 배치의 동일한 입력은 순서가 있는 체인을 구성합니다. 각 후속 입력은 선행 입력을 기다리고(작업자 하나를 점유), 정책에 따라 선행 입력의 최신 결과를 사용합니다. `moveExisting`에서는 마지막 입력의 폴더에 파일이 위치합니다. 후속 입력의 파일명, 이름 및 설명은 무시되며 `isSensitive`는 파일을 `true`로만 승격할 수 있습니다. 선행 입력이 실패하거나 건너뛰면 이미 실행 중인 후속 입력은 `dependencyFailed`로 건너뜁니다. `uploadAnyway`에서는 각 입력이 독립적으로 업로드됩니다.
 - `deduplicate`를 사용하지 않아도 서버는 같은 콘텐츠의 기존 파일을 반환할 수 있지만 결과는 `uploaded`로 보고됩니다.
 - `onProgress`는 항목 수(`completedItems`, `succeededItems`, `failedItems`, `totalItems`)와 `itemIndex` 항목의 바이트 진행 상황(`sent`, `total`)을 담은 `DriveBatchUploadProgress`를 받습니다.
-- 자동 재시도는 없습니다. 서버가 파일을 저장한 뒤 네트워크 오류가 나면 실패로 보고됩니다. 서버 측 중복 제거 덕분에 다시 실행해도 안전합니다.
+- 자동 재시도는 없습니다. 서버가 파일을 저장한 뒤 네트워크 오류가 나면 실패로 보고됩니다. `deduplicate` 없이 다시 실행하거나 `reuseExisting` 또는 `moveExisting` 정책으로 다시 실행하면 서버 측 중복 제거(`force: false`)에 의해 사본을 추가하는 대신 저장된 파일이 반환됩니다. `uploadAnyway`(`force: true`)로 다시 실행하면 사본이 추가로 생성될 수 있습니다.
 - 입력 바이트는 복사되지 않으므로 배치가 완료될 때까지 수정하지 마세요.
 
 ## URL 업로드 완료 대기 {#waiting-for-url-uploads}
@@ -435,4 +435,4 @@ try {
 | `drive/files/upload-from-url` | 시간당 60회 | `uploadFromUrlAndWait()` |
 | 목록 조회, `show`, `find`, `update`, `delete`, `move-bulk` | 엔드포인트별 제한 없음 | 기타 모든 헬퍼 |
 
-서버 관리자가 설정한 역할별 요청 제한 계수가 이 값을 조정합니다. 제한에 도달하면 단일 요청 헬퍼는 `MisskeyRateLimitException`을 발생시키고, 배치 헬퍼는 새 작업을 시작하지 않고 남은 항목을 `rateLimited`로 보고합니다.
+서버 관리자가 설정한 역할별 요청 제한 계수가 이 값을 조정합니다. 제한에 도달하면 단일 요청 헬퍼는 `MisskeyRateLimitException`을 발생시키고, 배치 헬퍼는 새 작업을 시작하지 않습니다. `createMany()`, `dissolveFolder()`, `deleteFolderRecursive()`는 남은 항목을 `rateLimited`로 보고합니다.

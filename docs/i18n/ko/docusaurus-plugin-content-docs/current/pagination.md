@@ -126,7 +126,7 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
-## 자동 페이지네이션 헬퍼
+## 자동 페이지네이션 헬퍼 {#auto-pagination-helpers}
 
 일부 API는 위의 `untilId` 반복 처리를 대신 수행하고 지연 `Stream`을 반환하는 헬퍼를 제공합니다. 현재 드라이브 목록 헬퍼가 이에 해당합니다.
 
