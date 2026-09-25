@@ -4,6 +4,7 @@ import 'package:dio/dio.dart' show FormData, MultipartFile;
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/id_paginator.dart';
 import '../../internal/optional.dart';
 import '../../internal/request_body.dart';
 import '../../models/chat/misskey_chat_message.dart';
@@ -22,6 +23,38 @@ class DriveFilesApi {
   @internal
   final MisskeyHttp http;
 
+  /// Lazily retrieves all files in newest-first ID order.
+  ///
+  /// Only ID order is supported: the server applies `untilId` as an ID filter
+  /// even when sorting by name or size, causing pages to skip or repeat items.
+  /// Collect the results and sort locally for other orders. This is not a
+  /// snapshot; changes on the server during pagination may affect results.
+  ///
+  /// [folderId] selects the parent folder; omit it for root-level items.
+  /// [type] accepts only letters, `/`, `-`, and `*` (for example, `image/*`).
+  /// The server rejects values containing digits such as `video/mp4`.
+  /// [pageSize] must be 1-100 and [maxItems] must be non-negative, or an
+  /// [ArgumentError] is thrown synchronously. A zero [maxItems] sends no request.
+  ///
+  /// Each call returns a cold, single-subscription stream: requests start only
+  /// when listened to. API errors are delivered as stream errors after any
+  /// already-yielded items.
+  Stream<MisskeyDriveFile> listAll({
+    String? folderId,
+    String? type,
+    int pageSize = 100,
+    int? maxItems,
+  }) {
+    validatePageArgs(pageSize, maxItems);
+    return paginateById(
+      fetchPage: (limit, untilId) =>
+          list(limit: limit, untilId: untilId, folderId: folderId, type: type),
+      idOf: (item) => item.id,
+      pageSize: pageSize,
+      maxItems: maxItems,
+    );
+  }
+
   /// Retrieves a list of Drive files (`/api/drive/files`).
   ///
   /// [limit] caps the number of results (1-100). Use [sinceId] and [untilId]
@@ -29,7 +62,9 @@ class DriveFilesApi {
   /// timestamp in milliseconds. Pass [folderId] to filter by folder (`null`
   /// for root) and [type] to filter by MIME type pattern (e.g., `"image/*"`).
   /// [sort] controls the sort order and accepts `+createdAt`, `-createdAt`,
-  /// `+name`, `-name`, `+size`, or `-size`.
+  /// `+name`, `-name`, `+size`, or `-size`; `+` means descending.
+  /// Sorting by name or size cannot be combined with [sinceId]/[untilId]
+  /// pagination because these cursors filter by ID, not by the sort field.
   Future<List<MisskeyDriveFile>> list({
     int? limit,
     String? sinceId,
