@@ -14,6 +14,7 @@ A pure Dart client library for the [Misskey](https://misskey-hub.net/) API. Prov
 - Sealed exception hierarchy for exhaustive error handling
 - Strongly typed request and response models generated with `json_serializable`
 - Integrated Streaming API with typed channels, events, and automatic reconnection
+- Drive helpers for auto-pagination, bulk moves, deduplicated batch uploads, and recursive folder operations with per-item results
 - Configurable logging through a swappable `Logger` interface
 - Pure Dart — no Flutter dependency required
 
@@ -72,7 +73,7 @@ void main() async {
 | `charts` | Statistics charts |
 | `chat` | Chat rooms and messages |
 | `clips` | Clip collections |
-| `drive` | Drive (file storage), files, folders, stats |
+| `drive` | Drive (file storage), files, folders, stats; helpers for listing all items, bulk moves, batch uploads, folder trees, and recursive deletion |
 | `federation` | Federated instance information |
 | `flash` | Flash (Play) scripts |
 | `following` | Following and follow requests |
@@ -174,7 +175,7 @@ Endpoints that require authentication inject the token automatically. Endpoints 
 
 ## Error Handling
 
-All exceptions extend the sealed class `MisskeyClientException`, allowing exhaustive pattern matching:
+API and transport exceptions extend the sealed class `MisskeyClientException`, allowing exhaustive pattern matching:
 
 ```dart
 try {
@@ -195,6 +196,8 @@ try {
   // Timeout, connection refused, etc.
 }
 ```
+
+Helper APIs can additionally throw `ArgumentError` for invalid arguments (before any request), `StateError` for unmet preconditions (such as `drive.uploadFromUrlAndWait()` without a connected `main` streaming subscription), and `DriveFolderAmbiguousException`, which is outside the sealed hierarchy. Batch helpers that change many items report per-item outcomes in a `MisskeyBatchResult` instead of throwing once changes have started.
 
 ## Logging
 
