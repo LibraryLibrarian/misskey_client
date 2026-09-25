@@ -39,9 +39,11 @@ class DriveApi {
   /// parent (checked when moving files) cannot be read. After moves begin, it
   /// returns their individual outcomes and deletes the source folder only when
   /// every move succeeds. If file moves are not complete, subfolders and
-  /// deletion are skipped. Concurrent additions can make deletion fail with
-  /// `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported in the result. It
-  /// is safe to run again after a partial result.
+  /// deletion are skipped. An HTTP 429 stops scheduling additional subfolder
+  /// moves; already-started requests finish, remaining subfolders are reported
+  /// as `rateLimited`, and deletion is skipped. Concurrent additions can make
+  /// deletion fail with `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported
+  /// in the result. It is safe to run again after a partial result.
   ///
   /// [concurrency] bounds parallel subfolder moves; files are moved sequentially
   /// in chunks of 100. It must be positive or an [ArgumentError] is thrown
@@ -58,10 +60,9 @@ class DriveApi {
 
   /// Lazily retrieves all files across all folders in newest-first ID order.
   ///
-  /// Only ID order is supported: the server applies `untilId` as an ID filter
-  /// even when sorting by name or size, causing pages to skip or repeat items.
-  /// Collect the results and sort locally for other orders. This is not a
-  /// snapshot; changes on the server during pagination may affect results.
+  /// Results are newest-first by ID. Other orders require collecting the
+  /// results and sorting locally. This is not a snapshot; changes on the
+  /// server during pagination may affect results.
   ///
   /// [type] accepts only letters, `/`, `-`, and `*` (for example, `image/*`).
   /// The server rejects values containing digits such as `video/mp4`.
