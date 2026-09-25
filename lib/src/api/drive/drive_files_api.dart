@@ -2,13 +2,17 @@ import 'package:meta/meta.dart';
 
 import 'package:dio/dio.dart' show FormData, MultipartFile;
 
+import '../../client/misskey_cancellation_token.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/drive/batch_uploader.dart';
 import '../../internal/drive/dedup_uploader.dart';
 import '../../internal/id_paginator.dart';
 import '../../internal/optional.dart';
 import '../../internal/request_body.dart';
+import '../../models/batch/misskey_batch_result.dart';
 import '../../models/chat/misskey_chat_message.dart';
+import '../../models/drive/drive_upload_batch.dart';
 import '../../models/drive/drive_upload_result.dart';
 import '../../models/misskey_drive_file.dart';
 import '../../models/misskey_note.dart';
@@ -208,6 +212,43 @@ class DriveFilesApi {
     md5: md5,
     onDuplicate: onDuplicate,
     onSendProgress: onSendProgress,
+  );
+
+  /// Uploads multiple files with bounded concurrency.
+  ///
+  /// The returned per-item outcomes preserve [inputs] order. A server rate
+  /// limit stops new uploads and marks remaining inputs as `rateLimited`; Drive
+  /// files/create permits 120 uploads per user per hour by default, subject to
+  /// role rate-limit factors. In-flight uploads finish. Set [stopOnError] to
+  /// stop after any error. Cancellation is cooperative: it prevents new work
+  /// but does not abort in-flight requests.
+  ///
+  /// When [deduplicate] is set, identical inputs in this batch share the first
+  /// upload. Later inputs reuse that file according to the duplicate policy;
+  /// with `moveExisting`, a different destination folder moves it. With
+  /// `uploadAnyway`, every input uploads independently. If the first upload
+  /// fails or is skipped, dependent later inputs are skipped as
+  /// `dependencyFailed`.
+  ///
+  /// This method never retries automatically. A network failure after the
+  /// server stored a file is reported as a failure; rerunning is safe with
+  /// server deduplication. All input bytes remain held by the caller for the
+  /// duration of the operation.
+  Future<MisskeyBatchResult<DriveUploadInput, DriveUploadResult>> createMany(
+    List<DriveUploadInput> inputs, {
+    int concurrency = 2,
+    DriveDuplicatePolicy? deduplicate,
+    bool stopOnError = false,
+    void Function(DriveBatchUploadProgress progress)? onProgress,
+    MisskeyCancellationToken? cancellation,
+  }) => createManyDriveFiles(
+    files: this,
+    inputs: inputs,
+    concurrency: concurrency,
+    deduplicate: deduplicate,
+    stopOnError: stopOnError,
+    onProgress: onProgress,
+    cancellation: cancellation,
   );
 
   /// Updates the metadata of a Drive file (`/api/drive/files/update`).
