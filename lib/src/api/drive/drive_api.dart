@@ -39,9 +39,11 @@ class DriveApi {
   /// parent (checked when moving files) cannot be read. After moves begin, it
   /// returns their individual outcomes and deletes the source folder only when
   /// every move succeeds. If file moves are not complete, subfolders and
-  /// deletion are skipped. Concurrent additions can make deletion fail with
-  /// `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported in the result. It
-  /// is safe to run again after a partial result.
+  /// deletion are skipped. An HTTP 429 stops scheduling additional subfolder
+  /// moves; already-started requests finish, remaining subfolders are reported
+  /// as `rateLimited`, and deletion is skipped. Concurrent additions can make
+  /// deletion fail with `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported
+  /// in the result. It is safe to run again after a partial result.
   ///
   /// [concurrency] bounds parallel subfolder moves; files are moved sequentially
   /// in chunks of 100. It must be positive or an [ArgumentError] is thrown
