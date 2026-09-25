@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the embedded `user`, `files`, `channel`, `renote`, and `reply` relationships to `MisskeyNoteDraft`; draft channels use a dedicated partial model matching the server response (issue #20)
 - Added `AdminApi.updateMeta(extra:)` for passing newer upstream or fork-specific instance settings that do not yet have typed parameters (issue #23)
 - Added `DriveFilesApi.listAll`, `DriveFoldersApi.listAll`, and `DriveApi.streamAll` for lazy newest-first pagination, plus the `MisskeyBatchResult` / `MisskeyBatchItemResult` family and `MisskeyCancellationToken` used by batch Drive helpers.
+- Added `DriveFilesApi.moveBulkAll` for sequentially moving any number of Drive files in bulk
+- Added `DriveApi.dissolveFolder` for moving a folder's direct contents into its parent or the root before deletion
+- Added `DriveFoldersApi.getTree` for retrieving immutable Drive folder trees
+- Added `DriveApi.getUsageSummary` for aggregating Drive usage by folder and MIME type
+- Added `DriveApi.deleteFolderRecursive` with dry-run planning, bounded deletion, dependency-aware outcomes, progress, and cooperative cancellation.
 - Added `DriveFilesApi.createDeduplicated()` for MD5-checked uploads with configurable duplicate handling.
 - Added `DriveFilesApi.createMany()` for bounded concurrent Drive batch uploads with progress reporting and duplicate handling.
 
