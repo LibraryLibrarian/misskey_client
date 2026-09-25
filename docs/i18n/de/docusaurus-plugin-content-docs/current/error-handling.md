@@ -28,7 +28,7 @@ MisskeyClientException (sealed)
 - `errorId` — UUID zur Identifizierung des Misskey-Fehlertyps
 - `endpoint` — Der API-Pfad, bei dem der Fehler aufgetreten ist
 
-## Ausnahmen außerhalb der Hierarchie
+## Ausnahmen außerhalb der Hierarchie {#exceptions-outside-the-hierarchy}
 
 `MisskeyClientException` deckt API- und Transportfehler ab. Einige Helfer-APIs, etwa die [Drive-Helfer](./advanced/drive-helpers.md), können außerdem folgende Ausnahmen auslösen:
 
@@ -46,7 +46,7 @@ try {
 }
 ```
 
-Batch-Helfer, die viele Elemente ändern (zum Beispiel `createMany()`, `moveBulkAll()`, `dissolveFolder()` und `deleteFolderRecursive()`), lösen nach Beginn der Änderungen keine Ausnahme aus. Sie geben ein `MisskeyBatchResult` (oder ein Ergebnis, das ein solches enthält) zurück, das jedes Element als Erfolg, Fehler mit Ursache oder Überspringen mit Begründung meldet. Fehler vor jeder Änderung, etwa eine fehlgeschlagene Prüfung des Zielordners, werden weiterhin ausgelöst.
+Sobald Batch-Helfer, die viele Elemente ändern (zum Beispiel `createMany()`, `moveBulkAll()`, `dissolveFolder()` und `deleteFolderRecursive()`), mit Änderungen begonnen haben, werden Fehler einzelner Vorgänge in einem `MisskeyBatchResult` (oder einem Ergebnis, das ein solches enthält) als Fehlschlag mit Fehlerursache oder als Überspringen mit Begründung erfasst, statt ausgelöst zu werden. Fehler vor jeder Änderung, etwa eine fehlgeschlagene Prüfung des Zielordners, werden weiterhin ausgelöst. Ein Fehler, den ein `onProgress`-Callback beim Melden eines abgeschlossenen Elements auslöst, wird erneut ausgelöst, nachdem laufende Vorgänge beendet sind; abgeschlossene Änderungen werden nicht rückgängig gemacht.
 
 ## Grundlegende Abfangmuster
 

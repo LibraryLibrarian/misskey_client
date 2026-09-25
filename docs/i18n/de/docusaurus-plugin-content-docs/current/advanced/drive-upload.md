@@ -37,7 +37,7 @@ final driveFile = await client.drive.files.create(
 );
 ```
 
-Misskey dedupliziert Uploads anhand des Inhalts (MD5-Hash), nicht anhand des Namens. Ohne `force` gibt ein Upload von Inhalten, die bereits in Ihrem Drive vorhanden sind, die vorhandene Datei zurück; die angegebene `folderId`, `name` und `comment` werden ignoriert. Um die Übertragung der Bytes ganz zu vermeiden, siehe `createDeduplicated()` in [Drive-Helfer](./drive-helpers.md#creatededuplicated).
+Misskey dedupliziert Uploads anhand des Inhalts (MD5-Hash), nicht anhand des Namens. Ohne `force` gibt ein Upload von Inhalten, die bereits in Ihrem Drive vorhanden sind, die vorhandene Datei zurück; die angegebenen Parameter `folderId`, `name` und `comment` werden ignoriert. Um die Übertragung der Bytes ganz zu vermeiden, siehe `createDeduplicated()` in [Drive-Helfer](./drive-helpers.md#creatededuplicated).
 
 ### Upload-Fortschritt
 

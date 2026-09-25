@@ -197,7 +197,7 @@ try {
 }
 ```
 
-Helfer-APIs können zusätzlich `ArgumentError` für ungültige Argumente (vor jeder Anfrage), `StateError` für nicht erfüllte Voraussetzungen (etwa `drive.uploadFromUrlAndWait()` ohne verbundenes `main`-Streaming-Abonnement) und `DriveFolderAmbiguousException` auslösen, die nicht zur versiegelten Hierarchie gehört. Batch-Helfer, die viele Elemente ändern, geben ein `MisskeyBatchResult` mit Ergebnissen pro Element zurück, statt nach Beginn der Änderungen eine Ausnahme auszulösen.
+Helfer-APIs können zusätzlich `ArgumentError` für ungültige Argumente (vor jeder Anfrage), `StateError` für nicht erfüllte Voraussetzungen (etwa `drive.uploadFromUrlAndWait()` ohne verbundenes `main`-Streaming-Abonnement) und `DriveFolderAmbiguousException` auslösen, die nicht zur versiegelten Hierarchie gehört. Sobald Batch-Helfer, die viele Elemente ändern, mit Änderungen begonnen haben, werden Fehler einzelner Vorgänge in einem `MisskeyBatchResult` erfasst, statt ausgelöst zu werden. Ein Fehler, den ein `onProgress`-Callback beim Melden eines abgeschlossenen Elements auslöst, wird erneut ausgelöst, nachdem laufende Vorgänge beendet sind; bereits abgeschlossene Änderungen werden nicht rückgängig gemacht.
 
 ## Logging
 

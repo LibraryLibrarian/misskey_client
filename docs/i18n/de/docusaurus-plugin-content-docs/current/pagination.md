@@ -126,7 +126,7 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
-## Auto-Paginierungshilfen
+## Auto-Paginierungshilfen {#auto-pagination-helpers}
 
 Einige APIs bieten Helfer, die die obige `untilId`-Schleife übernehmen und einen verzögerten `Stream` zurückgeben. Derzeit sind dies die Drive-Auflistungshilfen:
 

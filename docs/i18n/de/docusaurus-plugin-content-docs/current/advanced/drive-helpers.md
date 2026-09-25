@@ -50,7 +50,7 @@ Ungültige Werte lösen synchron beim Methodenaufruf einen `ArgumentError` aus.
 
 ### Stream-Verhalten {#stream-behavior}
 
-Jeder Aufruf gibt einen kalten Stream, der nur einmal abonniert werden kann zurück. Anfragen werden erst beim Abonnement gesendet. Wird das Abonnement abgebrochen (oder eine `await for`-Schleife vorzeitig verlassen), werden keine weiteren Seiten angefordert. API-Fehler werden nach den bereits ausgegebenen Einträgen als Stream-Fehler gemeldet.
+Jeder Aufruf gibt einen kalten Stream zurück, der nur einmal abonniert werden kann. Anfragen werden erst beim Abonnement gesendet. Wird das Abonnement abgebrochen (oder eine `await for`-Schleife vorzeitig verlassen), werden keine weiteren Seiten angefordert. API-Fehler werden nach den bereits ausgegebenen Einträgen als Stream-Fehler gemeldet.
 
 Die Auflistung ist keine Momentaufnahme. Während der Paginierung hinzugefügte, verschobene oder gelöschte Dateien können fehlen oder enthalten sein.
 
@@ -67,7 +67,7 @@ final mp4s = await client.drive
 
 ## Batch-Ergebnisse und Abbruch {#batch-results-and-cancellation}
 
-Hilfsmethoden, die viele Elemente ändern, lösen nach Beginn der Änderungen keine Ausnahme aus. Stattdessen geben sie ein `MisskeyBatchResult<I, T>` mit einem Ergebnis pro Eingabe in Eingabereihenfolge zurück:
+Sobald Hilfsmethoden, die viele Elemente ändern, mit den Änderungen begonnen haben, wird der Fehler eines einzelnen Vorgangs nicht ausgelöst, sondern in einem `MisskeyBatchResult<I, T>` mit einem Ergebnis pro Eingabe in Eingabereihenfolge erfasst. Ein Fehler, den ein eigener `onProgress`-Callback beim Melden eines abgeschlossenen Elements auslöst, ist davon zu unterscheiden: Neue Arbeit wird angehalten, und der Fehler wird erneut ausgelöst, nachdem laufende Anfragen abgeschlossen sind. Bereits abgeschlossene Änderungen werden nicht rückgängig gemacht.
 
 | Typ | Bedeutung | Felder |
 |---|---|---|
@@ -80,9 +80,9 @@ Hilfsmethoden, die viele Elemente ändern, lösen nach Beginn der Änderungen ke
 | Wert | Bedeutung |
 |---|---|
 | `cancelled` | Der Abbruch wurde angefordert |
-| `rateLimited` | Der Server hat eine Anfrage rate-limitiert |
-| `stoppedAfterError` | Ein vorheriger Fehler hat den Batch angehalten |
-| `dependencyFailed` | Ein erforderlicher Vorgang war nicht erfolgreich |
+| `rateLimited` | Der Server hat eine Anfrage rate-limitiert (HTTP 429) in `createMany()`, `dissolveFolder()` oder `deleteFolderRecursive()` |
+| `stoppedAfterError` | Ein vorheriger Fehler hat den Batch angehalten (`createMany()` mit `stopOnError` oder ein fehlgeschlagener Block in `moveBulkAll()`, einschließlich HTTP 429) |
+| `dependencyFailed` | Ein erforderlicher Vorgang war nicht erfolgreich (zum Beispiel das Auflösen eines Ordners nach fehlgeschlagenen Dateiverschiebungen oder das Löschen eines Ordners, dessen Inhalt nicht gelöscht wurde) |
 
 Das Ergebnis bietet außerdem `successes`, `failures`, `skipped` und `isComplete` (true, wenn alle Elemente erfolgreich waren, auch bei einem leeren Batch). Da `MisskeyBatchItemResult` sealed ist, ist ein `switch` über die Elemente vollständig:
 
@@ -103,7 +103,7 @@ for (final item in result.items) {
 
 ### Abbruch {#cancellation}
 
-`createMany()` und `deleteFolderRecursive()` akzeptieren ein `MisskeyCancellationToken`. Der Abbruch erfolgt kooperativ: Neue Vorgänge werden nicht gestartet, laufende Anfragen jedoch nicht abgebrochen, sondern bis zum Abschluss abgewartet. Nicht gestartete Elemente werden mit `cancelled` als übersprungen gemeldet.
+`createMany()` und `deleteFolderRecursive()` akzeptieren ein `MisskeyCancellationToken`. Der Abbruch erfolgt kooperativ: Neue Vorgänge werden nicht gestartet, laufende Anfragen jedoch nicht abgebrochen, sondern bis zum Abschluss abgewartet. Nicht gestartete Elemente werden in der Regel mit `cancelled` als übersprungen gemeldet. In `deleteFolderRecursive()` wird ein Ordner, dessen Wiederholung bei `HAS_CHILD_FILES_OR_FOLDERS` durch einen Abbruch unterbrochen wird, stattdessen als fehlgeschlagen gemeldet, da sein Löschvorgang bereits versucht wurde.
 
 ```dart
 final token = MisskeyCancellationToken();
@@ -236,7 +236,7 @@ print('${result.folder.id} erstellt: ${result.created}');
 
 - Akzeptiert dieselbe `onAmbiguous`-Richtlinie wie `resolvePath()`.
 - Der Vorgang ist nicht atomar: Gleichzeitige Aufrufe können jeweils einen gleichnamigen Ordner erstellen.
-- `folders/create` ist auf 10 Anfragen pro Stunde begrenzt. Ein `MisskeyRateLimitException` wird weitergegeben.
+- `folders/create` ist auf 10 Anfragen pro Stunde begrenzt. Eine `MisskeyRateLimitException` wird weitergegeben.
 - Ein leerer oder mehr als 200 Zeichen langer Name löst `ArgumentError` aus. Bei einem nicht existierenden `parentId` wird nichts gefunden; anschließend schlägt die Erstellungsanfrage mit `NO_SUCH_FOLDER` als `MisskeyApiException` fehl.
 
 ## Ordner auflösen und löschen {#dissolving-and-deleting-folders}
@@ -302,7 +302,7 @@ Der Vorgang wird in drei Phasen ausgeführt (`DriveRecursiveDeletePhase`): `plan
 - **Teilergebnisse:** Ordner, deren geplanter Inhalt nicht vollständig erfolgreich war, werden nicht gelöscht; dasselbe gilt für ihre übergeordneten Ordner. Bereits entfernte Dateien und Ordner gelten als erfolgreich gelöscht.
 - **Bei Ratenbegrenzung** werden keine neuen Vorgänge gestartet.
 - **Der Abbruch** erfolgt kooperativ. Ein Abbruch während der Planung stoppt noch nicht gestartete Datei-Auflistungen und gibt alle geplanten Elemente als mit `cancelled` übersprungen zurück; Löschanfragen werden nicht gesendet.
-- **Wiederholungen bei `HAS_CHILD_FILES_OR_FOLDERS`:** Misskey entfernt den Datenbankeintrag einer Datei erst nach der Antwort auf die Löschanfrage. Wird der Ordner sofort danach gelöscht, kann `HAS_CHILD_FILES_OR_FOLDERS` auftreten. Bei Ordnern, deren geplante untergeordnete Elemente gelöscht wurden, wird dieser Fehler mit exponentiellem Backoff ab 200 ms bis zu fünfmal erneut versucht. Andere Schreibfehler werden nicht wiederholt.
+- **Wiederholungen bei `HAS_CHILD_FILES_OR_FOLDERS`:** Misskey entfernt den Datenbankeintrag einer Datei erst nach der Antwort auf die Löschanfrage. Wird der Ordner sofort danach gelöscht, kann `HAS_CHILD_FILES_OR_FOLDERS` auftreten. Bei Ordnern, deren geplante untergeordnete Elemente gelöscht wurden, wird bei diesem Fehler mit exponentiellem Backoff ab 200 ms erneut versucht, wobei insgesamt höchstens fünf Versuche erfolgen. Andere Schreibfehler werden nicht wiederholt.
 - Wenn `onProgress` eine Ausnahme auslöst, werden noch nicht gestartete Vorgänge angehalten; der Fehler wird erneut ausgelöst, nachdem laufende Vorgänge beendet sind. Bereits erfolgte Löschungen können nicht rückgängig gemacht werden.
 
 ## Uploads {#uploading}
@@ -341,7 +341,7 @@ Jedes `DriveUploadIssue` hat eine `severity`:
 
 ### createDeduplicated
 
-Wenn Sie Inhalte hochladen, die bereits in Ihrem Drive vorhanden sind, gibt der Server die vorhandene Datei zurück – allerdings erst nach dem vollständigen Empfang des Uploads. Die angegebene `folderId`, `name` und `comment` werden ignoriert. `createDeduplicated()` sucht zuerst per MD5 und vermeidet bei einem Treffer die Übertragung:
+Wenn Sie Inhalte hochladen, die bereits in Ihrem Drive vorhanden sind, gibt der Server die vorhandene Datei zurück – allerdings erst nach dem vollständigen Empfang des Uploads. Die angegebenen Parameter `folderId`, `name` und `comment` werden ignoriert. `createDeduplicated()` sucht zuerst per MD5 und vermeidet bei einem Treffer die Übertragung:
 
 ```dart
 final result = await client.drive.files.createDeduplicated(
@@ -363,7 +363,7 @@ print('${result.file.id}: ${result.outcome.name}');
 - `result.outcome` ist `uploaded`, `reusedExisting` oder `movedExisting`. Das Ergebnis ist bestmöglich: Ein gleichzeitiger Upload kann nach der Suche zuerst abgeschlossen werden, und solche Konflikte lassen sich nicht immer erkennen.
 - Name und Kommentar vorhandener Dateien bleiben erhalten. `isSensitive: true` stuft eine vorhandene nicht-sensible Datei als sensibel ein.
 - Übergeben Sie `md5` (32 hexadezimale Zeichen), um das Hashing großer Eingaben zu vermeiden. Andernfalls wird der Hash synchron im aufrufenden Isolate berechnet (außer bei `uploadAnyway`).
-- Bei `reuseExisting` wird `folderId` bei einem Treffer nicht validiert; ein normaler Upload würde bei einem nicht existierenden oder fremden Ordner fehlschlagen.
+- Wenn eine vorhandene Datei übereinstimmt, wird `folderId` nicht validiert; ein nicht existierender oder fremder Ordner verursacht daher bei `reuseExisting` keinen Fehler. Ein einfaches `create()` ohne `force` verhält sich genauso, da der Server den Treffer zurückgibt, bevor er den Ordner abfragt.
 
 ### createMany
 
@@ -392,7 +392,7 @@ final result = await client.drive.files.createMany(
 - Mit `deduplicate` wird jede Eingabe wie `createDeduplicated()` mit der angegebenen Richtlinie behandelt. Identische Eingaben im selben Batch bilden eine geordnete Kette: Jedes Folgeelement wartet auf seinen Vorgänger (und belegt dabei einen Worker) und verwendet gemäß der Richtlinie dessen aktuellstes Ergebnis. Bei `moveExisting` landet die Datei im Ordner des letzten Elements. Dateiname, Name und Kommentar späterer Eingaben werden ignoriert; `isSensitive` kann die Datei nur auf `true` setzen. Schlägt ein Vorgänger fehl oder wird übersprungen, wird ein bereits laufendes Folgeelement als `dependencyFailed` übersprungen. Bei `uploadAnyway` wird jede Eingabe unabhängig hochgeladen.
 - Ohne `deduplicate` kann der Server dennoch eine vorhandene Datei mit identischem Inhalt zurückgeben; sie wird dann als `uploaded` gemeldet.
 - `onProgress` erhält ein `DriveBatchUploadProgress` mit Elementzählern (`completedItems`, `succeededItems`, `failedItems`, `totalItems`) und dem Byte-Fortschritt (`sent`, `total`) des Elements bei `itemIndex`.
-- Es gibt keine automatischen Wiederholungen. Ein Netzwerkfehler, nachdem der Server eine Datei gespeichert hat, wird als Fehler gemeldet; dank serverseitiger Deduplizierung kann der Vorgang sicher erneut ausgeführt werden.
+- Es gibt keine automatischen Wiederholungen. Ein Netzwerkfehler, nachdem der Server eine Datei gespeichert hat, wird als Fehler gemeldet. Bei einer erneuten Ausführung ohne `deduplicate` oder mit `reuseExisting` beziehungsweise `moveExisting` wird die gespeicherte Datei zurückgegeben, statt eine weitere anzulegen, da diese Uploads serverseitig dedupliziert werden (`force: false`). Bei `uploadAnyway` (`force: true`) kann eine erneute Ausführung zusätzliche Kopien erzeugen.
 - Die Eingabebytes werden nicht kopiert; ändern Sie sie nicht, bis der Batch abgeschlossen ist.
 
 ## Auf URL-Uploads warten {#waiting-for-url-uploads}
@@ -421,7 +421,7 @@ try {
 - Mit `mainSubscription` kann ein bestimmtes `main`-Abonnement ausgewählt werden; andernfalls wird das zuerst in `client.streaming.subscriptions` registrierte verwendet. Ein fehlendes oder inaktives Abonnement oder eine nicht verbundene Streaming-Verbindung löst `StateError` aus.
 - Bei einem fehlgeschlagenen Upload sendet der Server kein Ereignis, daher ist ein Fehler nur als Timeout erkennbar. Ein Timeout bricht den serverseitigen Upload nicht ab. `timeout` (Standardwert 2 Minuten) beginnt nach Abschluss der Upload-Anfrage.
 - Während einer Wiederverbindung eintreffende Ereignisse gehen verloren.
-- Für jeden Aufruf wird ein eindeutiger `marker` generiert. Ein eigener Wert muss nicht leer und für jeden Upload eindeutig sein.
+- Für jeden Aufruf wird ein eindeutiger `marker` generiert. Ein eigener Wert darf nicht leer sein und muss für jeden Upload eindeutig sein.
 - Durch serverseitige Deduplizierung kann eine vorhandene Datei aus einem anderen Ordner zurückgegeben werden.
 
 Details zu Verbindung und Abonnement finden Sie unter [Streaming API](../streaming.md).
@@ -437,4 +437,4 @@ Misskeys standardmäßige Limits pro Benutzer für die von diesen Helfern verwen
 | `drive/files/upload-from-url` | 60 pro Stunde | `uploadFromUrlAndWait()` |
 | Auflistung, `show`, `find`, `update`, `delete`, `move-bulk` | Kein Limit pro Endpunkt | Alle übrigen Helfer |
 
-Die vom Serveradministrator festgelegten Ratenlimit-Faktoren für Rollen skalieren diese Werte. Bei Erreichen eines Limits lösen Helfer mit einzelnen Anfragen `MisskeyRateLimitException` aus; Batch-Helfer starten keine neuen Vorgänge und melden die übrigen Elemente als `rateLimited`.
+Die vom Serveradministrator festgelegten Ratenlimit-Faktoren für Rollen skalieren diese Werte. Bei Erreichen eines Limits lösen Helfer mit einzelnen Anfragen `MisskeyRateLimitException` aus; Batch-Helfer starten keine neuen Vorgänge. `createMany()`, `dissolveFolder()` und `deleteFolderRecursive()` melden die übrigen Elemente als `rateLimited`.
