@@ -136,8 +136,9 @@ class DriveFilesApi {
   /// [name] sets the name to store on the server and defaults to [filename].
   /// [folderId] specifies the destination folder. [comment] is an optional
   /// comment (subject to `DB_MAX_IMAGE_COMMENT_LENGTH`). Set [isSensitive] to
-  /// mark the file as sensitive content. Set [force] to upload even if a file
-  /// with the same name already exists. [onSendProgress] is an optional
+  /// mark the file as sensitive content. Set [force] to store a new file even
+  /// if a file with the same content (MD5) already exists; otherwise the
+  /// server returns the existing file. [onSendProgress] is an optional
   /// callback for upload progress.
   Future<MisskeyDriveFile> create({
     required List<int> bytes,
@@ -340,8 +341,9 @@ class DriveFilesApi {
   /// destination folder. Set [isSensitive] to mark the file as sensitive
   /// content. [comment] is an optional comment (up to 512 characters).
   /// [marker] is an optional tracking string that is included in the stream
-  /// event. Set [force] to upload even if a file with the same name already
-  /// exists.
+  /// event. Set [force] to store a new file even if a file with the same
+  /// content (MD5) already exists; otherwise the server returns the existing
+  /// file.
   Future<void> uploadFromUrl({
     required String url,
     String? folderId,

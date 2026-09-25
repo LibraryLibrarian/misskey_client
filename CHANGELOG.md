@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking:** Replaced dynamic policy maps with `MisskeyRolePolicies` on effective-policy responses and with typed `MisskeyRolePolicyOverride` entries on role definitions (issue #10)
 - Added the explicit `MetaApi.hasMetaKey()` name for metadata key-presence checks and deprecated the ambiguous `supports()` alias; key presence does not interpret a boolean metadata value or indicate endpoint availability (issue #41)
 - **Breaking:** `MetaApi.getEndpoints()` now returns an unmodifiable list instead of a mutable list so callers cannot mutate a value that represents the cached endpoint snapshot (issue #41)
+- Corrected the `force` documentation of `DriveFilesApi.create` and `DriveFilesApi.uploadFromUrl`: it bypasses the server's same-content (MD5) deduplication, not a same-name check
 
 ### Removed
 
