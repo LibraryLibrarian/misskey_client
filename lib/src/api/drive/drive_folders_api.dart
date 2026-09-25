@@ -2,7 +2,9 @@ import 'package:meta/meta.dart';
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/drive/folder_tree_builder.dart';
 import '../../internal/id_paginator.dart';
+import '../../models/drive/drive_folder_tree.dart';
 import '../../models/misskey_drive_folder.dart';
 
 /// Provides Drive folder operations (`/api/drive/folders/*`).
@@ -43,6 +45,33 @@ class DriveFoldersApi {
       idOf: (item) => item.id,
       pageSize: pageSize,
       maxItems: maxItems,
+    );
+  }
+
+  /// Retrieves an immutable hierarchy of Drive folders.
+  ///
+  /// This makes one or more list requests for each visited folder. It is
+  /// read-only, so any request failure aborts traversal and is rethrown. The
+  /// result is not a snapshot; folder changes during traversal may be reflected
+  /// inconsistently.
+  ///
+  /// Set [rootFolderId] to start at that folder, or omit it to start at the
+  /// Drive root. [maxDepth] must be non-negative when specified. At the depth
+  /// limit, folders remain in the result but have [DriveFolderNode.childrenLoaded]
+  /// set to `false`. [concurrency] must be at least one. Invalid arguments throw
+  /// [ArgumentError] before a request is made.
+  Future<DriveFolderTree> getTree({
+    String? rootFolderId,
+    int? maxDepth,
+    int concurrency = 4,
+  }) {
+    validateDriveFolderTreeArgs(maxDepth: maxDepth, concurrency: concurrency);
+    return buildDriveFolderTree(
+      show: (folderId) => show(folderId: folderId),
+      listAll: (folderId) => listAll(folderId: folderId),
+      rootFolderId: rootFolderId,
+      maxDepth: maxDepth,
+      concurrency: concurrency,
     );
   }
 

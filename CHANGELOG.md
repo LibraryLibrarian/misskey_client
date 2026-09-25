@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the embedded `user`, `files`, `channel`, `renote`, and `reply` relationships to `MisskeyNoteDraft`; draft channels use a dedicated partial model matching the server response (issue #20)
 - Added `AdminApi.updateMeta(extra:)` for passing newer upstream or fork-specific instance settings that do not yet have typed parameters (issue #23)
 - Added lazy newest-first Drive file and folder pagination helpers, immutable batch outcomes, and cooperative cancellation support
+- Added `DriveFoldersApi.getTree` for retrieving immutable Drive folder trees
 
 ### Changed
 
