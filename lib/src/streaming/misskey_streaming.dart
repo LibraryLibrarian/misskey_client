@@ -104,6 +104,14 @@ class MisskeyStreaming {
   /// Decoded raw Streaming API messages.
   Stream<MisskeyStreamingMessage> get messages => _messageController.stream;
 
+  /// Registered subscriptions in registration order, including those awaiting
+  /// a `connected` acknowledgement.
+  ///
+  /// Returns an unmodifiable snapshot, empty after disposal.
+  List<MisskeyStreamingSubscription> get subscriptions => List.unmodifiable(
+    _subscriptions.values.map((entry) => entry.subscription),
+  );
+
   /// Subscribes to a raw Misskey Streaming API channel.
   ///
   /// When connected, the returned future completes after the server sends a

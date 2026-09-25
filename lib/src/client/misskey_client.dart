@@ -95,7 +95,7 @@ class MisskeyClient {
     charts = ChartsApi(http: http);
     chat = ChatApi(http: http);
     clips = ClipsApi(http: http);
-    drive = DriveApi(http: http);
+    drive = DriveApi(http: http, streaming: () => streaming);
     federation = FederationApi(http: http);
     flash = FlashApi(http: http);
     following = FollowingApi(http: http);
