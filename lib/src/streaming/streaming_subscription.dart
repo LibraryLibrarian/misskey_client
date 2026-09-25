@@ -19,6 +19,7 @@ class MisskeyStreamingSubscription {
     required Stream<MisskeyStreamingEvent> events,
     required Future<void> Function() onUnsubscribe,
     required bool Function() onIsActive,
+    required bool Function() onIsConnected,
     required void Function(String noteId) onCaptureNote,
     required void Function(String noteId) onUncaptureNote,
   }) : params = Map.unmodifiable(params),
@@ -32,6 +33,7 @@ class MisskeyStreamingSubscription {
            .map((event) => (event as MisskeyNotificationEvent).notification),
        _onUnsubscribe = onUnsubscribe,
        _onIsActive = onIsActive,
+       _onIsConnected = onIsConnected,
        _onCaptureNote = onCaptureNote,
        _onUncaptureNote = onUncaptureNote;
 
@@ -53,6 +55,7 @@ class MisskeyStreamingSubscription {
   final Stream<MisskeyNotification> _notifications;
   final Future<void> Function() _onUnsubscribe;
   final bool Function() _onIsActive;
+  final bool Function() _onIsConnected;
   final void Function(String noteId) _onCaptureNote;
   final void Function(String noteId) _onUncaptureNote;
   Future<void>? _unsubscribeFuture;
@@ -71,6 +74,10 @@ class MisskeyStreamingSubscription {
 
   /// Whether this subscription is still registered with the client.
   bool get isActive => _onIsActive();
+
+  /// Whether the owning streaming client is connected.
+  @internal
+  bool get isConnected => _onIsConnected();
 
   /// Starts receiving `noteUpdated` events for [noteId].
   ///

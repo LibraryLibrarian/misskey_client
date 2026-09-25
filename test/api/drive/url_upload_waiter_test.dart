@@ -176,6 +176,61 @@ void main() {
     },
   );
 
+  test(
+    'explicit subscription checks its owner with or without a provider',
+    () async {
+      final other = MisskeyStreaming.withConnector(
+        baseUrl: http.baseUrl,
+        connector: FakeStreamingConnector([FakeStreamingSocket()]).call,
+      );
+      addTearDown(other.dispose);
+      await other.connect();
+      final disconnectedSub = await other.subscribe(
+        MisskeyStreamingChannel.main(),
+      );
+      await other.disconnect();
+      for (final api in [drive, DriveApi(http: http)]) {
+        await expectLater(
+          api.uploadFromUrlAndWait(url: url, mainSubscription: disconnectedSub),
+          throwsStateError,
+        );
+      }
+      expect(adapter.requests, isEmpty);
+
+      adapter.on(path, (request) {
+        emit(request.jsonBody!['marker'] as String, 'connected-owner');
+        return ScriptedResponse.noContent();
+      });
+      final api = DriveApi(http: http, streaming: () => other);
+      expect(
+        (await api.uploadFromUrlAndWait(
+          url: url,
+          mainSubscription: mainSub,
+        )).id,
+        'connected-owner',
+      );
+    },
+  );
+
+  test('disposal after HTTP succeeds closes an outstanding wait', () async {
+    final received = Completer<void>();
+    adapter.on(path, (request) {
+      received.complete();
+      return ScriptedResponse.noContent();
+    });
+    final result = drive.uploadFromUrlAndWait(url: url);
+    final assertion = expectLater(
+      result,
+      throwsA(isA<MisskeyStreamingSubscriptionException>()),
+    );
+    await received.future;
+    // HTTP 応答処理のマイクロタスクが完了してから破棄する。
+    await Future<void>.delayed(Duration.zero);
+    expect(adapter.inFlight, 0);
+    await streaming.dispose();
+    await assertion;
+  });
+
   test('missing provider and subscription sends no HTTP request', () async {
     await expectLater(
       DriveApi(http: http).uploadFromUrlAndWait(url: url),
@@ -244,7 +299,8 @@ void main() {
       messages: messages.stream,
       events: const Stream.empty(),
       onUnsubscribe: () async {},
-      onIsActive: () => true,
+      onIsActive: () => mainSub.isActive,
+      onIsConnected: () => streaming.isConnected,
       onCaptureNote: (_) {},
       onUncaptureNote: (_) {},
     );

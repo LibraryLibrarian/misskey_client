@@ -47,7 +47,7 @@ Future<MisskeyDriveFile> uploadFromUrlAndWait({
       }
     }
   }
-  if (subscription == null || (client != null && !client.isConnected)) {
+  if (subscription == null || !subscription.isConnected) {
     throw StateError('No connected main subscription; $guidance');
   }
   if (marker == '') {

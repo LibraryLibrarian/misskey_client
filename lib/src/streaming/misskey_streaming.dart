@@ -192,6 +192,7 @@ class MisskeyStreaming {
         await _unsubscribeSubscription(subscriptionId);
       },
       onIsActive: () => identical(_subscriptions[subscriptionId], entry),
+      onIsConnected: () => isConnected,
       onCaptureNote: (noteId) => _captureNote(entry, noteId),
       onUncaptureNote: (noteId) => _uncaptureNote(entry, noteId),
     );

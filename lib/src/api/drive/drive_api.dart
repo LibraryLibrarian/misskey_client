@@ -1,5 +1,6 @@
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../exception/misskey_client_exception.dart';
 import '../../internal/drive/url_upload_waiter.dart' as url_upload_waiter;
 import '../../models/misskey_drive_file.dart';
 import '../../streaming/misskey_streaming.dart';
@@ -33,7 +34,8 @@ class DriveApi {
   /// Provides Drive statistics operations.
   final DriveStatsApi stats;
 
-  /// Uploads a URL and waits for its `urlUploadFinished` event.
+  /// Uploads the file at [url] to the Drive and waits for its
+  /// `urlUploadFinished` event.
   ///
   /// Requires `write:drive` and `read:account`. Before calling, subscribe to
   /// `MisskeyStreamingChannel.main()` and connect the streaming client. Uses
@@ -42,11 +44,19 @@ class DriveApi {
   ///
   /// The server sends no event on upload failure, so server-side failures
   /// surface only as a timeout. A timeout does not cancel the server-side
-  /// upload. Events arriving during reconnect are lost.
+  /// upload. The [timeout] starts after the upload-from-url request completes.
+  /// Events arriving during reconnect are lost.
   ///
   /// A caller-supplied [marker] must be non-empty and unique for each upload.
   /// Otherwise a secure random marker is generated. Server deduplication may
   /// return an existing file located in another folder.
+  ///
+  /// Throws [StateError] if no main subscription is available, it is inactive,
+  /// or its owning streaming client is not connected; [ArgumentError] for a
+  /// non-main subscription or empty marker; [MisskeyStreamingTimeoutException]
+  /// when the wait times out; [MisskeyStreamingSubscriptionException] if the
+  /// subscription closes while waiting; and [MisskeyStreamingProtocolException]
+  /// if the matching event cannot be decoded.
   Future<MisskeyDriveFile> uploadFromUrlAndWait({
     required String url,
     String? folderId,
