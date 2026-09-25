@@ -35,12 +35,17 @@ final class DriveFolderNode {
 @immutable
 final class DriveFolderTree {
   /// Creates a tree with unmodifiable top-level [children].
+  ///
+  /// When [rootNode] is non-null, [children] must be that node's children.
+  /// [rootChildrenLoaded] records whether the implicit Drive root's children
+  /// were loaded when no root folder was requested.
   DriveFolderTree({
     required this.rootNode,
     required List<DriveFolderNode> children,
     required this.maxDepth,
     bool rootChildrenLoaded = true,
-  }) : children = List.unmodifiable(children),
+  }) : assert(rootNode == null || identical(children, rootNode.children)),
+       children = List.unmodifiable(children),
        _rootChildrenLoaded = rootChildrenLoaded;
 
   /// The requested root folder, or `null` when rooted at the Drive root.
@@ -54,9 +59,13 @@ final class DriveFolderTree {
 
   final bool _rootChildrenLoaded;
 
-  /// Whether traversal stopped before all children were loaded.
-  bool get isTruncated =>
+  late final bool _isTruncated =
       !_rootChildrenLoaded || nodes.any((node) => !node.childrenLoaded);
+
+  /// Whether any included folder's children were not listed.
+  ///
+  /// A `true` value does not imply that deeper folders exist.
+  bool get isTruncated => _isTruncated;
 
   /// All included nodes in pre-order, including [rootNode] when present.
   Iterable<DriveFolderNode> get nodes sync* {
@@ -69,8 +78,10 @@ final class DriveFolderTree {
     }
   }
 
+  late final int _folderCount = nodes.length;
+
   /// The number of folders included in this tree.
-  int get folderCount => nodes.length;
+  int get folderCount => _folderCount;
 
   @override
   String toString() =>
