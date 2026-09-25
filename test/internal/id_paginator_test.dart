@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:misskey_client/src/internal/id_paginator.dart';
 import 'package:test/test.dart';
 
@@ -61,6 +63,59 @@ void main() {
     );
     expect(requests, [(2, null), (1, '8')]);
   });
+
+  test('maxItems trims an over-long response page', () async {
+    final gate = Completer<List<String>>();
+    final started = Completer<void>();
+    final result = paginateById<String>(
+      fetchPage: (limit, untilId) {
+        requests.add((limit, untilId));
+        started.complete();
+        return gate.future;
+      },
+      idOf: (item) => item,
+      pageSize: 2,
+      maxItems: 1,
+    ).toList();
+    await started.future;
+    gate.complete(['9', '8', '7']);
+    expect(await result, ['9']);
+    expect(requests, [(1, null)]);
+  });
+
+  for (final fails in [false, true]) {
+    test('cancellation during a pending fetch (fails: $fails)', () async {
+      final gate = Completer<List<String>>();
+      final started = Completer<void>();
+      final events = <Object>[];
+      final subscription = paginateById<String>(
+        fetchPage: (limit, untilId) {
+          requests.add((limit, untilId));
+          started.complete();
+          return gate.future;
+        },
+        idOf: (item) => item,
+        pageSize: 2,
+      ).listen(events.add, onError: (Object error) => events.add(error));
+      await started.future;
+      final error = StateError('fetch failed');
+      final cancelled = subscription.cancel();
+      // async* はキャンセル中の例外を cancel() の Future に返す。
+      final cancellationChecked = expectLater(
+        cancelled,
+        fails ? throwsA(same(error)) : completes,
+      );
+      if (fails) {
+        gate.completeError(error);
+      } else {
+        gate.complete(['9', '8']);
+      }
+      await cancellationChecked;
+      await Future<void>.delayed(Duration.zero);
+      expect(requests, [(2, null)]);
+      expect(events, isEmpty);
+    });
+  }
 
   test('zero maxItems does not request a page', () async {
     expect(await paginate([], maxItems: 0).toList(), isEmpty);

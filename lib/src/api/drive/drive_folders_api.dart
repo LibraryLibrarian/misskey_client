@@ -19,10 +19,9 @@ class DriveFoldersApi {
 
   /// Lazily retrieves all folders in newest-first ID order.
   ///
-  /// Only ID order is supported: the server applies `untilId` as an ID filter
-  /// even when sorting by name or size, causing pages to skip or repeat items.
-  /// Collect the results and sort locally for other orders. This is not a
-  /// snapshot; changes on the server during pagination may affect results.
+  /// Results are newest-first by ID. Other orders require collecting the
+  /// results and sorting locally. This is not a snapshot; changes on the
+  /// server during pagination may affect results.
   ///
   /// [folderId] selects the parent folder; omit it for root-level items.
   /// [pageSize] must be 1-100 and [maxItems] must be non-negative, or an
