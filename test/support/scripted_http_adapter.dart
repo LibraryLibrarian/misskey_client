@@ -181,7 +181,8 @@ class ScriptedHttpClientAdapter implements HttpClientAdapter {
 
   static ResponseBody _responseBody(ScriptedResponse response) {
     final headers = <String, List<String>>{
-      Headers.contentTypeHeader: ['application/json'],
+      if (response.status != 204)
+        Headers.contentTypeHeader: ['application/json'],
       for (final entry in response.headers.entries) entry.key: [entry.value],
     };
     final body = response.body == null ? '' : jsonEncode(response.body);
@@ -231,11 +232,13 @@ _MultipartParts _parseMultipart(List<int> bytes, String? contentType) {
       r'filename="([^"]*)"',
     ).firstMatch(disposition)?.group(1);
     if (filename == null) {
-      fields[name] = value;
+      fields[name] = _decodeUtf8(value);
     } else {
-      fileNames.add(filename);
+      fileNames.add(_decodeUtf8(filename));
       firstFileBytes ??= latin1.encode(value);
     }
   }
   return _MultipartParts(fields, fileNames, firstFileBytes);
 }
+
+String _decodeUtf8(String value) => utf8.decode(latin1.encode(value));
