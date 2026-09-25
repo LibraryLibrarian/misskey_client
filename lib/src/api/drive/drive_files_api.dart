@@ -190,7 +190,8 @@ class DriveFilesApi {
   /// content. Existing files retain their name and comment. If [isSensitive] is
   /// `true`, an existing non-sensitive file is upgraded to sensitive. With
   /// [DriveDuplicatePolicy.reuseExisting], a match means a nonexistent or
-  /// foreign [folderId] is not validated, whereas a plain upload would fail.
+  /// foreign [folderId] is not validated. A plain [create] without `force`
+  /// also skips this validation when the server finds a match.
   /// With [DriveDuplicatePolicy.moveExisting], a match already in [folderId]
   /// is reused rather than reported as moved.
   Future<DriveUploadResult> createDeduplicated({
