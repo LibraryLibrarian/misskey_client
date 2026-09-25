@@ -6,6 +6,7 @@ environment:
 description: A pure Dart client library for the Misskey API. Covers 26 API domains with token-based auth, automatic retry, and structured error handling.
 dependencies:
   collection: ^1.19.1
+  crypto: ^3.0.6
   dio: ^5.11.0
   freezed_annotation: ^3.1.0
   json_annotation: ^4.12.0
