@@ -82,12 +82,23 @@ void main() {
       expect(
         await paginate([
           ['9', '8'],
-          ['9', last],
+          ['7', last],
         ]).toList(),
-        ['9', '8', '9', last],
+        ['9', '8', '7'],
       );
       expect(requests, hasLength(2));
     }
+  });
+
+  test('a repeated page yields no duplicate items', () async {
+    expect(
+      await paginate([
+        ['9', '8'],
+        ['9', '8'],
+      ]).toList(),
+      ['9', '8'],
+    );
+    expect(requests, hasLength(2));
   });
 
   test('cancelling after the first item sends no second request', () async {
