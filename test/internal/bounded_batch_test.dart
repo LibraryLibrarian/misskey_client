@@ -5,6 +5,31 @@ import 'package:misskey_client/src/internal/bounded_batch.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test(
+    'a non-async task throwing synchronously is recorded as a failure',
+    () async {
+      final error = StateError('synchronous task');
+      final gate = Completer<int>();
+      final started = <int>[];
+      final future = runBounded<int, int>(
+        inputs: [0, 1],
+        concurrency: 1,
+        task: (input, index) {
+          started.add(index);
+          if (index == 0) throw error;
+          return gate.future;
+        },
+      );
+      expect(started, [0, 1]);
+      gate.complete(10);
+      final result = await future;
+      expect(result.failures.single.error, same(error));
+      expect(result.failures.single.index, 0);
+      expect(result.successes.single.value, 10);
+      expect(result.successes.single.index, 1);
+    },
+  );
+
   test('gated workers bound concurrency and preserve input order', () async {
     final gates = List.generate(5, (_) => Completer<int>());
     final started = <int>[];

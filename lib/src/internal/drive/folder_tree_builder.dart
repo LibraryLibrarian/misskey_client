@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 
+import '../../client/misskey_cancellation_token.dart';
 import '../../models/batch/misskey_batch_result.dart';
 import '../../models/drive/drive_folder_tree.dart';
 import '../../models/misskey_drive_folder.dart';
@@ -25,6 +26,7 @@ Future<DriveFolderTree> buildDriveFolderTree({
   required String? rootFolderId,
   required int? maxDepth,
   required int concurrency,
+  MisskeyCancellationToken? cancellation,
 }) async {
   final foldersById = <String, MisskeyDriveFolder>{};
   final childIdsByParent = <String?, List<String>>{};
@@ -42,11 +44,15 @@ Future<DriveFolderTree> buildDriveFolderTree({
 
   var frontier = <String?>[rootFolderId];
   var depth = 1;
-  while (frontier.isNotEmpty && (maxDepth == null || depth <= maxDepth)) {
+  while (frontier.isNotEmpty &&
+      (maxDepth == null || depth <= maxDepth) &&
+      !(cancellation?.isCancelled ?? false)) {
     final batch = await runBounded<String?, List<MisskeyDriveFolder>>(
       inputs: frontier,
-      task: (parentId, _) => listAll(parentId).toList(),
+      task: (parentId, _) =>
+          _collectFolders(listAll(parentId), cancellation: cancellation),
       concurrency: concurrency,
+      cancellation: cancellation,
       stopReasonFor: (_) => MisskeyBatchSkipReason.stoppedAfterError,
     );
     for (final item in batch.items) {
@@ -74,8 +80,12 @@ Future<DriveFolderTree> buildDriveFolderTree({
     }
     frontier = nextFrontier;
     depth++;
+    if (cancellation?.isCancelled ?? false) break;
   }
 
+  if (cancellation?.isCancelled ?? false) {
+    rootChildrenLoaded = false;
+  }
   if (frontier.isNotEmpty) {
     for (final folderId in frontier) {
       if (folderId == null) {
@@ -114,4 +124,16 @@ Future<DriveFolderTree> buildDriveFolderTree({
     maxDepth: maxDepth,
     rootChildrenLoaded: rootChildrenLoaded,
   );
+}
+
+Future<List<MisskeyDriveFolder>> _collectFolders(
+  Stream<MisskeyDriveFolder> folders, {
+  MisskeyCancellationToken? cancellation,
+}) async {
+  final collected = <MisskeyDriveFolder>[];
+  await for (final folder in folders) {
+    if (cancellation?.isCancelled ?? false) break;
+    collected.add(folder);
+  }
+  return collected;
 }
