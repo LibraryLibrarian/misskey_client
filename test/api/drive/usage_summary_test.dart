@@ -17,9 +17,10 @@ void main() {
       final top = server.addFolder(name: 'top');
       final middle = server.addFolder(parentId: top.id, name: 'middle');
       final bottom = server.addFolder(parentId: middle.id, name: 'bottom');
-      server.addFile(folderId: top.id, size: 10);
+      final sibling = server.addFolder(parentId: top.id, name: 'sibling');
       server.addFile(folderId: middle.id, size: 20);
-      server.addFile(folderId: bottom.id, size: 30);
+      server.addFile(folderId: bottom.id, size: 40);
+      server.addFile(folderId: sibling.id, size: 30);
 
       final summary = await server.client.drive.getUsageSummary();
       final topUsage = summary.folderUsage(top.id)!;
@@ -28,22 +29,23 @@ void main() {
 
       expect(
         summary.total,
-        const DriveUsageStats(fileCount: 3, totalBytes: 60),
+        const DriveUsageStats(fileCount: 3, totalBytes: 90),
       );
-      expect(
-        topUsage.direct,
-        const DriveUsageStats(fileCount: 1, totalBytes: 10),
-      );
+      expect(topUsage.direct, DriveUsageStats.zero);
       expect(
         topUsage.recursive,
-        const DriveUsageStats(fileCount: 3, totalBytes: 60),
+        const DriveUsageStats(fileCount: 3, totalBytes: 90),
       );
       expect(
         middleUsage.recursive,
-        const DriveUsageStats(fileCount: 2, totalBytes: 50),
+        const DriveUsageStats(fileCount: 2, totalBytes: 60),
       );
       expect(
         bottomUsage.recursive,
+        const DriveUsageStats(fileCount: 1, totalBytes: 40),
+      );
+      expect(
+        summary.folderUsage(sibling.id)!.recursive,
         const DriveUsageStats(fileCount: 1, totalBytes: 30),
       );
     },
@@ -53,8 +55,6 @@ void main() {
     'separates root and unassigned files and groups exact MIME types',
     () async {
       final folder = server.addFolder();
-      server.addFile(size: 4, type: 'text/plain');
-      server.addFile(folderId: folder.id, size: 6, type: 'custom');
       server.failWhen(
         '/drive/stream',
         (request) => request.jsonBody?['untilId'] == null,
@@ -90,6 +90,10 @@ void main() {
         summary.byMimeType['text/plain'],
         const DriveUsageStats(fileCount: 1, totalBytes: 4),
       );
+      expect(
+        () => summary.byMimeType['custom'] = DriveUsageStats.zero,
+        throwsUnsupportedError,
+      );
     },
   );
 
@@ -118,19 +122,59 @@ void main() {
     });
   }
 
-  test('reports monotonic progress and the final scanned file count', () async {
-    for (var i = 0; i < 3; i++) {
+  test('cancels file scanning when folder traversal fails', () async {
+    for (var i = 0; i < 250; i++) {
       server.addFile();
     }
     final progress = <int>[];
-
-    final summary = await server.client.drive.getUsageSummary(
-      onProgress: progress.add,
+    server.failWhen(
+      '/drive/folders',
+      (_) => true,
+      ScriptedResponse.error(400, code: 'TEST_ERROR'),
     );
 
-    expect(progress, [1, 2, 3]);
-    expect(progress.last, summary.total.fileCount);
+    await expectLater(
+      server.client.drive.getUsageSummary(onProgress: progress.add),
+      throwsA(isA<MisskeyApiException>()),
+    );
+    final streamRequestsAfterFailure = server.adapter.requests
+        .where((request) => request.path == '/drive/stream')
+        .length;
+    final progressAfterFailure = List<int>.of(progress);
+
+    await _pumpEventLoop();
+
+    expect(
+      server.adapter.requests
+          .where((request) => request.path == '/drive/stream')
+          .length,
+      streamRequestsAfterFailure,
+    );
+    expect(progress, progressAfterFailure);
   });
+
+  test(
+    'reports progress across pages through the final scanned file count',
+    () async {
+      for (var i = 0; i < 101; i++) {
+        server.addFile();
+      }
+      final progress = <int>[];
+
+      final summary = await server.client.drive.getUsageSummary(
+        onProgress: progress.add,
+      );
+
+      expect(progress, [for (var i = 1; i <= 101; i++) i]);
+      expect(progress.last, summary.total.fileCount);
+      expect(
+        server.adapter.requests.where(
+          (request) => request.path == '/drive/stream',
+        ),
+        hasLength(2),
+      );
+    },
+  );
 
   test('exposes folder usage in pre-order and supports lookup', () async {
     final first = server.addFolder();
@@ -181,4 +225,10 @@ void main() {
       100,
     ]);
   });
+}
+
+Future<void> _pumpEventLoop() async {
+  for (var i = 0; i < 3; i++) {
+    await Future<void>.delayed(Duration.zero);
+  }
 }

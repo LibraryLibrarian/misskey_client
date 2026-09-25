@@ -52,7 +52,7 @@ final class DriveFolderUsage {
   /// The folder represented by this usage entry.
   final MisskeyDriveFolder folder;
 
-  /// The folder depth relative to the Drive root.
+  /// The folder depth relative to the Drive root; top-level folders have depth 1.
   final int depth;
 
   /// Usage from files directly inside [folder].

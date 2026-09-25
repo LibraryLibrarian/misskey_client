@@ -64,13 +64,18 @@ class DriveApi {
 
   /// Scans the whole Drive and aggregates file usage by folder and MIME type.
   ///
-  /// This makes one `/drive/stream` request per 100 files and concurrently
-  /// retrieves the folder tree. It is not an atomic snapshot: concurrent Drive
-  /// changes can cause small inconsistencies, and [DriveUsageSummary.total] may
-  /// differ slightly from the usage reported by [DriveStatsApi.getCapacity].
+  /// This makes about one `/drive/stream` request per 100 files plus one
+  /// `/drive/folders` listing per folder. It is not an atomic snapshot:
+  /// concurrent Drive changes can cause small inconsistencies. Linked files
+  /// (uncached remote files with `isLink`) are included here but excluded from
+  /// server-reported Drive usage, so [DriveUsageSummary.total] may differ from
+  /// the usage reported by [DriveStatsApi.getCapacity].
+  ///
   /// [onProgress] is called after every scanned file with the cumulative count.
   /// [concurrency] limits concurrent folder-tree requests and must be positive.
-  /// Invalid concurrency throws [ArgumentError] before any request is made.
+  /// Invalid concurrency throws [ArgumentError] before any request is made. If
+  /// scanning fails, in-flight folder listings cannot be cancelled and may
+  /// continue briefly before their errors are discarded.
   Future<DriveUsageSummary> getUsageSummary({
     int concurrency = 4,
     void Function(int filesScanned)? onProgress,
