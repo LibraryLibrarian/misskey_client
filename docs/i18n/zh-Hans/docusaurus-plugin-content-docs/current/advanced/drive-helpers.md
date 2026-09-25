@@ -435,4 +435,4 @@ Misskey 对这些辅助方法使用的端点设置的默认单用户限制如下
 | `drive/files/upload-from-url` | 每小时 60 次 | `uploadFromUrlAndWait()` |
 | 列表、`show`、`find`、`update`、`delete`、`move-bulk` | 每个端点无单独限制 | 其他所有辅助方法 |
 
-服务器管理员设置的角色频率限制系数会按比例调整这些值。达到限制时，单请求辅助方法会抛出 `MisskeyRateLimitException`，批量辅助方法会停止启动新工作。未开始的独立工作会在 `createMany()`、`dissolveFolder()` 的子文件夹移动阶段以及 `deleteFolderRecursive()` 的删除阶段中报告为 `rateLimited`。`moveBulkAll()` 的分块使用 `stoppedAfterError`，依赖的操作可能为 `dependencyFailed`，被中断的文件夹删除重试仍视为失败。
+服务器管理员设置的角色频率限制系数会按比例调整这些值。达到限制时，单请求辅助方法会抛出 `MisskeyRateLimitException`，批量辅助方法会停止启动新工作。未开始的独立工作会在 `createMany()`、`dissolveFolder()` 的子文件夹移动阶段以及 `deleteFolderRecursive()` 的删除阶段中报告为 `rateLimited`。`moveBulkAll()` 的分组使用 `stoppedAfterError`，依赖的操作可能为 `dependencyFailed`，被中断的文件夹删除重试仍视为失败。
