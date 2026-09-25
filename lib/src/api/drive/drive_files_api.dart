@@ -72,9 +72,9 @@ class DriveFilesApi {
   /// [sort] controls the sort order and accepts `+createdAt`, `-createdAt`,
   /// `+name`, `-name`, `+size`, or `-size`; `+` means descending.
   /// Only `+createdAt` (or null) is consistent with [untilId] pagination,
-  /// and only `-createdAt` with [sinceId]. Other sorts override the pagination
-  /// order while the cursors still filter by ID, causing skipped or repeated
-  /// items.
+  /// and `-createdAt` (or null) with [sinceId] alone. Other sorts override the
+  /// pagination order while the cursors still filter by ID, causing skipped
+  /// or repeated items.
   Future<List<MisskeyDriveFile>> list({
     int? limit,
     String? sinceId,

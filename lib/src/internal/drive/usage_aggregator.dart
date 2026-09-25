@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:meta/meta.dart';
 
+import '../../client/misskey_cancellation_token.dart';
 import '../../models/drive/drive_folder_tree.dart';
 import '../../models/drive/drive_usage_summary.dart';
 import '../../models/misskey_drive_file.dart';
@@ -9,16 +10,21 @@ import '../../models/misskey_drive_file.dart';
 /// Aggregates a folder tree and a full file stream into Drive usage statistics.
 @internal
 Future<DriveUsageSummary> aggregateDriveUsage({
-  required Future<DriveFolderTree> Function() getTree,
+  required Future<DriveFolderTree> Function(
+    MisskeyCancellationToken cancellation,
+  )
+  getTree,
   required Stream<MisskeyDriveFile> Function() streamAll,
   void Function(int filesScanned)? onProgress,
 }) async {
   final files = streamAll();
   final scan = _DriveUsageScanner(files, onProgress: onProgress);
+  final treeCancellation = MisskeyCancellationToken();
   late final Future<DriveFolderTree> tree;
   try {
-    tree = getTree();
+    tree = getTree(treeCancellation);
   } catch (error, stackTrace) {
+    treeCancellation.cancel();
     await _stopScan(scan);
     Error.throwWithStackTrace(error, stackTrace);
   }
@@ -27,6 +33,7 @@ Future<DriveUsageSummary> aggregateDriveUsage({
   try {
     results = await Future.wait<Object>([tree, scan.result], eagerError: true);
   } catch (error, stackTrace) {
+    treeCancellation.cancel();
     await _stopScan(scan);
     Error.throwWithStackTrace(error, stackTrace);
   }

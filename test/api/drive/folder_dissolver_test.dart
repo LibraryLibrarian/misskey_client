@@ -323,6 +323,27 @@ void main() {
     expect(server.adapter.paths, ['/drive/folders/show', '/drive/files']);
   });
 
+  test('throws when subfolder listing fails before mutations', () async {
+    final folder = server.addFolder();
+    server.addFile(folderId: folder.id);
+    server.failWhen(
+      '/drive/folders',
+      (_) => true,
+      ScriptedResponse.error(400, code: 'TEST_ERROR'),
+    );
+
+    await expectLater(
+      server.client.drive.dissolveFolder(folderId: folder.id),
+      throwsA(isA<MisskeyApiException>()),
+    );
+
+    expect(server.adapter.paths, [
+      '/drive/folders/show',
+      '/drive/files',
+      '/drive/folders',
+    ]);
+  });
+
   test('validates concurrency before sending a request', () async {
     await expectLater(
       server.client.drive.dissolveFolder(folderId: 'folder', concurrency: 0),

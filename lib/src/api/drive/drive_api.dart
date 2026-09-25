@@ -45,9 +45,11 @@ class DriveApi {
   /// parent (checked when moving files) cannot be read. After moves begin, it
   /// returns their individual outcomes and deletes the source folder only when
   /// every move succeeds. If file moves are not complete, subfolders and
-  /// deletion are skipped. Concurrent additions can make deletion fail with
-  /// `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported in the result. It
-  /// is safe to run again after a partial result.
+  /// deletion are skipped. An HTTP 429 stops scheduling additional subfolder
+  /// moves; already-started requests finish, remaining subfolders are reported
+  /// as `rateLimited`, and deletion is skipped. Concurrent additions can make
+  /// deletion fail with `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported
+  /// in the result. It is safe to run again after a partial result.
   ///
   /// [concurrency] bounds parallel subfolder moves; files are moved sequentially
   /// in chunks of 100. It must be positive or an [ArgumentError] is thrown
@@ -78,7 +80,10 @@ class DriveApi {
   /// plan contains only files already listed; every planned file and folder is
   /// returned as skipped with `cancelled`, and no deletes are sent (even for a
   /// dry run). Tree traversal itself finishes before cancellation is observed.
-  /// The plan is a snapshot; concurrently added contents are not deleted.
+  /// Planning spans multiple requests and is not atomic: items added during
+  /// planning may be included. Only items absent from the completed plan are
+  /// excluded from deletion. A dry run does not freeze the targets of a later
+  /// non-dry-run call, which creates a new plan.
   /// Planned items are deleted even if they are moved elsewhere after planning.
   ///
   /// Misskey removes file database rows after responding to file deletion.
@@ -114,10 +119,9 @@ class DriveApi {
 
   /// Lazily retrieves all files across all folders in newest-first ID order.
   ///
-  /// Only ID order is supported: the server applies `untilId` as an ID filter
-  /// even when sorting by name or size, causing pages to skip or repeat items.
-  /// Collect the results and sort locally for other orders. This is not a
-  /// snapshot; changes on the server during pagination may affect results.
+  /// Results are newest-first by ID. Other orders require collecting the
+  /// results and sorting locally. This is not a snapshot; changes on the
+  /// server during pagination may affect results.
   ///
   /// [type] accepts only letters, `/`, `-`, and `*` (for example, `image/*`).
   /// The server rejects values containing digits such as `video/mp4`.
@@ -154,15 +158,18 @@ class DriveApi {
   /// [onProgress] is called after every scanned file with the cumulative count.
   /// [concurrency] limits concurrent folder-tree requests and must be positive.
   /// Invalid concurrency throws [ArgumentError] before any request is made. If
-  /// scanning fails, in-flight folder listings cannot be cancelled and may
-  /// continue briefly before their errors are discarded.
+  /// scanning fails, no additional folder listings start; already-started
+  /// requests finish before their results and errors are discarded.
   Future<DriveUsageSummary> getUsageSummary({
     int concurrency = 4,
     void Function(int filesScanned)? onProgress,
   }) {
     validateConcurrency(concurrency);
     return aggregateDriveUsage(
-      getTree: () => folders.getTree(concurrency: concurrency),
+      getTree: (cancellation) => folders.getTreeWithCancellation(
+        concurrency: concurrency,
+        cancellation: cancellation,
+      ),
       streamAll: streamAll,
       onProgress: onProgress,
     );
