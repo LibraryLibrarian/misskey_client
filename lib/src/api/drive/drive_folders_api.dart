@@ -1,6 +1,5 @@
 import 'package:meta/meta.dart';
 
-import '../../client/misskey_cancellation_token.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/drive/folder_tree_builder.dart';
@@ -67,36 +66,14 @@ class DriveFoldersApi {
     int concurrency = 4,
   }) {
     validateDriveFolderTreeArgs(maxDepth: maxDepth, concurrency: concurrency);
-    return _buildTree(
+    return buildDriveFolderTree(
+      show: (folderId) => show(folderId: folderId),
+      listAll: (folderId) => listAll(folderId: folderId),
       rootFolderId: rootFolderId,
       maxDepth: maxDepth,
       concurrency: concurrency,
     );
   }
-
-  /// Retrieves a Drive folder tree with cooperative cancellation.
-  @internal
-  Future<DriveFolderTree> getTreeWithCancellation({
-    required int concurrency,
-    required MisskeyCancellationToken cancellation,
-  }) {
-    validateDriveFolderTreeArgs(maxDepth: null, concurrency: concurrency);
-    return _buildTree(concurrency: concurrency, cancellation: cancellation);
-  }
-
-  Future<DriveFolderTree> _buildTree({
-    String? rootFolderId,
-    int? maxDepth,
-    required int concurrency,
-    MisskeyCancellationToken? cancellation,
-  }) => buildDriveFolderTree(
-    show: (folderId) => show(folderId: folderId),
-    listAll: (folderId) => listAll(folderId: folderId),
-    rootFolderId: rootFolderId,
-    maxDepth: maxDepth,
-    concurrency: concurrency,
-    cancellation: cancellation,
-  );
 
   /// Retrieves a list of Drive folders (`/api/drive/folders`).
   ///

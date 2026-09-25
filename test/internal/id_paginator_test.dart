@@ -84,38 +84,182 @@ void main() {
   });
 
   for (final fails in [false, true]) {
-    test('cancellation during a pending fetch (fails: $fails)', () async {
-      final gate = Completer<List<String>>();
-      final started = Completer<void>();
-      final events = <Object>[];
-      final subscription = paginateById<String>(
-        fetchPage: (limit, untilId) {
-          requests.add((limit, untilId));
-          started.complete();
-          return gate.future;
+    for (final discardCancel in [false, true]) {
+      test(
+        'pending fetch cancellation (fails: $fails, discarded: $discardCancel)',
+        () async {
+          final unhandled = <Object>[];
+          final cancellationErrors = <Object>[];
+          final events = <Object>[];
+          var cancellationCompleted = false;
+          await runZonedGuarded<Future<void>>(() async {
+            final gate = Completer<List<String>>();
+            final started = Completer<void>();
+            final subscription = paginateById<String>(
+              fetchPage: (limit, untilId) {
+                requests.add((limit, untilId));
+                started.complete();
+                return gate.future;
+              },
+              idOf: (item) => item,
+              pageSize: 2,
+            ).listen(events.add, onError: (Object error) => events.add(error));
+            await started.future;
+            final cancelled = subscription.cancel();
+            Future<void>? checked;
+            if (!discardCancel) {
+              checked = cancelled.then<void>(
+                (_) => cancellationCompleted = true,
+                onError: (Object error) => cancellationErrors.add(error),
+              );
+            }
+            if (fails) {
+              gate.completeError(StateError('fetch failed'));
+            } else {
+              gate.complete(['9', '8']);
+            }
+            await checked;
+            await Future<void>.delayed(Duration.zero);
+          }, (error, _) => unhandled.add(error));
+          expect(unhandled, isEmpty);
+          expect(cancellationErrors, isEmpty);
+          if (!discardCancel) expect(cancellationCompleted, isTrue);
+          expect(requests, [(2, null)]);
+          expect(events, isEmpty);
         },
-        idOf: (item) => item,
-        pageSize: 2,
-      ).listen(events.add, onError: (Object error) => events.add(error));
-      await started.future;
-      final error = StateError('fetch failed');
-      final cancelled = subscription.cancel();
-      // async* はキャンセル中の例外を cancel() の Future に返す。
-      final cancellationChecked = expectLater(
-        cancelled,
-        fails ? throwsA(same(error)) : completes,
       );
-      if (fails) {
-        gate.completeError(error);
-      } else {
-        gate.complete(['9', '8']);
-      }
-      await cancellationChecked;
+    }
+  }
+
+  test('pause immediately after listen prevents the first request', () async {
+    final events = <String>[];
+    final done = Completer<void>();
+    final subscription = paginate([
+      ['9', '8'],
+      ['7'],
+    ]).listen(events.add, onDone: done.complete);
+    subscription.pause();
+    await Future<void>.delayed(Duration.zero);
+    expect(requests, isEmpty);
+    expect(events, isEmpty);
+    subscription.resume();
+    await done.future;
+    expect(events, ['9', '8', '7']);
+    expect(requests, [(2, null), (2, '8')]);
+  });
+
+  test(
+    'pause during the readiness gap between pages prevents fetching',
+    () async {
+      final paused = Completer<void>();
+      final done = Completer<void>();
+      final events = <String>[];
+      late StreamSubscription<String> subscription;
+      subscription = paginateById<String>(
+        fetchPage: (limit, untilId) async {
+          requests.add((limit, untilId));
+          return untilId == null ? ['9', '8'] : ['7'];
+        },
+        idOf: (item) {
+          if (item == '8') {
+            // 次のページの準備待ちとその継続の間に pause する。
+            scheduleMicrotask(() {
+              subscription.pause();
+              paused.complete();
+            });
+          }
+          return item;
+        },
+        pageSize: 2,
+      ).listen(events.add, onDone: done.complete);
+      await paused.future;
       await Future<void>.delayed(Duration.zero);
       expect(requests, [(2, null)]);
-      expect(events, isEmpty);
-    });
-  }
+      expect(events, ['9', '8']);
+      subscription.resume();
+      await done.future;
+      expect(requests, [(2, null), (2, '8')]);
+      expect(events, ['9', '8', '7']);
+    },
+  );
+
+  test(
+    'pause after a delivered page prevents the next fetch until resume',
+    () async {
+      final paused = Completer<void>();
+      final done = Completer<void>();
+      final events = <String>[];
+      late StreamSubscription<String> subscription;
+      subscription =
+          paginate([
+            ['9', '8'],
+            ['7'],
+          ]).listen((item) {
+            events.add(item);
+            if (item == '8') {
+              subscription.pause();
+              paused.complete();
+            }
+          }, onDone: done.complete);
+      await paused.future;
+      await Future<void>.delayed(Duration.zero);
+      expect(events, ['9', '8']);
+      expect(requests, [(2, null)]);
+      subscription.resume();
+      await done.future;
+      expect(events, ['9', '8', '7']);
+      expect(requests, [(2, null), (2, '8')]);
+    },
+  );
+
+  test(
+    'pause within a page holds remaining items and cancellation releases it',
+    () async {
+      final paused = Completer<void>();
+      final events = <String>[];
+      late StreamSubscription<String> subscription;
+      subscription =
+          paginate([
+            ['9', '8'],
+          ]).listen((item) {
+            events.add(item);
+            subscription.pause();
+            paused.complete();
+          });
+      await paused.future;
+      await Future<void>.delayed(Duration.zero);
+      expect(events, ['9']);
+      await subscription.cancel();
+      await Future<void>.delayed(Duration.zero);
+      expect(events, ['9']);
+      expect(requests, [(2, null)]);
+    },
+  );
+
+  test('await-for backpressure prevents fetching before consumption', () async {
+    final consumed = Completer<void>();
+    final resume = Completer<void>();
+    final events = <String>[];
+    final processing = () async {
+      await for (final item in paginate([
+        ['9', '8'],
+        ['7'],
+      ])) {
+        events.add(item);
+        if (item == '8') {
+          consumed.complete();
+          await resume.future;
+        }
+      }
+    }();
+    await consumed.future;
+    await Future<void>.delayed(Duration.zero);
+    expect(requests, [(2, null)]);
+    resume.complete();
+    await processing;
+    expect(events, ['9', '8', '7']);
+    expect(requests, [(2, null), (2, '8')]);
+  });
 
   test('zero maxItems does not request a page', () async {
     expect(await paginate([], maxItems: 0).toList(), isEmpty);

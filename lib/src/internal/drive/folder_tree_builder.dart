@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:meta/meta.dart';
 
 import '../../client/misskey_cancellation_token.dart';
@@ -129,11 +131,33 @@ Future<DriveFolderTree> buildDriveFolderTree({
 Future<List<MisskeyDriveFolder>> _collectFolders(
   Stream<MisskeyDriveFolder> folders, {
   MisskeyCancellationToken? cancellation,
-}) async {
+}) {
   final collected = <MisskeyDriveFolder>[];
-  await for (final folder in folders) {
-    if (cancellation?.isCancelled ?? false) break;
-    collected.add(folder);
+  final result = Completer<List<MisskeyDriveFolder>>();
+  late final StreamSubscription<MisskeyDriveFolder> subscription;
+
+  Future<void> stop() async {
+    if (!result.isCompleted) result.complete(collected);
+    await subscription.cancel();
   }
-  return collected;
+
+  subscription = folders.listen(
+    (folder) {
+      if (cancellation?.isCancelled ?? false) return;
+      collected.add(folder);
+    },
+    onError: (Object error, StackTrace stackTrace) {
+      if (!result.isCompleted) result.completeError(error, stackTrace);
+    },
+    onDone: () {
+      if (!result.isCompleted) result.complete(collected);
+    },
+    cancelOnError: true,
+  );
+  if (cancellation?.isCancelled ?? false) {
+    unawaited(stop());
+  } else {
+    cancellation?.whenCancelled.then((_) => unawaited(stop()));
+  }
+  return result.future;
 }
