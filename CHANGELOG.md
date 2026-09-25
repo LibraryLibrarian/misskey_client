@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `AdminApi.updateMeta(extra:)` for passing newer upstream or fork-specific instance settings that do not yet have typed parameters (issue #23)
 - Added `DriveFilesApi.listAll`, `DriveFoldersApi.listAll`, and `DriveApi.streamAll` for lazy newest-first pagination, plus the `MisskeyBatchResult` / `MisskeyBatchItemResult` family and `MisskeyCancellationToken` used by batch Drive helpers.
 - Added `DriveFilesApi.moveBulkAll` for sequentially moving any number of Drive files in bulk
+- Added `DriveApi.dissolveFolder` for moving a folder’s direct contents into its parent or the root before deletion
 
 ### Changed
 
