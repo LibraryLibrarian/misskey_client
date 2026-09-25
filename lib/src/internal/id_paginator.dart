@@ -34,6 +34,7 @@ Stream<T> paginateById<T>({
         : math.min(pageSize, maxItems - count);
     final page = await fetchPage(limit, untilId);
     for (final item in page) {
+      if (untilId != null && idOf(item).compareTo(untilId) >= 0) return;
       yield item;
       count++;
       if (maxItems != null && count >= maxItems) return;

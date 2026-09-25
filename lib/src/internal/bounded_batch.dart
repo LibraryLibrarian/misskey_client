@@ -13,6 +13,14 @@ MisskeyBatchSkipReason? stopOnRateLimit(Object e) =>
     ? MisskeyBatchSkipReason.rateLimited
     : null;
 
+/// Validates the worker concurrency synchronously.
+@internal
+void validateConcurrency(int concurrency) {
+  if (concurrency < 1) {
+    throw ArgumentError.value(concurrency, 'concurrency', 'must be positive');
+  }
+}
+
 /// Runs at most [concurrency] tasks concurrently, returning input-order results.
 ///
 /// Cancellation is cooperative: no Dio `CancelToken` is passed to requests,
@@ -20,7 +28,9 @@ MisskeyBatchSkipReason? stopOnRateLimit(Object e) =>
 /// stop reason determines the reason and cause for unstarted inputs.
 /// [onResult] receives each outcome, including skipped inputs. If it throws,
 /// unstarted work is stopped and its first error is rethrown with its original
-/// stack trace after all workers finish.
+/// stack trace after all workers finish. It continues to receive remaining
+/// outcomes even after throwing. Errors thrown by [stopReasonFor] are handled
+/// in the same way: stop unstarted work and rethrow after workers finish.
 @internal
 Future<MisskeyBatchResult<I, T>> runBounded<I, T>({
   required List<I> inputs,
@@ -30,9 +40,7 @@ Future<MisskeyBatchResult<I, T>> runBounded<I, T>({
   MisskeyBatchSkipReason? Function(Object error)? stopReasonFor,
   void Function(MisskeyBatchItemResult<I, T>)? onResult,
 }) async {
-  if (concurrency < 1) {
-    throw ArgumentError.value(concurrency, 'concurrency', 'must be positive');
-  }
+  validateConcurrency(concurrency);
   final pending = List<I>.of(inputs);
   final results = List<MisskeyBatchItemResult<I, T>?>.filled(
     pending.length,
@@ -50,13 +58,21 @@ Future<MisskeyBatchResult<I, T>> runBounded<I, T>({
     stopCause = cause;
   }
 
+  cancellation?.whenCancelled.then((_) {
+    stop(MisskeyBatchSkipReason.cancelled);
+  });
+
+  void recordCallbackError(Object error, StackTrace stackTrace) {
+    callbackError ??= error;
+    callbackStack ??= stackTrace;
+    stop(MisskeyBatchSkipReason.stoppedAfterError, error);
+  }
+
   void notify(MisskeyBatchItemResult<I, T> result) {
     try {
       onResult?.call(result);
     } catch (error, stackTrace) {
-      callbackError ??= error;
-      callbackStack ??= stackTrace;
-      stop(MisskeyBatchSkipReason.stoppedAfterError, error);
+      recordCallbackError(error, stackTrace);
     }
   }
 
@@ -80,8 +96,12 @@ Future<MisskeyBatchResult<I, T>> runBounded<I, T>({
           error: error,
           stackTrace: stackTrace,
         );
-        final reason = stopReasonFor?.call(error);
-        if (reason != null) stop(reason, error);
+        try {
+          final reason = stopReasonFor?.call(error);
+          if (reason != null) stop(reason, error);
+        } catch (error, stackTrace) {
+          recordCallbackError(error, stackTrace);
+        }
       }
       results[index] = result;
       notify(result);

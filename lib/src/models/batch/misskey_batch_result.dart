@@ -43,6 +43,9 @@ final class MisskeyBatchSuccess<I, T> extends MisskeyBatchItemResult<I, T> {
 
   /// The operation's return value.
   final T value;
+
+  @override
+  String toString() => 'MisskeyBatchSuccess(index: $index, value: $value)';
 }
 
 /// An input whose operation threw an error.
@@ -61,6 +64,9 @@ final class MisskeyBatchFailure<I, T> extends MisskeyBatchItemResult<I, T> {
 
   /// The original stack trace.
   final StackTrace stackTrace;
+
+  @override
+  String toString() => 'MisskeyBatchFailure(index: $index, error: $error)';
 }
 
 /// An input whose operation was not started.
@@ -79,6 +85,10 @@ final class MisskeyBatchSkipped<I, T> extends MisskeyBatchItemResult<I, T> {
 
   /// The error that caused the stop, if any.
   final Object? cause;
+
+  @override
+  String toString() =>
+      'MisskeyBatchSkipped(index: $index, reason: $reason, cause: $cause)';
 }
 
 /// Immutable batch outcomes in input order.
@@ -108,4 +118,9 @@ final class MisskeyBatchResult<I, T> {
 
   /// Whether every input succeeded; also true for an empty batch.
   bool get isComplete => items.every((item) => item.isSuccess);
+
+  @override
+  String toString() =>
+      'MisskeyBatchResult(items: ${items.length}, successes: ${successes.length}, '
+      'failures: ${failures.length}, skipped: ${skipped.length})';
 }
