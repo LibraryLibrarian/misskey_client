@@ -96,9 +96,15 @@ void main() {
         expect(exact.check(size: 1, mimeType: 'video/mp4').issues, isEmpty);
         expect(exact.check(size: 1).issues, isEmpty);
 
-        final issue = image.check(size: 1, mimeType: 'video/mp4').issues.single;
+        final check = image.check(size: 1, mimeType: 'video/mp4');
+        final issue = check.issues.single;
         expect(issue, isA<DriveUploadTypeNotAllowed>());
         expect(issue.severity, DriveUploadIssueSeverity.advisory);
+        expect(check.canUpload, isTrue);
+        expect(
+          image.check(size: 1, mimeType: 'imagex/png').issues.single,
+          isA<DriveUploadTypeNotAllowed>(),
+        );
       },
     );
 
@@ -118,13 +124,15 @@ void main() {
         ),
         capacity: const DriveCapacityInfo(capacity: 1, usage: 1),
       );
-      final partialIssue = partial.check(size: megabyte).issues.single;
+      final partialIssues = partial.check(size: megabyte).issues;
+      final partialIssue = partialIssues.first;
       expect(partialIssue, isA<DriveUploadPoliciesUnavailable>());
       expect((partialIssue as DriveUploadPoliciesUnavailable).missing, [
         'maxFileSizeMb',
         'driveCapacityMb',
         'uploadableFileTypes',
       ]);
+      expect(partialIssues.last, isA<DriveUploadInsufficientCapacity>());
     });
 
     test('checks cumulative capacity and returns post-upload snapshots', () {
@@ -139,6 +147,7 @@ void main() {
       ]);
       expect(checks.first.canUpload, isTrue);
       expect(checks.last.issues.single, isA<DriveUploadInsufficientCapacity>());
+      expect(snapshot.checkAll([]), isEmpty);
 
       final afterUpload = snapshot.afterUpload(60);
       expect(afterUpload.capacity.usage, 60);
@@ -157,6 +166,60 @@ void main() {
       final issue = snapshot.check(size: 51).issues.single;
       expect(issue, isA<DriveUploadFileTooLarge>());
       expect((issue as DriveUploadFileTooLarge).instanceLimit, isTrue);
+    });
+
+    test('returns every applicable issue from one check', () {
+      final snapshot = preflight(
+        policies: policies(),
+        capacity: const DriveCapacityInfo(capacity: 100, usage: 100),
+        instanceMaxFileSize: 1,
+      );
+
+      final check = snapshot.check(size: megabyte + 1, mimeType: 'video/mp4');
+
+      expect(check.canUpload, isFalse);
+      expect(
+        check.issues,
+        containsAll([
+          isA<DriveUploadFileTooLarge>(),
+          isA<DriveUploadInsufficientCapacity>(),
+          isA<DriveUploadTypeNotAllowed>(),
+        ]),
+      );
+      expect(check.issues.whereType<DriveUploadFileTooLarge>(), hasLength(2));
+    });
+
+    test('exposes unmodifiable result lists', () {
+      final snapshot = preflight(policies: policies());
+      final typeCheck = snapshot.check(size: 1, mimeType: 'video/mp4');
+      final typeIssue = typeCheck.issues.single as DriveUploadTypeNotAllowed;
+      final unavailableIssue =
+          preflight().check(size: 1).issues.single
+              as DriveUploadPoliciesUnavailable;
+      final checks = snapshot.checkAll([(size: 1, mimeType: null)]);
+
+      expect(
+        () => typeCheck.issues.add(
+          const DriveUploadFileTooLarge(
+            size: 1,
+            maxSize: 1,
+            instanceLimit: false,
+          ),
+        ),
+        throwsUnsupportedError,
+      );
+      expect(
+        () => typeIssue.allowedTypes.add('video/*'),
+        throwsUnsupportedError,
+      );
+      expect(
+        () => unavailableIssue.missing.add('policies'),
+        throwsUnsupportedError,
+      );
+      expect(
+        () => checks.add(DriveUploadCheck(issues: const [])),
+        throwsUnsupportedError,
+      );
     });
   });
 
@@ -198,5 +261,25 @@ void main() {
         await server.client.dispose();
       },
     );
+
+    test('recognizes an admin as bypassing role policy limits', () async {
+      final server = FakeDriveServer(
+        isAdmin: true,
+        policies: {
+          'maxFileSizeMb': 1,
+          'driveCapacityMb': 1,
+          'uploadableFileTypes': ['image/*'],
+        },
+      );
+
+      final snapshot = await server.client.drive.getUploadPreflight();
+
+      expect(snapshot.bypassesPolicyLimits, isTrue);
+      expect(
+        snapshot.check(size: 2 * megabyte, mimeType: 'video/mp4').canUpload,
+        isTrue,
+      );
+      await server.client.dispose();
+    });
   });
 }

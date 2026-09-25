@@ -5,8 +5,14 @@ import 'package:meta/meta.dart';
 import '../misskey_role_policies.dart';
 import 'drive_capacity_info.dart';
 
-/// The severity of an issue found during an upload preflight check.
-enum DriveUploadIssueSeverity { blocking, advisory }
+/// The severity assigned to an upload preflight issue.
+enum DriveUploadIssueSeverity {
+  /// Prevents the upload.
+  blocking,
+
+  /// Provides information without preventing the upload.
+  advisory,
+}
 
 /// An issue found during an upload preflight check.
 @immutable
@@ -14,7 +20,8 @@ sealed class DriveUploadIssue {
   /// Creates an upload issue.
   const DriveUploadIssue();
 
-  /// Whether this issue prevents the upload.
+  /// The severity of this issue; [DriveUploadIssueSeverity.blocking] prevents
+  /// the upload.
   DriveUploadIssueSeverity get severity;
 }
 
@@ -40,6 +47,11 @@ final class DriveUploadFileTooLarge extends DriveUploadIssue {
 
   @override
   DriveUploadIssueSeverity get severity => DriveUploadIssueSeverity.blocking;
+
+  @override
+  String toString() =>
+      'DriveUploadFileTooLarge(size: $size, maxSize: $maxSize, '
+      'instanceLimit: $instanceLimit)';
 }
 
 /// Reports that an upload would exceed available Drive capacity.
@@ -59,6 +71,11 @@ final class DriveUploadInsufficientCapacity extends DriveUploadIssue {
 
   @override
   DriveUploadIssueSeverity get severity => DriveUploadIssueSeverity.blocking;
+
+  @override
+  String toString() =>
+      'DriveUploadInsufficientCapacity(size: $size, '
+      'availableBytes: $availableBytes)';
 }
 
 /// Reports that a MIME type is not allowed by the effective policies.
@@ -81,6 +98,11 @@ final class DriveUploadTypeNotAllowed extends DriveUploadIssue {
 
   @override
   DriveUploadIssueSeverity get severity => DriveUploadIssueSeverity.advisory;
+
+  @override
+  String toString() =>
+      'DriveUploadTypeNotAllowed(mimeType: $mimeType, '
+      'allowedTypes: $allowedTypes)';
 }
 
 /// Reports policy values that were unavailable for a preflight check.
@@ -95,6 +117,9 @@ final class DriveUploadPoliciesUnavailable extends DriveUploadIssue {
 
   @override
   DriveUploadIssueSeverity get severity => DriveUploadIssueSeverity.advisory;
+
+  @override
+  String toString() => 'DriveUploadPoliciesUnavailable(missing: $missing)';
 }
 
 /// The result of checking a candidate Drive upload.
@@ -111,14 +136,17 @@ final class DriveUploadCheck {
   bool get canUpload => !issues.any(
     (issue) => issue.severity == DriveUploadIssueSeverity.blocking,
   );
+
+  @override
+  String toString() => 'DriveUploadCheck(issues: $issues)';
 }
 
 /// A snapshot of the limits relevant to a Drive upload.
 ///
 /// Results are advisory because limits and usage can change after this
-/// snapshot. The server deduplicates identical content before checking
-/// capacity, so a blocking capacity issue can be a false negative for a
-/// duplicate file.
+/// snapshot. The server can return an existing same-hash file before it
+/// evaluates role-policy checks, so reported policy file-size, capacity, or
+/// MIME type issues can be false positives for duplicate content.
 @immutable
 final class DriveUploadPreflight {
   /// Creates an upload preflight snapshot.
@@ -194,16 +222,6 @@ final class DriveUploadPreflight {
           }
         }
 
-        if (policies.driveCapacityMb != null &&
-            capacity.capacity < capacity.usage + size) {
-          issues.add(
-            DriveUploadInsufficientCapacity(
-              size: size,
-              availableBytes: capacity.availableCapacity,
-            ),
-          );
-        }
-
         final allowedTypes = policies.uploadableFileTypes;
         if (mimeType != null &&
             allowedTypes != null &&
@@ -216,6 +234,14 @@ final class DriveUploadPreflight {
           );
         }
       }
+      if (capacity.capacity < capacity.usage + size) {
+        issues.add(
+          DriveUploadInsufficientCapacity(
+            size: size,
+            availableBytes: capacity.availableCapacity,
+          ),
+        );
+      }
     }
 
     return DriveUploadCheck(issues: issues);
@@ -223,8 +249,10 @@ final class DriveUploadPreflight {
 
   /// Checks candidates in order, accounting for their cumulative size.
   ///
-  /// Every candidate contributes to the projected usage for following
-  /// candidates, including candidates that have other blocking issues.
+  /// Records require an explicit `mimeType: null` when no MIME type is known;
+  /// for example, `checkAll([(size: 10, mimeType: null)])`. Every candidate
+  /// contributes to the projected usage for following candidates, including
+  /// candidates that have other blocking issues.
   List<DriveUploadCheck> checkAll(
     Iterable<({int size, String? mimeType})> candidates,
   ) {
@@ -256,6 +284,12 @@ final class DriveUploadPreflight {
       instanceMaxFileSize: instanceMaxFileSize,
     );
   }
+
+  @override
+  String toString() =>
+      'DriveUploadPreflight(policies: $policies, capacity: $capacity, '
+      'bypassesPolicyLimits: $bypassesPolicyLimits, '
+      'instanceMaxFileSize: $instanceMaxFileSize)';
 }
 
 bool _isAllowedMimeType(String mimeType, List<String> allowedTypes) {

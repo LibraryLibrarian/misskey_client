@@ -11,10 +11,12 @@ class FakeDriveServer {
     String Function(List<int> bytes)? md5Of,
     Map<String, dynamic>? policies,
     bool isModerator = false,
+    bool isAdmin = false,
     this.capacity = 1024 * 1024 * 1024,
   }) : _md5Of = md5Of ?? _stableHash,
        _policies = policies,
        _isModerator = isModerator,
+       _isAdmin = isAdmin,
        adapter = ScriptedHttpClientAdapter() {
     client = testClient(adapter);
     _installHandlers();
@@ -38,6 +40,7 @@ class FakeDriveServer {
   final String Function(List<int> bytes) _md5Of;
   final Map<String, dynamic>? _policies;
   final bool _isModerator;
+  final bool _isAdmin;
   final List<FakeFile> _files = [];
   final List<FakeFolder> _folders = [];
   final List<_PendingFile> _pendingDeletion = [];
@@ -168,7 +171,11 @@ class FakeDriveServer {
         'usage': _files.fold<int>(0, (sum, file) => sum + file.size),
       }),
       '/i' => ScriptedResponse.json(
-        userJson(policies: _policies, isModerator: _isModerator),
+        userJson(
+          policies: _policies,
+          isModerator: _isModerator,
+          isAdmin: _isAdmin,
+        ),
       ),
       _ => throw StateError('Unexpected fake Drive path: ${request.path}'),
     };
