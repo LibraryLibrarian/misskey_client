@@ -101,15 +101,18 @@ class DriveApi {
   /// [onProgress] is called after every scanned file with the cumulative count.
   /// [concurrency] limits concurrent folder-tree requests and must be positive.
   /// Invalid concurrency throws [ArgumentError] before any request is made. If
-  /// scanning fails, in-flight folder listings cannot be cancelled and may
-  /// continue briefly before their errors are discarded.
+  /// scanning fails, no additional folder listings start; already-started
+  /// requests finish before their results and errors are discarded.
   Future<DriveUsageSummary> getUsageSummary({
     int concurrency = 4,
     void Function(int filesScanned)? onProgress,
   }) {
     validateConcurrency(concurrency);
     return aggregateDriveUsage(
-      getTree: () => folders.getTree(concurrency: concurrency),
+      getTree: (cancellation) => folders.getTreeWithCancellation(
+        concurrency: concurrency,
+        cancellation: cancellation,
+      ),
       streamAll: streamAll,
       onProgress: onProgress,
     );

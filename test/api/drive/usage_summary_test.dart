@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
@@ -153,6 +155,108 @@ void main() {
     expect(progress, progressAfterFailure);
   });
 
+  test('stops tree traversal when the file stream fails', () async {
+    final root = server.addFolder();
+    final child = server.addFolder(parentId: root.id);
+    server.addFolder(parentId: child.id);
+    final folderGate = Completer<void>();
+    final streamGate = Completer<void>();
+    server.failWhen(
+      '/drive/folders',
+      (request) => request.jsonBody?['folderId'] == root.id,
+      ScriptedResponse.gated(
+        folderGate.future,
+        ScriptedResponse.json([
+          driveFolderJson(id: child.id, parentId: root.id),
+        ]),
+      ),
+    );
+    server.failWhen(
+      '/drive/stream',
+      (request) => request.jsonBody?['untilId'] == null,
+      ScriptedResponse.gated(
+        streamGate.future,
+        ScriptedResponse.error(400, code: 'TEST_ERROR'),
+      ),
+    );
+
+    final summary = server.client.drive.getUsageSummary();
+    await _waitFor(
+      () => server.adapter.requests.any(
+        (request) =>
+            request.path == '/drive/folders' &&
+            request.jsonBody?['folderId'] == root.id,
+      ),
+    );
+    streamGate.complete();
+    await expectLater(summary, throwsA(isA<MisskeyApiException>()));
+    final folderRequestsAfterFailure = server.adapter.requests
+        .where((request) => request.path == '/drive/folders')
+        .length;
+
+    folderGate.complete();
+    await _pumpEventLoop();
+
+    expect(
+      server.adapter.requests
+          .where((request) => request.path == '/drive/folders')
+          .length,
+      folderRequestsAfterFailure,
+    );
+  });
+
+  test('stops tree traversal when progress reporting fails', () async {
+    final root = server.addFolder();
+    final child = server.addFolder(parentId: root.id);
+    server.addFolder(parentId: child.id);
+    final folderGate = Completer<void>();
+    final streamGate = Completer<void>();
+    server.failWhen(
+      '/drive/folders',
+      (request) => request.jsonBody?['folderId'] == root.id,
+      ScriptedResponse.gated(
+        folderGate.future,
+        ScriptedResponse.json([
+          driveFolderJson(id: child.id, parentId: root.id),
+        ]),
+      ),
+    );
+    server.failWhen(
+      '/drive/stream',
+      (request) => request.jsonBody?['untilId'] == null,
+      ScriptedResponse.gated(
+        streamGate.future,
+        ScriptedResponse.json([driveFileJson(id: 'file')]),
+      ),
+    );
+
+    final summary = server.client.drive.getUsageSummary(
+      onProgress: (_) => throw StateError('progress failed'),
+    );
+    await _waitFor(
+      () => server.adapter.requests.any(
+        (request) =>
+            request.path == '/drive/folders' &&
+            request.jsonBody?['folderId'] == root.id,
+      ),
+    );
+    streamGate.complete();
+    await expectLater(summary, throwsStateError);
+    final folderRequestsAfterFailure = server.adapter.requests
+        .where((request) => request.path == '/drive/folders')
+        .length;
+
+    folderGate.complete();
+    await _pumpEventLoop();
+
+    expect(
+      server.adapter.requests
+          .where((request) => request.path == '/drive/folders')
+          .length,
+      folderRequestsAfterFailure,
+    );
+  });
+
   test(
     'reports progress across pages through the final scanned file count',
     () async {
@@ -229,6 +333,12 @@ void main() {
 
 Future<void> _pumpEventLoop() async {
   for (var i = 0; i < 3; i++) {
+    await Future<void>.delayed(Duration.zero);
+  }
+}
+
+Future<void> _waitFor(bool Function() condition) async {
+  while (!condition()) {
     await Future<void>.delayed(Duration.zero);
   }
 }
