@@ -34,7 +34,10 @@ void main() {
   test(
     'moves 100 IDs in one root request with an explicit null folder',
     () async {
-      final files = [for (var i = 0; i < 100; i++) server.addFile()];
+      final folder = server.addFolder();
+      final files = [
+        for (var i = 0; i < 100; i++) server.addFile(folderId: folder.id),
+      ];
 
       final result = await server.client.drive.files.moveBulkAll(
         fileIds: files.map((file) => file.id),
@@ -46,7 +49,10 @@ void main() {
         server.adapter.requests.single.jsonBody?['fileIds'],
         files.map((file) => file.id).toList(),
       );
-      expect(server.adapter.requests.single.jsonBody?['folderId'], isNull);
+      expect(
+        server.adapter.requests.single.jsonBody,
+        containsPair('folderId', isNull),
+      );
       expect(server.files.every((file) => file.folderId == null), isTrue);
     },
   );
