@@ -2,13 +2,16 @@ import '../../client/misskey_cancellation_token.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/bounded_batch.dart';
+import '../../internal/drive/drive_upload_preflight.dart';
 import '../../internal/drive/folder_dissolver.dart' as folder_dissolver;
 import '../../internal/drive/recursive_deleter.dart';
 import '../../internal/drive/usage_aggregator.dart';
 import '../../internal/id_paginator.dart';
 import '../../models/drive/drive_folder_dissolve_result.dart';
 import '../../models/drive/drive_recursive_delete.dart';
+import '../../models/drive/drive_upload_preflight.dart';
 import '../../models/drive/drive_usage_summary.dart';
+import '../../models/meta.dart';
 import '../../models/misskey_drive_file.dart';
 import 'drive_files_api.dart';
 import 'drive_folders_api.dart';
@@ -173,6 +176,14 @@ class DriveApi {
       onProgress: onProgress,
     );
   }
+
+  /// Retrieves a snapshot for checking Drive uploads before sending them.
+  ///
+  /// Fetches the authenticated user and Drive capacity concurrently. When
+  /// [meta] is omitted, this method does not request `/meta` and skips the
+  /// instance-wide multipart file-size check.
+  Future<DriveUploadPreflight> getUploadPreflight({Meta? meta}) =>
+      getDriveUploadPreflight(http: _http, stats: stats, meta: meta);
 
   /// Retrieves all files in the Drive regardless of folder
   /// (`/api/drive/stream`).
