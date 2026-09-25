@@ -4,9 +4,11 @@ import 'package:dio/dio.dart' show FormData, MultipartFile;
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/drive/dedup_uploader.dart';
 import '../../internal/optional.dart';
 import '../../internal/request_body.dart';
 import '../../models/chat/misskey_chat_message.dart';
+import '../../models/drive/drive_upload_result.dart';
 import '../../models/misskey_drive_file.dart';
 import '../../models/misskey_note.dart';
 
@@ -125,6 +127,46 @@ class DriveFilesApi {
     );
     return MisskeyDriveFile.fromJson(res);
   }
+
+  /// Uploads a Drive file while avoiding a transfer when its content exists.
+  ///
+  /// This checks for an existing file by MD5 before uploading. Without this
+  /// check, the server receives the complete upload before returning an
+  /// existing file, and ignores the requested [folderId], [name], and
+  /// [comment]. Supply [md5] to avoid hashing large inputs; it must be a
+  /// 32-character hexadecimal MD5 value. Hashing is synchronous on the
+  /// caller's isolate when [md5] is not supplied.
+  ///
+  /// A concurrent upload can win after the hash lookup. If the create response
+  /// belongs to a different folder or its timestamp is strictly earlier than
+  /// the request start time (with no clock-skew allowance), the result reports
+  /// [DriveUploadOutcome.reusedExisting].
+  ///
+  /// [onDuplicate] controls whether to reuse, move, or always upload matching
+  /// content. Existing files retain their name and comment. If [isSensitive] is
+  /// `true`, an existing non-sensitive file is upgraded to sensitive.
+  Future<DriveUploadResult> createDeduplicated({
+    required List<int> bytes,
+    required String filename,
+    String? name,
+    String? folderId,
+    String? comment,
+    bool? isSensitive,
+    String? md5,
+    DriveDuplicatePolicy onDuplicate = DriveDuplicatePolicy.reuseExisting,
+    void Function(int sent, int total)? onSendProgress,
+  }) => createDeduplicatedDriveFile(
+    files: this,
+    bytes: bytes,
+    filename: filename,
+    name: name,
+    folderId: folderId,
+    comment: comment,
+    isSensitive: isSensitive,
+    md5: md5,
+    onDuplicate: onDuplicate,
+    onSendProgress: onSendProgress,
+  );
 
   /// Updates the metadata of a Drive file (`/api/drive/files/update`).
   ///

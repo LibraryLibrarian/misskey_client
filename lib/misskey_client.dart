@@ -96,6 +96,7 @@ export 'src/models/chat/misskey_chat_room.dart';
 export 'src/models/chat/misskey_chat_room_invitation.dart';
 export 'src/models/chat/misskey_chat_room_member.dart';
 export 'src/models/drive/drive_capacity_info.dart';
+export 'src/models/drive/drive_upload_result.dart';
 export 'src/models/federation/misskey_federation_instance.dart';
 export 'src/models/federation/misskey_federation_stats.dart';
 export 'src/models/gallery/misskey_gallery_like.dart';
