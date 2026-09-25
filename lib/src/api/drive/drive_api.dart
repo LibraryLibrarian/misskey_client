@@ -166,10 +166,9 @@ class DriveApi {
   }) {
     validateConcurrency(concurrency);
     return aggregateDriveUsage(
-      getTree: (cancellation) => folders.getTreeWithCancellation(
-        concurrency: concurrency,
-        cancellation: cancellation,
-      ),
+      showFolder: (folderId) => folders.show(folderId: folderId),
+      listAllFolders: (folderId) => folders.listAll(folderId: folderId),
+      concurrency: concurrency,
       streamAll: streamAll,
       onProgress: onProgress,
     );

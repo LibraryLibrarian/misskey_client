@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
+import 'package:misskey_client/src/internal/drive/folder_tree_builder.dart';
+import 'package:misskey_client/src/internal/id_paginator.dart';
 import '../../support/drive_fixtures.dart';
 import '../../support/fake_drive_server.dart';
 import '../../support/scripted_http_adapter.dart';
@@ -144,7 +146,7 @@ void main() {
         .length;
     final progressAfterFailure = List<int>.of(progress);
 
-    await _pumpEventLoop();
+    await _waitForRequestsToSettle(server);
 
     expect(
       server.adapter.requests
@@ -195,7 +197,7 @@ void main() {
         .length;
 
     folderGate.complete();
-    await _pumpEventLoop();
+    await _waitForRequestsToSettle(server);
 
     expect(
       server.adapter.requests
@@ -247,7 +249,7 @@ void main() {
         .length;
 
     folderGate.complete();
-    await _pumpEventLoop();
+    await _waitForRequestsToSettle(server);
 
     expect(
       server.adapter.requests
@@ -255,6 +257,134 @@ void main() {
           .length,
       folderRequestsAfterFailure,
     );
+  });
+
+  test('does not start queued sibling listings after scan failure', () async {
+    final first = server.addFolder();
+    final second = server.addFolder();
+    final third = server.addFolder();
+    final folderGate = Completer<void>();
+    final streamGate = Completer<void>();
+    server.failWhen(
+      '/drive/folders',
+      (request) =>
+          request.jsonBody?['folderId'] == second.id ||
+          request.jsonBody?['folderId'] == third.id,
+      ScriptedResponse.gated(folderGate.future, ScriptedResponse.json([])),
+      times: -1,
+    );
+    server.failWhen(
+      '/drive/stream',
+      (request) => request.jsonBody?['untilId'] == null,
+      ScriptedResponse.gated(
+        streamGate.future,
+        ScriptedResponse.error(400, code: 'TEST_ERROR'),
+      ),
+    );
+
+    final summary = server.client.drive.getUsageSummary(concurrency: 2);
+    await _waitFor(
+      () =>
+          server.adapter.requests
+              .where(
+                (request) =>
+                    request.path == '/drive/folders' &&
+                    request.jsonBody?['folderId'] != null,
+              )
+              .length ==
+          2,
+    );
+    streamGate.complete();
+    await expectLater(summary, throwsA(isA<MisskeyApiException>()));
+
+    folderGate.complete();
+    await _waitForRequestsToSettle(server);
+
+    expect(
+      server.adapter.requests.any(
+        (request) =>
+            request.path == '/drive/folders' &&
+            request.jsonBody?['folderId'] == first.id,
+      ),
+      isFalse,
+    );
+  });
+
+  test('cancels a full folder page before fetching its continuation', () async {
+    final cancellation = MisskeyCancellationToken();
+    var fetches = 0;
+    var delivered = 0;
+    final pageGate = Completer<void>();
+    final page = [
+      for (var i = 0; i < 100; i++)
+        MisskeyDriveFolder.fromJson(driveFolderJson(id: idAt(i + 1))),
+    ];
+
+    final tree = buildDriveFolderTree(
+      show: (_) => throw UnimplementedError(),
+      listAll: (_) =>
+          paginateById(
+            fetchPage: (_, _) async {
+              fetches++;
+              await pageGate.future;
+              return page;
+            },
+            idOf: (folder) => folder.id,
+            pageSize: 100,
+          ).map((folder) {
+            if (++delivered == 100) cancellation.cancel();
+            return folder;
+          }),
+      rootFolderId: null,
+      maxDepth: null,
+      concurrency: 1,
+      cancellation: cancellation,
+    );
+    await _waitFor(() => fetches == 1);
+    pageGate.complete();
+    await tree;
+
+    expect(fetches, 1);
+  });
+
+  test('discards an in-flight tree error after scan failure', () async {
+    final root = server.addFolder();
+    final folderGate = Completer<void>();
+    final streamGate = Completer<void>();
+    final uncaught = <Object>[];
+    server.failWhen(
+      '/drive/folders',
+      (request) => request.jsonBody?['folderId'] == root.id,
+      ScriptedResponse.gated(
+        folderGate.future,
+        ScriptedResponse.error(400, code: 'TREE_ERROR'),
+      ),
+    );
+    server.failWhen(
+      '/drive/stream',
+      (request) => request.jsonBody?['untilId'] == null,
+      ScriptedResponse.gated(
+        streamGate.future,
+        ScriptedResponse.error(400, code: 'SCAN_ERROR'),
+      ),
+    );
+
+    await runZonedGuarded(() async {
+      final summary = server.client.drive.getUsageSummary();
+      await _waitFor(
+        () => server.adapter.requests.any(
+          (request) =>
+              request.path == '/drive/folders' &&
+              request.jsonBody?['folderId'] == root.id,
+        ),
+      );
+      streamGate.complete();
+      await expectLater(summary, throwsA(isA<MisskeyApiException>()));
+      folderGate.complete();
+      await _waitForRequestsToSettle(server);
+    }, (error, _) => uncaught.add(error));
+
+    expect(uncaught, isEmpty);
   });
 
   test(
@@ -331,11 +461,8 @@ void main() {
   });
 }
 
-Future<void> _pumpEventLoop() async {
-  for (var i = 0; i < 3; i++) {
-    await Future<void>.delayed(Duration.zero);
-  }
-}
+Future<void> _waitForRequestsToSettle(FakeDriveServer server) =>
+    _waitFor(() => server.adapter.inFlight == 0);
 
 Future<void> _waitFor(bool Function() condition) async {
   while (!condition()) {
