@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:crypto/crypto.dart' show md5;
 import 'package:misskey_client/misskey_client.dart';
 
 import 'drive_fixtures.dart';
@@ -268,11 +269,8 @@ class FakeDriveServer {
     if (!_requiredString(body, 'folderId')) return _validationError();
     final folder = _folder(body['folderId'] as String?);
     if (folder == null) return _error('NO_SUCH_FOLDER');
-    if (body['name'] case final String name when name.isNotEmpty) {
-      folder.name = name;
-    }
+    final parentId = body['parentId'] as String?;
     if (body.containsKey('parentId')) {
-      final parentId = body['parentId'] as String?;
       if (parentId == folder.id ||
           (parentId != null && _isDescendant(parentId, folder.id))) {
         return _error('RECURSIVE_NESTING');
@@ -280,8 +278,11 @@ class FakeDriveServer {
       if (parentId != null && _folder(parentId) == null) {
         return _error('NO_SUCH_PARENT_FOLDER');
       }
-      folder.parentId = parentId;
     }
+    if (body['name'] case final String name when name.isNotEmpty) {
+      folder.name = name;
+    }
+    if (body.containsKey('parentId')) folder.parentId = parentId;
     return ScriptedResponse.json(_folderJson(folder));
   }
 
@@ -309,16 +310,16 @@ class FakeDriveServer {
     if (!_requiredString(body, 'fileId')) return _validationError();
     final file = _file(body['fileId'] as String?);
     if (file == null) return _error('NO_SUCH_FILE');
+    final folderId = body['folderId'] as String?;
+    if (body.containsKey('folderId') &&
+        folderId != null &&
+        _folder(folderId) == null) {
+      return _error('NO_SUCH_FOLDER');
+    }
     if (body['name'] case final String name) file.name = name;
     if (body['isSensitive'] case final bool value) file.isSensitive = value;
     if (body.containsKey('comment')) file.comment = body['comment'] as String?;
-    if (body.containsKey('folderId')) {
-      final folderId = body['folderId'] as String?;
-      if (folderId != null && _folder(folderId) == null) {
-        return _error('NO_SUCH_FOLDER');
-      }
-      file.folderId = folderId;
-    }
+    if (body.containsKey('folderId')) file.folderId = folderId;
     return ScriptedResponse.json(_fileJson(file));
   }
 
@@ -340,10 +341,15 @@ class FakeDriveServer {
     if (ids is! List ||
         ids.isEmpty ||
         ids.length > 100 ||
-        ids.toSet().length != ids.length) {
+        ids.toSet().length != ids.length ||
+        !ids.every(_isMisskeyId)) {
       return _validationError();
     }
-    final folderId = body['folderId'] as String?;
+    final folderIdValue = body['folderId'];
+    if (folderIdValue != null && !_isMisskeyId(folderIdValue)) {
+      return _validationError();
+    }
+    final folderId = folderIdValue as String?;
     if (folderId != null && _folder(folderId) == null) {
       return ScriptedResponse.error(500, code: 'INTERNAL_ERROR');
     }
@@ -406,7 +412,7 @@ class FakeDriveServer {
   }
 
   int? _limit(Map<String, dynamic> body) {
-    final value = body['limit'] ?? 10;
+    final value = body.containsKey('limit') ? body['limit'] : 10;
     if (value is! int || value < 1 || value > 100) return null;
     return value;
   }
@@ -499,19 +505,20 @@ class FakeDriveServer {
 
   static ScriptedResponse _error(String code) =>
       ScriptedResponse.error(400, code: code);
-  static ScriptedResponse _validationError() => ScriptedResponse.error(
-    400,
-    code: 'INVALID_PARAM',
-    id: '3d81ceae-475f-4600-b2a8-2bc116157532',
-  );
+  static bool _isMisskeyId(Object? value) =>
+      value is String && RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value);
 
-  static String _stableHash(List<int> bytes) {
-    final sum = bytes.fold<int>(0, (sum, byte) => (sum + byte) & 0xffffffff);
-    return '${bytes.length.toRadixString(16)}${sum.toRadixString(16)}'.padLeft(
-      32,
-      '0',
-    );
-  }
+  static ScriptedResponse _validationError() => ScriptedResponse.json({
+    'error': {
+      'message': 'Invalid param.',
+      'code': 'INVALID_PARAM',
+      'id': '3d81ceae-475f-4600-b2a8-2bc116157532',
+      'kind': 'client',
+      'info': {'param': '', 'reason': ''},
+    },
+  }, status: 400);
+
+  static String _stableHash(List<int> bytes) => md5.convert(bytes).toString();
 }
 
 /// Mutable file record exposed by [FakeDriveServer.files].
