@@ -197,7 +197,7 @@ try {
 }
 ```
 
-辅助 API 还可能因参数无效（在发送请求前）抛出 `ArgumentError`，因前置条件未满足（例如未连接 main 流式订阅时调用 `drive.uploadFromUrlAndWait()`）抛出 `StateError`，也可能抛出不属于该密封层次结构的 `DriveFolderAmbiguousException`。对多个项目执行变更的批量辅助方法会通过 `MisskeyBatchResult` 报告每项结果，而不会在变更开始后统一抛出异常。
+辅助 API 还可能因参数无效（在发送请求前）抛出 `ArgumentError`，因前置条件未满足（例如未连接 main 流式订阅时调用 `drive.uploadFromUrlAndWait()`）抛出 `StateError`，也可能抛出不属于该密封层次结构的 `DriveFolderAmbiguousException`。对多个项目执行变更的批量辅助方法开始变更后，单项操作失败会记录在 `MisskeyBatchResult` 中，而不会抛出异常；在报告已完成项目时，如果 `onProgress` 回调抛出错误，则会在正在进行的工作完成后重新抛出，已完成的变更不会回滚。
 
 ## 日志记录
 

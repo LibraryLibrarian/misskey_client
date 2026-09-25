@@ -67,7 +67,7 @@ final mp4s = await client.drive
 
 ## 批量结果和取消 {#batch-results-and-cancellation}
 
-更改多个项目的辅助方法在开始更改后不会抛出异常，而是返回 `MisskeyBatchResult<I, T>`，其中每个输入都有一个结果，顺序与输入一致：
+更改多个项目的辅助方法开始执行变更后，单项操作失败不会抛出异常，而是记录在 `MisskeyBatchResult<I, T>` 中；该结果按输入顺序为每个输入保留一个结果。另需注意：在报告已完成项目时，如果你自己的 `onProgress` 回调抛出错误，则会停止新工作，并在正在进行的请求完成后重新抛出该错误。已完成的变更不会回滚。
 
 | 类型 | 含义 | 字段 |
 |---|---|---|
@@ -80,9 +80,9 @@ final mp4s = await client.drive
 | 值 | 含义 |
 |---|---|
 | `cancelled` | 已请求取消 |
-| `rateLimited` | 服务器对请求实施了频率限制 |
-| `stoppedAfterError` | 批处理因先前的错误而停止 |
-| `dependencyFailed` | 前置操作未成功 |
+| `rateLimited` | 服务器对请求实施了频率限制（HTTP 429）；适用于 `createMany()`、`dissolveFolder()` 或 `deleteFolderRecursive()` |
+| `stoppedAfterError` | 批处理因先前的错误而停止（`createMany()` 设置 `stopOnError`，或 `moveBulkAll()` 的任一分组失败，包括 429） |
+| `dependencyFailed` | 前置操作未成功（例如文件移动失败后解散文件夹，或文件夹内容未删除而导致无法删除该文件夹） |
 
 结果还提供 `successes`、`failures`、`skipped` 和 `isComplete`（所有项目均成功时为 true，包括空批次）。由于 `MisskeyBatchItemResult` 是 sealed 类型，对其项目使用 `switch` 时可以穷举所有情况：
 
@@ -103,7 +103,7 @@ for (final item in result.items) {
 
 ### 取消 {#cancellation}
 
-`createMany()` 和 `deleteFolderRecursive()` 接受 `MisskeyCancellationToken`。取消采用协作式机制：阻止启动新工作，但不会中止正在进行的请求，并会等待其完成。尚未启动的项目会以 `cancelled` 原因报告为已跳过。
+`createMany()` 和 `deleteFolderRecursive()` 接受 `MisskeyCancellationToken`。取消采用协作式机制：阻止启动新工作，但不会中止正在进行的请求，并会等待其完成。尚未启动的项目通常会以 `cancelled` 原因报告为已跳过。在 `deleteFolderRecursive()` 中，如果取消中断了文件夹的 `HAS_CHILD_FILES_OR_FOLDERS` 重试，该文件夹会报告为失败，因为删除操作已经尝试过。
 
 ```dart
 final token = MisskeyCancellationToken();
@@ -361,7 +361,7 @@ print('${result.file.id}: ${result.outcome.name}');
 - `result.outcome` 为 `uploaded`、`reusedExisting` 或 `movedExisting`。这是尽力而为的结果：查找后并发上传可能先完成，这类竞争不一定都能检测到。
 - 已有文件会保留其名称和备注。`isSensitive: true` 会将已有的非敏感文件升级为敏感文件。
 - 传入 `md5`（32 个十六进制字符）可避免对大型输入进行哈希计算。否则会在调用方 isolate 上同步计算哈希（`uploadAnyway` 除外）。
-- 使用 `reuseExisting` 时，如果找到匹配文件，就不会验证 `folderId`；普通上传则会因文件夹不存在或属于其他用户而失败。
+- 找到匹配的已有文件时，不会验证 `folderId`，因此使用 `reuseExisting` 时，即使文件夹不存在或属于其他用户也不会报错。不带 `force` 的普通 `create()` 行为相同，因为服务器会在查找文件夹前返回匹配项。
 
 ### createMany
 
@@ -387,10 +387,10 @@ final result = await client.drive.files.createMany(
 
 - `concurrency`（默认值为 2）限制并行上传数。
 - 触发频率限制（HTTP 429）时会停止启动新上传，并将剩余输入标记为 `rateLimited`；正在进行的上传会继续完成。设置 `stopOnError: true` 可在发生任何错误后停止，剩余输入会以 `stoppedAfterError` 跳过。
-- 设置 `deduplicate` 后，每个输入都会按照对应策略执行 `createDeduplicated()`。同一批次中内容相同的输入会形成有序链：每个后续项都会等待其前一项（等待期间会占用一个工作线程），并根据策略使用前一项的最新结果。采用 `moveExisting` 时，文件最终位于最后一个输入指定的文件夹。后续项的文件名、名称和备注会被忽略，而 `isSensitive` 只能将文件升级为 `true`。如果前一项失败或被跳过，已经运行的后续项会以 `dependencyFailed` 跳过。使用 `uploadAnyway` 时，每个输入都会独立上传。
+- 设置 `deduplicate` 后，每个输入都会按照对应策略执行 `createDeduplicated()`。同一批次中内容相同的输入会形成有序链：每个后续项都会等待其前一项（等待期间会占用一个并发工作单元），并根据策略使用前一项的最新结果。采用 `moveExisting` 时，文件最终位于最后一个输入指定的文件夹。后续项的文件名、名称和备注会被忽略，而 `isSensitive` 只能将文件升级为 `true`。如果前一项失败或被跳过，已经运行的后续项会以 `dependencyFailed` 跳过。使用 `uploadAnyway` 时，每个输入都会独立上传。
 - 不设置 `deduplicate` 时，服务器仍可能返回内容相同的已有文件，但它会报告为 `uploaded`。
 - `onProgress` 会收到 `DriveBatchUploadProgress`，其中包含项目计数（`completedItems`、`succeededItems`、`failedItems`、`totalItems`），以及 `itemIndex` 对应项目的字节进度（`sent`、`total`）。
-- 不会自动重试。服务器存储文件后发生的网络故障会报告为失败；由于服务器端去重，重新运行是安全的。
+- 不会自动重试。服务器存储文件后发生的网络故障会报告为失败。不使用 `deduplicate`、或使用 `reuseExisting` 或 `moveExisting` 重新运行时，会返回已存储的文件而非创建另一个文件，因为这些上传使用服务器端去重（`force: false`）。使用 `uploadAnyway`（`force: true`）重新运行则可能创建额外副本。
 - 输入字节不会被复制；批次完成前请勿修改。
 
 ## 等待 URL 上传完成 {#waiting-for-url-uploads}
@@ -435,4 +435,4 @@ Misskey 对这些辅助方法使用的端点设置的默认单用户限制如下
 | `drive/files/upload-from-url` | 每小时 60 次 | `uploadFromUrlAndWait()` |
 | 列表、`show`、`find`、`update`、`delete`、`move-bulk` | 每个端点无单独限制 | 其他所有辅助方法 |
 
-服务器管理员设置的角色频率限制系数会按比例调整这些值。达到限制时，单请求辅助方法会抛出 `MisskeyRateLimitException`，批量辅助方法会停止启动新工作，并将剩余项目报告为 `rateLimited`。
+服务器管理员设置的角色频率限制系数会按比例调整这些值。达到限制时，单请求辅助方法会抛出 `MisskeyRateLimitException`，批量辅助方法会停止启动新工作。`createMany()`、`dissolveFolder()` 和 `deleteFolderRecursive()` 会将剩余项目报告为 `rateLimited`。

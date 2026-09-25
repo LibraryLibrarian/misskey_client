@@ -126,7 +126,7 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
-## 自动分页辅助方法
+## 自动分页辅助方法 {#auto-pagination-helpers}
 
 部分 API 提供辅助方法，自动执行上述 `untilId` 循环并返回惰性 `Stream`。目前网盘列表辅助方法支持此功能：
 

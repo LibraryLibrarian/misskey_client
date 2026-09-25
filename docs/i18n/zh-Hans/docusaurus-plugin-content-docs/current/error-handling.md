@@ -28,7 +28,7 @@ MisskeyClientException (sealed)
 - `errorId` — 标识 Misskey 错误类型的 UUID
 - `endpoint` — 发生错误的 API 路径
 
-## 层级之外的异常
+## 层级之外的异常 {#exceptions-outside-the-hierarchy}
 
 `MisskeyClientException` 涵盖 API 和传输错误。一些辅助 API（例如[网盘辅助方法](./advanced/drive-helpers.md)）还可能抛出：
 
@@ -46,7 +46,7 @@ try {
 }
 ```
 
-会更改多个项目的批量辅助方法（例如 `createMany()`、`moveBulkAll()`、`dissolveFolder()` 和 `deleteFolderRecursive()`）在开始更改后不会抛出异常，而是返回 `MisskeyBatchResult`（或包含它的结果），逐项报告成功、带有错误的失败，或带有原因的跳过。更改开始前发生的错误（例如目标检查失败）仍会抛出。
+更改多个项目的批量辅助方法（例如 `createMany()`、`moveBulkAll()`、`dissolveFolder()` 和 `deleteFolderRecursive()`）开始执行变更后，单项操作失败会记录在 `MisskeyBatchResult`（或包含它的结果）中，作为带有错误的失败或带有原因的跳过，而不是抛出异常。更改开始前发生的错误（例如目标检查失败）仍会抛出。在报告已完成项目时，如果 `onProgress` 回调抛出错误，则会在正在进行的工作完成后重新抛出，且已完成的变更不会回滚。
 
 ## 基本捕获模式
 
