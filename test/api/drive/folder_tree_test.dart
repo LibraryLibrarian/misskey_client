@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:misskey_client/misskey_client.dart';
+import 'package:misskey_client/src/internal/drive/folder_tree_builder.dart';
 import 'package:test/test.dart';
 
 import '../../support/drive_fixtures.dart';
@@ -228,6 +229,52 @@ void main() {
     expect(adapter.paths, ['/drive/folders/show', '/drive/folders']);
   });
 
+  test('attaches a duplicate child ID to only one parent', () async {
+    final first = server.addFolder();
+    final second = server.addFolder();
+    final child = server.addFolder(parentId: first.id);
+    server.failWhen(
+      '/drive/folders',
+      (request) => request.jsonBody?['folderId'] == second.id,
+      ScriptedResponse.json([
+        driveFolderJson(id: child.id, parentId: second.id),
+      ]),
+    );
+
+    final tree = await server.client.drive.folders.getTree();
+
+    final secondNode = tree.children.firstWhere(
+      (node) => node.folder.id == second.id,
+    );
+    final firstNode = tree.children.firstWhere(
+      (node) => node.folder.id == first.id,
+    );
+    expect(secondNode.children.map((node) => node.folder.id), [child.id]);
+    expect(firstNode.children, isEmpty);
+    expect(tree.folderCount, 3);
+  });
+
+  test('preserves the stack trace when rethrowing a list error', () async {
+    final error = StateError('list failed');
+    final expectedStackTrace = StackTrace.fromString('folder-tree-list-error');
+
+    try {
+      await buildDriveFolderTree(
+        show: (_) => throw UnimplementedError(),
+        listAll: (_) async* {
+          Error.throwWithStackTrace(error, expectedStackTrace);
+        },
+        rootFolderId: null,
+        maxDepth: null,
+        concurrency: 1,
+      );
+      fail('Expected buildDriveFolderTree to throw.');
+    } catch (caughtError, stackTrace) {
+      expect(identical(caughtError, error), isTrue);
+      expect(stackTrace.toString(), expectedStackTrace.toString());
+    }
+  });
+
   test('validates arguments before sending requests', () {
     expect(
       () => server.client.drive.folders.getTree(maxDepth: -1),
@@ -241,8 +288,13 @@ void main() {
   });
 }
 
-Future<void> _waitFor(bool Function() condition) async {
-  while (!condition()) {
+Future<void> _waitFor(
+  bool Function() condition, {
+  int maxIterations = 1000,
+}) async {
+  for (var iteration = 0; iteration < maxIterations; iteration++) {
+    if (condition()) return;
     await Future<void>.delayed(Duration.zero);
   }
+  throw StateError('Condition was not met after $maxIterations iterations.');
 }

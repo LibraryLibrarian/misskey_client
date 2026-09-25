@@ -14,9 +14,7 @@ void validateDriveFolderTreeArgs({
   if (maxDepth != null && maxDepth < 0) {
     throw ArgumentError.value(maxDepth, 'maxDepth', 'must not be negative');
   }
-  if (concurrency < 1) {
-    throw ArgumentError.value(concurrency, 'concurrency', 'must be positive');
-  }
+  validateConcurrency(concurrency);
 }
 
 /// Builds a Drive folder tree by loading each level concurrently.
