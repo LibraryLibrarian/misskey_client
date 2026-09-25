@@ -116,18 +116,18 @@ void main() {
       },
     );
 
-    test('uploads anyway without a hash lookup', () async {
-      final server = _server();
-      server.addFile(md5: _helloMd5);
+    test('uploads anyway without hashing or a hash lookup', () async {
+      final server = FakeDriveServer(md5Of: (_) => 'server-md5');
       addTearDown(server.client.dispose);
 
       final result = await server.client.drive.files.createDeduplicated(
-        bytes: _hello,
+        bytes: const [1, 2, 3],
         filename: 'hello.txt',
         onDuplicate: DriveDuplicatePolicy.uploadAnyway,
       );
 
       expect(result.outcome, DriveUploadOutcome.uploaded);
+      expect(result.md5, 'server-md5');
       expect(result.existingMatches, isEmpty);
       expect(server.adapter.paths, ['/drive/files/create']);
       expect(server.adapter.requests.single.formFields['force'], 'true');
@@ -228,7 +228,7 @@ void main() {
       expect(server.adapter.requests, isEmpty);
     });
 
-    test('reports a raced duplicate returned by create as reused', () async {
+    test('detects a raced duplicate from a folder mismatch', () async {
       final adapter = ScriptedHttpClientAdapter();
       final client = testClient(adapter);
       addTearDown(client.dispose);
@@ -240,7 +240,6 @@ void main() {
             id: 'existing-file',
             folderId: 'other-folder',
             md5: _helloMd5,
-            createdAt: DateTime.now().subtract(const Duration(seconds: 1)),
           ),
         ),
       );
@@ -253,6 +252,166 @@ void main() {
 
       expect(result.outcome, DriveUploadOutcome.reusedExisting);
       expect(result.existingMatches, isEmpty);
+    });
+
+    test('detects a raced duplicate from a comment mismatch', () async {
+      final adapter = ScriptedHttpClientAdapter();
+      final client = testClient(adapter);
+      addTearDown(client.dispose);
+      adapter.on('/drive/files/find-by-hash', (_) => ScriptedResponse.json([]));
+      adapter.on(
+        '/drive/files/create',
+        (_) => ScriptedResponse.json(
+          driveFileJson(
+            id: 'existing-file',
+            folderId: 'requested-folder',
+            md5: _helloMd5,
+          )..['comment'] = 'existing comment',
+        ),
+      );
+
+      final result = await client.drive.files.createDeduplicated(
+        bytes: _hello,
+        filename: 'hello.txt',
+        folderId: 'requested-folder',
+        comment: 'requested comment',
+      );
+
+      expect(result.outcome, DriveUploadOutcome.reusedExisting);
+    });
+
+    test(
+      'detects a raced duplicate from a trimmed non-blob name mismatch',
+      () async {
+        final adapter = ScriptedHttpClientAdapter();
+        final client = testClient(adapter);
+        addTearDown(client.dispose);
+        adapter.on(
+          '/drive/files/find-by-hash',
+          (_) => ScriptedResponse.json([]),
+        );
+        adapter.on(
+          '/drive/files/create',
+          (_) => ScriptedResponse.json(
+            driveFileJson(
+              id: 'existing-file',
+              folderId: 'requested-folder',
+              name: 'existing name',
+              md5: _helloMd5,
+            ),
+          ),
+        );
+
+        final result = await client.drive.files.createDeduplicated(
+          bytes: _hello,
+          filename: 'hello.txt',
+          folderId: 'requested-folder',
+          name: ' requested name ',
+        );
+
+        expect(result.outcome, DriveUploadOutcome.reusedExisting);
+      },
+    );
+
+    test('does not use blob as a name race signal', () async {
+      final adapter = ScriptedHttpClientAdapter();
+      final client = testClient(adapter);
+      addTearDown(client.dispose);
+      adapter.on('/drive/files/find-by-hash', (_) => ScriptedResponse.json([]));
+      adapter.on(
+        '/drive/files/create',
+        (_) => ScriptedResponse.json(
+          driveFileJson(
+            id: 'new-file',
+            folderId: 'requested-folder',
+            name: 'stored file name',
+            md5: _helloMd5,
+          ),
+        ),
+      );
+
+      final result = await client.drive.files.createDeduplicated(
+        bytes: _hello,
+        filename: 'hello.txt',
+        folderId: 'requested-folder',
+        name: ' blob ',
+      );
+
+      expect(result.outcome, DriveUploadOutcome.uploaded);
+    });
+
+    test('does not use an older create timestamp as a race signal', () async {
+      final adapter = ScriptedHttpClientAdapter();
+      final client = testClient(adapter);
+      addTearDown(client.dispose);
+      adapter.on('/drive/files/find-by-hash', (_) => ScriptedResponse.json([]));
+      adapter.on(
+        '/drive/files/create',
+        (_) => ScriptedResponse.json(
+          driveFileJson(
+            id: 'new-file',
+            folderId: 'requested-folder',
+            md5: _helloMd5,
+            createdAt: DateTime.utc(2000),
+          ),
+        ),
+      );
+
+      final result = await client.drive.files.createDeduplicated(
+        bytes: _hello,
+        filename: 'hello.txt',
+        folderId: 'requested-folder',
+      );
+
+      expect(result.outcome, DriveUploadOutcome.uploaded);
+    });
+
+    test('moves a raced duplicate when moveExisting is requested', () async {
+      final adapter = ScriptedHttpClientAdapter();
+      final client = testClient(adapter);
+      addTearDown(client.dispose);
+      adapter.on('/drive/files/find-by-hash', (_) => ScriptedResponse.json([]));
+      adapter.on(
+        '/drive/files/create',
+        (_) => ScriptedResponse.json(
+          driveFileJson(
+            id: 'existing-file',
+            folderId: 'other-folder',
+            md5: _helloMd5,
+          ),
+        ),
+      );
+      adapter.on(
+        '/drive/files/update',
+        (_) => ScriptedResponse.json(
+          driveFileJson(
+            id: 'existing-file',
+            folderId: 'requested-folder',
+            md5: _helloMd5,
+          ),
+        ),
+      );
+
+      final result = await client.drive.files.createDeduplicated(
+        bytes: _hello,
+        filename: 'hello.txt',
+        folderId: 'requested-folder',
+        onDuplicate: DriveDuplicatePolicy.moveExisting,
+      );
+
+      expect(result.outcome, DriveUploadOutcome.movedExisting);
+      expect(adapter.paths, [
+        '/drive/files/find-by-hash',
+        '/drive/files/create',
+        '/drive/files/update',
+      ]);
+      expect(
+        adapter.requests.last.jsonBody,
+        allOf(
+          containsPair('fileId', 'existing-file'),
+          containsPair('folderId', 'requested-folder'),
+        ),
+      );
     });
   });
 }

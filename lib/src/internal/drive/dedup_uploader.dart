@@ -19,7 +19,7 @@ Future<DriveUploadResult> createDeduplicatedDriveFile({
   DriveDuplicatePolicy onDuplicate = DriveDuplicatePolicy.reuseExisting,
   void Function(int sent, int total)? onSendProgress,
 }) async {
-  final hash = _normalizedMd5(md5) ?? crypto.md5.convert(bytes).toString();
+  final suppliedMd5 = _normalizedMd5(md5);
 
   if (onDuplicate == DriveDuplicatePolicy.uploadAnyway) {
     final file = await files.create(
@@ -35,11 +35,12 @@ Future<DriveUploadResult> createDeduplicatedDriveFile({
     return DriveUploadResult(
       file: file,
       outcome: DriveUploadOutcome.uploaded,
-      md5: hash,
+      md5: suppliedMd5 ?? file.md5,
       existingMatches: const [],
     );
   }
 
+  final hash = suppliedMd5 ?? crypto.md5.convert(bytes).toString();
   final existingMatches = await files.findByHash(md5: hash);
   if (existingMatches.isNotEmpty) {
     final existing = _selectExisting(existingMatches, folderId);
@@ -54,7 +55,6 @@ Future<DriveUploadResult> createDeduplicatedDriveFile({
     );
   }
 
-  final requestStartedAt = DateTime.now();
   final file = await files.create(
     bytes: bytes,
     filename: filename,
@@ -65,13 +65,25 @@ Future<DriveUploadResult> createDeduplicatedDriveFile({
     force: false,
     onSendProgress: onSendProgress,
   );
-  final reusedInRace =
-      file.folderId != folderId || file.createdAt.isBefore(requestStartedAt);
+  if (_wasDeduplicatedByServer(
+    file: file,
+    requestedFolderId: folderId,
+    requestedName: name,
+    requestedComment: comment,
+  )) {
+    return _handleExisting(
+      files: files,
+      file: file,
+      requestedFolderId: folderId,
+      isSensitive: isSensitive,
+      onDuplicate: onDuplicate,
+      md5: hash,
+      existingMatches: existingMatches,
+    );
+  }
   return DriveUploadResult(
     file: file,
-    outcome: reusedInRace
-        ? DriveUploadOutcome.reusedExisting
-        : DriveUploadOutcome.uploaded,
+    outcome: DriveUploadOutcome.uploaded,
     md5: hash,
     existingMatches: existingMatches,
   );
@@ -113,6 +125,22 @@ Future<DriveUploadResult> _handleExisting({
     md5: md5,
     existingMatches: existingMatches,
   );
+}
+
+bool _wasDeduplicatedByServer({
+  required MisskeyDriveFile file,
+  required String? requestedFolderId,
+  required String? requestedName,
+  required String? requestedComment,
+}) {
+  if (file.folderId != requestedFolderId) return true;
+  if (requestedComment != null && file.comment != requestedComment) return true;
+
+  final trimmedName = requestedName?.trim();
+  return trimmedName != null &&
+      trimmedName.isNotEmpty &&
+      trimmedName != 'blob' &&
+      file.name != trimmedName;
 }
 
 MisskeyDriveFile _selectExisting(

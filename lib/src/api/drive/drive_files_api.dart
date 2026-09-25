@@ -134,17 +134,22 @@ class DriveFilesApi {
   /// check, the server receives the complete upload before returning an
   /// existing file, and ignores the requested [folderId], [name], and
   /// [comment]. Supply [md5] to avoid hashing large inputs; it must be a
-  /// 32-character hexadecimal MD5 value. Hashing is synchronous on the
+  /// 32-character hexadecimal MD5 value. Except with
+  /// [DriveDuplicatePolicy.uploadAnyway], hashing is synchronous on the
   /// caller's isolate when [md5] is not supplied.
   ///
-  /// A concurrent upload can win after the hash lookup. If the create response
-  /// belongs to a different folder or its timestamp is strictly earlier than
-  /// the request start time (with no clock-skew allowance), the result reports
-  /// [DriveUploadOutcome.reusedExisting].
+  /// A concurrent upload can win after the hash lookup. Detection is
+  /// best-effort: a create response that differs in folder, requested comment,
+  /// or a non-empty, non-`blob` trimmed requested name is treated as a reused
+  /// file and handled according to [onDuplicate].
   ///
   /// [onDuplicate] controls whether to reuse, move, or always upload matching
   /// content. Existing files retain their name and comment. If [isSensitive] is
-  /// `true`, an existing non-sensitive file is upgraded to sensitive.
+  /// `true`, an existing non-sensitive file is upgraded to sensitive. With
+  /// [DriveDuplicatePolicy.reuseExisting], a match means a nonexistent or
+  /// foreign [folderId] is not validated, whereas a plain upload would fail.
+  /// With [DriveDuplicatePolicy.moveExisting], a match already in [folderId]
+  /// is reused rather than reported as moved.
   Future<DriveUploadResult> createDeduplicated({
     required List<int> bytes,
     required String filename,
