@@ -1,6 +1,10 @@
+import '../../client/misskey_cancellation_token.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/bounded_batch.dart';
+import '../../internal/drive/recursive_deleter.dart';
 import '../../internal/id_paginator.dart';
+import '../../models/drive/drive_recursive_delete.dart';
 import '../../models/misskey_drive_file.dart';
 import 'drive_files_api.dart';
 import 'drive_folders_api.dart';
@@ -28,6 +32,47 @@ class DriveApi {
 
   /// Provides Drive statistics operations.
   final DriveStatsApi stats;
+
+  /// Irreversibly deletes a folder and all its planned contents.
+  ///
+  /// Run with [dryRun] first to inspect the plan without deleting anything.
+  /// Notes and chat messages retain dangling references to deleted files.
+  /// Files are deleted first, then folders deepest-first. A folder whose
+  /// planned contents did not succeed is not attempted, nor are its ancestors.
+  /// Already absent files and folders count as successfully deleted.
+  ///
+  /// Planning failures throw before anything is deleted. Once deletion starts,
+  /// individual failures are returned in the result. Rate limiting stops new
+  /// work. Cancellation is cooperative: in-flight requests finish normally.
+  /// The plan is a snapshot; concurrently added contents are not deleted.
+  ///
+  /// Misskey removes file database rows after responding to file deletion.
+  /// A folder with successful planned children therefore retries
+  /// `HAS_CHILD_FILES_OR_FOLDERS` with exponential backoff starting at 200 ms,
+  /// for at most five attempts. Other write failures are not retried.
+  ///
+  /// [concurrency] must be positive or an [ArgumentError] is thrown before
+  /// any request. Progress counts are per phase and include skipped items.
+  /// If [onProgress] throws, unstarted work stops and the error is rethrown
+  /// after in-flight work finishes; earlier deletions cannot be rolled back.
+  Future<DriveRecursiveDeleteResult> deleteFolderRecursive({
+    required String folderId,
+    bool dryRun = false,
+    int concurrency = 4,
+    void Function(DriveRecursiveDeleteProgress progress)? onProgress,
+    MisskeyCancellationToken? cancellation,
+  }) {
+    validateConcurrency(concurrency);
+    return deleteDriveFolderRecursive(
+      files: files,
+      folders: folders,
+      folderId: folderId,
+      dryRun: dryRun,
+      concurrency: concurrency,
+      onProgress: onProgress,
+      cancellation: cancellation,
+    );
+  }
 
   /// Lazily retrieves all files across all folders in newest-first ID order.
   ///
