@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:dio/dio.dart' show RequestOptions;
+import 'package:dio/dio.dart' show RequestOptions, ResponseBody;
 import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
@@ -106,6 +108,64 @@ void main() {
     });
 
     test(
+      'counts a gated upload while its multipart stream is drained',
+      () async {
+        final gate = Completer<void>();
+        final entered = Completer<void>();
+        final adapter = ScriptedHttpClientAdapter()
+          ..on('/drive/files/create', (_) {
+            entered.complete();
+            return ScriptedResponse.gated(
+              gate.future,
+              ScriptedResponse.json(driveFileJson(id: 'uploaded')),
+            );
+          });
+        final client = testClient(adapter);
+        addTearDown(client.dispose);
+
+        final upload = client.drive.files.create(
+          bytes: [1],
+          filename: 'one.bin',
+        );
+        await entered.future;
+        expect(adapter.inFlight, 1);
+        expect(adapter.maxInFlight, 1);
+        gate.complete();
+        await upload;
+        expect(adapter.inFlight, 0);
+      },
+    );
+
+    test('drains JSON streams and propagates stream failures', () async {
+      final adapter = ScriptedHttpClientAdapter()
+        ..on('/i', (_) => ScriptedResponse.json(userJson()));
+      var jsonStreamListened = false;
+      final controller = StreamController<Uint8List>(
+        onListen: () => jsonStreamListened = true,
+      );
+      controller.add(Uint8List.fromList([1]));
+      final jsonFetch = adapter.fetch(
+        RequestOptions(path: '/api/i', data: <String, dynamic>{}),
+        controller.stream,
+        null,
+      );
+      await controller.close();
+      await jsonFetch;
+      expect(jsonStreamListened, isTrue);
+
+      await expectLater(
+        adapter.fetch(
+          RequestOptions(path: '/api/i', data: <String, dynamic>{}),
+          Stream<Uint8List>.error(StateError('stream failure')),
+          null,
+        ),
+        throwsA(isA<StateError>()),
+      );
+      expect(adapter.inFlight, 0);
+      expect(adapter.maxInFlight, 1);
+    });
+
+    test(
       'parses uploads and drains the stream for progress callbacks',
       () async {
         final adapter = ScriptedHttpClientAdapter()
@@ -136,6 +196,99 @@ void main() {
   });
 
   group('FakeDriveServer', () {
+    test(
+      'validates raw request boundaries with server-shaped errors',
+      () async {
+        final server = FakeDriveServer();
+        addTearDown(server.client.dispose);
+
+        Future<ResponseBody> request(String path, Map<String, dynamic> body) =>
+            server.adapter.fetch(
+              RequestOptions(path: '/api$path', data: body),
+              Stream<Uint8List>.empty(),
+              null,
+            );
+
+        expect((await request('/drive/stream', {'limit': 1})).statusCode, 200);
+        final explicitNull = await request('/drive/stream', {
+          'limit': 1,
+          'type': null,
+        });
+        expect(explicitNull.statusCode, 400);
+        final error = await _jsonBody(explicitNull);
+        expect(error, {
+          'error': {
+            'message': 'Invalid param.',
+            'code': 'INVALID_PARAM',
+            'id': '3d81ceae-475f-4600-b2a8-2bc116157532',
+            'kind': 'client',
+            'info': {'param': '', 'reason': ''},
+          },
+        });
+        expect(
+          (await request('/drive/files', {'limit': null})).statusCode,
+          400,
+        );
+        expect(
+          (await request('/drive/files/move-bulk', {
+            'fileIds': [1],
+          })).statusCode,
+          400,
+        );
+        expect(
+          (await request('/drive/files/move-bulk', {
+            'fileIds': ['invalid-id!'],
+          })).statusCode,
+          400,
+        );
+      },
+    );
+
+    test('validates before applying folder and file updates', () async {
+      final server = FakeDriveServer();
+      addTearDown(server.client.dispose);
+      final parent = server.addFolder(name: 'parent');
+      final child = server.addFolder(parentId: parent.id, name: 'child');
+      final file = server.addFile(name: 'original', folderId: parent.id)
+        ..isSensitive = false
+        ..comment = 'original comment';
+
+      await expectLater(
+        server.client.drive.folders.update(
+          folderId: child.id,
+          name: 'changed',
+          parentId: 'missing',
+        ),
+        throwsA(isA<MisskeyApiException>()),
+      );
+      expect(child.name, 'child');
+      expect(child.parentId, parent.id);
+      await expectLater(
+        server.client.drive.folders.update(
+          folderId: parent.id,
+          name: 'changed parent',
+          parentId: child.id,
+        ),
+        throwsA(isA<MisskeyApiException>()),
+      );
+      expect(parent.name, 'parent');
+
+      await expectLater(
+        server.client.drive.files.update(
+          fileId: file.id,
+          name: 'changed',
+          folderId: 'missing',
+          isSensitive: true,
+          comment: const Optional('changed comment'),
+        ),
+        throwsA(isA<MisskeyApiException>()),
+      );
+      expect(file.name, 'original');
+      expect(file.folderId, parent.id);
+      expect(file.isSensitive, isFalse);
+      expect(file.comment, 'original comment');
+    });
+
     test('paginates an untilId chain across 250 files', () async {
       final server = FakeDriveServer();
       addTearDown(server.client.dispose);
@@ -313,6 +466,27 @@ void main() {
       expect(second.id, first.id);
       expect(server.files, hasLength(1));
       expect(server.files.single.isSensitive, isTrue);
+    });
+
+    test('uses real MD5 so reordered bytes do not deduplicate', () async {
+      final server = FakeDriveServer();
+      addTearDown(server.client.dispose);
+
+      final first = await server.client.drive.files.create(
+        bytes: [1, 2],
+        filename: 'first.bin',
+      );
+      final identical = await server.client.drive.files.create(
+        bytes: [1, 2],
+        filename: 'identical.bin',
+      );
+      final reordered = await server.client.drive.files.create(
+        bytes: [2, 1],
+        filename: 'reordered.bin',
+      );
+      expect(identical.id, first.id);
+      expect(reordered.id, isNot(first.id));
+      expect(server.files, hasLength(2));
     });
 
     test(
@@ -498,4 +672,12 @@ void main() {
       );
     });
   });
+}
+
+Future<Map<String, dynamic>> _jsonBody(ResponseBody response) async {
+  final bytes = <int>[];
+  await for (final chunk in response.stream) {
+    bytes.addAll(chunk);
+  }
+  return jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
 }
