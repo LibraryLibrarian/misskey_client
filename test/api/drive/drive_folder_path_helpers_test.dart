@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
@@ -42,6 +44,47 @@ void main() {
       expect(adapter.requests[0].jsonBody, isNot(contains('parentId')));
       expect(adapter.requests[1].jsonBody?['parentId'], 'first');
       expect(adapter.requests[2].jsonBody?['parentId'], 'second');
+    });
+
+    test('uses a path snapshot when the caller mutates segments', () async {
+      final firstRequest = Completer<void>();
+      final gate = Completer<void>();
+      var requestCount = 0;
+      final adapter = ScriptedHttpClientAdapter()
+        ..on('/drive/folders/find', (_) {
+          requestCount++;
+          if (requestCount == 1) {
+            firstRequest.complete();
+            return ScriptedResponse.gated(
+              gate.future,
+              ScriptedResponse.json([
+                driveFolderJson(id: 'first', name: 'one'),
+              ]),
+            );
+          }
+          return ScriptedResponse.json([
+            driveFolderJson(id: 'second', parentId: 'first', name: 'two'),
+          ]);
+        });
+      final client = testClient(adapter);
+      addTearDown(client.dispose);
+      final segments = ['one', 'two'];
+
+      final resolution = client.drive.folders.resolvePath(segments);
+      await firstRequest.future;
+      segments
+        ..clear()
+        ..add('changed');
+      gate.complete();
+
+      final folder = await resolution;
+
+      expect(folder?.id, 'second');
+      expect(adapter.requests.map((request) => request.jsonBody?['name']), [
+        'one',
+        'two',
+      ]);
+      expect(adapter.requests[1].jsonBody?['parentId'], 'first');
     });
 
     test('sends a supplied parent ID in the initial find request', () async {

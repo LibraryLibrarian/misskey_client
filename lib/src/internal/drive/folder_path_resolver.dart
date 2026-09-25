@@ -17,18 +17,16 @@ Future<MisskeyDriveFolder?> resolveDriveFolderPath({
   })
   find,
 }) async {
-  _validateSegments(segments);
+  final path = List<String>.of(segments);
+  _validateSegments(path);
 
   var currentParentId = parentId;
   MisskeyDriveFolder? resolved;
-  for (var index = 0; index < segments.length; index++) {
-    final candidates = await find(
-      name: segments[index],
-      parentId: currentParentId,
-    );
+  for (var index = 0; index < path.length; index++) {
+    final candidates = await find(name: path[index], parentId: currentParentId);
     if (candidates.isEmpty) return null;
     resolved = _selectFolder(
-      name: segments[index],
+      name: path[index],
       parentId: currentParentId,
       candidates: candidates,
       segmentIndex: index,
