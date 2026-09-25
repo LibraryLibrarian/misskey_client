@@ -131,6 +131,58 @@ void main() {
     }
   }
 
+  test('pause immediately after listen prevents the first request', () async {
+    final events = <String>[];
+    final done = Completer<void>();
+    final subscription = paginate([
+      ['9', '8'],
+      ['7'],
+    ]).listen(events.add, onDone: done.complete);
+    subscription.pause();
+    await Future<void>.delayed(Duration.zero);
+    expect(requests, isEmpty);
+    expect(events, isEmpty);
+    subscription.resume();
+    await done.future;
+    expect(events, ['9', '8', '7']);
+    expect(requests, [(2, null), (2, '8')]);
+  });
+
+  test(
+    'pause during the readiness gap between pages prevents fetching',
+    () async {
+      final paused = Completer<void>();
+      final done = Completer<void>();
+      final events = <String>[];
+      late StreamSubscription<String> subscription;
+      subscription = paginateById<String>(
+        fetchPage: (limit, untilId) async {
+          requests.add((limit, untilId));
+          return untilId == null ? ['9', '8'] : ['7'];
+        },
+        idOf: (item) {
+          if (item == '8') {
+            // 次のページの準備待ちとその継続の間に pause する。
+            scheduleMicrotask(() {
+              subscription.pause();
+              paused.complete();
+            });
+          }
+          return item;
+        },
+        pageSize: 2,
+      ).listen(events.add, onDone: done.complete);
+      await paused.future;
+      await Future<void>.delayed(Duration.zero);
+      expect(requests, [(2, null)]);
+      expect(events, ['9', '8']);
+      subscription.resume();
+      await done.future;
+      expect(requests, [(2, null), (2, '8')]);
+      expect(events, ['9', '8', '7']);
+    },
+  );
+
   test(
     'pause after a delivered page prevents the next fetch until resume',
     () async {
