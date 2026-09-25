@@ -28,6 +28,26 @@ MisskeyClientException (sealed)
 - `errorId` — UUID zur Identifizierung des Misskey-Fehlertyps
 - `endpoint` — Der API-Pfad, bei dem der Fehler aufgetreten ist
 
+## Ausnahmen außerhalb der Hierarchie {#exceptions-outside-the-hierarchy}
+
+`MisskeyClientException` deckt API- und Transportfehler ab. Einige Helfer-APIs, etwa die [Drive-Helfer](./advanced/drive-helpers.md), können außerdem folgende Ausnahmen auslösen:
+
+- `ArgumentError` — ungültige Argumente (zum Beispiel ein nicht positives `concurrency` oder ein außerhalb des gültigen Bereichs liegendes `pageSize`). Die Ausnahme wird ausgelöst, bevor eine Anfrage gesendet wird.
+- `StateError` — nicht erfüllte Voraussetzungen, etwa der Aufruf von `client.drive.uploadFromUrlAndWait()` ohne ein verbundenes `main`-Streaming-Abonnement.
+- `DriveFolderAmbiguousException` — wird von `resolvePath()` und `getOrCreate()` ausgelöst, wenn mehrere Unterordner denselben Namen haben. Die Ausnahme gehört nicht zur versiegelten Hierarchie und wird daher nicht von `on MisskeyClientException` abgefangen.
+
+```dart
+try {
+  final folder = await client.drive.folders.resolvePath(['Photos', 'Trip']);
+} on DriveFolderAmbiguousException catch (e) {
+  print('${e.candidates.length} folders named "${e.name}"');
+} on MisskeyClientException catch (e) {
+  print('Error: $e');
+}
+```
+
+Sobald Batch-Helfer, die viele Elemente ändern (zum Beispiel `createMany()`, `moveBulkAll()`, `dissolveFolder()` und `deleteFolderRecursive()`), mit Änderungen begonnen haben, werden Fehler einzelner Vorgänge in einem `MisskeyBatchResult` (oder einem Ergebnis, das ein solches enthält) als Fehlschlag mit Fehlerursache oder als Überspringen mit Begründung erfasst, statt ausgelöst zu werden. Fehler vor jeder Änderung, etwa eine fehlgeschlagene Prüfung des Zielordners, werden weiterhin ausgelöst. Ein Fehler, den ein `onProgress`-Callback beim Melden eines abgeschlossenen Elements auslöst, wird erneut ausgelöst, nachdem laufende Vorgänge beendet sind; abgeschlossene Änderungen werden nicht rückgängig gemacht.
+
 ## Grundlegende Abfangmuster
 
 ### Alle Fehler abfangen

@@ -7,6 +7,8 @@ title: 드라이브 업로드
 
 Misskey의 드라이브는 파일 저장 시스템입니다. 노트에 첨부되는 모든 파일은 먼저 드라이브에 업로드해야 합니다. `client.drive` 파사드는 `files`, `folders`, `stats` 하위 API를 제공합니다.
 
+여러 요청을 결합하는 작업(모든 파일 조회, 일괄 이동, 배치 업로드, 폴더 재귀 삭제 등)은 [드라이브 헬퍼](./drive-helpers.md)도 참조하세요.
+
 ## 파일 업로드
 
 ```dart
@@ -31,9 +33,11 @@ final driveFile = await client.drive.files.create(
   filename: 'nsfw.jpg',
   folderId: myFolderId,
   isSensitive: true,
-  force: true, // 같은 이름의 파일이 있어도 업로드
+  force: true, // 같은 내용의 파일이 있어도 업로드
 );
 ```
+
+Misskey는 이름이 아니라 콘텐츠(MD5 해시)를 기준으로 중복을 제거합니다. `force`가 없으면 드라이브에 이미 존재하는 콘텐츠를 업로드할 때 기존 파일이 반환되며 요청한 `folderId`, `name`, `comment`는 무시됩니다. 바이트 전송 자체를 피하려면 [드라이브 헬퍼](./drive-helpers.md#creatededuplicated)의 `createDeduplicated()`를 참조하세요.
 
 ### 업로드 진행률
 
@@ -58,7 +62,7 @@ await client.drive.files.uploadFromUrl(
 );
 ```
 
-이 엔드포인트는 fire-and-forget 방식이며, 파일은 비동기적으로 드라이브에 나타납니다.
+이 엔드포인트는 fire-and-forget 방식이며, 파일은 비동기적으로 드라이브에 나타납니다. `force`는 `create()`와 같은 의미입니다. 결과 파일을 기다리려면 [드라이브 헬퍼](./drive-helpers.md#waiting-for-url-uploads)의 [`uploadFromUrlAndWait()`](./drive-helpers.md#waiting-for-url-uploads)를 사용하세요.
 
 ## 드라이브 파일을 노트에 첨부
 
@@ -92,10 +96,12 @@ final files = await client.drive.files.list(
 final images = await client.drive.files.list(type: 'image/*');
 
 // 크기 기준 내림차순 정렬
-final large = await client.drive.files.list(sort: '-size');
+final large = await client.drive.files.list(sort: '+size');
 ```
 
-`sort` 허용 값: `+createdAt`, `-createdAt`, `+name`, `-name`, `+size`, `-size`.
+`sort` 허용 값: `+createdAt`, `-createdAt`, `+name`, `-name`, `+size`, `-size` (`+`는 내림차순입니다).
+
+`untilId` 페이지네이션과 일관성이 있는 정렬은 `+createdAt`(또는 `sort` 생략)뿐입니다. 다른 정렬은 커서가 ID로 필터링되는 동안 순서를 바꾸므로 페이지에서 항목이 누락되거나 반복될 수 있습니다. 모든 파일 조회에는 `listAll()`을 사용하고 로컬에서 정렬하세요. 자세한 내용은 [드라이브 헬퍼](./drive-helpers.md#listing-everything)를 참조하세요.
 
 ### 스트림 (폴더 필터 없이 모든 파일)
 
@@ -134,7 +140,7 @@ final file = await client.drive.files.showByUrl('https://example.com/file.jpg');
 final updated = await client.drive.files.update(
   fileId: driveFile.id,
   name: 'new-name.jpg',
-  comment: '업데이트된 대체 텍스트',
+  comment: Optional('업데이트된 대체 텍스트'), // Optional.null_()는 값을 지웁니다
   isSensitive: false,
 );
 ```

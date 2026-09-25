@@ -126,6 +126,22 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
+## Auto-Paginierungshilfen {#auto-pagination-helpers}
+
+Einige APIs bieten Helfer, die die obige `untilId`-Schleife übernehmen und einen verzögerten `Stream` zurückgeben. Derzeit sind dies die Drive-Auflistungshilfen:
+
+- `client.drive.files.listAll()` — Dateien in einem Ordner
+- `client.drive.folders.listAll()` — Ordner in einem übergeordneten Ordner
+- `client.drive.streamAll()` — Dateien in allen Ordnern
+
+```dart
+await for (final file in client.drive.files.listAll(pageSize: 100)) {
+  print(file.name);
+}
+```
+
+Anfragen beginnen erst, wenn der Stream abonniert wird; durch Abbrechen des Abonnements werden weitere Anfragen gestoppt. Die Ergebnisse sind immer nach ID neueste zuerst sortiert; verwenden Sie `maxItems`, um frühzeitig zu beenden. Details finden Sie unter [Drive-Helfer](./advanced/drive-helpers.md#listing-everything).
+
 ## APIs mit Paginierungsunterstuetzung
 
 Die meisten listenrueckgebenden APIs unterstuetzen `sinceId`/`untilId` und `limit`:

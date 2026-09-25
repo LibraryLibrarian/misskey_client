@@ -126,6 +126,22 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
+## 自动分页辅助方法 {#auto-pagination-helpers}
+
+部分 API 提供辅助方法，自动执行上述 `untilId` 循环并返回惰性 `Stream`。目前网盘列表辅助方法支持此功能：
+
+- `client.drive.files.listAll()` — 一个文件夹中的文件
+- `client.drive.folders.listAll()` — 一个父文件夹中的文件夹
+- `client.drive.streamAll()` — 所有文件夹中的文件
+
+```dart
+await for (final file in client.drive.files.listAll(pageSize: 100)) {
+  print(file.name);
+}
+```
+
+只有开始监听后才会发送请求；取消订阅会停止后续请求。结果始终按 ID 从新到旧排列；可用 `maxItems` 提前停止。详情请参阅[网盘辅助方法](./advanced/drive-helpers.md#listing-everything)。
+
 ## 支持分页的 API
 
 大多数返回列表的 API 都支持 `sinceId`/`untilId` 和 `limit`：
