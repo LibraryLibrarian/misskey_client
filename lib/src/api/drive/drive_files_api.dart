@@ -65,8 +65,10 @@ class DriveFilesApi {
   /// for root) and [type] to filter by MIME type pattern (e.g., `"image/*"`).
   /// [sort] controls the sort order and accepts `+createdAt`, `-createdAt`,
   /// `+name`, `-name`, `+size`, or `-size`; `+` means descending.
-  /// Sorting by name or size cannot be combined with [sinceId]/[untilId]
-  /// pagination because these cursors filter by ID, not by the sort field.
+  /// Only `+createdAt` (or null) is consistent with [untilId] pagination,
+  /// and only `-createdAt` with [sinceId]. Other sorts override the pagination
+  /// order while the cursors still filter by ID, causing skipped or repeated
+  /// items.
   Future<List<MisskeyDriveFile>> list({
     int? limit,
     String? sinceId,
