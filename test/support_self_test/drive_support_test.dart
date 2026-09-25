@@ -401,6 +401,8 @@ void main() {
           )).map((file) => file.id),
           [image.id],
         );
+        // type の省略はすべての種類を返す
+        expect(await server.client.drive.stream(), hasLength(2));
         await expectLater(
           server.client.drive.stream(type: 'video/mp4'),
           throwsA(

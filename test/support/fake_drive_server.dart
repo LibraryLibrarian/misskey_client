@@ -193,7 +193,10 @@ class FakeDriveServer {
 
   ScriptedResponse _streamFiles(Map<String, dynamic> body) {
     final limit = _limit(body);
-    if (limit == null || !_validRequiredType(body['type'])) {
+    // stream の type は nullable ではないため、省略は許可し明示的な null のみ拒否する
+    final typeInvalid =
+        body.containsKey('type') && !_validRequiredType(body['type']);
+    if (limit == null || typeInvalid) {
       return _validationError();
     }
     return ScriptedResponse.json(
