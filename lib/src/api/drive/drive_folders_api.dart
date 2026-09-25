@@ -51,9 +51,10 @@ class DriveFoldersApi {
   /// Retrieves an immutable hierarchy of Drive folders.
   ///
   /// This makes one or more list requests for each visited folder. It is
-  /// read-only, so any request failure aborts traversal and is rethrown. The
-  /// result is not a snapshot; folder changes during traversal may be reflected
-  /// inconsistently.
+  /// read-only, so any request failure aborts traversal. In-flight requests on
+  /// the same level finish before the first failure by input order is rethrown.
+  /// The result is not a snapshot; folder changes during traversal may be
+  /// reflected inconsistently.
   ///
   /// Set [rootFolderId] to start at that folder, or omit it to start at the
   /// Drive root. [maxDepth] must be non-negative when specified. At the depth
