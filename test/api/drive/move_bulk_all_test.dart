@@ -21,6 +21,16 @@ void main() {
     expect(server.adapter.requests, isEmpty);
   });
 
+  test('zero IDs skip destination validation for a non-null folder', () async {
+    final result = await server.client.drive.files.moveBulkAll(
+      fileIds: [],
+      folderId: 'missing-folder',
+    );
+
+    expect(result.isComplete, isTrue);
+    expect(server.adapter.requests, isEmpty);
+  });
+
   test(
     'moves 100 IDs in one root request with an explicit null folder',
     () async {
