@@ -126,7 +126,7 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
-## Assistants de pagination automatique
+## Assistants de pagination automatique {#auto-pagination-helpers}
 
 Certaines API proposent des assistants qui exécutent la boucle `untilId` ci-dessus et renvoient un `Stream` paresseux. Il s’agit actuellement des assistants de liste du Drive :
 

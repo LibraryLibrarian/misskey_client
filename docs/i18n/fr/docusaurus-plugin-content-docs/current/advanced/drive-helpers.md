@@ -20,7 +20,7 @@ Trois assistants parcourent les pages d’une liste et renvoient un `Stream` :
 | `client.drive.streamAll()` | Fichiers de tous les dossiers | `type` |
 
 ```dart
-// Every image in a folder
+// Toutes les images d’un dossier
 await for (final file in client.drive.files.listAll(
   folderId: myFolderId,
   type: 'image/*',
@@ -28,7 +28,7 @@ await for (final file in client.drive.files.listAll(
   print('${file.name} (${file.size} bytes)');
 }
 
-// At most 500 files from the whole Drive
+// Au plus 500 fichiers de tout le Drive
 final recent = await client.drive.streamAll(maxItems: 500).toList();
 ```
 
@@ -38,7 +38,7 @@ Les résultats sont toujours renvoyés par ID, du plus récent au plus ancien. `
 
 ```dart
 final files = await client.drive.files.listAll(folderId: myFolderId).toList();
-files.sort((a, b) => b.size.compareTo(a.size)); // Largest first
+files.sort((a, b) => b.size.compareTo(a.size)); // Du plus grand au plus petit
 ```
 
 ### Taille des pages et limites {#page-size-and-limits}
@@ -67,7 +67,7 @@ final mp4s = await client.drive
 
 ## Résultats des traitements par lots et annulation {#batch-results-and-cancellation}
 
-Les assistants qui modifient plusieurs éléments ne lèvent pas d’exception une fois les modifications commencées. Ils renvoient plutôt un `MisskeyBatchResult<I, T>` contenant un résultat par entrée, dans l’ordre des entrées :
+Une fois que les assistants qui modifient plusieurs éléments ont commencé à effectuer des modifications, l’échec d’une opération individuelle ne provoque pas d’exception ; il est consigné dans un `MisskeyBatchResult<I, T>`, qui contient un résultat par entrée, dans l’ordre des entrées. Une erreur levée par votre propre callback `onProgress` lors du signalement d’un élément traité est différente : les nouvelles opérations sont arrêtées et l’erreur est relancée une fois les requêtes en cours terminées. Les modifications déjà effectuées ne sont pas annulées.
 
 | Type | Signification | Champs |
 |---|---|---|
@@ -80,9 +80,9 @@ Les assistants qui modifient plusieurs éléments ne lèvent pas d’exception u
 | Valeur | Signification |
 |---|---|
 | `cancelled` | Une annulation a été demandée |
-| `rateLimited` | Le serveur a limité le débit d’une requête |
-| `stoppedAfterError` | Une erreur précédente a interrompu le traitement par lots |
-| `dependencyFailed` | Une opération préalable a échoué |
+| `rateLimited` | Le serveur a limité le débit d’une requête (HTTP 429) dans `createMany()`, `dissolveFolder()` ou `deleteFolderRecursive()` |
+| `stoppedAfterError` | Une erreur précédente a interrompu le traitement par lots (`createMany()` avec `stopOnError`, ou tout groupe en échec dans `moveBulkAll()`, y compris une erreur 429) |
+| `dependencyFailed` | Une opération préalable a échoué (par exemple, la dissolution après l’échec du déplacement de fichiers, ou la suppression d’un dossier dont le contenu n’a pas été supprimé) |
 
 Le résultat fournit également `successes`, `failures`, `skipped` et `isComplete` (true lorsque chaque élément a réussi, y compris pour un lot vide). `MisskeyBatchItemResult` étant sealed, un `switch` sur ses éléments est exhaustif :
 
@@ -103,13 +103,13 @@ for (final item in result.items) {
 
 ### Annulation {#cancellation}
 
-`createMany()` et `deleteFolderRecursive()` acceptent un `MisskeyCancellationToken`. L’annulation est coopérative : elle empêche le démarrage de nouvelles opérations, mais les requêtes en cours ne sont pas interrompues et leur achèvement est attendu. Les éléments non commencés sont signalés comme ignorés avec `cancelled`.
+`createMany()` et `deleteFolderRecursive()` acceptent un `MisskeyCancellationToken`. L’annulation est coopérative : elle empêche le démarrage de nouvelles opérations, mais les requêtes en cours ne sont pas interrompues et leur achèvement est attendu. Les éléments non commencés sont généralement signalés comme ignorés avec `cancelled`. Dans `deleteFolderRecursive()`, un dossier dont la nouvelle tentative après `HAS_CHILD_FILES_OR_FOLDERS` est interrompue est plutôt signalé comme un échec, car sa suppression a déjà été tentée.
 
 ```dart
 final token = MisskeyCancellationToken();
 final future = client.drive.files.createMany(inputs, cancellation: token);
 
-// Later, for example when the user taps "Cancel"
+// Plus tard, par exemple lorsque l’utilisateur appuie sur « Annuler »
 token.cancel();
 
 final result = await future;
@@ -211,7 +211,7 @@ Misskey autorise des dossiers frères de même nom et `folders/find` ne garantit
 | `oldest` | Choisit le `createdAt` le plus ancien, puis l’ID le plus petit |
 | `newest` | Choisit le `createdAt` le plus récent, puis l’ID le plus grand |
 
-`DriveFolderAmbiguousException` reports the ambiguous `name`, its `parentId`, the matching `candidates`, and the `segmentIndex`. It is not a subtype of `MisskeyClientException`, so catch it explicitly:
+`DriveFolderAmbiguousException` fournit le `name` ambigu, son `parentId`, les `candidates` correspondants et le `segmentIndex`. Elle n’est pas un sous-type de `MisskeyClientException` ; interceptez-la donc explicitement :
 
 ```dart
 try {
@@ -268,7 +268,7 @@ if (!result.isComplete) {
 :::
 
 ```dart
-// 1. Inspect the plan without deleting anything
+// 1. Examiner le plan sans rien supprimer
 final preview = await client.drive.deleteFolderRecursive(
   folderId: folderId,
   dryRun: true,
@@ -276,7 +276,7 @@ final preview = await client.drive.deleteFolderRecursive(
 final plan = preview.plan;
 print('${plan.fileCount} files, ${plan.folderCount} folders, ${plan.totalBytes} bytes');
 
-// 2. Delete
+// 2. Supprimer
 final result = await client.drive.deleteFolderRecursive(
   folderId: folderId,
   onProgress: (p) => print('${p.phase.name}: ${p.completed}/${p.total}'),
@@ -361,7 +361,7 @@ print('${result.file.id}: ${result.outcome.name}');
 - `result.outcome` vaut `uploaded`, `reusedExisting` ou `movedExisting`. Le résultat est fourni au mieux : un téléversement concurrent peut aboutir après la recherche, et ces courses ne sont pas toujours détectables.
 - Les fichiers existants conservent leur nom et leur commentaire. `isSensitive: true` rend sensible un fichier existant qui ne l’était pas.
 - Passez `md5` (32 caractères hexadécimaux) pour éviter de calculer le hachage d’entrées volumineuses. Sinon, le hachage est calculé de manière synchrone sur l’isolate appelant (sauf avec `uploadAnyway`).
-- Avec `reuseExisting`, une correspondance signifie que `folderId` n’est pas validé, alors qu’un téléversement normal échouerait pour un dossier inexistant ou appartenant à un autre utilisateur.
+- Lorsqu’un fichier existant correspond, `folderId` n’est pas validé ; un dossier inexistant ou appartenant à un autre utilisateur ne provoque donc pas d’erreur avec `reuseExisting`. Un appel simple à `create()` sans `force` se comporte de la même manière, car le serveur renvoie le fichier correspondant avant de rechercher le dossier.
 
 ### createMany
 
@@ -390,7 +390,7 @@ final result = await client.drive.files.createMany(
 - Avec `deduplicate`, chaque entrée est traitée comme avec `createDeduplicated()` selon la politique indiquée. Les entrées identiques d’un même lot forment une chaîne ordonnée : chaque entrée suivante attend la précédente (en occupant un worker) et utilise son résultat le plus récent selon la politique. Avec `moveExisting`, le fichier se retrouve dans le dossier de la dernière entrée. Le nom de fichier, le nom et le commentaire d’une entrée suivante sont ignorés, tandis que `isSensitive` ne peut que faire passer le fichier à `true`. Si l’entrée précédente échoue ou est ignorée, une entrée suivante déjà en cours est ignorée avec `dependencyFailed`. Avec `uploadAnyway`, chaque entrée est téléversée indépendamment.
 - Sans `deduplicate`, le serveur peut tout de même renvoyer un fichier existant de même contenu, mais le résultat est signalé comme `uploaded`.
 - `onProgress` reçoit un `DriveBatchUploadProgress` contenant le nombre d’éléments (`completedItems`, `succeededItems`, `failedItems`, `totalItems`) et la progression en octets (`sent`, `total`) de l’élément situé à `itemIndex`.
-- Aucune nouvelle tentative n’est effectuée automatiquement. Une erreur réseau survenant après l’enregistrement du fichier par le serveur est signalée comme un échec ; vous pouvez relancer l’opération sans risque grâce à la déduplication côté serveur.
+- Aucune nouvelle tentative n’est effectuée automatiquement. Une erreur réseau survenant après l’enregistrement du fichier par le serveur est signalée comme un échec. Une nouvelle exécution sans `deduplicate`, ou avec `reuseExisting` ou `moveExisting`, renvoie le fichier enregistré au lieu d’en créer un autre, car ces téléversements utilisent la déduplication côté serveur (`force: false`). Avec `uploadAnyway` (`force: true`), une nouvelle exécution peut créer des copies supplémentaires.
 - Les octets d’entrée ne sont pas copiés ; ne les modifiez pas avant la fin du traitement par lots.
 
 ## Attendre la fin des téléversements par URL {#waiting-for-url-uploads}
@@ -435,4 +435,4 @@ Limites par utilisateur définies par défaut par Misskey pour les points de ter
 | `drive/files/upload-from-url` | 60 par heure | `uploadFromUrlAndWait()` |
 | Liste, `show`, `find`, `update`, `delete`, `move-bulk` | Aucune limite par point de terminaison | Tous les autres assistants |
 
-Les facteurs de limitation de débit des rôles définis par l’administrateur du serveur modifient ces valeurs. Lorsqu’une limite est atteinte, les assistants à requête unique lèvent une `MisskeyRateLimitException` et les assistants par lots cessent de lancer de nouvelles opérations et signalent les éléments restants comme `rateLimited`.
+Les facteurs de limitation de débit des rôles définis par l’administrateur du serveur modifient ces valeurs. Lorsqu’une limite est atteinte, les assistants à requête unique lèvent une `MisskeyRateLimitException` et les assistants par lots cessent de lancer de nouvelles opérations. `createMany()`, `dissolveFolder()` et `deleteFolderRecursive()` signalent les éléments restants comme `rateLimited`.

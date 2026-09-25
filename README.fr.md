@@ -197,7 +197,7 @@ try {
 }
 ```
 
-Les API d’assistance peuvent également lever `ArgumentError` pour des arguments invalides (avant toute requête), `StateError` lorsque des préconditions ne sont pas remplies (par exemple `drive.uploadFromUrlAndWait()` sans abonnement de streaming `main` connecté) et `DriveFolderAmbiguousException`, qui ne fait pas partie de la hiérarchie scellée. Les assistants par lots qui modifient plusieurs éléments renvoient les résultats de chaque élément dans un `MisskeyBatchResult` au lieu de lever une exception une fois les modifications commencées.
+Les API d’assistance peuvent également lever `ArgumentError` pour des arguments invalides (avant toute requête), `StateError` lorsque des préconditions ne sont pas remplies (par exemple `drive.uploadFromUrlAndWait()` sans abonnement de streaming `main` connecté) et `DriveFolderAmbiguousException`, qui ne fait pas partie de la hiérarchie scellée. Une fois que les assistants par lots qui modifient plusieurs éléments ont commencé à effectuer des modifications, les échecs de chaque opération sont consignés dans un `MisskeyBatchResult` au lieu d’être levés ; une erreur levée par un callback `onProgress` lors du signalement d’un élément traité est relancée après la fin des opérations en cours, sans annuler les modifications effectuées.
 
 ## Journalisation
 

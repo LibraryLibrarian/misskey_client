@@ -28,7 +28,7 @@ MisskeyClientException (sealed)
 - `errorId` — UUID identifiant le type d'erreur Misskey
 - `endpoint` — Le chemin de l'API où l'erreur s'est produite
 
-## Exceptions hors de la hiérarchie
+## Exceptions hors de la hiérarchie {#exceptions-outside-the-hierarchy}
 
 `MisskeyClientException` couvre les erreurs d’API et de transport. Certaines API d’assistance, comme les [assistants Drive](./advanced/drive-helpers.md), peuvent également lever :
 
@@ -46,7 +46,7 @@ try {
 }
 ```
 
-Les assistants par lots qui modifient plusieurs éléments (par exemple `createMany()`, `moveBulkAll()`, `dissolveFolder()` et `deleteFolderRecursive()`) ne lèvent pas d’exception une fois les modifications commencées. Ils renvoient un `MisskeyBatchResult` (ou un résultat qui en contient un) indiquant pour chaque élément s’il a réussi, échoué avec une erreur ou été ignoré avec une raison. Les erreurs survenant avant toute modification, comme l’échec de la vérification de destination, sont toujours levées.
+Une fois que les assistants par lots qui modifient plusieurs éléments (par exemple `createMany()`, `moveBulkAll()`, `dissolveFolder()` et `deleteFolderRecursive()`) ont commencé à effectuer des modifications, les échecs individuels sont consignés dans un `MisskeyBatchResult` (ou un résultat qui en contient un) comme échec avec son erreur, ou comme élément ignoré avec une raison, au lieu d’être levés. Les erreurs survenant avant toute modification, comme l’échec de la vérification de destination, sont toujours levées. Une erreur levée par un callback `onProgress` lors du signalement d’un élément traité est relancée après la fin des opérations en cours, et les modifications déjà effectuées ne sont pas annulées.
 
 ## Modèles de capture de base
 
