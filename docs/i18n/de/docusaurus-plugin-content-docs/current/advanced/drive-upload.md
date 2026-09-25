@@ -7,6 +7,8 @@ title: Drive-Upload
 
 Misskeys Drive ist das Dateispeichersystem. Alle an Notizen angehefteten Dateien muessen zuerst in Ihr Drive hochgeladen werden. Das `client.drive`-Facade stellt die Unter-APIs `files`, `folders` und `stats` bereit.
 
+Siehe auch [Drive-Helfer](./drive-helpers.md) für Vorgänge, die mehrere Anfragen kombinieren, etwa das Auflisten aller Dateien, Sammelverschiebungen, Batch-Uploads und das rekursive Löschen von Ordnern.
+
 ## Eine Datei hochladen
 
 ```dart
@@ -31,9 +33,11 @@ final driveFile = await client.drive.files.create(
   filename: 'nsfw.jpg',
   folderId: myFolderId,
   isSensitive: true,
-  force: true, // Hochladen, auch wenn eine Datei mit demselben Namen existiert
+  force: true, // Hochladen, auch wenn eine Datei mit demselben Inhalt existiert
 );
 ```
+
+Misskey dedupliziert Uploads anhand des Inhalts (MD5-Hash), nicht anhand des Namens. Ohne `force` gibt ein Upload von Inhalten, die bereits in Ihrem Drive vorhanden sind, die vorhandene Datei zurück; die angegebene `folderId`, `name` und `comment` werden ignoriert. Um die Übertragung der Bytes ganz zu vermeiden, siehe `createDeduplicated()` in [Drive-Helfer](./drive-helpers.md#creatededuplicated).
 
 ### Upload-Fortschritt
 
@@ -58,7 +62,7 @@ await client.drive.files.uploadFromUrl(
 );
 ```
 
-Dies ist ein Fire-and-Forget-Endpunkt; die Datei erscheint asynchron im Drive.
+Dies ist ein Fire-and-Forget-Endpunkt; die Datei erscheint asynchron im Drive. `force` hat dieselbe Bedeutung wie bei `create()`. Um auf die resultierende Datei zu warten, verwenden Sie [`uploadFromUrlAndWait()`](./drive-helpers.md#waiting-for-url-uploads).
 
 ## Drive-Dateien an Notizen anhaengen
 
@@ -92,10 +96,12 @@ final files = await client.drive.files.list(
 final images = await client.drive.files.list(type: 'image/*');
 
 // Absteigend nach Groesse sortieren
-final large = await client.drive.files.list(sort: '-size');
+final large = await client.drive.files.list(sort: '+size');
 ```
 
-`sort` akzeptiert: `+createdAt`, `-createdAt`, `+name`, `-name`, `+size`, `-size`.
+`sort` akzeptiert: `+createdAt`, `-createdAt`, `+name`, `-name`, `+size`, `-size` (`+` bedeutet absteigend).
+
+Nur `+createdAt` (oder kein `sort`) ist mit der Paginierung über `untilId` konsistent. Andere Sortierungen ändern die Reihenfolge, während der Cursor weiterhin nach ID filtert, sodass Seiten Einträge überspringen oder wiederholen. Um alle Dateien aufzulisten, verwenden Sie `listAll()` und sortieren Sie lokal; siehe [Drive-Helfer](./drive-helpers.md#listing-everything).
 
 ### Stream (alle Dateien, kein Ordnerfilter)
 
@@ -134,7 +140,7 @@ final file = await client.drive.files.showByUrl('https://example.com/file.jpg');
 final updated = await client.drive.files.update(
   fileId: driveFile.id,
   name: 'new-name.jpg',
-  comment: 'Updated alt text',
+  comment: Optional('Updated alt text'), // Optional.null_() clears it
   isSensitive: false,
 );
 ```

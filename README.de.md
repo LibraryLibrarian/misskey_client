@@ -14,6 +14,7 @@ Eine reine Dart-Clientbibliothek für die [Misskey](https://misskey-hub.net/) AP
 - Versiegelte Ausnahmeklassenhierarchie für erschöpfende Fehlerbehandlung
 - Stark typisierte Anfrage- und Antwortmodelle, generiert mit `json_serializable`
 - Integrierte Streaming API mit typisierten Channels, Events und automatischer Wiederverbindung
+- Drive-Helfer für automatische Paginierung, Sammelverschiebungen, deduplizierte Batch-Uploads und rekursive Ordneroperationen mit Ergebnissen pro Element
 - Konfigurierbares Logging über ein austauschbares `Logger`-Interface
 - Reines Dart — keine Flutter-Abhängigkeit erforderlich
 
@@ -72,7 +73,7 @@ void main() async {
 | `charts` | Statistik-Charts |
 | `chat` | Chat-Räume und Nachrichten |
 | `clips` | Clip-Sammlungen |
-| `drive` | Drive (Dateispeicher), Dateien, Ordner, Statistiken |
+| `drive` | Drive (Dateispeicher), Dateien, Ordner, Statistiken; Helfer zum Auflisten aller Einträge, Sammelverschieben, Batch-Uploads, Erstellen von Ordnerbäumen und rekursiven Löschen |
 | `federation` | Informationen zu föderierten Instanzen |
 | `flash` | Flash (Play)-Skripte |
 | `following` | Folgen und Folgeanfragen |
@@ -174,7 +175,7 @@ Endpunkte, die eine Authentifizierung erfordern, fügen das Token automatisch hi
 
 ## Fehlerbehandlung
 
-Alle Ausnahmen erweitern die versiegelte Klasse `MisskeyClientException`, was erschöpfendes Pattern Matching ermöglicht:
+API- und Transportausnahmen erweitern die versiegelte Klasse `MisskeyClientException`, was erschöpfendes Pattern Matching ermöglicht:
 
 ```dart
 try {
@@ -195,6 +196,8 @@ try {
   // Timeout, Verbindung abgelehnt, usw.
 }
 ```
+
+Helfer-APIs können zusätzlich `ArgumentError` für ungültige Argumente (vor jeder Anfrage), `StateError` für nicht erfüllte Voraussetzungen (etwa `drive.uploadFromUrlAndWait()` ohne verbundenes `main`-Streaming-Abonnement) und `DriveFolderAmbiguousException` auslösen, die nicht zur versiegelten Hierarchie gehört. Batch-Helfer, die viele Elemente ändern, geben ein `MisskeyBatchResult` mit Ergebnissen pro Element zurück, statt nach Beginn der Änderungen eine Ausnahme auszulösen.
 
 ## Logging
 
