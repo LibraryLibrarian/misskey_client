@@ -112,11 +112,11 @@ class ScriptedHttpClientAdapter implements HttpClientAdapter {
     Stream<Uint8List>? requestStream,
     Future<void>? cancelFuture,
   ) async {
-    final request = await _record(options, requestStream);
-    requests.add(request);
     inFlight++;
     if (inFlight > maxInFlight) maxInFlight = inFlight;
     try {
+      final request = await _record(options, requestStream);
+      requests.add(request);
       final queue = _queued[request.path];
       ScriptedResponse response;
       if (queue != null && queue.isNotEmpty) {
@@ -149,6 +149,7 @@ class ScriptedHttpClientAdapter implements HttpClientAdapter {
   ) async {
     final path = _stripApiPrefix(options.uri.path);
     final data = options.data;
+    final bytes = await _drain(requestStream);
     if (data is Map) {
       return RecordedRequest(
         path: path,
@@ -157,7 +158,6 @@ class ScriptedHttpClientAdapter implements HttpClientAdapter {
     }
     if (data is! FormData) return RecordedRequest(path: path);
 
-    final bytes = await _drain(requestStream);
     final multipart = _parseMultipart(bytes, options.contentType);
     return RecordedRequest(
       path: path,
