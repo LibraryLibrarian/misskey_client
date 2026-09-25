@@ -18,6 +18,26 @@ MisskeyClientException (sealed)
     └── cause: Object?       - 元の例外
 ```
 
+## 階層外の例外
+
+`MisskeyClientException` が対象とするのは API と通信のエラーです。[ドライブヘルパー](./advanced/drive-helpers.md)など一部のヘルパー API は、次の例外もスローする場合があります。
+
+- `ArgumentError` — 不正な引数（たとえば正でない `concurrency` や範囲外の `pageSize`）。リクエストを送信する前にスローされます。
+- `StateError` — 前提条件が満たされていない場合。たとえば `main` ストリーミング購読が接続されていない状態で `client.drive.uploadFromUrlAndWait()` を呼び出した場合です。
+- `DriveFolderAmbiguousException` — 同じ階層に同名のフォルダが複数ある場合に `resolvePath()` と `getOrCreate()` がスローします。sealed 階層には含まれないため、`on MisskeyClientException` では catch されません。
+
+```dart
+try {
+  final folder = await client.drive.folders.resolvePath(['Photos', 'Trip']);
+} on DriveFolderAmbiguousException catch (e) {
+  print('${e.candidates.length} folders named "${e.name}"');
+} on MisskeyClientException catch (e) {
+  print('Error: $e');
+}
+```
+
+多数の項目を変更するバッチヘルパー（`createMany()`、`moveBulkAll()`、`dissolveFolder()`、`deleteFolderRecursive()` など）は、変更を開始した後は例外をスローしません。各項目を成功、エラーを伴う失敗、理由を伴うスキップのいずれかとして報告する `MisskeyBatchResult`（またはそれを含む結果）を返します。移動先の確認の失敗など、変更を行う前に発生したエラーは引き続きスローされます。
+
 ## 基本的なcatchパターン
 
 ```dart

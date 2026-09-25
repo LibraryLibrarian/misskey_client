@@ -126,6 +126,22 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
+## 自動ページネーションのヘルパー
+
+一部の API には、上記の `untilId` ループを代わりに実行し、遅延評価される `Stream` を返すヘルパーがあります。現在はドライブの一覧取得ヘルパーが該当します。
+
+- `client.drive.files.listAll()` — 1つのフォルダ内のファイル
+- `client.drive.folders.listAll()` — 1つの親フォルダ内のフォルダ
+- `client.drive.streamAll()` — すべてのフォルダにわたるファイル
+
+```dart
+await for (final file in client.drive.files.listAll(pageSize: 100)) {
+  print(file.name);
+}
+```
+
+リクエストはストリームを listen した時点で開始され、購読をキャンセルすると以降のリクエストは停止します。結果は常に ID の新しい順です。途中で打ち切るには `maxItems` を使用します。詳細は[ドライブヘルパー](./advanced/drive-helpers.md#listing-everything)を参照してください。
+
 ## ページネーションに対応する主な API
 
 リストを返す API の多くは `sinceId`/`untilId` と `limit` に対応しています。
