@@ -72,7 +72,6 @@ Future<DriveUploadResult> createDeduplicatedDriveFile({
   if (_wasDeduplicatedByServer(
     file: file,
     requestedFolderId: folderId,
-    requestedName: name,
     requestedComment: comment,
   )) {
     return _handleExisting(
@@ -149,18 +148,10 @@ Future<DriveUploadResult> _handleExisting({
 bool _wasDeduplicatedByServer({
   required MisskeyDriveFile file,
   required String? requestedFolderId,
-  required String? requestedName,
   required String? requestedComment,
-}) {
-  if (file.folderId != requestedFolderId) return true;
-  if (requestedComment != null && file.comment != requestedComment) return true;
-
-  final trimmedName = requestedName?.trim();
-  return trimmedName != null &&
-      trimmedName.isNotEmpty &&
-      trimmedName != 'blob' &&
-      file.name != trimmedName;
-}
+}) =>
+    file.folderId != requestedFolderId ||
+    (requestedComment != null && file.comment != requestedComment);
 
 MisskeyDriveFile _selectExisting(
   List<MisskeyDriveFile> matches,

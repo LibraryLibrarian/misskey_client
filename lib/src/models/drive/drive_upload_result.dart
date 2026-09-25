@@ -14,12 +14,16 @@ enum DriveDuplicatePolicy {
   uploadAnyway,
 }
 
-/// Describes whether a deduplicated upload transferred or reused content.
+/// A best-effort classification of a deduplicated upload result.
+///
+/// Classifications do not indicate whether bytes were transferred: a detected
+/// raced reuse can have transferred bytes, while an undetectable raced reuse is
+/// reported as [uploaded].
 enum DriveUploadOutcome {
-  /// A new file was uploaded.
+  /// No existing-file reuse was detected.
   uploaded,
 
-  /// An existing file was returned without moving it.
+  /// An existing file was selected or detected without moving it.
   reusedExisting,
 
   /// An existing file was moved to the requested folder.
@@ -40,10 +44,13 @@ final class DriveUploadResult {
   /// The uploaded, reused, or moved file.
   final MisskeyDriveFile file;
 
-  /// How the requested upload was fulfilled.
+  /// The best-effort classification of how the request was fulfilled.
   final DriveUploadOutcome outcome;
 
-  /// The normalized MD5 hash used for duplicate detection.
+  /// The normalized supplied MD5 or locally computed MD5 used for deduplication.
+  ///
+  /// For [DriveDuplicatePolicy.uploadAnyway], this is the normalized supplied
+  /// value or the returned [file]'s MD5 from the server.
   final String md5;
 
   /// All existing files returned by the hash lookup.
