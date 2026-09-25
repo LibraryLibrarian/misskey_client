@@ -105,6 +105,7 @@ export 'src/models/drive/drive_folder_get_or_create_result.dart';
 export 'src/models/drive/drive_folder_tree.dart';
 export 'src/models/drive/drive_move_bulk_result.dart';
 export 'src/models/drive/drive_recursive_delete.dart';
+export 'src/models/drive/drive_upload_batch.dart';
 export 'src/models/drive/drive_upload_result.dart';
 export 'src/models/drive/drive_usage_summary.dart';
 export 'src/models/federation/misskey_federation_instance.dart';
