@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:meta/meta.dart';
 
 import '../../api/drive/drive_files_api.dart';
@@ -9,6 +11,7 @@ import '../../models/drive/drive_recursive_delete.dart';
 import '../../models/misskey_drive_file.dart';
 import '../../models/misskey_drive_folder.dart';
 import '../bounded_batch.dart';
+import 'folder_levels.dart';
 
 /// Plans and performs recursive deletion. [delay] allows deterministic tests.
 @internal
@@ -51,6 +54,7 @@ Future<DriveRecursiveDeleteResult> deleteDriveFolderRecursive({
     inputs: [for (final node in tree.nodes) node.folder],
     task: (folder, _) => files.listAll(folderId: folder.id).toList(),
     concurrency: concurrency,
+    cancellation: cancellation,
     stopReasonFor: (_) => MisskeyBatchSkipReason.stoppedAfterError,
     onResult: record,
   );
@@ -63,6 +67,39 @@ Future<DriveRecursiveDeleteResult> deleteDriveFolderRecursive({
       for (final item in listing.successes) item.input.id: item.value,
     },
   );
+  if (cancellation?.isCancelled ?? false) {
+    MisskeyBatchResult<I, Null> cancelled<I>(
+      List<I> inputs,
+      DriveRecursiveDeletePhase nextPhase,
+    ) {
+      phase = nextPhase;
+      total = inputs.length;
+      completed = 0;
+      failed = 0;
+      notify();
+      final items = <MisskeyBatchItemResult<I, Null>>[];
+      for (var index = 0; index < inputs.length; index++) {
+        final item = MisskeyBatchSkipped<I, Null>(
+          input: inputs[index],
+          index: index,
+          reason: MisskeyBatchSkipReason.cancelled,
+        );
+        items.add(item);
+        record(item);
+      }
+      return MisskeyBatchResult(items: items);
+    }
+
+    return DriveRecursiveDeleteResult(
+      plan: plan,
+      dryRun: dryRun,
+      files: cancelled(plan.files, DriveRecursiveDeletePhase.deletingFiles),
+      folders: cancelled(
+        plan.foldersDeepestFirst,
+        DriveRecursiveDeletePhase.deletingFolders,
+      ),
+    );
+  }
   if (dryRun) {
     return DriveRecursiveDeleteResult(
       plan: plan,
@@ -74,6 +111,7 @@ Future<DriveRecursiveDeleteResult> deleteDriveFolderRecursive({
 
   MisskeyBatchSkipReason? stopReason;
   Object? stopCause;
+  final stopped = Completer<void>();
   void checkCancellation() {
     if (stopReason == null && (cancellation?.isCancelled ?? false)) {
       stopReason = MisskeyBatchSkipReason.cancelled;
@@ -86,6 +124,7 @@ Future<DriveRecursiveDeleteResult> deleteDriveFolderRecursive({
     if (stopReason == null && reason != null) {
       stopReason = reason;
       stopCause = error;
+      stopped.complete();
     }
     return reason;
   }
@@ -119,10 +158,7 @@ Future<DriveRecursiveDeleteResult> deleteDriveFolderRecursive({
   };
   final nodesById = {for (final node in tree.nodes) node.folder.id: node};
   final outcomes = <String, MisskeyBatchItemResult<MisskeyDriveFolder, Null>>{};
-  final levels = <int, List<MisskeyDriveFolder>>{};
-  for (final folder in orderedFolders) {
-    levels.putIfAbsent(nodesById[folder.id]!.depth, () => []).add(folder);
-  }
+  final levels = driveFolderLevels(tree);
   phase = DriveRecursiveDeletePhase.deletingFolders;
   total = plan.folderCount;
   completed = 0;
@@ -134,7 +170,7 @@ Future<DriveRecursiveDeleteResult> deleteDriveFolderRecursive({
     record(item);
   }
 
-  for (final level in levels.values) {
+  for (final level in levels) {
     checkCancellation();
     final ready = <MisskeyDriveFolder>[];
     for (final folder in level) {
@@ -167,19 +203,32 @@ Future<DriveRecursiveDeleteResult> deleteDriveFolderRecursive({
       cancellation: cancellation,
       stopReasonFor: stopFor,
       task: (folder, _) async {
+        MisskeyApiException? lastError;
+        StackTrace? lastStack;
         for (var attempt = 0; ; attempt++) {
           checkCancellation();
-          if (stopReason != null) throw _DeleteStopped(stopReason!, stopCause);
+          if (stopReason != null) {
+            if (lastError != null) {
+              Error.throwWithStackTrace(lastError, lastStack!);
+            }
+            throw _DeleteStopped(stopReason!, stopCause);
+          }
           try {
             await folders.delete(folderId: folder.id);
             return null;
-          } on MisskeyApiException catch (error) {
+          } on MisskeyApiException catch (error, stackTrace) {
             if (error.code == 'NO_SUCH_FOLDER') return null;
             // Misskey は削除応答後にファイルの DB 行を消すため、反映を待つ。
             if (error.code != 'HAS_CHILD_FILES_OR_FOLDERS' || attempt >= 4) {
               rethrow;
             }
-            await delay(Duration(milliseconds: 200 * (1 << attempt)));
+            lastError = error;
+            lastStack = stackTrace;
+            await Future.any<void>([
+              delay(Duration(milliseconds: 200 * (1 << attempt))),
+              if (cancellation != null) cancellation.whenCancelled,
+              stopped.future,
+            ]);
           }
         }
       },

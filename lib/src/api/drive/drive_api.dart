@@ -36,7 +36,8 @@ class DriveApi {
   /// Irreversibly deletes a folder and all its planned contents.
   ///
   /// Run with [dryRun] first to inspect the plan without deleting anything.
-  /// Notes and chat messages retain dangling references to deleted files.
+  /// Notes and gallery posts keep dangling references to deleted files;
+  /// chat messages lose their attachment.
   /// Files are deleted first, then folders deepest-first. A folder whose
   /// planned contents did not succeed is not attempted, nor are its ancestors.
   /// Already absent files and folders count as successfully deleted.
@@ -44,12 +45,20 @@ class DriveApi {
   /// Planning failures throw before anything is deleted. Once deletion starts,
   /// individual failures are returned in the result. Rate limiting stops new
   /// work. Cancellation is cooperative: in-flight requests finish normally.
+  /// Cancellation during planning stops unstarted file listings. The partial
+  /// plan contains only files already listed; every planned file and folder is
+  /// returned as skipped with `cancelled`, and no deletes are sent (even for a
+  /// dry run). Tree traversal itself finishes before cancellation is observed.
   /// The plan is a snapshot; concurrently added contents are not deleted.
+  /// Planned items are deleted even if they are moved elsewhere after planning.
   ///
   /// Misskey removes file database rows after responding to file deletion.
   /// A folder with successful planned children therefore retries
   /// `HAS_CHILD_FILES_OR_FOLDERS` with exponential backoff starting at 200 ms,
-  /// for at most five attempts. Other write failures are not retried.
+  /// for at most five attempts. Cancellation interrupts backoff promptly.
+  /// If cancellation or rate limiting interrupts a retry, the folder is a
+  /// failure containing its last `HAS_CHILD_FILES_OR_FOLDERS` error, not a skip:
+  /// its deletion was already attempted. Other write failures are not retried.
   ///
   /// [concurrency] must be positive or an [ArgumentError] is thrown before
   /// any request. Progress counts are per phase and include skipped items.

@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 
+import '../../internal/drive/folder_levels.dart';
 import '../batch/misskey_batch_result.dart';
 import '../misskey_drive_file.dart';
 import '../misskey_drive_folder.dart';
@@ -52,7 +53,12 @@ final class DriveRecursiveDeletePlan {
   DriveRecursiveDeletePlan({
     required this.tree,
     required Map<String, List<MisskeyDriveFile>> filesByFolder,
-  }) : filesByFolder = Map.unmodifiable({
+  }) : assert(
+         filesByFolder.keys.every(
+           tree.nodes.map((node) => node.folder.id).toSet().contains,
+         ),
+       ),
+       filesByFolder = Map.unmodifiable({
          for (final entry in filesByFolder.entries)
            entry.key: List<MisskeyDriveFile>.unmodifiable(entry.value),
        });
@@ -61,6 +67,8 @@ final class DriveRecursiveDeletePlan {
   final DriveFolderTree tree;
 
   /// Planned files keyed by their containing folder ID.
+  ///
+  /// Folders not listed before planning was cancelled have no entry.
   final Map<String, List<MisskeyDriveFile>> filesByFolder;
 
   /// All planned files in folder traversal order.
@@ -69,18 +77,12 @@ final class DriveRecursiveDeletePlan {
   ]);
 
   /// All planned folders, deepest first, including the root.
-  List<MisskeyDriveFolder> get foldersDeepestFirst {
-    final levels = <int, List<MisskeyDriveFolder>>{};
-    for (final node in tree.nodes) {
-      levels.putIfAbsent(node.depth, () => []).add(node.folder);
-    }
-    final depths = levels.keys.toList()..sort((a, b) => b.compareTo(a));
-    return List.unmodifiable([for (final depth in depths) ...levels[depth]!]);
-  }
+  List<MisskeyDriveFolder> get foldersDeepestFirst => List.unmodifiable([
+    for (final level in driveFolderLevels(tree)) ...level,
+  ]);
 
   /// The number of planned files.
-  int get fileCount =>
-      filesByFolder.values.fold(0, (sum, list) => sum + list.length);
+  int get fileCount => files.length;
 
   /// The number of planned folders, including the root.
   int get folderCount => tree.folderCount;
@@ -111,10 +113,12 @@ final class DriveRecursiveDeleteResult {
   /// Whether only planning was performed.
   final bool dryRun;
 
-  /// File outcomes, or an empty batch for a dry run.
+  /// File outcomes, or an empty batch for a completed dry run.
+  /// Cancelled planning returns skipped outcomes even for a dry run.
   final MisskeyBatchResult<MisskeyDriveFile, Null> files;
 
-  /// Folder outcomes in deepest-first order, or empty for a dry run.
+  /// Folder outcomes in deepest-first order, or empty for a completed dry run.
+  /// Cancelled planning returns skipped outcomes even for a dry run.
   final MisskeyBatchResult<MisskeyDriveFolder, Null> folders;
 
   /// Whether deleting the root succeeded, including an already absent root.

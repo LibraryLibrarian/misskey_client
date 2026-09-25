@@ -341,13 +341,14 @@ void main() {
       folders: server.client.drive.folders,
       folderId: root.id,
       cancellation: cancellation,
-      delay: (_) async {
+      delay: (_) {
         cancellation.cancel();
+        return Completer<void>().future;
       },
     );
     expect(
-      result.folders.skipped.single.reason,
-      MisskeyBatchSkipReason.cancelled,
+      (result.folders.failures.single.error as MisskeyApiException).code,
+      'HAS_CHILD_FILES_OR_FOLDERS',
     );
     expect(deletes(), hasLength(2));
   });
@@ -373,9 +374,7 @@ void main() {
         folderId: root.id,
         concurrency: 2,
       );
-      while (deletes().length < 2) {
-        await Future<void>.delayed(Duration.zero);
-      }
+      await waitUntil(() => deletes().length >= 2);
       expect(deletes(), hasLength(2));
       expect(server.adapter.inFlight, 2);
       gate.complete();
@@ -390,6 +389,182 @@ void main() {
     },
   );
 
+  test('real deletion preserves root files and sibling subtrees', () async {
+    final outsideFile = server.addFile();
+    final sibling = server.addFolder();
+    final siblingChild = server.addFolder(parentId: sibling.id);
+    final siblingFile = server.addFile(folderId: siblingChild.id);
+    final root = server.addFolder();
+    final child = server.addFolder(parentId: root.id);
+    server.addFile(folderId: root.id);
+    server.addFile(folderId: child.id);
+    final result = await server.client.drive.deleteFolderRecursive(
+      folderId: root.id,
+    );
+    expect(result.isComplete, isTrue);
+    expect(server.files.map((f) => f.id), [outsideFile.id, siblingFile.id]);
+    expect(server.folders.map((f) => f.id), [sibling.id, siblingChild.id]);
+  });
+
+  test(
+    'planning cancellation stops listings and skips every planned item',
+    () async {
+      final root = server.addFolder();
+      server.addFolder(parentId: root.id);
+      server.addFolder(parentId: root.id);
+      server.addFile(folderId: root.id);
+      final cancellation = MisskeyCancellationToken();
+      final result = await server.client.drive.deleteFolderRecursive(
+        folderId: root.id,
+        concurrency: 1,
+        cancellation: cancellation,
+        onProgress: (p) {
+          if (p.phase == DriveRecursiveDeletePhase.planning &&
+              p.completed == 1) {
+            cancellation.cancel();
+          }
+        },
+      );
+      expect(deletes(), isEmpty);
+      expect(
+        server.adapter.paths.where((p) => p == '/drive/files'),
+        hasLength(1),
+      );
+      expect(result.plan.filesByFolder.keys, [root.id]);
+      expect(result.files.skipped, hasLength(1));
+      expect(result.folders.skipped, hasLength(3));
+      expect(
+        result.files.skipped.every(
+          (i) => i.reason == MisskeyBatchSkipReason.cancelled,
+        ),
+        isTrue,
+      );
+      expect(
+        result.folders.skipped.every(
+          (i) => i.reason == MisskeyBatchSkipReason.cancelled,
+        ),
+        isTrue,
+      );
+    },
+  );
+
+  for (final phase in [
+    DriveRecursiveDeletePhase.deletingFiles,
+    DriveRecursiveDeletePhase.deletingFolders,
+  ]) {
+    test(
+      'throwing progress in $phase drains workers and prevents later work',
+      () async {
+        final root = server.addFolder();
+        final isFiles = phase == DriveRecursiveDeletePhase.deletingFiles;
+        for (var i = 0; i < 3; i++) {
+          if (isFiles) {
+            server.addFile(folderId: root.id);
+          } else {
+            server.addFolder(parentId: root.id);
+          }
+        }
+        final path = isFiles ? '/drive/files/delete' : '/drive/folders/delete';
+        final gate = Completer<void>();
+        server.adapter.enqueue(path, ScriptedResponse.noContent());
+        server.adapter.enqueue(
+          path,
+          ScriptedResponse.gated(gate.future, ScriptedResponse.noContent()),
+        );
+        final error = StateError('progress');
+        var threw = false;
+        var settled = false;
+        final future = server.client.drive.deleteFolderRecursive(
+          folderId: root.id,
+          concurrency: 2,
+          onProgress: (p) {
+            if (p.phase == phase && p.completed == 1) {
+              threw = true;
+              throw error;
+            }
+          },
+        );
+        final assertion = expectLater(future, throwsA(same(error))).then((_) {
+          settled = true;
+        });
+        await waitUntil(() => threw);
+        expect(settled, isFalse);
+        expect(server.adapter.inFlight, 1);
+        expect(deletes(), hasLength(2));
+        gate.complete();
+        await assertion;
+        expect(server.adapter.inFlight, 0);
+        expect(deletes(), hasLength(2));
+        expect(deletes().every((r) => r.path == path), isTrue);
+        if (!isFiles) {
+          expect(
+            deletes().every((r) => r.jsonBody!['folderId'] != root.id),
+            isTrue,
+          );
+        }
+      },
+    );
+  }
+
+  test(
+    'another worker rate limits during backoff and preserves attempted failure',
+    () async {
+      final root = server.addFolder();
+      final rateLimited = server.addFolder(parentId: root.id);
+      final retrying = server.addFolder(parentId: root.id);
+      final releaseRateLimit = Completer<void>();
+      server.failWhen(
+        '/drive/folders/delete',
+        (r) => r.jsonBody!['folderId'] == retrying.id,
+        ScriptedResponse.error(400, code: 'HAS_CHILD_FILES_OR_FOLDERS'),
+      );
+      server.failWhen(
+        '/drive/folders/delete',
+        (r) => r.jsonBody!['folderId'] == rateLimited.id,
+        ScriptedResponse.gated(
+          releaseRateLimit.future,
+          ScriptedResponse.error(429, code: 'RATE_LIMIT_EXCEEDED'),
+        ),
+      );
+      final result = await deleteDriveFolderRecursive(
+        files: server.client.drive.files,
+        folders: server.client.drive.folders,
+        folderId: root.id,
+        concurrency: 2,
+        delay: (_) {
+          releaseRateLimit.complete();
+          return Completer<void>().future;
+        },
+      );
+      expect(deletes(), hasLength(2));
+      expect(result.folders.failures, hasLength(2));
+      expect(
+        (result.folders.failures.first.error as MisskeyApiException).code,
+        'HAS_CHILD_FILES_OR_FOLDERS',
+      );
+      expect(
+        result.folders.failures.last.error,
+        isA<MisskeyRateLimitException>(),
+      );
+      expect(
+        result.folders.skipped.single.reason,
+        MisskeyBatchSkipReason.dependencyFailed,
+      );
+    },
+  );
+
+  test('plan rejects file map keys outside the tree', () async {
+    final root = server.addFolder();
+    final tree = await server.client.drive.folders.getTree(
+      rootFolderId: root.id,
+    );
+    expect(
+      () =>
+          DriveRecursiveDeletePlan(tree: tree, filesByFolder: {'outside': []}),
+      throwsA(isA<AssertionError>()),
+    );
+  });
+
   test('invalid concurrency fails synchronously with zero requests', () {
     for (final concurrency in [0, -1]) {
       expect(
@@ -402,4 +577,12 @@ void main() {
     }
     expect(server.adapter.requests, isEmpty);
   });
+}
+
+Future<void> waitUntil(bool Function() condition) async {
+  for (var attempt = 0; attempt < 1000; attempt++) {
+    if (condition()) return;
+    await Future<void>.delayed(Duration.zero);
+  }
+  fail('Condition was not reached within 1000 event-loop turns');
 }
