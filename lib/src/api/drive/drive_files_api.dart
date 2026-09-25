@@ -139,9 +139,8 @@ class DriveFilesApi {
   /// caller's isolate when [md5] is not supplied.
   ///
   /// A concurrent upload can win after the hash lookup. Detection is
-  /// best-effort: a create response that differs in folder, requested comment,
-  /// or a non-empty, non-`blob` trimmed requested name is treated as a reused
-  /// file and handled according to [onDuplicate].
+  /// best-effort: a create response that differs in folder or requested comment
+  /// is treated as a reused file and handled according to [onDuplicate].
   ///
   /// [onDuplicate] controls whether to reuse, move, or always upload matching
   /// content. Existing files retain their name and comment. If [isSensitive] is

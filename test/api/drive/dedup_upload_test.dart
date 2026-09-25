@@ -280,40 +280,7 @@ void main() {
       expect(result.outcome, DriveUploadOutcome.reusedExisting);
     });
 
-    test(
-      'detects a raced duplicate from a trimmed non-blob name mismatch',
-      () async {
-        final adapter = ScriptedHttpClientAdapter();
-        final client = testClient(adapter);
-        addTearDown(client.dispose);
-        adapter.on(
-          '/drive/files/find-by-hash',
-          (_) => ScriptedResponse.json([]),
-        );
-        adapter.on(
-          '/drive/files/create',
-          (_) => ScriptedResponse.json(
-            driveFileJson(
-              id: 'existing-file',
-              folderId: 'requested-folder',
-              name: 'existing name',
-              md5: _helloMd5,
-            ),
-          ),
-        );
-
-        final result = await client.drive.files.createDeduplicated(
-          bytes: _hello,
-          filename: 'hello.txt',
-          folderId: 'requested-folder',
-          name: ' requested name ',
-        );
-
-        expect(result.outcome, DriveUploadOutcome.reusedExisting);
-      },
-    );
-
-    test('does not use blob as a name race signal', () async {
+    test('does not use a corrected file name as a race signal', () async {
       final adapter = ScriptedHttpClientAdapter();
       final client = testClient(adapter);
       addTearDown(client.dispose);
@@ -324,7 +291,7 @@ void main() {
           driveFileJson(
             id: 'new-file',
             folderId: 'requested-folder',
-            name: 'stored file name',
+            name: 'photo.png',
             md5: _helloMd5,
           ),
         ),
@@ -334,7 +301,7 @@ void main() {
         bytes: _hello,
         filename: 'hello.txt',
         folderId: 'requested-folder',
-        name: ' blob ',
+        name: 'photo',
       );
 
       expect(result.outcome, DriveUploadOutcome.uploaded);
