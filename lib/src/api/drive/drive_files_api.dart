@@ -223,17 +223,24 @@ class DriveFilesApi {
   /// stop after any error. Cancellation is cooperative: it prevents new work
   /// but does not abort in-flight requests.
   ///
-  /// When [deduplicate] is set, identical inputs in this batch share the first
-  /// upload. Later inputs reuse that file according to the duplicate policy;
-  /// with `moveExisting`, a different destination folder moves it. With
-  /// `uploadAnyway`, every input uploads independently. If the first upload
-  /// fails or is skipped, dependent later inputs are skipped as
-  /// `dependencyFailed`.
+  /// When [deduplicate] is set, identical inputs form an ordered chain. A
+  /// follower occupies a worker while waiting for its predecessor, then uses
+  /// that latest result according to the duplicate policy. With `moveExisting`,
+  /// the file ends in the last member's folder; earlier results describe the
+  /// state at their own step. A follower's filename, name, and comment are
+  /// ignored, while `isSensitive` can only upgrade the file to `true`. With
+  /// `uploadAnyway`, every input uploads independently.
+  ///
+  /// A follower already running when its predecessor fails or is skipped is
+  /// skipped as `dependencyFailed`. An unstarted follower keeps the batch stop
+  /// reason, such as `cancelled`, `rateLimited`, or `stoppedAfterError`.
   ///
   /// This method never retries automatically. A network failure after the
   /// server stored a file is reported as a failure; rerunning is safe with
-  /// server deduplication. All input bytes remain held by the caller for the
-  /// duration of the operation.
+  /// server deduplication. With no [deduplicate] policy, the server can still
+  /// return an existing file because `force` defaults to false, although the
+  /// reported outcome is `uploaded`. All input bytes remain held by the caller
+  /// for the duration of the operation.
   Future<MisskeyBatchResult<DriveUploadInput, DriveUploadResult>> createMany(
     List<DriveUploadInput> inputs, {
     int concurrency = 2,

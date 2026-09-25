@@ -49,23 +49,28 @@ _createManyDriveFiles({
   void Function(DriveBatchUploadProgress progress)? onProgress,
   MisskeyCancellationToken? cancellation,
 }) async {
-  final hashes = deduplicate == null
+  final hashes =
+      deduplicate == null || deduplicate == DriveDuplicatePolicy.uploadAnyway
       ? null
       : [
           for (final input in inputs)
             crypto.md5.convert(input.bytes).toString(),
         ];
-  final leaders = _leadersFor(inputs.length, hashes, deduplicate);
-  final completions = <int, Completer<_LeaderCompletion>>{
-    for (var index = 0; index < inputs.length; index++)
-      if (leaders[index] == index) index: Completer<_LeaderCompletion>(),
-  };
+  final predecessors = _predecessorsFor(inputs.length, hashes);
+  final completions = List.generate(
+    inputs.length,
+    (_) => Completer<_Completion>(),
+  );
   final results =
       List<MisskeyBatchItemResult<DriveUploadInput, DriveUploadResult>?>.filled(
         inputs.length,
         null,
       );
   final lastTotals = <int, int>{};
+  final stop = _BatchStop();
+  cancellation?.whenCancelled.then((_) {
+    stop.set(MisskeyBatchSkipReason.cancelled);
+  });
   var completedItems = 0;
   var succeededItems = 0;
   var failedItems = 0;
@@ -84,6 +89,15 @@ _createManyDriveFiles({
     );
   }
 
+  void throwIfStopped() {
+    if (cancellation?.isCancelled ?? false) {
+      stop.set(MisskeyBatchSkipReason.cancelled);
+    }
+    if (stop.reason case final reason?) {
+      throw _Stopped(reason, stop.cause);
+    }
+  }
+
   MisskeyBatchItemResult<DriveUploadInput, DriveUploadResult> logicalResult(
     MisskeyBatchItemResult<DriveUploadInput, DriveUploadResult> result,
   ) {
@@ -99,21 +113,17 @@ _createManyDriveFiles({
         cause: error.cause,
       );
     }
-    final leader = leaders[result.index];
-    if (leader != result.index && result is MisskeyBatchSkipped) {
-      final leaderResult = results[leader];
-      if (leaderResult is! MisskeyBatchSuccess) {
-        return MisskeyBatchSkipped(
-          input: result.input,
-          index: result.index,
-          reason: MisskeyBatchSkipReason.dependencyFailed,
-          cause: switch (leaderResult) {
-            MisskeyBatchFailure(:final error) => error,
-            MisskeyBatchSkipped(:final cause) => cause,
-            _ => null,
-          },
-        );
-      }
+    if (result case MisskeyBatchFailure(
+      :final input,
+      :final index,
+      :final error,
+    ) when error is _Stopped) {
+      return MisskeyBatchSkipped(
+        input: input,
+        index: index,
+        reason: error.reason,
+        cause: error.cause,
+      );
     }
     return result;
   }
@@ -124,42 +134,42 @@ _createManyDriveFiles({
     cancellation: cancellation,
     stopReasonFor: (error) {
       final rateLimitReason = stopOnRateLimit(error);
-      if (rateLimitReason != null) return rateLimitReason;
-      return stopOnError && error is! _DependencyFailed
-          ? MisskeyBatchSkipReason.stoppedAfterError
-          : null;
+      if (rateLimitReason != null) {
+        stop.set(rateLimitReason, error);
+        return rateLimitReason;
+      }
+      if (stopOnError && error is! _DependencyFailed && error is! _Stopped) {
+        stop.set(MisskeyBatchSkipReason.stoppedAfterError, error);
+        return MisskeyBatchSkipReason.stoppedAfterError;
+      }
+      return null;
     },
     task: (input, index) async {
-      final leader = leaders[index];
-      if (leader != index) {
-        final completion = await completions[leader]!.future;
-        if (completion case _LeaderFailure(:final error)) {
-          throw _DependencyFailed(error);
-        }
-        return _reuseLeaderResult(
-          files: files,
-          input: input,
-          result: (completion as _LeaderSuccess).value,
-          policy: deduplicate!,
-          md5: hashes![index],
-        );
-      }
-
       try {
-        final value = await _upload(
-          files: files,
-          input: input,
-          deduplicate: deduplicate,
-          md5: hashes?[index],
-          onSendProgress: (sent, total) {
-            lastTotals[index] = total;
-            emit(index, sent, total);
-          },
-        );
-        completions[index]!.complete(_LeaderSuccess(value));
+        final predecessor = predecessors[index];
+        final value = predecessor == null
+            ? await _upload(
+                files: files,
+                input: input,
+                deduplicate: deduplicate,
+                md5: hashes?[index],
+                onSendProgress: (sent, total) {
+                  lastTotals[index] = total;
+                  emit(index, sent, total);
+                },
+              )
+            : await _reusePredecessorResult(
+                files: files,
+                input: input,
+                completion: await completions[predecessor].future,
+                policy: deduplicate!,
+                md5: hashes![index],
+                throwIfStopped: throwIfStopped,
+              );
+        completions[index].complete(_Completion.success(value));
         return value;
-      } catch (error, stackTrace) {
-        completions[index]!.complete(_LeaderFailure(error, stackTrace));
+      } catch (error) {
+        completions[index].complete(_Completion.failure(error));
         rethrow;
       }
     },
@@ -172,8 +182,7 @@ _createManyDriveFiles({
       } else if (logical is MisskeyBatchFailure) {
         failedItems++;
       }
-      final total =
-          lastTotals[logical.index] ?? inputs[logical.index].bytes.length;
+      final total = lastTotals[logical.index] ?? 0;
       emit(logical.index, total, total);
     },
   );
@@ -186,19 +195,14 @@ _createManyDriveFiles({
   );
 }
 
-List<int> _leadersFor(
-  int length,
-  List<String>? hashes,
-  DriveDuplicatePolicy? policy,
-) {
-  if (hashes == null || policy == DriveDuplicatePolicy.uploadAnyway) {
-    return List<int>.generate(length, (index) => index);
-  }
-  final firstByHash = <String, int>{};
-  return List<int>.generate(
-    length,
-    (index) => firstByHash.putIfAbsent(hashes[index], () => index),
-  );
+List<int?> _predecessorsFor(int length, List<String>? hashes) {
+  if (hashes == null) return List<int?>.filled(length, null);
+  final lastByHash = <String, int>{};
+  return List<int?>.generate(length, (index) {
+    final predecessor = lastByHash[hashes[index]];
+    lastByHash[hashes[index]] = index;
+    return predecessor;
+  });
 }
 
 Future<DriveUploadResult> _upload({
@@ -238,13 +242,19 @@ Future<DriveUploadResult> _upload({
   );
 }
 
-Future<DriveUploadResult> _reuseLeaderResult({
+Future<DriveUploadResult> _reusePredecessorResult({
   required DriveFilesApi files,
   required DriveUploadInput input,
-  required DriveUploadResult result,
+  required _Completion completion,
   required DriveDuplicatePolicy policy,
   required String md5,
+  required void Function() throwIfStopped,
 }) async {
+  if (completion case _CompletionFailure(:final error)) {
+    throw _DependencyFailed(_dependencyCause(error));
+  }
+  final result = (completion as _CompletionSuccess).value;
+  throwIfStopped();
   final upgradeSensitivity =
       input.isSensitive == true && result.file.isSensitive != true;
   if (policy == DriveDuplicatePolicy.moveExisting &&
@@ -273,25 +283,51 @@ Future<DriveUploadResult> _reuseLeaderResult({
   );
 }
 
-sealed class _LeaderCompletion {
-  const _LeaderCompletion();
+Object? _dependencyCause(Object error) => switch (error) {
+  _Stopped(:final cause) => cause,
+  _DependencyFailed(:final cause) => cause,
+  _ => error,
+};
+
+final class _BatchStop {
+  MisskeyBatchSkipReason? reason;
+  Object? cause;
+
+  void set(MisskeyBatchSkipReason value, [Object? valueCause]) {
+    if (reason != null) return;
+    reason = value;
+    cause = valueCause;
+  }
 }
 
-final class _LeaderSuccess extends _LeaderCompletion {
-  const _LeaderSuccess(this.value);
+sealed class _Completion {
+  const _Completion();
+
+  factory _Completion.success(DriveUploadResult value) = _CompletionSuccess;
+  factory _Completion.failure(Object error) = _CompletionFailure;
+}
+
+final class _CompletionSuccess extends _Completion {
+  const _CompletionSuccess(this.value);
 
   final DriveUploadResult value;
 }
 
-final class _LeaderFailure extends _LeaderCompletion {
-  const _LeaderFailure(this.error, this.stackTrace);
+final class _CompletionFailure extends _Completion {
+  const _CompletionFailure(this.error);
 
   final Object error;
-  final StackTrace stackTrace;
+}
+
+final class _Stopped implements Exception {
+  const _Stopped(this.reason, this.cause);
+
+  final MisskeyBatchSkipReason reason;
+  final Object? cause;
 }
 
 final class _DependencyFailed implements Exception {
   const _DependencyFailed(this.cause);
 
-  final Object cause;
+  final Object? cause;
 }

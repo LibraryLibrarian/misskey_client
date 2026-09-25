@@ -209,7 +209,19 @@ void main() {
       expect(progress.last.completedItems, 2);
       expect(progress.last.totalItems, 2);
       expect(progress.last.sent, progress.last.total);
-      expect(progress.any((event) => event.total > 0), isTrue);
+      for (var itemIndex = 0; itemIndex < 2; itemIndex++) {
+        final itemProgress = progress
+            .where((event) => event.itemIndex == itemIndex)
+            .toList();
+        final multipartTotal = itemProgress
+            .map((event) => event.total)
+            .reduce((previous, value) => previous > value ? previous : value);
+        final completion = itemProgress.lastWhere(
+          (event) => event.sent == event.total,
+        );
+        expect(multipartTotal, greaterThan(_inputs(2)[itemIndex].bytes.length));
+        expect(completion.total, multipartTotal);
+      }
     });
 
     test(
@@ -316,6 +328,230 @@ void main() {
       expect((result.items[1] as MisskeyBatchSkipped).cause, isNotNull);
     });
 
+    test(
+      'chains moveExisting followers through the latest folder state',
+      () async {
+        final server = _server();
+        final folder = server.addFolder();
+        addTearDown(server.client.dispose);
+        final inputs = [
+          const DriveUploadInput(bytes: [1, 2, 3], filename: 'root-one.bin'),
+          DriveUploadInput(
+            bytes: const [1, 2, 3],
+            filename: 'folder.bin',
+            folderId: folder.id,
+          ),
+          const DriveUploadInput(bytes: [1, 2, 3], filename: 'root-two.bin'),
+        ];
+
+        final result = await server.client.drive.files.createMany(
+          inputs,
+          concurrency: 3,
+          deduplicate: DriveDuplicatePolicy.moveExisting,
+        );
+
+        final first = (result.items[0] as MisskeyBatchSuccess).value;
+        final second = (result.items[1] as MisskeyBatchSuccess).value;
+        final third = (result.items[2] as MisskeyBatchSuccess).value;
+        expect(first.file.folderId, isNull);
+        expect(second.file.folderId, folder.id);
+        expect(third.file.folderId, isNull);
+        expect(server.files.single.folderId, isNull);
+        expect(
+          server.adapter.paths.where((path) => path == '/drive/files/update'),
+          hasLength(2),
+        );
+      },
+    );
+
+    test(
+      'does not update a follower after another item stops the batch',
+      () async {
+        final server = _server();
+        final folder = server.addFolder();
+        addTearDown(server.client.dispose);
+        final failureGate = Completer<void>();
+        final leaderGate = Completer<void>();
+        server.failWhen(
+          '/drive/files/create',
+          (request) => request.formFileNames.single == 'failure.bin',
+          ScriptedResponse.gated(
+            failureGate.future,
+            ScriptedResponse.error(400, code: 'INVALID_PARAM'),
+          ),
+        );
+        server.failWhen(
+          '/drive/files/create',
+          (request) => request.formFileNames.single == 'leader.bin',
+          ScriptedResponse.gated(
+            leaderGate.future,
+            ScriptedResponse.json(_file('leader')),
+          ),
+        );
+        final inputs = [
+          const DriveUploadInput(bytes: [9], filename: 'failure.bin'),
+          const DriveUploadInput(bytes: [1, 2, 3], filename: 'leader.bin'),
+          DriveUploadInput(
+            bytes: const [1, 2, 3],
+            filename: 'follower.bin',
+            folderId: folder.id,
+          ),
+        ];
+
+        final future = server.client.drive.files.createMany(
+          inputs,
+          concurrency: 3,
+          deduplicate: DriveDuplicatePolicy.moveExisting,
+          stopOnError: true,
+        );
+        await _until(() => server.adapter.inFlight == 2);
+        failureGate.complete();
+        await _until(() => server.adapter.inFlight == 1);
+        leaderGate.complete();
+        final result = await future;
+
+        expect(result.items[1], isA<MisskeyBatchSuccess>());
+        expect(
+          _skipReason(result.items[2]),
+          MisskeyBatchSkipReason.stoppedAfterError,
+        );
+        expect(server.adapter.paths, isNot(contains('/drive/files/update')));
+      },
+    );
+
+    test(
+      'reports a running follower as dependencyFailed after failure',
+      () async {
+        final server = _server();
+        addTearDown(server.client.dispose);
+        final gate = Completer<void>();
+        server.failWhen(
+          '/drive/files/create',
+          (_) => true,
+          ScriptedResponse.gated(
+            gate.future,
+            ScriptedResponse.error(400, code: 'INVALID_PARAM'),
+          ),
+        );
+        final inputs = [
+          const DriveUploadInput(bytes: [1, 2, 3], filename: 'leader.bin'),
+          const DriveUploadInput(bytes: [1, 2, 3], filename: 'follower.bin'),
+        ];
+
+        final future = server.client.drive.files.createMany(
+          inputs,
+          concurrency: 2,
+          deduplicate: DriveDuplicatePolicy.reuseExisting,
+          stopOnError: true,
+        );
+        await _until(() => server.adapter.inFlight == 1);
+        gate.complete();
+        final result = await future;
+
+        expect(result.items[0], isA<MisskeyBatchFailure>());
+        expect(
+          _skipReason(result.items[1]),
+          MisskeyBatchSkipReason.dependencyFailed,
+        );
+      },
+    );
+
+    test(
+      'reports a running follower as dependencyFailed after a rate limit',
+      () async {
+        final server = _server();
+        addTearDown(server.client.dispose);
+        final gate = Completer<void>();
+        server.failWhen(
+          '/drive/files/create',
+          (_) => true,
+          ScriptedResponse.gated(
+            gate.future,
+            ScriptedResponse.error(429, code: 'RATE_LIMITED'),
+          ),
+        );
+        final inputs = [
+          const DriveUploadInput(bytes: [1, 2, 3], filename: 'leader.bin'),
+          const DriveUploadInput(bytes: [1, 2, 3], filename: 'follower.bin'),
+        ];
+
+        final future = server.client.drive.files.createMany(
+          inputs,
+          concurrency: 2,
+          deduplicate: DriveDuplicatePolicy.reuseExisting,
+        );
+        await _until(() => server.adapter.inFlight == 1);
+        gate.complete();
+        final result = await future;
+
+        expect(result.items[0], isA<MisskeyBatchFailure>());
+        expect(
+          _skipReason(result.items[1]),
+          MisskeyBatchSkipReason.dependencyFailed,
+        );
+      },
+    );
+
+    test('keeps cancellation for unstarted group members', () async {
+      final server = _server();
+      addTearDown(server.client.dispose);
+      final gate = Completer<void>();
+      final cancellation = MisskeyCancellationToken();
+      server.failWhen(
+        '/drive/files/create',
+        (request) => request.formFileNames.single == 'blocking.bin',
+        ScriptedResponse.gated(
+          gate.future,
+          ScriptedResponse.json(_file('one')),
+        ),
+      );
+      final inputs = [
+        const DriveUploadInput(bytes: [9], filename: 'blocking.bin'),
+        const DriveUploadInput(bytes: [1, 2, 3], filename: 'leader.bin'),
+        const DriveUploadInput(bytes: [1, 2, 3], filename: 'follower.bin'),
+      ];
+
+      final future = server.client.drive.files.createMany(
+        inputs,
+        concurrency: 1,
+        deduplicate: DriveDuplicatePolicy.reuseExisting,
+        cancellation: cancellation,
+      );
+      await _until(() => server.adapter.inFlight == 1);
+      cancellation.cancel();
+      gate.complete();
+      final result = await future;
+
+      expect(_skipReason(result.items[1]), MisskeyBatchSkipReason.cancelled);
+      expect(_skipReason(result.items[2]), MisskeyBatchSkipReason.cancelled);
+    });
+
+    test('upgrades sensitivity for a reused follower', () async {
+      final server = _server();
+      addTearDown(server.client.dispose);
+      final inputs = [
+        const DriveUploadInput(bytes: [1, 2, 3], filename: 'leader.bin'),
+        const DriveUploadInput(
+          bytes: [1, 2, 3],
+          filename: 'follower.bin',
+          isSensitive: true,
+        ),
+      ];
+
+      final result = await server.client.drive.files.createMany(
+        inputs,
+        deduplicate: DriveDuplicatePolicy.reuseExisting,
+      );
+
+      final follower = (result.items[1] as MisskeyBatchSuccess).value;
+      expect(follower.file.isSensitive, isTrue);
+      expect(server.adapter.paths.last, '/drive/files/update');
+      expect(
+        server.adapter.requests.last.jsonBody,
+        containsPair('isSensitive', true),
+      );
+    });
+
     test('returns an empty result without requests for empty input', () async {
       final server = _server();
       addTearDown(server.client.dispose);
@@ -372,7 +608,9 @@ Map<String, dynamic> _file(String id) => {
 };
 
 Future<void> _until(bool Function() condition) async {
-  while (!condition()) {
+  for (var attempts = 0; attempts < 1000; attempts++) {
+    if (condition()) return;
     await Future<void>.delayed(Duration.zero);
   }
+  fail('Timed out waiting for the expected test state.');
 }
