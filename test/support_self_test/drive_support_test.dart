@@ -107,34 +107,28 @@ void main() {
       expect(adapter.inFlight, 0);
     });
 
-    test(
-      'counts a gated upload while its multipart stream is drained',
-      () async {
-        final gate = Completer<void>();
-        final entered = Completer<void>();
-        final adapter = ScriptedHttpClientAdapter()
-          ..on('/drive/files/create', (_) {
-            entered.complete();
-            return ScriptedResponse.gated(
-              gate.future,
-              ScriptedResponse.json(driveFileJson(id: 'uploaded')),
-            );
-          });
-        final client = testClient(adapter);
-        addTearDown(client.dispose);
-
-        final upload = client.drive.files.create(
-          bytes: [1],
-          filename: 'one.bin',
+    test('counts an upload while its supplied stream is still open', () async {
+      final adapter = ScriptedHttpClientAdapter()
+        ..on(
+          '/drive/files/create',
+          (_) => ScriptedResponse.json(driveFileJson(id: 'uploaded')),
         );
-        await entered.future;
-        expect(adapter.inFlight, 1);
-        expect(adapter.maxInFlight, 1);
-        gate.complete();
-        await upload;
-        expect(adapter.inFlight, 0);
-      },
-    );
+      final controller = StreamController<Uint8List>();
+
+      final fetch = adapter.fetch(
+        RequestOptions(
+          path: '/api/drive/files/create',
+          data: <String, dynamic>{},
+        ),
+        controller.stream,
+        null,
+      );
+      expect(adapter.inFlight, 1);
+      expect(adapter.maxInFlight, 1);
+      await controller.close();
+      await fetch;
+      expect(adapter.inFlight, 0);
+    });
 
     test('drains JSON streams and propagates stream failures', () async {
       final adapter = ScriptedHttpClientAdapter()
