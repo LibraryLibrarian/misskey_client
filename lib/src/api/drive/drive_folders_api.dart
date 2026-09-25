@@ -2,6 +2,9 @@ import 'package:meta/meta.dart';
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/drive/folder_path_resolver.dart';
+import '../../models/drive/drive_folder_ambiguity_policy.dart';
+import '../../models/drive/drive_folder_get_or_create_result.dart';
 import '../../models/misskey_drive_folder.dart';
 
 /// Provides Drive folder operations (`/api/drive/folders/*`).
@@ -127,4 +130,44 @@ class DriveFoldersApi {
         .map(MisskeyDriveFolder.fromJson)
         .toList();
   }
+
+  /// Resolves [segments] as a path of Drive folder names.
+  ///
+  /// Performs one `folders/find` request for each segment and returns `null`
+  /// when a segment is not found. Names may contain `/`; each list item is one
+  /// complete folder name. An empty list or empty segment throws
+  /// [ArgumentError] before making a request.
+  ///
+  /// Misskey permits same-named siblings. Use [onAmbiguous] to select the
+  /// oldest or newest match, or leave its default to throw a
+  /// `DriveFolderAmbiguousException`.
+  Future<MisskeyDriveFolder?> resolvePath(
+    List<String> segments, {
+    String? parentId,
+    DriveFolderAmbiguityPolicy onAmbiguous = DriveFolderAmbiguityPolicy.error,
+  }) => resolveDriveFolderPath(
+    segments: segments,
+    parentId: parentId,
+    onAmbiguous: onAmbiguous,
+    find: find,
+  );
+
+  /// Finds a Drive folder or creates it when no matching folder exists.
+  ///
+  /// This is not an atomic operation: concurrent callers can each create a
+  /// folder with the same name. `folders/create` is rate-limited to 10
+  /// requests per hour per user by default, and `MisskeyRateLimitException`
+  /// propagates. An empty [name] throws [ArgumentError] before making a
+  /// request.
+  Future<DriveFolderGetOrCreateResult> getOrCreate({
+    required String name,
+    String? parentId,
+    DriveFolderAmbiguityPolicy onAmbiguous = DriveFolderAmbiguityPolicy.error,
+  }) => getOrCreateDriveFolder(
+    name: name,
+    parentId: parentId,
+    onAmbiguous: onAmbiguous,
+    find: find,
+    create: create,
+  );
 }
