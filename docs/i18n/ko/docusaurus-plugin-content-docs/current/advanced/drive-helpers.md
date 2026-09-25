@@ -435,4 +435,4 @@ try {
 | `drive/files/upload-from-url` | 시간당 60회 | `uploadFromUrlAndWait()` |
 | 목록 조회, `show`, `find`, `update`, `delete`, `move-bulk` | 엔드포인트별 제한 없음 | 기타 모든 헬퍼 |
 
-서버 관리자가 설정한 역할별 요청 제한 계수가 이 값을 조정합니다. 제한에 도달하면 단일 요청 헬퍼는 `MisskeyRateLimitException`을 발생시키고, 배치 헬퍼는 새 작업을 시작하지 않습니다. `createMany()`, `dissolveFolder()`, `deleteFolderRecursive()`는 남은 항목을 `rateLimited`로 보고합니다.
+서버 관리자가 설정한 역할별 요청 제한 계수가 이 값을 조정합니다. 제한에 도달하면 단일 요청 헬퍼는 `MisskeyRateLimitException`을 발생시키고, 배치 헬퍼는 새 작업을 시작하지 않습니다. 시작되지 않은 독립 작업은 `createMany()`, `dissolveFolder()`의 하위 폴더 이동 단계, `deleteFolderRecursive()`의 삭제 단계에서 `rateLimited`로 보고됩니다. `moveBulkAll()`의 청크는 `stoppedAfterError`를 사용하고, 의존 작업은 `dependencyFailed`가 될 수 있으며, 중단된 폴더 삭제 재시도는 실패로 남습니다.

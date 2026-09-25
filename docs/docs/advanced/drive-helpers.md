@@ -435,4 +435,4 @@ Misskey's default per-user limits for the endpoints used by these helpers:
 | `drive/files/upload-from-url` | 60 per hour | `uploadFromUrlAndWait()` |
 | Listing, `show`, `find`, `update`, `delete`, `move-bulk` | No per-endpoint limit | All other helpers |
 
-Role rate-limit factors set by the server administrator scale these values. When a limit is hit, single-request helpers throw `MisskeyRateLimitException`, and batch helpers stop starting new work. `createMany()`, `dissolveFolder()`, and `deleteFolderRecursive()` report the remaining items as `rateLimited`.
+Role rate-limit factors set by the server administrator scale these values. When a limit is hit, single-request helpers throw `MisskeyRateLimitException`, and batch helpers stop starting new work. Unstarted independent work is reported as `rateLimited` in `createMany()`, the subfolder-move phase of `dissolveFolder()`, and the deletion phases of `deleteFolderRecursive()`. `moveBulkAll()` chunks use `stoppedAfterError`, dependent operations can be `dependencyFailed`, and an interrupted folder-deletion retry remains a failure.

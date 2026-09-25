@@ -437,4 +437,4 @@ try {
 | `drive/files/upload-from-url` | 1時間あたり60回 | `uploadFromUrlAndWait()` |
 | 一覧、`show`、`find`、`update`、`delete`、`move-bulk` | エンドポイントごとの制限なし | その他すべてのヘルパー |
 
-サーバー管理者が設定したロールのレート制限係数によって、これらの値は増減します。制限に達すると、単一リクエストのヘルパーは `MisskeyRateLimitException` をスローし、バッチヘルパーは新しい処理の開始を停止します。`createMany()`、`dissolveFolder()`、`deleteFolderRecursive()` は残りの項目を `rateLimited` として報告します。
+サーバー管理者が設定したロールのレート制限係数によって、これらの値は増減します。制限に達すると、単一リクエストのヘルパーは `MisskeyRateLimitException` をスローし、バッチヘルパーは新しい処理の開始を停止します。開始前の独立した処理は、`createMany()`、`dissolveFolder()` のサブフォルダ移動、`deleteFolderRecursive()` の削除の各段階で `rateLimited` として報告されます。`moveBulkAll()` の組は `stoppedAfterError`、依存する操作は `dependencyFailed` となり、中断されたフォルダ削除のリトライは失敗として扱われます。
