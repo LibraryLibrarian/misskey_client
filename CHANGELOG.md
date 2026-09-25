@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `DriveFoldersApi.getTree` for retrieving immutable Drive folder trees
 - Added `DriveApi.getUsageSummary` for aggregating Drive usage by folder and MIME type
 - Added `DriveApi.deleteFolderRecursive` with dry-run planning, bounded deletion, dependency-aware outcomes, progress, and cooperative cancellation.
+- Added `DriveFoldersApi.resolvePath` and `DriveFoldersApi.getOrCreate` (not atomic), with `DriveFolderAmbiguityPolicy`, `DriveFolderGetOrCreateResult`, and `DriveFolderAmbiguousException` for same-named sibling folders.
 
 ### Changed
 
