@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `DriveFilesApi.createDeduplicated()` for MD5-checked uploads with configurable duplicate handling.
 - Added `DriveFilesApi.createMany()` for bounded concurrent Drive batch uploads with progress reporting and duplicate handling.
 - Added `DriveApi.getUploadPreflight()` returning a `DriveUploadPreflight` snapshot whose `check`, `checkAll`, and `afterUpload` report sealed `DriveUploadIssue`s for role-policy file size, Drive capacity, MIME type (advisory), and the instance multipart limit (`Meta.maxFileSize`).
+- Added `DriveApi.uploadFromUrlAndWait` to await URL uploads using an existing main-channel subscription, and `MisskeyStreaming.subscriptions` to inspect registered subscriptions.
 
 ### Changed
 
