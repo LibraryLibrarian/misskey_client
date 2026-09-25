@@ -1,8 +1,9 @@
+import 'package:meta/meta.dart';
+
 import '../../exception/drive_folder_ambiguous_exception.dart';
 import '../../models/drive/drive_folder_ambiguity_policy.dart';
 import '../../models/drive/drive_folder_get_or_create_result.dart';
 import '../../models/misskey_drive_folder.dart';
-import 'package:meta/meta.dart';
 
 /// Resolves a sequence of folder names through `folders/find` requests.
 @internal
@@ -19,24 +20,24 @@ Future<MisskeyDriveFolder?> resolveDriveFolderPath({
   _validateSegments(segments);
 
   var currentParentId = parentId;
+  MisskeyDriveFolder? resolved;
   for (var index = 0; index < segments.length; index++) {
     final candidates = await find(
       name: segments[index],
       parentId: currentParentId,
     );
     if (candidates.isEmpty) return null;
-    final folder = _selectFolder(
+    resolved = _selectFolder(
       name: segments[index],
       parentId: currentParentId,
       candidates: candidates,
       segmentIndex: index,
       onAmbiguous: onAmbiguous,
     );
-    currentParentId = folder.id;
-    if (index == segments.length - 1) return folder;
+    currentParentId = resolved.id;
   }
 
-  throw StateError('Unreachable');
+  return resolved;
 }
 
 /// Finds a folder or creates it when no matching folder exists.
@@ -118,18 +119,16 @@ void _validateSegments(List<String> segments) {
     throw ArgumentError.value(segments, 'segments', 'must not be empty');
   }
   for (var index = 0; index < segments.length; index++) {
-    if (segments[index].isEmpty) {
-      throw ArgumentError.value(
-        segments[index],
-        'segments[$index]',
-        'must not be empty',
-      );
-    }
+    _validateName(segments[index], 'segments[$index]');
   }
 }
 
-void _validateName(String name) {
-  if (name.isEmpty) {
-    throw ArgumentError.value(name, 'name', 'must not be empty');
+void _validateName(String name, [String parameterName = 'name']) {
+  if (name.isEmpty || name.runes.length > 200) {
+    throw ArgumentError.value(
+      name,
+      parameterName,
+      'must not be empty or exceed 200 Unicode code points',
+    );
   }
 }

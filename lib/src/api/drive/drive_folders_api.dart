@@ -2,6 +2,8 @@ import 'package:meta/meta.dart';
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../exception/drive_folder_ambiguous_exception.dart';
+import '../../exception/misskey_client_exception.dart';
 import '../../internal/drive/folder_path_resolver.dart';
 import '../../models/drive/drive_folder_ambiguity_policy.dart';
 import '../../models/drive/drive_folder_get_or_create_result.dart';
@@ -135,12 +137,14 @@ class DriveFoldersApi {
   ///
   /// Performs one `folders/find` request for each segment and returns `null`
   /// when a segment is not found. Names may contain `/`; each list item is one
-  /// complete folder name. An empty list or empty segment throws
-  /// [ArgumentError] before making a request.
+  /// complete folder name. An empty list, empty segment, or segment exceeding
+  /// 200 Unicode code points throws [ArgumentError] before making a request.
+  /// A nonexistent [parentId] also returns `null` because the first find
+  /// request returns `[]`.
   ///
   /// Misskey permits same-named siblings. Use [onAmbiguous] to select the
   /// oldest or newest match, or leave its default to throw a
-  /// `DriveFolderAmbiguousException`.
+  /// [DriveFolderAmbiguousException].
   Future<MisskeyDriveFolder?> resolvePath(
     List<String> segments, {
     String? parentId,
@@ -156,9 +160,15 @@ class DriveFoldersApi {
   ///
   /// This is not an atomic operation: concurrent callers can each create a
   /// folder with the same name. `folders/create` is rate-limited to 10
-  /// requests per hour per user by default, and `MisskeyRateLimitException`
-  /// propagates. An empty [name] throws [ArgumentError] before making a
+  /// requests per hour, subject to role rate-limit factors, and
+  /// [MisskeyRateLimitException] propagates. An empty [name] or a name
+  /// exceeding 200 Unicode code points throws [ArgumentError] before making a
   /// request.
+  ///
+  /// With the default [onAmbiguous] policy, multiple matching folders throw
+  /// [DriveFolderAmbiguousException]. A nonexistent [parentId] produces no
+  /// find matches, then `folders/create` fails with `NO_SUCH_FOLDER` as a
+  /// [MisskeyApiException].
   Future<DriveFolderGetOrCreateResult> getOrCreate({
     required String name,
     String? parentId,

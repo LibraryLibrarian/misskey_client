@@ -2,10 +2,10 @@ import 'package:meta/meta.dart';
 
 import '../models/misskey_drive_folder.dart';
 
-/// A client-side folder resolution error caused by multiple matching folders.
+/// Thrown when a path segment matches multiple sibling folders.
 ///
-/// This is not a server response and therefore is not a
-/// `MisskeyClientException`.
+/// This is not a subtype of the sealed `MisskeyClientException`, so handlers
+/// for that type do not catch it.
 @immutable
 final class DriveFolderAmbiguousException implements Exception {
   /// Creates an exception for multiple folders matching a path segment.

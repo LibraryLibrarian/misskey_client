@@ -44,6 +44,22 @@ void main() {
       expect(adapter.requests[2].jsonBody?['parentId'], 'second');
     });
 
+    test('sends a supplied parent ID in the initial find request', () async {
+      final adapter = ScriptedHttpClientAdapter()
+        ..enqueue(
+          '/drive/folders/find',
+          ScriptedResponse.json([
+            driveFolderJson(id: 'child', parentId: 'p', name: 'child'),
+          ]),
+        );
+      final client = testClient(adapter);
+      addTearDown(client.dispose);
+
+      await client.drive.folders.resolvePath(['child'], parentId: 'p');
+
+      expect(adapter.requests.single.jsonBody?['parentId'], 'p');
+    });
+
     test('stops when a middle path segment is missing', () async {
       final adapter = ScriptedHttpClientAdapter()
         ..enqueue(
@@ -180,6 +196,49 @@ void main() {
     );
 
     test(
+      'getOrCreate rejects or selects duplicate folders without creating',
+      () async {
+        final candidates = [
+          driveFolderJson(
+            id: 'oldest',
+            name: 'folder',
+            createdAt: DateTime.utc(2025),
+          ),
+          driveFolderJson(
+            id: 'newest',
+            name: 'folder',
+            createdAt: DateTime.utc(2027),
+          ),
+        ];
+        final adapter = ScriptedHttpClientAdapter()
+          ..enqueue('/drive/folders/find', ScriptedResponse.json(candidates))
+          ..enqueue('/drive/folders/find', ScriptedResponse.json(candidates));
+        final client = testClient(adapter);
+        addTearDown(client.dispose);
+
+        await expectLater(
+          client.drive.folders.getOrCreate(name: 'folder'),
+          throwsA(
+            isA<DriveFolderAmbiguousException>().having(
+              (error) => error.segmentIndex,
+              'segmentIndex',
+              0,
+            ),
+          ),
+        );
+        final result = await client.drive.folders.getOrCreate(
+          name: 'folder',
+          onAmbiguous: DriveFolderAmbiguityPolicy.oldest,
+        );
+
+        expect(result.folder.id, 'oldest');
+        expect(result.created, isFalse);
+        expect(adapter.paths, ['/drive/folders/find', '/drive/folders/find']);
+        expect(adapter.paths, isNot(contains('/drive/folders/create')));
+      },
+    );
+
+    test(
       'getOrCreate creates a missing folder under the requested parent',
       () async {
         final adapter = ScriptedHttpClientAdapter()
@@ -226,10 +285,11 @@ void main() {
       );
     });
 
-    test('rejects empty paths and names without sending requests', () async {
+    test('rejects invalid paths and names without sending requests', () async {
       final adapter = ScriptedHttpClientAdapter();
       final client = testClient(adapter);
       addTearDown(client.dispose);
+      final tooLong = List.filled(201, '😀').join();
 
       await expectLater(
         client.drive.folders.resolvePath([]),
@@ -240,7 +300,15 @@ void main() {
         throwsArgumentError,
       );
       await expectLater(
+        client.drive.folders.resolvePath([tooLong]),
+        throwsArgumentError,
+      );
+      await expectLater(
         client.drive.folders.getOrCreate(name: ''),
+        throwsArgumentError,
+      );
+      await expectLater(
+        client.drive.folders.getOrCreate(name: tooLong),
         throwsArgumentError,
       );
 
