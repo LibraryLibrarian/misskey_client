@@ -2,9 +2,13 @@ import '../../client/misskey_cancellation_token.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/bounded_batch.dart';
+import '../../internal/drive/folder_dissolver.dart' as folder_dissolver;
 import '../../internal/drive/recursive_deleter.dart';
+import '../../internal/drive/usage_aggregator.dart';
 import '../../internal/id_paginator.dart';
+import '../../models/drive/drive_folder_dissolve_result.dart';
 import '../../models/drive/drive_recursive_delete.dart';
+import '../../models/drive/drive_usage_summary.dart';
 import '../../models/misskey_drive_file.dart';
 import 'drive_files_api.dart';
 import 'drive_folders_api.dart';
@@ -32,6 +36,31 @@ class DriveApi {
 
   /// Provides Drive statistics operations.
   final DriveStatsApi stats;
+
+  /// Moves a folder's direct files and subfolders to its parent or the root,
+  /// then deletes the now-empty folder.
+  ///
+  /// Misskey permits duplicate names, so this does not rename moved items. It
+  /// throws before any change if the folder, its contents, or the destination
+  /// parent (checked when moving files) cannot be read. After moves begin, it
+  /// returns their individual outcomes and deletes the source folder only when
+  /// every move succeeds. If file moves are not complete, subfolders and
+  /// deletion are skipped. Concurrent additions can make deletion fail with
+  /// `HAS_CHILD_FILES_OR_FOLDERS`; that failure is reported in the result. It
+  /// is safe to run again after a partial result.
+  ///
+  /// [concurrency] bounds parallel subfolder moves; files are moved sequentially
+  /// in chunks of 100. It must be positive or an [ArgumentError] is thrown
+  /// before any request is sent.
+  Future<DriveFolderDissolveResult> dissolveFolder({
+    required String folderId,
+    int concurrency = 4,
+  }) => folder_dissolver.dissolveFolder(
+    folderId: folderId,
+    concurrency: concurrency,
+    files: files,
+    folders: folders,
+  );
 
   /// Irreversibly deletes a folder and all its planned contents.
   ///
@@ -110,6 +139,32 @@ class DriveApi {
       idOf: (item) => item.id,
       pageSize: pageSize,
       maxItems: maxItems,
+    );
+  }
+
+  /// Scans the whole Drive and aggregates file usage by folder and MIME type.
+  ///
+  /// This makes about one `/drive/stream` request per 100 files plus one
+  /// `/drive/folders` listing per folder. It is not an atomic snapshot:
+  /// concurrent Drive changes can cause small inconsistencies. Linked files
+  /// (uncached remote files with `isLink`) are included here but excluded from
+  /// server-reported Drive usage, so [DriveUsageSummary.total] may differ from
+  /// the usage reported by [DriveStatsApi.getCapacity].
+  ///
+  /// [onProgress] is called after every scanned file with the cumulative count.
+  /// [concurrency] limits concurrent folder-tree requests and must be positive.
+  /// Invalid concurrency throws [ArgumentError] before any request is made. If
+  /// scanning fails, in-flight folder listings cannot be cancelled and may
+  /// continue briefly before their errors are discarded.
+  Future<DriveUsageSummary> getUsageSummary({
+    int concurrency = 4,
+    void Function(int filesScanned)? onProgress,
+  }) {
+    validateConcurrency(concurrency);
+    return aggregateDriveUsage(
+      getTree: () => folders.getTree(concurrency: concurrency),
+      streamAll: streamAll,
+      onProgress: onProgress,
     );
   }
 
