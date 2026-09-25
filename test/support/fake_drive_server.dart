@@ -29,7 +29,10 @@ class FakeDriveServer {
   /// The total reported Drive capacity in bytes.
   final int capacity;
 
-  /// Delays physical deletion checks for this many folder-delete requests.
+  /// Keeps deleted rows visible for this many subsequent folder-delete requests.
+  ///
+  /// Every normally handled `/drive/folders/delete` request advances this
+  /// deterministic lag after its child check has run.
   int fileDeletionLagRequests = 0;
 
   final String Function(List<int> bytes) _md5Of;
@@ -143,7 +146,7 @@ class FakeDriveServer {
       }
     }
     final body = request.jsonBody ?? const <String, dynamic>{};
-    return switch (request.path) {
+    final response = switch (request.path) {
       '/drive/files' => _listFiles(body),
       '/drive/folders' => _listFolders(body),
       '/drive/stream' => _streamFiles(body),
@@ -169,11 +172,17 @@ class FakeDriveServer {
       ),
       _ => throw StateError('Unexpected fake Drive path: ${request.path}'),
     };
+    if (request.path == '/drive/folders/delete') {
+      _advanceDeletionLag();
+    }
+    return response;
   }
 
   ScriptedResponse _listFiles(Map<String, dynamic> body) {
     final limit = _limit(body);
-    if (limit == null) return _validationError();
+    if (limit == null || !_validOptionalType(body['type'])) {
+      return _validationError();
+    }
     final folderId = body['folderId'] as String?;
     var values = _files.where((file) => file.folderId == folderId);
     values = _filterFiles(values, body);
@@ -184,7 +193,9 @@ class FakeDriveServer {
 
   ScriptedResponse _streamFiles(Map<String, dynamic> body) {
     final limit = _limit(body);
-    if (limit == null) return _validationError();
+    if (limit == null || !_validRequiredType(body['type'])) {
+      return _validationError();
+    }
     return ScriptedResponse.json(
       _page(_filterFiles(_files, body), body, limit).map(_fileJson).toList(),
     );
@@ -212,12 +223,12 @@ class FakeDriveServer {
         _folders.where((folder) => folder.parentId == parentId),
         body,
         limit,
-        ascendingSince: false,
       ).map(_folderJson).toList(),
     );
   }
 
   ScriptedResponse _showFolder(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'folderId')) return _validationError();
     final folder = _folder(body['folderId'] as String?);
     return folder == null
         ? _error('NO_SUCH_FOLDER')
@@ -227,6 +238,7 @@ class FakeDriveServer {
   }
 
   ScriptedResponse _findFolders(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'name')) return _validationError();
     final name = body['name'];
     final parentId = body['parentId'] as String?;
     return ScriptedResponse.json(
@@ -250,9 +262,12 @@ class FakeDriveServer {
   }
 
   ScriptedResponse _updateFolder(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'folderId')) return _validationError();
     final folder = _folder(body['folderId'] as String?);
     if (folder == null) return _error('NO_SUCH_FOLDER');
-    if (body['name'] case final String name) folder.name = name;
+    if (body['name'] case final String name when name.isNotEmpty) {
+      folder.name = name;
+    }
     if (body.containsKey('parentId')) {
       final parentId = body['parentId'] as String?;
       if (parentId == folder.id ||
@@ -268,19 +283,19 @@ class FakeDriveServer {
   }
 
   ScriptedResponse _deleteFolder(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'folderId')) return _validationError();
     final folder = _folder(body['folderId'] as String?);
     if (folder == null) return _error('NO_SUCH_FOLDER');
     final hasChildren =
         _folders.any((item) => item.parentId == folder.id) ||
-        _files.any((item) => item.folderId == folder.id) ||
-        _pendingDeletion.any((item) => item.file.folderId == folder.id);
-    _advanceDeletionLag();
+        _files.any((item) => item.folderId == folder.id);
     if (hasChildren) return _error('HAS_CHILD_FILES_OR_FOLDERS');
     _folders.remove(folder);
     return ScriptedResponse.noContent();
   }
 
   ScriptedResponse _showFile(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'fileId')) return _validationError();
     final file = _file(body['fileId'] as String?);
     return file == null
         ? _error('NO_SUCH_FILE')
@@ -288,6 +303,7 @@ class FakeDriveServer {
   }
 
   ScriptedResponse _updateFile(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'fileId')) return _validationError();
     final file = _file(body['fileId'] as String?);
     if (file == null) return _error('NO_SUCH_FILE');
     if (body['name'] case final String name) file.name = name;
@@ -304,11 +320,14 @@ class FakeDriveServer {
   }
 
   ScriptedResponse _deleteFile(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'fileId')) return _validationError();
     final file = _file(body['fileId'] as String?);
     if (file == null) return _error('NO_SUCH_FILE');
-    _files.remove(file);
-    if (fileDeletionLagRequests > 0) {
+    if (fileDeletionLagRequests > 0 &&
+        !_pendingDeletion.any((pending) => pending.file == file)) {
       _pendingDeletion.add(_PendingFile(file, fileDeletionLagRequests));
+    } else if (fileDeletionLagRequests == 0) {
+      _files.remove(file);
     }
     return ScriptedResponse.noContent();
   }
@@ -333,6 +352,7 @@ class FakeDriveServer {
   }
 
   ScriptedResponse _findFiles(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'name')) return _validationError();
     final name = body['name'];
     final folderId = body['folderId'] as String?;
     return ScriptedResponse.json(
@@ -343,13 +363,17 @@ class FakeDriveServer {
     );
   }
 
-  ScriptedResponse _findByHash(Map<String, dynamic> body) =>
-      ScriptedResponse.json(
-        _files.where((file) => file.md5 == body['md5']).map(_fileJson).toList(),
-      );
+  ScriptedResponse _findByHash(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'md5')) return _validationError();
+    return ScriptedResponse.json(
+      _files.where((file) => file.md5 == body['md5']).map(_fileJson).toList(),
+    );
+  }
 
-  ScriptedResponse _checkExistence(Map<String, dynamic> body) =>
-      ScriptedResponse.json(_files.any((file) => file.md5 == body['md5']));
+  ScriptedResponse _checkExistence(Map<String, dynamic> body) {
+    if (!_requiredString(body, 'md5')) return _validationError();
+    return ScriptedResponse.json(_files.any((file) => file.md5 == body['md5']));
+  }
 
   ScriptedResponse _createFile(RecordedRequest request) {
     final fields = request.formFields;
@@ -363,7 +387,7 @@ class FakeDriveServer {
     }
     final folderId = fields['folderId'];
     if (folderId != null && _folder(folderId) == null) {
-      return _error('NO_SUCH_FOLDER');
+      return ScriptedResponse.error(500, code: 'INTERNAL_ERROR');
     }
     final file =
         addFile(
@@ -387,9 +411,8 @@ class FakeDriveServer {
   List<T> _page<T extends _HasId>(
     Iterable<T> source,
     Map<String, dynamic> body,
-    int limit, {
-    bool ascendingSince = true,
-  }) {
+    int limit,
+  ) {
     var values = source.toList();
     final untilId = body['untilId'] as String?;
     final sinceId = body['sinceId'] as String?;
@@ -400,9 +423,9 @@ class FakeDriveServer {
       values = values.where((item) => item.id.compareTo(sinceId) > 0).toList();
     }
     values.sort(
-      (a, b) => sinceId == null || !ascendingSince
-          ? b.id.compareTo(a.id)
-          : a.id.compareTo(b.id),
+      (a, b) => sinceId != null && untilId == null
+          ? a.id.compareTo(b.id)
+          : b.id.compareTo(a.id),
     );
     return values.take(limit).toList();
   }
@@ -418,7 +441,10 @@ class FakeDriveServer {
 
   void _advanceDeletionLag() {
     for (final pending in _pendingDeletion.toList()) {
-      if (--pending.remaining <= 0) _pendingDeletion.remove(pending);
+      if (--pending.remaining <= 0) {
+        _pendingDeletion.remove(pending);
+        _files.remove(pending.file);
+      }
     }
   }
 
@@ -455,13 +481,26 @@ class FakeDriveServer {
         ? _files.where((item) => item.folderId == folder.id).length
         : null,
     parent: parent && folder.parentId != null
-        ? _folderJson(_folder(folder.parentId)!, parent: true)
+        ? _folderJson(_folder(folder.parentId)!, counts: true, parent: true)
         : null,
   );
 
+  static bool _requiredString(Map<String, dynamic> body, String key) =>
+      body[key] is String;
+
+  static bool _validOptionalType(Object? value) =>
+      value == null || _validRequiredType(value);
+
+  static bool _validRequiredType(Object? value) =>
+      value is String && RegExp(r'^[a-zA-Z/\-*]+$').hasMatch(value);
+
   static ScriptedResponse _error(String code) =>
       ScriptedResponse.error(400, code: code);
-  static ScriptedResponse _validationError() => _error('VALIDATION_ERROR');
+  static ScriptedResponse _validationError() => ScriptedResponse.error(
+    400,
+    code: 'INVALID_PARAM',
+    id: '3d81ceae-475f-4600-b2a8-2bc116157532',
+  );
 
   static String _stableHash(List<int> bytes) {
     final sum = bytes.fold<int>(0, (sum, byte) => (sum + byte) & 0xffffffff);
