@@ -4,10 +4,12 @@ import 'package:dio/dio.dart' show FormData, MultipartFile;
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../internal/drive/bulk_mover.dart' as bulk_mover;
 import '../../internal/id_paginator.dart';
 import '../../internal/optional.dart';
 import '../../internal/request_body.dart';
 import '../../models/chat/misskey_chat_message.dart';
+import '../../models/drive/drive_move_bulk_result.dart';
 import '../../models/misskey_drive_file.dart';
 import '../../models/misskey_note.dart';
 
@@ -283,6 +285,34 @@ class DriveFilesApi {
         .map(MisskeyDriveFile.fromJson)
         .toList();
   }
+
+  /// Moves every distinct file ID to a folder in sequential bulk requests.
+  ///
+  /// Requests are split into chunks of at most 100 IDs. Processing stops after
+  /// the first failed chunk, and later chunks are reported as skipped. A
+  /// successful chunk means the server accepted it, not that every ID moved:
+  /// the server silently ignores IDs that do not exist or belong to another
+  /// user.
+  ///
+  /// This requires Misskey 2025.5.1 or later. Older servers return their
+  /// endpoint error unchanged as a failed chunk. When [folderId] is non-null,
+  /// this validates the destination folder before any mutation because the
+  /// server otherwise reports a missing folder as a generic 500 error.
+  /// A failed destination check is thrown (for example a `MisskeyApiException`
+  /// with code `NO_SUCH_FOLDER`) and no files are moved. A folder deleted
+  /// after the check surfaces as a failed chunk instead.
+  ///
+  /// Pass `null` for [folderId] to move files to the root. An empty [fileIds]
+  /// iterable sends no request, including no destination-folder validation.
+  Future<DriveMoveBulkResult> moveBulkAll({
+    required Iterable<String> fileIds,
+    String? folderId,
+  }) => bulk_mover.moveBulkAll(
+    http: http,
+    fileIds: fileIds,
+    folderId: folderId,
+    moveBulk: moveBulk,
+  );
 
   /// Moves multiple files to a folder in bulk
   /// (`/api/drive/files/move-bulk`).
