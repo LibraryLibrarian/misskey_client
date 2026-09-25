@@ -5,11 +5,13 @@ import 'package:dio/dio.dart' show FormData, MultipartFile;
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/drive/bulk_mover.dart' as bulk_mover;
+import '../../internal/drive/dedup_uploader.dart';
 import '../../internal/id_paginator.dart';
 import '../../internal/optional.dart';
 import '../../internal/request_body.dart';
 import '../../models/chat/misskey_chat_message.dart';
 import '../../models/drive/drive_move_bulk_result.dart';
+import '../../models/drive/drive_upload_result.dart';
 import '../../models/misskey_drive_file.dart';
 import '../../models/misskey_note.dart';
 
@@ -164,6 +166,50 @@ class DriveFilesApi {
     );
     return MisskeyDriveFile.fromJson(res);
   }
+
+  /// Uploads a Drive file while avoiding a transfer when its content exists.
+  ///
+  /// This checks for an existing file by MD5 before uploading. Without this
+  /// check, the server receives the complete upload before returning an
+  /// existing file, and ignores the requested [folderId], [name], and
+  /// [comment]. Supply [md5] to avoid hashing large inputs; it must be a
+  /// 32-character hexadecimal MD5 value. Except with
+  /// [DriveDuplicatePolicy.uploadAnyway], hashing is synchronous on the
+  /// caller's isolate when [md5] is not supplied.
+  ///
+  /// A concurrent upload can win after the hash lookup. Detection is
+  /// best-effort: a create response that differs in folder or requested comment
+  /// is treated as a reused file and handled according to [onDuplicate].
+  ///
+  /// [onDuplicate] controls whether to reuse, move, or always upload matching
+  /// content. Existing files retain their name and comment. If [isSensitive] is
+  /// `true`, an existing non-sensitive file is upgraded to sensitive. With
+  /// [DriveDuplicatePolicy.reuseExisting], a match means a nonexistent or
+  /// foreign [folderId] is not validated, whereas a plain upload would fail.
+  /// With [DriveDuplicatePolicy.moveExisting], a match already in [folderId]
+  /// is reused rather than reported as moved.
+  Future<DriveUploadResult> createDeduplicated({
+    required List<int> bytes,
+    required String filename,
+    String? name,
+    String? folderId,
+    String? comment,
+    bool? isSensitive,
+    String? md5,
+    DriveDuplicatePolicy onDuplicate = DriveDuplicatePolicy.reuseExisting,
+    void Function(int sent, int total)? onSendProgress,
+  }) => createDeduplicatedDriveFile(
+    files: this,
+    bytes: bytes,
+    filename: filename,
+    name: name,
+    folderId: folderId,
+    comment: comment,
+    isSensitive: isSensitive,
+    md5: md5,
+    onDuplicate: onDuplicate,
+    onSendProgress: onSendProgress,
+  );
 
   /// Updates the metadata of a Drive file (`/api/drive/files/update`).
   ///

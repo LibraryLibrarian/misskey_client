@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `DriveApi.getUsageSummary` for aggregating Drive usage by folder and MIME type
 - Added `DriveApi.deleteFolderRecursive` with dry-run planning, bounded deletion, dependency-aware outcomes, progress, and cooperative cancellation.
 - Added `DriveFoldersApi.resolvePath` and `DriveFoldersApi.getOrCreate` (not atomic), with `DriveFolderAmbiguityPolicy`, `DriveFolderGetOrCreateResult`, and `DriveFolderAmbiguousException` for same-named sibling folders.
+- Added `DriveFilesApi.createDeduplicated()` for MD5-checked uploads with configurable duplicate handling.
 - Added `DriveApi.getUploadPreflight()` returning a `DriveUploadPreflight` snapshot whose `check`, `checkAll`, and `afterUpload` report sealed `DriveUploadIssue`s for role-policy file size, Drive capacity, MIME type (advisory), and the instance multipart limit (`Meta.maxFileSize`).
 
 ### Changed
