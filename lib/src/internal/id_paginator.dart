@@ -50,7 +50,9 @@ Stream<T> paginateById<T>({
       String? untilId;
       var count = 0;
       while (maxItems == null || count < maxItems) {
-        await waitUntilReady();
+        do {
+          await waitUntilReady();
+        } while (!cancelled && controller.isPaused);
         if (cancelled) return;
         final limit = maxItems == null
             ? pageSize
@@ -58,7 +60,9 @@ Stream<T> paginateById<T>({
         final page = await fetchPage(limit, untilId);
         if (cancelled) return;
         for (final item in page) {
-          await waitUntilReady();
+          do {
+            await waitUntilReady();
+          } while (!cancelled && controller.isPaused);
           if (cancelled) return;
           if (untilId != null && idOf(item).compareTo(untilId) >= 0) return;
           controller.add(item);
