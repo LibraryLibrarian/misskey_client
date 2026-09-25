@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
@@ -342,6 +344,52 @@ void main() {
       await server.client.dispose();
     });
 
+    test(
+      'runs requests concurrently and observes a later failure after rejection',
+      () async {
+        final firstGate = Completer<void>();
+        final secondGate = Completer<void>();
+        final server = FakeDriveServer();
+        server.adapter
+          ..enqueue(
+            '/i',
+            ScriptedResponse.gated(
+              firstGate.future,
+              ScriptedResponse.error(403, code: 'USER_REQUEST_FAILED'),
+            ),
+          )
+          ..enqueue(
+            '/drive',
+            ScriptedResponse.gated(
+              secondGate.future,
+              ScriptedResponse.error(400, code: 'CAPACITY_REQUEST_FAILED'),
+            ),
+          );
+        final zoneErrors = <Object>[];
+
+        await runZonedGuarded(() async {
+          final preflight = server.client.drive.getUploadPreflight();
+          await _waitFor(() => server.adapter.inFlight == 2);
+          expect(server.adapter.paths, unorderedEquals(['/i', '/drive']));
+
+          firstGate.complete();
+          try {
+            await preflight;
+            fail('Expected the user request failure.');
+          } on MisskeyForbiddenException catch (_, stackTrace) {
+            expect(stackTrace.toString(), isNotEmpty);
+            expect(stackTrace.toString(), contains('MisskeyHttp.send'));
+          }
+
+          secondGate.complete();
+          await _waitFor(() => server.adapter.inFlight == 0);
+        }, (error, _) => zoneErrors.add(error));
+
+        expect(zoneErrors, isEmpty);
+        await server.client.dispose();
+      },
+    );
+
     test('recognizes an admin as bypassing role policy limits', () async {
       final server = FakeDriveServer(
         isAdmin: true,
@@ -362,4 +410,12 @@ void main() {
       await server.client.dispose();
     });
   });
+}
+
+Future<void> _waitFor(bool Function() condition) async {
+  for (var attempt = 0; attempt < 20; attempt++) {
+    if (condition()) return;
+    await Future<void>.delayed(Duration.zero);
+  }
+  throw StateError('Timed out waiting for the scripted requests.');
 }
