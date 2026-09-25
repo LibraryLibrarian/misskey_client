@@ -126,7 +126,7 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
-## 自動ページネーションのヘルパー
+## 自動ページネーションのヘルパー {#auto-pagination-helpers}
 
 一部の API には、上記の `untilId` ループを代わりに実行し、遅延評価される `Stream` を返すヘルパーがあります。現在はドライブの一覧取得ヘルパーが該当します。
 

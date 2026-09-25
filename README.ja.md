@@ -196,7 +196,7 @@ try {
 }
 ```
 
-ヘルパー API はこのほかに、不正な引数に対する `ArgumentError`（リクエスト送信前）、前提条件が満たされていない場合の `StateError`（`main` ストリーミング購読が接続されていない状態での `drive.uploadFromUrlAndWait()` など）、sealed 階層に含まれない `DriveFolderAmbiguousException` をスローする場合があります。多数の項目を変更するバッチヘルパーは、変更を開始した後は例外をスローせず、項目ごとの結果を `MisskeyBatchResult` で報告します。
+ヘルパー API はこのほかに、不正な引数に対する `ArgumentError`（リクエスト送信前）、前提条件が満たされていない場合の `StateError`（`main` ストリーミング購読が接続されていない状態での `drive.uploadFromUrlAndWait()` など）、sealed 階層に含まれない `DriveFolderAmbiguousException` をスローする場合があります。多数の項目を変更するバッチヘルパーでは、変更を開始した後に個々の操作が失敗しても例外はスローされず、`MisskeyBatchResult` に記録されます。完了した項目を通知している最中に `onProgress` コールバックが例外をスローした場合は、実行中の処理が終わった後でそのエラーが再スローされ、完了した変更はロールバックされません。
 
 ## ロギング
 

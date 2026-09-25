@@ -67,7 +67,7 @@ final mp4s = await client.drive
 
 ## バッチ結果とキャンセル {#batch-results-and-cancellation}
 
-多数の項目を変更するヘルパーは、変更を開始した後は例外をスローしません。代わりに、入力ごとに1つの結果を入力順に格納した `MisskeyBatchResult<I, T>` を返します。
+多数の項目を変更するヘルパーでは、変更を開始した後に個々の操作が失敗しても例外はスローされず、その失敗は `MisskeyBatchResult<I, T>` に記録されます。`MisskeyBatchResult<I, T>` は入力ごとに1つの結果を入力順に保持します。ただし、完了した項目を通知している最中に独自の `onProgress` コールバックが例外をスローした場合は扱いが異なります。新しい処理を停止し、実行中のリクエストが終わった後でそのエラーが再スローされます。すでに完了した変更はロールバックされません。
 
 | 型 | 意味 | フィールド |
 |---|---|---|
@@ -80,9 +80,9 @@ final mp4s = await client.drive
 | 値 | 意味 |
 |---|---|
 | `cancelled` | キャンセルが要求された |
-| `rateLimited` | サーバーがリクエストをレート制限した |
-| `stoppedAfterError` | 先行するエラーによってバッチが停止した |
-| `dependencyFailed` | 前提となる操作が成功しなかった |
+| `rateLimited` | `createMany()`、`dissolveFolder()`、`deleteFolderRecursive()` でサーバーがリクエストをレート制限した（HTTP 429） |
+| `stoppedAfterError` | 先行するエラーによってバッチが停止した（`stopOnError` を指定した `createMany()`、または 429 を含む `moveBulkAll()` のチャンクの失敗） |
+| `dependencyFailed` | 前提となる操作が成功しなかった（たとえばファイルの移動に失敗した後の解体や、中身を削除できなかったフォルダの削除） |
 
 結果には `successes`、`failures`、`skipped`、`isComplete`（すべての項目が成功した場合に true。空のバッチも含む）も用意されています。`MisskeyBatchItemResult` は sealed なので、その項目に対する `switch` は網羅的になります。
 
@@ -103,7 +103,7 @@ for (final item in result.items) {
 
 ### キャンセル {#cancellation}
 
-`createMany()` と `deleteFolderRecursive()` は `MisskeyCancellationToken` を受け付けます。キャンセルは協調的です。新しい処理の開始は止めますが、実行中のリクエストは中断されず、完了まで待機されます。開始されなかった項目は `cancelled` としてスキップ扱いで報告されます。
+`createMany()` と `deleteFolderRecursive()` は `MisskeyCancellationToken` を受け付けます。キャンセルは協調的です。新しい処理の開始は止めますが、実行中のリクエストは中断されず、完了まで待機されます。開始されなかった項目は、原則として `cancelled` としてスキップ扱いで報告されます。`deleteFolderRecursive()` では、`HAS_CHILD_FILES_OR_FOLDERS` のリトライが中断されたフォルダは、すでに削除を試行しているため失敗として報告されます。
 
 ```dart
 final token = MisskeyCancellationToken();
@@ -363,7 +363,7 @@ print('${result.file.id}: ${result.outcome.name}');
 - `result.outcome` は `uploaded`、`reusedExisting`、`movedExisting` のいずれかです。これはベストエフォートです。検索の後に同時に行われたアップロードが先に完了する場合があり、そのような競合は常に検出できるとは限りません。
 - 既存のファイルの名前とコメントは変更されません。`isSensitive: true` を指定すると、センシティブでない既存のファイルをセンシティブに変更します。
 - 大きな入力のハッシュ計算を避けるには `md5`（16進数32文字）を渡します。渡さない場合、ハッシュは呼び出し元の isolate 上で同期的に計算されます（`uploadAnyway` の場合を除く）。
-- `reuseExisting` で一致するファイルが見つかった場合、`folderId` は検証されません。通常のアップロードであれば、存在しないフォルダや他のユーザーのフォルダを指定すると失敗します。
+- 既存のファイルが一致した場合は `folderId` が検証されないため、`reuseExisting` では存在しないフォルダや他のユーザーのフォルダを指定してもエラーになりません。`force` を指定しない通常の `create()` も同じ動作です。サーバーがフォルダを検索する前に一致したファイルを返すためです。
 
 ### createMany
 
@@ -392,7 +392,7 @@ final result = await client.drive.files.createMany(
 - `deduplicate` を指定すると、各入力はそのポリシーの `createDeduplicated()` と同様に処理されます。同じバッチ内の同一の入力は順序付きのチェーンを形成します。後続の入力は先行する入力を待機し（その間ワーカーを占有します）、ポリシーに従って先行する入力の最新の結果を使用します。`moveExisting` の場合、ファイルは最後の入力のフォルダに配置されます。後続の入力のファイル名、名前、コメントは無視されますが、`isSensitive` はファイルを `true` に変更する方向にのみ作用します。先行する入力が失敗またはスキップされた場合、すでに実行中の後続の入力は `dependencyFailed` としてスキップされます。`uploadAnyway` の場合、各入力は独立してアップロードされます。
 - `deduplicate` を指定しない場合でもサーバーが同じ内容の既存ファイルを返すことがありますが、その場合も `uploaded` として報告されます。
 - `onProgress` は、項目の件数（`completedItems`、`succeededItems`、`failedItems`、`totalItems`）と、`itemIndex` の項目のバイト単位の進捗（`sent`、`total`）を持つ `DriveBatchUploadProgress` を受け取ります。
-- 自動的なリトライは行いません。サーバーがファイルを保存した後にネットワークが失敗した場合は失敗として報告されますが、サーバー側の重複排除により再実行しても問題ありません。
+- 自動的なリトライは行いません。サーバーがファイルを保存した後にネットワークが失敗した場合は失敗として報告されます。`deduplicate` を指定せずに、または `reuseExisting` か `moveExisting` を指定して再実行すると、これらのアップロードはサーバー側の重複排除（`force: false`）を利用するため、新たなファイルは作成されず保存済みのファイルが返されます。`uploadAnyway`（`force: true`）の場合は、再実行によって追加のコピーが作成される場合があります。
 - 入力のバイト列はコピーされません。バッチが完了するまで変更しないでください。
 
 ## URL アップロードの完了を待つ {#waiting-for-url-uploads}
@@ -437,4 +437,4 @@ try {
 | `drive/files/upload-from-url` | 1時間あたり60回 | `uploadFromUrlAndWait()` |
 | 一覧、`show`、`find`、`update`、`delete`、`move-bulk` | エンドポイントごとの制限なし | その他すべてのヘルパー |
 
-サーバー管理者が設定したロールのレート制限係数によって、これらの値は増減します。制限に達すると、単一リクエストのヘルパーは `MisskeyRateLimitException` をスローし、バッチヘルパーは新しい処理の開始を停止して残りの項目を `rateLimited` として報告します。
+サーバー管理者が設定したロールのレート制限係数によって、これらの値は増減します。制限に達すると、単一リクエストのヘルパーは `MisskeyRateLimitException` をスローし、バッチヘルパーは新しい処理の開始を停止します。`createMany()`、`dissolveFolder()`、`deleteFolderRecursive()` は残りの項目を `rateLimited` として報告します。

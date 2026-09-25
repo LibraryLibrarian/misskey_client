@@ -18,7 +18,7 @@ MisskeyClientException (sealed)
     └── cause: Object?       - 元の例外
 ```
 
-## 階層外の例外
+## 階層外の例外 {#exceptions-outside-the-hierarchy}
 
 `MisskeyClientException` が対象とするのは API と通信のエラーです。[ドライブヘルパー](./advanced/drive-helpers.md)など一部のヘルパー API は、次の例外もスローする場合があります。
 
@@ -36,7 +36,7 @@ try {
 }
 ```
 
-多数の項目を変更するバッチヘルパー（`createMany()`、`moveBulkAll()`、`dissolveFolder()`、`deleteFolderRecursive()` など）は、変更を開始した後は例外をスローしません。各項目を成功、エラーを伴う失敗、理由を伴うスキップのいずれかとして報告する `MisskeyBatchResult`（またはそれを含む結果）を返します。移動先の確認の失敗など、変更を行う前に発生したエラーは引き続きスローされます。
+多数の項目を変更するバッチヘルパー（`createMany()`、`moveBulkAll()`、`dissolveFolder()`、`deleteFolderRecursive()` など）では、変更を開始した後に個々の操作が失敗しても例外はスローされず、`MisskeyBatchResult`（またはそれを含む結果）にエラーを伴う失敗、または理由を伴うスキップとして記録されます。移動先の確認の失敗など、変更を行う前に発生したエラーは引き続きスローされます。完了した項目を通知している最中に `onProgress` コールバックが例外をスローした場合は、実行中の処理が終わった後でそのエラーが再スローされ、完了した変更はロールバックされません。
 
 ## 基本的なcatchパターン
 
