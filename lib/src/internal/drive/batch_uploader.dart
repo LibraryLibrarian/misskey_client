@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import '../../api/drive/drive_files_api.dart';
 import '../../client/misskey_cancellation_token.dart';
 import '../../internal/bounded_batch.dart';
+import '../../internal/drive/dedup_uploader.dart';
 import '../../models/batch/misskey_batch_result.dart';
 import '../../models/drive/drive_upload_batch.dart';
 import '../../models/drive/drive_upload_result.dart';
@@ -66,7 +67,7 @@ _createManyDriveFiles({
         inputs.length,
         null,
       );
-  final lastTotals = <int, int>{};
+  final lastProgress = <int, _SendProgress>{};
   final stop = _BatchStop();
   cancellation?.whenCancelled.then((_) {
     stop.set(MisskeyBatchSkipReason.cancelled);
@@ -154,7 +155,7 @@ _createManyDriveFiles({
                 deduplicate: deduplicate,
                 md5: hashes?[index],
                 onSendProgress: (sent, total) {
-                  lastTotals[index] = total;
+                  lastProgress[index] = _SendProgress(sent, total);
                   emit(index, sent, total);
                 },
               )
@@ -182,8 +183,8 @@ _createManyDriveFiles({
       } else if (logical is MisskeyBatchFailure) {
         failedItems++;
       }
-      final total = lastTotals[logical.index] ?? 0;
-      emit(logical.index, total, total);
+      final progress = lastProgress[logical.index];
+      emit(logical.index, progress?.sent ?? 0, progress?.total ?? 0);
     },
   );
 
@@ -205,6 +206,13 @@ List<int?> _predecessorsFor(int length, List<String>? hashes) {
   });
 }
 
+final class _SendProgress {
+  const _SendProgress(this.sent, this.total);
+
+  final int sent;
+  final int total;
+}
+
 Future<DriveUploadResult> _upload({
   required DriveFilesApi files,
   required DriveUploadInput input,
@@ -213,7 +221,8 @@ Future<DriveUploadResult> _upload({
   required void Function(int sent, int total) onSendProgress,
 }) async {
   if (deduplicate != null) {
-    return files.createDeduplicated(
+    return createDeduplicatedDriveFile(
+      files: files,
       bytes: input.bytes,
       filename: input.filename,
       name: input.name,
@@ -223,6 +232,7 @@ Future<DriveUploadResult> _upload({
       md5: md5,
       onDuplicate: deduplicate,
       onSendProgress: onSendProgress,
+      retryLookup: false,
     );
   }
   final file = await files.create(

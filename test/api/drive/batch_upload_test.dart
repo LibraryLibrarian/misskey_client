@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:dio/dio.dart';
 import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
+import '../../support/drive_fixtures.dart';
 import '../../support/fake_drive_server.dart';
 import '../../support/scripted_http_adapter.dart';
 
@@ -222,6 +225,54 @@ void main() {
         expect(multipartTotal, greaterThan(_inputs(2)[itemIndex].bytes.length));
         expect(completion.total, multipartTotal);
       }
+    });
+
+    test('does not retry a rate-limited batch hash lookup', () async {
+      final server = _server();
+      addTearDown(server.client.dispose);
+      server.adapter.enqueue(
+        '/drive/files/find-by-hash',
+        ScriptedResponse.error(429, code: 'RATE_LIMITED'),
+      );
+      server.adapter.enqueue(
+        '/drive/files/find-by-hash',
+        ScriptedResponse.json(const []),
+      );
+
+      final result = await server.client.drive.files.createMany(
+        _inputs(2),
+        concurrency: 1,
+        deduplicate: DriveDuplicatePolicy.reuseExisting,
+      );
+
+      expect(
+        server.adapter.paths.where(
+          (path) => path == '/drive/files/find-by-hash',
+        ),
+        hasLength(1),
+      );
+      expect(server.adapter.paths, isNot(contains('/drive/files/create')));
+      expect(result.items[0], isA<MisskeyBatchFailure>());
+      expect(_skipReason(result.items[1]), MisskeyBatchSkipReason.rateLimited);
+    });
+
+    test('replays partial transfer progress when an upload fails', () async {
+      final adapter = _PartialFailureAdapter();
+      final client = testClient(adapter);
+      addTearDown(client.dispose);
+      final progress = <DriveBatchUploadProgress>[];
+
+      final result = await client.drive.files.createMany([
+        const DriveUploadInput(bytes: [1, 2, 3], filename: 'partial.bin'),
+      ], onProgress: progress.add);
+
+      expect(result.items.single, isA<MisskeyBatchFailure>());
+      expect(progress, hasLength(2));
+      expect(progress[0].sent, 7);
+      expect(progress[0].total, 19);
+      expect(progress[1].completedItems, 1);
+      expect(progress[1].sent, 7);
+      expect(progress[1].total, 19);
     });
 
     test(
@@ -606,6 +657,24 @@ Map<String, dynamic> _file(String id) => {
   'userId': 'user',
   'user': null,
 };
+
+final class _PartialFailureAdapter implements HttpClientAdapter {
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    options.onSendProgress?.call(7, 19);
+    throw DioException(
+      requestOptions: options,
+      type: DioExceptionType.connectionError,
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
 
 Future<void> _until(bool Function() condition) async {
   for (var attempts = 0; attempts < 1000; attempts++) {

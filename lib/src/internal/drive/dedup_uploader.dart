@@ -2,6 +2,7 @@ import 'package:crypto/crypto.dart' as crypto;
 import 'package:meta/meta.dart';
 
 import '../../api/drive/drive_files_api.dart';
+import '../../client/request_options.dart';
 import '../../models/drive/drive_upload_result.dart';
 import '../../models/misskey_drive_file.dart';
 
@@ -18,6 +19,7 @@ Future<DriveUploadResult> createDeduplicatedDriveFile({
   String? md5,
   DriveDuplicatePolicy onDuplicate = DriveDuplicatePolicy.reuseExisting,
   void Function(int sent, int total)? onSendProgress,
+  bool retryLookup = true,
 }) async {
   final suppliedMd5 = _normalizedMd5(md5);
 
@@ -41,7 +43,9 @@ Future<DriveUploadResult> createDeduplicatedDriveFile({
   }
 
   final hash = suppliedMd5 ?? crypto.md5.convert(bytes).toString();
-  final existingMatches = await files.findByHash(md5: hash);
+  final existingMatches = retryLookup
+      ? await files.findByHash(md5: hash)
+      : await _findByHashWithoutRetry(files, hash);
   if (existingMatches.isNotEmpty) {
     final existing = _selectExisting(existingMatches, folderId);
     return _handleExisting(
@@ -87,6 +91,21 @@ Future<DriveUploadResult> createDeduplicatedDriveFile({
     md5: hash,
     existingMatches: existingMatches,
   );
+}
+
+Future<List<MisskeyDriveFile>> _findByHashWithoutRetry(
+  DriveFilesApi files,
+  String md5,
+) async {
+  final response = await files.http.send<List<dynamic>>(
+    '/drive/files/find-by-hash',
+    body: <String, dynamic>{'md5': md5},
+    options: const RequestOptions(idempotent: false),
+  );
+  return response
+      .whereType<Map<String, dynamic>>()
+      .map(MisskeyDriveFile.fromJson)
+      .toList();
 }
 
 Future<DriveUploadResult> _handleExisting({
