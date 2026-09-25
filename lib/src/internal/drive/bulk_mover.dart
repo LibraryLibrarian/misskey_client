@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math' as math;
 
 import 'package:meta/meta.dart';
 
@@ -45,9 +46,7 @@ Future<DriveMoveBulkResult> moveBulkAll({
       List.unmodifiable(
         uniqueFileIds.sublist(
           offset,
-          offset + _moveBulkChunkSize < uniqueFileIds.length
-              ? offset + _moveBulkChunkSize
-              : uniqueFileIds.length,
+          math.min(offset + _moveBulkChunkSize, uniqueFileIds.length),
         ),
       ),
   ];

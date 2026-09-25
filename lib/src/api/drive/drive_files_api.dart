@@ -298,6 +298,9 @@ class DriveFilesApi {
   /// endpoint error unchanged as a failed chunk. When [folderId] is non-null,
   /// this validates the destination folder before any mutation because the
   /// server otherwise reports a missing folder as a generic 500 error.
+  /// A failed destination check is thrown (for example a `MisskeyApiException`
+  /// with code `NO_SUCH_FOLDER`) and no files are moved. A folder deleted
+  /// after the check surfaces as a failed chunk instead.
   ///
   /// Pass `null` for [folderId] to move files to the root. An empty [fileIds]
   /// iterable sends no request, including no destination-folder validation.
