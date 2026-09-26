@@ -31,19 +31,15 @@ Passez `detail: false` pour une réponse allégée (équivalent à `MetaLite`) :
 final lite = await client.meta.getMeta(detail: false);
 ```
 
-### Détection des fonctionnalités
+### Présence des clés de métadonnées
 
-Appelez `getMeta()` au moins une fois avant d'utiliser `supports()`. Cette méthode vérifie la présence d'une clé dans la réponse brute en utilisant une notation par points :
+Appelez `getMeta()` au moins une fois avant d'utiliser `hasMetaKey()`. Cette méthode vérifie uniquement la présence d'une clé dans la réponse brute avec une notation par points. Elle n'interprète pas la valeur : une valeur booléenne `false` compte toujours comme présente.
 
 ```dart
 await client.meta.getMeta();
 
-if (client.meta.supports('features.miauth')) {
-  // MiAuth is available on this server
-}
-
-if (client.meta.supports('policies.canInvite')) {
-  // Invite feature is enabled
+if (client.meta.hasMetaKey('features.miauth')) {
+  // La clé existe ; inspectez sa valeur pour déterminer l'activation.
 }
 ```
 
@@ -70,6 +66,11 @@ final timestamp = await client.meta.ping();
 // All endpoint names
 final endpoints = await client.meta.getEndpoints();
 
+// Vérification préalable recommandée pour les API ajoutées récemment
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create',
+);
+
 // Parameters for a specific endpoint
 final info = await client.meta.getEndpoint(endpoint: 'notes/create');
 if (info != null) {
@@ -78,6 +79,8 @@ if (info != null) {
   }
 }
 ```
+
+L'énumération des points de terminaison est mise en cache ; passez `refresh: true` après une mise à niveau du serveur. Préférez-la à la comparaison de `Meta.version`, surtout pour les forks ayant leurs propres versions. Le résultat n'est qu'un instantané : gérez toujours `MisskeyNotFoundException` lors de l'appel réel. Si `/api/endpoints` n'est pas disponible, appelez directement l'API souhaitée et gérez sa réponse 404 potentiellement ambiguë.
 
 ### Emojis personnalisés
 

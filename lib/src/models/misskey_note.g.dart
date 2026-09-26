@@ -69,6 +69,7 @@ MisskeyNote _$MisskeyNoteFromJson(Map<String, dynamic> json) => MisskeyNote(
   poll: json['poll'] == null
       ? null
       : MisskeyPoll.fromJson(json['poll'] as Map<String, dynamic>),
+  hasPoll: json['hasPoll'] as bool?,
   myReaction: json['myReaction'] as String?,
   clippedCount: (json['clippedCount'] as num?)?.toInt() ?? 0,
   deletedAt: const SafeDateTimeConverter().fromJson(
@@ -116,6 +117,7 @@ Map<String, dynamic> _$MisskeyNoteToJson(MisskeyNote instance) =>
       'visibleUserIds': instance.visibleUserIds,
       'tags': instance.tags,
       'poll': instance.poll?.toJson(),
+      'hasPoll': instance.hasPoll,
       'myReaction': instance.myReaction,
       'clippedCount': instance.clippedCount,
       'deletedAt': const SafeDateTimeConverter().toJson(instance.deletedAt),

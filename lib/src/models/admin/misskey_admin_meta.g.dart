@@ -6,64 +6,71 @@ part of 'misskey_admin_meta.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MisskeyAdminMeta _$MisskeyAdminMetaFromJson(Map<String, dynamic> json) =>
-    MisskeyAdminMeta(
-      maintainerName: json['maintainerName'] as String?,
-      maintainerEmail: json['maintainerEmail'] as String?,
-      name: json['name'] as String?,
-      description: json['description'] as String?,
-      langs: (json['langs'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      tosUrl: json['tosUrl'] as String?,
-      privacyPolicyUrl: json['privacyPolicyUrl'] as String?,
-      impressumUrl: json['impressumUrl'] as String?,
-      inquiryUrl: json['inquiryUrl'] as String?,
-      repositoryUrl: json['repositoryUrl'] as String?,
-      feedbackUrl: json['feedbackUrl'] as String?,
-      disableRegistration: json['disableRegistration'] as bool?,
-      emailRequiredForSignup: json['emailRequiredForSignup'] as bool?,
-      enableEmail: json['enableEmail'] as bool?,
-      enableServiceWorker: json['enableServiceWorker'] as bool?,
-      enableIpLogging: json['enableIpLogging'] as bool?,
-      enableActiveEmailValidation: json['enableActiveEmailValidation'] as bool?,
-      cacheRemoteFiles: json['cacheRemoteFiles'] as bool?,
-      cacheRemoteSensitiveFiles: json['cacheRemoteSensitiveFiles'] as bool?,
-      federation: json['federation'] as String?,
-      federationHosts: (json['federationHosts'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      blockedHosts: (json['blockedHosts'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      silencedHosts: (json['silencedHosts'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      mediaSilencedHosts: (json['mediaSilencedHosts'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      sensitiveWords: (json['sensitiveWords'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      prohibitedWords: (json['prohibitedWords'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      hiddenTags: (json['hiddenTags'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      bannedEmailDomains: (json['bannedEmailDomains'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      preservedUsernames: (json['preservedUsernames'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      proxyAccountId: json['proxyAccountId'] as String?,
-      notesPerOneAd: (json['notesPerOneAd'] as num?)?.toInt(),
-      enableHcaptcha: json['enableHcaptcha'] as bool?,
-      enableRecaptcha: json['enableRecaptcha'] as bool?,
-      enableTurnstile: json['enableTurnstile'] as bool?,
-      swPublicKey: json['swPublicKey'] as String?,
-    );
+MisskeyAdminMeta _$MisskeyAdminMetaFromJson(
+  Map<String, dynamic> json,
+) => MisskeyAdminMeta(
+  maintainerName: json['maintainerName'] as String?,
+  maintainerEmail: json['maintainerEmail'] as String?,
+  name: json['name'] as String?,
+  description: json['description'] as String?,
+  langs: (json['langs'] as List<dynamic>?)?.map((e) => e as String).toList(),
+  tosUrl: json['tosUrl'] as String?,
+  privacyPolicyUrl: json['privacyPolicyUrl'] as String?,
+  impressumUrl: json['impressumUrl'] as String?,
+  inquiryUrl: json['inquiryUrl'] as String?,
+  repositoryUrl: json['repositoryUrl'] as String?,
+  feedbackUrl: json['feedbackUrl'] as String?,
+  disableRegistration: json['disableRegistration'] as bool?,
+  emailRequiredForSignup: json['emailRequiredForSignup'] as bool?,
+  enableEmail: json['enableEmail'] as bool?,
+  enableServiceWorker: json['enableServiceWorker'] as bool?,
+  enableIpLogging: json['enableIpLogging'] as bool?,
+  enableActiveEmailValidation: json['enableActiveEmailValidation'] as bool?,
+  cacheRemoteFiles: json['cacheRemoteFiles'] as bool?,
+  cacheRemoteSensitiveFiles: json['cacheRemoteSensitiveFiles'] as bool?,
+  federation: json['federation'] as String?,
+  policies: json['policies'] == null
+      ? null
+      : MisskeyRolePolicies.fromJson(json['policies'] as Map<String, dynamic>),
+  federationHosts: (json['federationHosts'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  blockedHosts: (json['blockedHosts'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  silencedHosts: (json['silencedHosts'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  mediaSilencedHosts: (json['mediaSilencedHosts'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  sensitiveWords: (json['sensitiveWords'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  prohibitedWords: (json['prohibitedWords'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  hiddenTags: (json['hiddenTags'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  bannedEmailDomains: (json['bannedEmailDomains'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  preservedUsernames: (json['preservedUsernames'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  proxyAccountId: json['proxyAccountId'] as String?,
+  notesPerOneAd: (json['notesPerOneAd'] as num?)?.toInt(),
+  enableHcaptcha: json['enableHcaptcha'] as bool?,
+  enableRecaptcha: json['enableRecaptcha'] as bool?,
+  enableTurnstile: json['enableTurnstile'] as bool?,
+  swPublicKey: json['swPublicKey'] as String?,
+  raw: MisskeyAdminMeta._readWholeObject(json, 'raw') == null
+      ? const RawMetaPayload.empty()
+      : MisskeyAdminMeta._rawFromJson(
+          MisskeyAdminMeta._readWholeObject(json, 'raw'),
+        ),
+);
 
 Map<String, dynamic> _$MisskeyAdminMetaToJson(MisskeyAdminMeta instance) =>
     <String, dynamic>{
@@ -87,6 +94,7 @@ Map<String, dynamic> _$MisskeyAdminMetaToJson(MisskeyAdminMeta instance) =>
       'cacheRemoteFiles': instance.cacheRemoteFiles,
       'cacheRemoteSensitiveFiles': instance.cacheRemoteSensitiveFiles,
       'federation': instance.federation,
+      'policies': instance.policies?.toJson(),
       'federationHosts': instance.federationHosts,
       'blockedHosts': instance.blockedHosts,
       'silencedHosts': instance.silencedHosts,

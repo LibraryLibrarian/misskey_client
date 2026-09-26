@@ -31,19 +31,15 @@ Uebergeben Sie `detail: false` fuer eine kompakte Antwort (entspricht `MetaLite`
 final lite = await client.meta.getMeta(detail: false);
 ```
 
-### Funktionserkennung
+### Vorhandensein von Metadaten-Schluesseln
 
-Rufen Sie `getMeta()` mindestens einmal auf, bevor Sie `supports()` verwenden. Die Methode prueft einen Schluessel in der Rohantwort mithilfe eines Punktnotationspfads:
+Rufen Sie `getMeta()` mindestens einmal auf, bevor Sie `hasMetaKey()` verwenden. Die Methode prueft nur, ob ein Schluesselpfad in der Rohantwort vorhanden ist. Der Wert wird nicht interpretiert; auch ein boolescher Wert `false` zaehlt als vorhanden:
 
 ```dart
 await client.meta.getMeta();
 
-if (client.meta.supports('features.miauth')) {
-  // MiAuth ist auf diesem Server verfuegbar
-}
-
-if (client.meta.supports('policies.canInvite')) {
-  // Einladefunktion ist aktiviert
+if (client.meta.hasMetaKey('features.miauth')) {
+  // Der Schluessel ist vorhanden; pruefen Sie den Wert fuer die Aktivierung.
 }
 ```
 
@@ -70,6 +66,11 @@ final timestamp = await client.meta.ping();
 // Alle Endpunktnamen
 final endpoints = await client.meta.getEndpoints();
 
+// Empfohlene Vorabpruefung fuer APIs neuerer Serverversionen
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create',
+);
+
 // Parameter fuer einen bestimmten Endpunkt
 final info = await client.meta.getEndpoint(endpoint: 'notes/create');
 if (info != null) {
@@ -78,6 +79,8 @@ if (info != null) {
   }
 }
 ```
+
+Die Endpunktauflistung wird zwischengespeichert; uebergeben Sie nach einem Server-Upgrade `refresh: true`. Bevorzugen Sie besonders bei Forks mit eigenen Versionsangaben die Auflistung gegenueber einem Vergleich von `Meta.version`. Das Ergebnis ist nur eine Momentaufnahme, daher muss beim tatsaechlichen Aufruf weiterhin `MisskeyNotFoundException` behandelt werden. Ist `/api/endpoints` selbst nicht verfuegbar, rufen Sie die gewuenschte API auf und behandeln Sie die moeglicherweise mehrdeutige 404-Antwort.
 
 ### Benutzerdefinierte Emojis
 

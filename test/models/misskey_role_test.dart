@@ -57,9 +57,13 @@ void main() {
       expect(role.isModerator, false);
     });
 
-    test('policies is not null and is a Map', () {
+    test('policies uses typed override envelopes', () {
       expect(role.policies, isNotNull);
-      expect(role.policies, isA<Map<String, dynamic>>());
+      final policy = role.policies!['canCreateChannel'];
+      expect(policy, isA<MisskeyRolePolicyOverride>());
+      expect(policy!.useDefault, isTrue);
+      expect(policy.priority, 0);
+      expect(policy.value, isTrue);
     });
 
     test('condFormula is not null', () {

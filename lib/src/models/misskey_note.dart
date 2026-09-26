@@ -59,6 +59,7 @@ class MisskeyNote with _$MisskeyNote {
     this.visibleUserIds,
     this.tags,
     this.poll,
+    this.hasPoll,
     this.myReaction,
     this.clippedCount,
     this.deletedAt,
@@ -193,6 +194,12 @@ class MisskeyNote with _$MisskeyNote {
   /// The poll attached to this note.
   @override
   final MisskeyPoll? poll;
+
+  /// Whether this note has a poll.
+  ///
+  /// This optional lightweight flag can be present independently of [poll].
+  @override
+  final bool? hasPoll;
 
   /// The authenticated user's reaction to this note.
   @override

@@ -10,6 +10,7 @@ import '../logging/logger.dart';
 import 'internal/streaming_event_decoder.dart';
 import 'internal/streaming_socket.dart';
 import 'internal/streaming_uri_builder.dart';
+import 'internal/subscription_connection.dart';
 import 'streaming_channel.dart';
 import 'streaming_config.dart';
 import 'streaming_connection_state.dart';
@@ -104,6 +105,14 @@ class MisskeyStreaming {
   /// Decoded raw Streaming API messages.
   Stream<MisskeyStreamingMessage> get messages => _messageController.stream;
 
+  /// Registered subscriptions in registration order, including those awaiting
+  /// a `connected` acknowledgement.
+  ///
+  /// Returns an unmodifiable snapshot, empty after disposal.
+  List<MisskeyStreamingSubscription> get subscriptions => List.unmodifiable(
+    _subscriptions.values.map((entry) => entry.subscription),
+  );
+
   /// Subscribes to a raw Misskey Streaming API channel.
   ///
   /// When connected, the returned future completes after the server sends a
@@ -187,6 +196,7 @@ class MisskeyStreaming {
       onCaptureNote: (noteId) => _captureNote(entry, noteId),
       onUncaptureNote: (noteId) => _uncaptureNote(entry, noteId),
     );
+    registerSubscriptionConnection(entry.subscription, () => isConnected);
     _subscriptions[subscriptionId] = entry;
 
     if (isConnected) {

@@ -53,13 +53,16 @@ class AdminAnnouncementsApi {
   /// Fetches announcements (`/api/admin/announcements/list`).
   ///
   /// Use [limit] (1-100, default 10) to cap the number of results and
-  /// [sinceId] / [untilId] for cursor-based pagination. [status] filters
-  /// by state (`all`, `active`, `archived`; default `active`). Pass
-  /// [userId] to fetch user-specific announcements.
+  /// [sinceId] / [untilId] for cursor-based pagination. [sinceDate] /
+  /// [untilDate] paginate by Unix timestamp in milliseconds. [status]
+  /// filters by state (`all`, `active`, `archived`; default `active`).
+  /// Pass [userId] to fetch user-specific announcements.
   Future<List<MisskeyAdminAnnouncement>> list({
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
     String? userId,
     String? status,
   }) async {
@@ -69,6 +72,8 @@ class AdminAnnouncementsApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
         'userId': ?userId,
         'status': ?status,
       },

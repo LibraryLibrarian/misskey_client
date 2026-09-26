@@ -9,6 +9,11 @@ part of 'misskey_user_relation.dart';
 MisskeyUserRelation _$MisskeyUserRelationFromJson(Map<String, dynamic> json) =>
     MisskeyUserRelation(
       id: json['id'] as String,
+      following: json['following'] == null
+          ? null
+          : RawUserRelationFollowing.fromJson(
+              json['following'] as Map<String, dynamic>,
+            ),
       isFollowing: json['isFollowing'] as bool? ?? false,
       hasPendingFollowRequestFromYou:
           json['hasPendingFollowRequestFromYou'] as bool? ?? false,
@@ -25,6 +30,7 @@ Map<String, dynamic> _$MisskeyUserRelationToJson(
   MisskeyUserRelation instance,
 ) => <String, dynamic>{
   'id': instance.id,
+  'following': instance.following?.toJson(),
   'isFollowing': instance.isFollowing,
   'hasPendingFollowRequestFromYou': instance.hasPendingFollowRequestFromYou,
   'hasPendingFollowRequestToYou': instance.hasPendingFollowRequestToYou,

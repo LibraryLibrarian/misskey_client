@@ -2,18 +2,19 @@
 
 # misskey_client
 
-[Misskey](https://misskey-hub.net/) API를 위한 순수 Dart 클라이언트 라이브러리입니다. 25개의 API 도메인에 대한 타입 안전 접근을 제공하며, 인증, 재시도 로직, 구조화된 오류 처리를 내장하고 있습니다.
+[Misskey](https://misskey-hub.net/) API를 위한 순수 Dart 클라이언트 라이브러리입니다. 26개의 API 도메인에 대한 타입 안전 접근을 제공하며, 인증, 재시도 로직, 구조화된 오류 처리를 내장하고 있습니다.
 
 > **베타**: API 구현은 완료되었으나 테스트 커버리지가 최소한입니다. 테스트 결과에 따라 응답 모델 및 메서드 시그니처가 변경될 수 있습니다. 자세한 내용은 [CHANGELOG](CHANGELOG.md)를 참조하세요.
 
 ## 기능
 
-- 25개의 Misskey API 도메인 지원 (노트, 드라이브, 사용자, 채널, 채팅 등)
+- 26개의 Misskey API 도메인 지원 (노트, 드라이브, 사용자, 채널, 채팅 등)
 - 교체 가능한 `TokenProvider` 콜백을 통한 토큰 기반 인증
 - 최대 재시도 횟수를 설정할 수 있는 자동 재시도
 - 망라적 오류 처리를 위한 sealed 예외 클래스 계층 구조
 - `json_serializable`로 생성된 강타입 요청 및 응답 모델
 - 타입 지정 채널, 이벤트, 자동 재연결을 제공하는 통합 Streaming API
+- 자동 페이지네이션, 일괄 이동, 중복 제거 배치 업로드, 항목별 결과를 제공하는 재귀 폴더 작업을 위한 드라이브 헬퍼
 - 교체 가능한 `Logger` 인터페이스를 통한 유연한 로깅
 - 순수 Dart — Flutter 의존성 불필요
 
@@ -23,7 +24,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.8
+  misskey_client: ^1.0.0-beta.9
 ```
 
 그런 다음 실행합니다:
@@ -63,6 +64,7 @@ void main() async {
 | 속성 | 설명 |
 |---|---|
 | `account` | 계정 및 프로필 관리, 레지스트리, 2단계 인증, 웹훅 |
+| `accountLifecycle` | 가입 검증, 비밀번호 재설정, 이메일 인증 |
 | `announcements` | 서버 공지사항 |
 | `antennas` | 안테나(키워드 기반 피드) 관리 |
 | `ap` | ActivityPub 유틸리티 |
@@ -71,7 +73,7 @@ void main() async {
 | `charts` | 통계 차트 |
 | `chat` | 채팅룸과 메시지 |
 | `clips` | 클립 컬렉션 |
-| `drive` | 드라이브(파일 저장소), 파일, 폴더, 통계 |
+| `drive` | 드라이브(파일 저장소), 파일, 폴더, 통계; 전체 목록 조회, 일괄 이동, 배치 업로드, 폴더 트리 및 재귀 삭제 헬퍼 |
 | `federation` | 연합 인스턴스 정보 |
 | `flash` | Flash(Play) 스크립트 |
 | `following` | 팔로우 및 팔로우 요청 |
@@ -88,6 +90,24 @@ void main() async {
 | `sw` | 푸시 알림(Service Worker) |
 | `streaming` | 실시간 타임라인, 알림 및 캡처한 노트 업데이트 |
 | `users` | 사용자 검색, 리스트, 관계, 업적 |
+
+## 서버 호환성
+
+서버가 이전 Misskey 버전을 사용하거나 API 구성이 다른 포크를 실행할 수 있습니다. `Meta.version` 비교보다 런타임 엔드포인트 열거를 우선하세요. 포크의 버전 문자열은 Misskey 릴리스와 직접 비교할 수 없는 경우가 있지만, `/api/endpoints`는 해당 서버가 실제로 제공한다고 알리는 API를 반환합니다.
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // /api/ 접두사를 붙이지 않습니다.
+);
+
+if (canCreateDrafts) {
+  // 초안 기능을 표시하거나 호출합니다.
+}
+```
+
+엔드포인트 목록은 메모리에 캐시됩니다. 서버 업그레이드 후 또는 최신 스냅샷이 필요할 때 `isEndpointAvailable()`이나 `getEndpoints()`에 `refresh: true`를 전달하세요. 열거 결과는 사전 확인용 힌트일 뿐 성공을 보장하지 않습니다. 확인 후 서버가 바뀔 수 있으므로 실제 호출에서도 `MisskeyNotFoundException`을 처리해야 합니다. 포크에서 `/api/endpoints` 자체를 사용할 수 없거나 요청이 실패하면 대상 API를 직접 호출하고 404를 처리하세요. 404만으로는 엔드포인트 부재와 리소스 부재를 구분하지 못할 수 있습니다.
+
+`hasMetaKey('features.x')`는 메타데이터 키의 존재 여부만 확인합니다. 값이 `false`여도 `true`를 반환하므로 엔드포인트 감지를 대신하는 용도로 사용하면 안 됩니다.
 
 ## Streaming API
 
@@ -155,7 +175,7 @@ final client = MisskeyClient(
 
 ## 오류 처리
 
-모든 예외는 sealed 클래스 `MisskeyClientException`을 상속하므로 망라적 패턴 매칭이 가능합니다:
+API 및 전송 예외는 sealed 클래스 `MisskeyClientException`을 상속하므로 망라적 패턴 매칭이 가능합니다:
 
 ```dart
 try {
@@ -176,6 +196,8 @@ try {
   // 타임아웃, 연결 거부 등
 }
 ```
+
+헬퍼 API는 잘못된 인수에 대해 `ArgumentError`(요청 전), 사전 조건 미충족에 대해 `StateError`(예: 연결된 `main` 스트리밍 구독이 없는 `drive.uploadFromUrlAndWait()`), sealed 계층 외부의 `DriveFolderAmbiguousException`을 추가로 발생시킬 수 있습니다. 여러 항목을 변경하는 배치 헬퍼가 변경을 시작한 뒤에는 개별 작업 실패를 예외로 던지는 대신 `MisskeyBatchResult`에 기록합니다. 결과가 확정된 항목을 보고하는 `onProgress` 콜백에서 발생한 오류는 진행 중인 작업이 끝난 뒤 다시 던져지며, 완료된 변경은 롤백되지 않습니다.
 
 ## 로깅
 
@@ -210,6 +232,14 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | 이름이 같은 클래스 |
 | `kReleaseMode` / `kDebugMode` | 공개 API에 포함하지 않음(아래 참조) |
 
+### misskey_api_kit에서 마이그레이션
+
+`misskey_api_kit`는 배포되지 않은 이전 패키지입니다. 해당 의존성을 제거하고 별도의 `MisskeyApiKitClient` 인스턴스 대신 하나의 `MisskeyClient`를 사용하세요.
+
+- `MisskeyApiKitClient`의 `account`, `notes`, `notifications`, `channels`, `users` 진입점을 `MisskeyClient`의 같은 이름을 가진 속성으로 교체하세요.
+
+이는 그대로 교체할 수 있는 호환 API가 아닙니다. 일부 메서드 이름이 변경되었고 이전에 원시 `Map<String, dynamic>` 값이었던 많은 응답은 이제 타입 지정 모델을 사용하지만, 여전히 원시 map을 반환하는 API도 있습니다. [API 참조](https://librarylibrarian.github.io/misskey_client/)를 확인하여 각 호출을 마이그레이션하세요.
+
 ### MisskeyApiException 이름 충돌
 
 두 패키지 모두 `MisskeyApiException`을 정의하지만 클래스의 내용과 상속 관계가 다릅니다. `misskey_api_core` 버전은 단순 클래스인 반면, `misskey_client` 버전은 `MisskeyClientException`을 상속하며 `statusCode`가 필수입니다. 마이그레이션 중 두 패키지를 함께 import할 때는 접두사를 사용하여 충돌을 피하세요:
@@ -224,7 +254,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 저수준 HTTP 접근
 
-`MisskeyHttpClient.send<T>()`에 해당하는 저수준 API는 공개하지 않습니다. `misskey_client`는 25개의 API 도메인을 지원하므로 타입 지정 메서드를 사용하세요. 필요한 엔드포인트가 구현되어 있지 않다면 타입 지정 API에 추가할 수 있도록 GitHub issue로 알려 주세요.
+`MisskeyHttpClient.send<T>()`에 해당하는 저수준 API는 공개하지 않습니다. `misskey_client`는 26개의 API 도메인을 지원하므로 타입 지정 메서드를 사용하세요. 필요한 엔드포인트가 구현되어 있지 않다면 타입 지정 API에 추가할 수 있도록 GitHub issue로 알려 주세요.
 
 ## misskey_streaming에서 마이그레이션
 

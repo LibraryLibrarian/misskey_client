@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'chat/misskey_chat_room_invitation.dart';
 import 'misskey_note.dart';
+import 'misskey_note_draft.dart';
 import 'misskey_user.dart';
 
 part 'misskey_notification.freezed.dart';
@@ -40,6 +42,23 @@ enum MisskeyNotificationType {
   unknown,
 }
 
+/// An entity that a Misskey user can export.
+@JsonEnum()
+enum MisskeyUserExportableEntity {
+  antenna,
+  blocking,
+  clip,
+  customEmoji,
+  favorite,
+  following,
+  muting,
+  note,
+  userList,
+
+  /// An exportable entity not yet known to this client.
+  unknown,
+}
+
 /// A Misskey notification.
 @freezed
 @JsonSerializable()
@@ -60,6 +79,10 @@ class MisskeyNotification with _$MisskeyNotification {
     this.message,
     this.reactions,
     this.users,
+    this.exportedEntity,
+    this.fileId,
+    this.invitation,
+    this.noteDraft,
   });
 
   factory MisskeyNotification.fromJson(Map<String, dynamic> json) =>
@@ -127,4 +150,21 @@ class MisskeyNotification with _$MisskeyNotification {
   /// The list of users for grouped renote notifications.
   @override
   final List<MisskeyUser>? users;
+
+  /// The kind of data produced by an export-completed notification.
+  @JsonKey(unknownEnumValue: MisskeyUserExportableEntity.unknown)
+  @override
+  final MisskeyUserExportableEntity? exportedEntity;
+
+  /// The ID of the exported file produced by an export-completed notification.
+  @override
+  final String? fileId;
+
+  /// The invitation carried by a chat-room-invitation notification.
+  @override
+  final MisskeyChatRoomInvitation? invitation;
+
+  /// The failed draft carried by a scheduled-note-post-failed notification.
+  @override
+  final MisskeyNoteDraft? noteDraft;
 }

@@ -16,6 +16,7 @@ void main() {
 
       expect(meta.disableRegistration, isTrue);
       expect(meta.federation, 'all');
+      expect(meta.policies?.canCreateChannel, isTrue);
       expect(meta.federationHosts, isEmpty);
       expect(meta.blockedHosts, isEmpty);
       expect(meta.cacheRemoteFiles, isFalse);
@@ -74,7 +75,7 @@ void main() {
       expect(detail.isSilenced, isFalse);
       expect(detail.isSuspended, isFalse);
       expect(detail.moderationNote, isEmpty);
-      expect(detail.policies, isNotEmpty);
+      expect(detail.policies?.canCreateChannel, isTrue);
       expect(detail.roles, isEmpty);
       expect(detail.roleAssigns, isEmpty);
     });

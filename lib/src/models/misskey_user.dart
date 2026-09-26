@@ -1,7 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'json_converters.dart';
+import 'misskey_announcement.dart';
 import 'misskey_note.dart';
+import 'misskey_role_policies.dart';
+import 'misskey_security_key.dart';
 import 'muted_word.dart';
 
 part 'misskey_user.freezed.dart';
@@ -73,6 +76,7 @@ class MisskeyUser with _$MisskeyUser {
     this.twoFactorEnabled,
     this.usePasswordLessLogin,
     this.securityKeys,
+    this.securityKeysList,
     this.isAdmin,
     this.isModerator,
     this.pinnedPageId,
@@ -96,6 +100,7 @@ class MisskeyUser with _$MisskeyUser {
     this.hasUnreadMentions,
     this.hasUnreadChatMessages,
     this.hasUnreadAnnouncement,
+    this.unreadAnnouncements,
     this.hasUnreadAntenna,
     this.hasUnreadChannel,
     this.hasUnreadNotification,
@@ -381,6 +386,13 @@ class MisskeyUser with _$MisskeyUser {
   @JsonKey(defaultValue: false)
   final bool? securityKeys;
 
+  /// The security keys registered to the authenticated user.
+  ///
+  /// This is absent when the response is not the authenticated user's
+  /// detailed representation.
+  @override
+  final List<MisskeySecurityKey>? securityKeysList;
+
   /// Whether this user has admin privileges.
   @override
   @JsonKey(defaultValue: false)
@@ -491,6 +503,13 @@ class MisskeyUser with _$MisskeyUser {
   @JsonKey(defaultValue: false)
   final bool? hasUnreadAnnouncement;
 
+  /// The unread announcements for the authenticated user.
+  ///
+  /// This is absent when the response is not the authenticated user's
+  /// detailed representation.
+  @override
+  final List<MisskeyAnnouncement>? unreadAnnouncements;
+
   /// Whether there are unread antenna notes for the authenticated user.
   @override
   @JsonKey(defaultValue: false)
@@ -553,9 +572,9 @@ class MisskeyUser with _$MisskeyUser {
   @JsonKey(defaultValue: 0)
   final int? loggedInDays;
 
-  /// The policy map applied to this user.
+  /// The effective role policies applied to this user.
   @override
-  final Map<String, dynamic>? policies;
+  final MisskeyRolePolicies? policies;
 
   /// The stock status of two-factor backup codes.
   @override

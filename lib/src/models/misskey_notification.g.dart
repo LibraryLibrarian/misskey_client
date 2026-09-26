@@ -33,6 +33,22 @@ MisskeyNotification _$MisskeyNotificationFromJson(Map<String, dynamic> json) =>
       users: (json['users'] as List<dynamic>?)
           ?.map((e) => MisskeyUser.fromJson(e as Map<String, dynamic>))
           .toList(),
+      exportedEntity: $enumDecodeNullable(
+        _$MisskeyUserExportableEntityEnumMap,
+        json['exportedEntity'],
+        unknownValue: MisskeyUserExportableEntity.unknown,
+      ),
+      fileId: json['fileId'] as String?,
+      invitation: json['invitation'] == null
+          ? null
+          : MisskeyChatRoomInvitation.fromJson(
+              json['invitation'] as Map<String, dynamic>,
+            ),
+      noteDraft: json['noteDraft'] == null
+          ? null
+          : MisskeyNoteDraft.fromJson(
+              json['noteDraft'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$MisskeyNotificationToJson(
@@ -53,6 +69,11 @@ Map<String, dynamic> _$MisskeyNotificationToJson(
   'message': instance.message,
   'reactions': instance.reactions,
   'users': instance.users?.map((e) => e.toJson()).toList(),
+  'exportedEntity':
+      _$MisskeyUserExportableEntityEnumMap[instance.exportedEntity],
+  'fileId': instance.fileId,
+  'invitation': instance.invitation?.toJson(),
+  'noteDraft': instance.noteDraft?.toJson(),
 };
 
 const _$MisskeyNotificationTypeEnumMap = {
@@ -80,4 +101,17 @@ const _$MisskeyNotificationTypeEnumMap = {
   MisskeyNotificationType.reactionGrouped: 'reaction:grouped',
   MisskeyNotificationType.renoteGrouped: 'renote:grouped',
   MisskeyNotificationType.unknown: 'unknown',
+};
+
+const _$MisskeyUserExportableEntityEnumMap = {
+  MisskeyUserExportableEntity.antenna: 'antenna',
+  MisskeyUserExportableEntity.blocking: 'blocking',
+  MisskeyUserExportableEntity.clip: 'clip',
+  MisskeyUserExportableEntity.customEmoji: 'customEmoji',
+  MisskeyUserExportableEntity.favorite: 'favorite',
+  MisskeyUserExportableEntity.following: 'following',
+  MisskeyUserExportableEntity.muting: 'muting',
+  MisskeyUserExportableEntity.note: 'note',
+  MisskeyUserExportableEntity.userList: 'userList',
+  MisskeyUserExportableEntity.unknown: 'unknown',
 };

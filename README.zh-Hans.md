@@ -2,18 +2,19 @@
 
 # misskey_client
 
-面向 [Misskey](https://misskey-hub.net/) API 的纯 Dart 客户端库。提供对 25 个 API 域的强类型访问，内置认证、重试逻辑和结构化错误处理。
+面向 [Misskey](https://misskey-hub.net/) API 的纯 Dart 客户端库。提供对 26 个 API 域的强类型访问，内置认证、重试逻辑和结构化错误处理。
 
 > **Beta 版本**: API 实现已完成，但测试覆盖率较低。响应模型和方法签名可能会根据测试结果进行调整。详情请参阅 [CHANGELOG](CHANGELOG.md)。
 
 ## 特性
 
-- 覆盖 25 个 Misskey API 域（帖子、网盘、用户、频道、聊天等）
+- 覆盖 26 个 Misskey API 域（帖子、网盘、用户、频道、聊天等）
 - 通过可插拔的 `TokenProvider` 回调实现基于令牌的认证
 - 可配置最大重试次数的自动重试
 - 用于穷举式错误处理的密封异常类层次结构
 - 使用 `json_serializable` 生成的强类型请求和响应模型
 - 集成 Streaming API，提供强类型频道、事件和自动重连
+- 网盘辅助方法支持自动分页、批量移动、带去重的批量上传，以及带逐项结果的递归文件夹操作
 - 通过可替换的 `Logger` 接口实现灵活日志记录
 - 纯 Dart — 无 Flutter 依赖
 
@@ -23,7 +24,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.8
+  misskey_client: ^1.0.0-beta.9
 ```
 
 然后运行：
@@ -63,6 +64,7 @@ void main() async {
 | 属性 | 说明 |
 |---|---|
 | `account` | 账号与个人资料管理、注册表、双重认证、Webhook |
+| `accountLifecycle` | 注册验证、密码重置、邮箱验证 |
 | `announcements` | 服务器公告 |
 | `antennas` | 天线（基于关键词的订阅源）管理 |
 | `ap` | ActivityPub 工具 |
@@ -71,7 +73,7 @@ void main() async {
 | `charts` | 统计图表 |
 | `chat` | 聊天室与消息 |
 | `clips` | 便签集合 |
-| `drive` | 网盘（文件存储）、文件、文件夹、统计信息 |
+| `drive` | 网盘（文件存储）、文件、文件夹、统计信息；支持列出所有项目、批量移动、批量上传、遍历文件夹树和递归删除的辅助方法 |
 | `federation` | 联合实例信息 |
 | `flash` | Flash（Play）脚本 |
 | `following` | 关注与关注请求 |
@@ -88,6 +90,24 @@ void main() async {
 | `sw` | 推送通知（Service Worker） |
 | `streaming` | 实时时间线、通知和已捕获帖子的更新 |
 | `users` | 用户搜索、列表、关系、成就 |
+
+## 服务器兼容性
+
+服务器可能仍在运行旧版 Misskey，也可能使用 API 表面不同的分支版本。请优先在运行时枚举端点，而不是比较 `Meta.version`：分支版本字符串未必能与 Misskey 版本直接比较，而 `/api/endpoints` 会报告该服务器实际公开的 API。
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // 不要添加 /api/ 前缀。
+);
+
+if (canCreateDrafts) {
+  // 显示或调用草稿功能。
+}
+```
+
+端点列表会缓存在内存中。服务器升级后或需要最新快照时，请向 `isEndpointAvailable()` 或 `getEndpoints()` 传入 `refresh: true`。枚举结果只是调用前的提示，并不保证后续调用成功；检查后服务器仍可能发生变化，因此调用端点时仍应处理 `MisskeyNotFoundException`。如果某个分支不支持 `/api/endpoints` 或该请求失败，请直接调用目标 API 并处理其 404；仅凭 404 可能无法区分“端点不存在”和“资源不存在”。
+
+`hasMetaKey('features.x')` 只检查元数据键是否存在。即使该键的值为 `false`，它也会返回 `true`，因此不要用元数据键存在性代替端点检测。
 
 ## Streaming API
 
@@ -155,7 +175,7 @@ final client = MisskeyClient(
 
 ## 错误处理
 
-所有异常都继承自密封类 `MisskeyClientException`，支持穷举式模式匹配：
+API 和传输异常都继承自密封类 `MisskeyClientException`，支持穷举式模式匹配：
 
 ```dart
 try {
@@ -176,6 +196,8 @@ try {
   // 超时、连接被拒绝等
 }
 ```
+
+辅助 API 还可能因参数无效（在发送请求前）抛出 `ArgumentError`，因前置条件未满足（例如未连接 main 流式订阅时调用 `drive.uploadFromUrlAndWait()`）抛出 `StateError`，也可能抛出不属于该密封层次结构的 `DriveFolderAmbiguousException`。对多个项目执行变更的批量辅助方法开始变更后，单项操作失败会记录在 `MisskeyBatchResult` 中，而不会抛出异常；在报告已完成项目时，如果 `onProgress` 回调抛出错误，则会在正在进行的工作完成后重新抛出，已完成的变更不会回滚。
 
 ## 日志记录
 
@@ -210,6 +232,14 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | 同名类 |
 | `kReleaseMode` / `kDebugMode` | 不属于公共 API；详见下文 |
 
+### 从 misskey_api_kit 迁移
+
+`misskey_api_kit` 是未发布的前身包。请移除该依赖，并使用一个 `MisskeyClient`，而不是单独创建 `MisskeyApiKitClient`。
+
+- 将 `MisskeyApiKitClient` 的 `account`、`notes`、`notifications`、`channels` 和 `users` 入口替换为 `MisskeyClient` 上的同名属性。
+
+这并非可直接替换的兼容 API：部分方法已重命名，许多原先以原始 `Map<String, dynamic>` 返回的响应现在使用类型化模型，但仍有一些 API 返回原始 map。请对照 [API 参考](https://librarylibrarian.github.io/misskey_client/)逐个迁移调用。
+
 ### MisskeyApiException 名称冲突
 
 两个包都定义了 `MisskeyApiException`，但类的内容和继承关系不同。`misskey_api_core` 版本是简单类，而 `misskey_client` 版本继承 `MisskeyClientException`，并且必须提供 `statusCode`。迁移期间同时导入两个包时，请使用前缀避免冲突：
@@ -224,7 +254,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 低级 HTTP 访问
 
-与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 25 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub issue 报告，以便将其加入强类型 API。
+与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 26 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub issue 报告，以便将其加入强类型 API。
 
 ## 从 misskey_streaming 迁移
 

@@ -14,6 +14,9 @@ MisskeyNoteDraft _$MisskeyNoteDraftFromJson(Map<String, dynamic> json) =>
         json['updatedAt'] as String?,
       ),
       userId: json['userId'] as String,
+      user: json['user'] == null
+          ? null
+          : MisskeyUser.fromJson(json['user'] as Map<String, dynamic>),
       visibility: json['visibility'] as String?,
       visibleUserIds:
           (json['visibleUserIds'] as List<dynamic>?)
@@ -33,6 +36,20 @@ MisskeyNoteDraft _$MisskeyNoteDraftFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           [],
+      files: (json['files'] as List<dynamic>?)
+          ?.map((e) => MisskeyDriveFile.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      channel: json['channel'] == null
+          ? null
+          : MisskeyNoteDraftChannel.fromJson(
+              json['channel'] as Map<String, dynamic>,
+            ),
+      renote: json['renote'] == null
+          ? null
+          : MisskeyNote.fromJson(json['renote'] as Map<String, dynamic>),
+      reply: json['reply'] == null
+          ? null
+          : MisskeyNote.fromJson(json['reply'] as Map<String, dynamic>),
       poll: json['poll'] == null
           ? null
           : MisskeyNoteDraftPoll.fromJson(json['poll'] as Map<String, dynamic>),
@@ -46,6 +63,7 @@ Map<String, dynamic> _$MisskeyNoteDraftToJson(MisskeyNoteDraft instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
       'userId': instance.userId,
+      'user': instance.user?.toJson(),
       'visibility': instance.visibility,
       'visibleUserIds': instance.visibleUserIds,
       'cw': instance.cw,
@@ -57,6 +75,10 @@ Map<String, dynamic> _$MisskeyNoteDraftToJson(MisskeyNoteDraft instance) =>
       'channelId': instance.channelId,
       'text': instance.text,
       'fileIds': instance.fileIds,
+      'files': instance.files?.map((e) => e.toJson()).toList(),
+      'channel': instance.channel?.toJson(),
+      'renote': instance.renote?.toJson(),
+      'reply': instance.reply?.toJson(),
       'poll': instance.poll?.toJson(),
       'scheduledAt': instance.scheduledAt,
       'isActuallyScheduled': instance.isActuallyScheduled,

@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart' as pkg;
+import 'package:logger/web.dart' as pkg;
 
 import '../client/constants.dart';
 

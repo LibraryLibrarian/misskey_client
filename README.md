@@ -2,18 +2,19 @@
 
 # misskey_client
 
-A pure Dart client library for the [Misskey](https://misskey-hub.net/) API. Provides typed access to 25 API domains with built-in authentication, retry logic, and structured error handling.
+A pure Dart client library for the [Misskey](https://misskey-hub.net/) API. Provides typed access to 26 API domains with built-in authentication, retry logic, and structured error handling.
 
 > **Beta**: API implementation is complete but test coverage is minimal. Response models and method signatures may change based on test findings. See the [changelog](CHANGELOG.md) for details.
 
 ## Features
 
-- Covers 25 Misskey API domains (Notes, Drive, Users, Channels, Chat, and more)
+- Covers 26 Misskey API domains (Notes, Drive, Users, Channels, Chat, and more)
 - Token-based authentication via a pluggable `TokenProvider` callback
 - Automatic retry with configurable maximum attempts
 - Sealed exception hierarchy for exhaustive error handling
 - Strongly typed request and response models generated with `json_serializable`
 - Integrated Streaming API with typed channels, events, and automatic reconnection
+- Drive helpers for auto-pagination, bulk moves, deduplicated batch uploads, and recursive folder operations with per-item results
 - Configurable logging through a swappable `Logger` interface
 - Pure Dart — no Flutter dependency required
 
@@ -23,7 +24,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.8
+  misskey_client: ^1.0.0-beta.9
 ```
 
 Then run:
@@ -63,6 +64,7 @@ void main() async {
 | Property | Description |
 |---|---|
 | `account` | Account and profile management, registry, 2FA, webhooks |
+| `accountLifecycle` | Sign-up validation, password reset, email verification |
 | `announcements` | Server announcements |
 | `antennas` | Antenna (keyword-based feed) management |
 | `ap` | ActivityPub utilities |
@@ -71,7 +73,7 @@ void main() async {
 | `charts` | Statistics charts |
 | `chat` | Chat rooms and messages |
 | `clips` | Clip collections |
-| `drive` | Drive (file storage), files, folders, stats |
+| `drive` | Drive (file storage), files, folders, stats; helpers for listing all items, bulk moves, batch uploads, folder trees, and recursive deletion |
 | `federation` | Federated instance information |
 | `flash` | Flash (Play) scripts |
 | `following` | Following and follow requests |
@@ -88,6 +90,24 @@ void main() async {
 | `sw` | Push notifications (Service Worker) |
 | `streaming` | Real-time timelines, notifications, and captured note updates |
 | `users` | User search, lists, relations, achievements |
+
+## Server compatibility
+
+Servers can lag behind current Misskey or run a fork with a different API surface. Prefer runtime endpoint enumeration over comparing `Meta.version`: fork version strings are not necessarily comparable with Misskey releases, while `/api/endpoints` reports what that server actually advertises.
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // No /api/ prefix.
+);
+
+if (canCreateDrafts) {
+  // Show or call the draft feature.
+}
+```
+
+The endpoint list is cached in memory. Pass `refresh: true` to `isEndpointAvailable()` or `getEndpoints()` after a server upgrade or when you need a fresh snapshot. Enumeration is a preflight hint, not a guarantee: the server can change after the check, so still handle `MisskeyNotFoundException` when calling the endpoint. If `/api/endpoints` itself is unavailable or fails on a fork, fall back to calling the desired API and handling its 404; a 404 alone may be ambiguous between an absent endpoint and an absent resource.
+
+`hasMetaKey('features.x')` only checks whether a metadata key exists. It returns `true` even when that key's value is `false`, so do not use metadata key presence as a substitute for endpoint detection.
 
 ## Streaming API
 
@@ -155,7 +175,7 @@ Endpoints that require authentication inject the token automatically. Endpoints 
 
 ## Error Handling
 
-All exceptions extend the sealed class `MisskeyClientException`, allowing exhaustive pattern matching:
+API and transport exceptions extend the sealed class `MisskeyClientException`, allowing exhaustive pattern matching:
 
 ```dart
 try {
@@ -176,6 +196,8 @@ try {
   // Timeout, connection refused, etc.
 }
 ```
+
+Helper APIs can additionally throw `ArgumentError` for invalid arguments (before any request), `StateError` for unmet preconditions (such as `drive.uploadFromUrlAndWait()` without a connected `main` streaming subscription), and `DriveFolderAmbiguousException`, which is outside the sealed hierarchy. Once batch helpers that change many items have started making changes, individual operation failures are recorded in a `MisskeyBatchResult` instead of being thrown; an error thrown by an `onProgress` callback while reporting a settled item is rethrown after in-flight work finishes, without rolling back completed changes.
 
 ## Logging
 
@@ -210,6 +232,14 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | Classes with the same names |
 | `kReleaseMode` / `kDebugMode` | Not part of the public API; see below |
 
+### Migrating from misskey_api_kit
+
+`misskey_api_kit` was an unpublished predecessor. Remove that dependency and use a single `MisskeyClient` instead of a separate `MisskeyApiKitClient` instance.
+
+- Replace the `account`, `notes`, `notifications`, `channels`, and `users` entry points from `MisskeyApiKitClient` with the properties of the same names on `MisskeyClient`.
+
+This is not a drop-in replacement: some methods have been renamed, and many responses that were raw `Map<String, dynamic>` values now use typed models, although some APIs still return raw maps. Migrate each call against the [API reference](https://librarylibrarian.github.io/misskey_client/).
+
 ### Exception name collision
 
 Both packages define `MisskeyApiException`, but the classes have different contents and no inheritance relationship. The `misskey_api_core` version is a simple class, while the `misskey_client` version extends `MisskeyClientException` and requires a `statusCode`. While importing both packages during migration, use a prefix to avoid the collision:
@@ -224,7 +254,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### Low-level HTTP access
 
-The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 25 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub issue so it can be added to the typed API.
+The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 26 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub issue so it can be added to the typed API.
 
 ## Migrating from misskey_streaming
 
@@ -233,6 +263,7 @@ Streaming is now integrated into `misskey_client`. See the [migration guide](MIG
 ## Documentation
 
 - API reference: https://librarylibrarian.github.io/misskey_client/
+- [Endpoint support policy](ENDPOINT_SUPPORT.md)
 - pub.dev page: https://pub.dev/packages/misskey_client
 - GitHub: https://github.com/LibraryLibrarian/misskey_client
 

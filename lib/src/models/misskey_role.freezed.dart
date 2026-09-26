@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyRole {
 
- String get id; DateTime get createdAt; DateTime get updatedAt; String get name; String get description; String? get color; String? get iconUrl; String get target; bool get isPublic; bool get isExplorable; bool get asBadge; bool get canEditMembersByModerator; int get displayOrder; int get usersCount; bool? get isAdministrator; bool? get isModerator; Map<String, dynamic>? get policies; Map<String, dynamic>? get condFormula; bool? get preserveAssignmentOnMoveAccount;
+ String get id; DateTime get createdAt; DateTime get updatedAt; String get name; String get description; String? get color; String? get iconUrl; String get target; bool get isPublic; bool get isExplorable; bool get asBadge; bool get canEditMembersByModerator; int get displayOrder; int get usersCount; bool? get isAdministrator; bool? get isModerator; Map<String, MisskeyRolePolicyOverride>? get policies; Map<String, dynamic>? get condFormula; bool? get preserveAssignmentOnMoveAccount;
 /// Create a copy of MisskeyRole
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyRoleCopyWith<$Res>  {
   factory $MisskeyRoleCopyWith(MisskeyRole value, $Res Function(MisskeyRole) _then) = _$MisskeyRoleCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime createdAt, DateTime updatedAt, String name, String description, String? color, String? iconUrl, String target, bool isPublic, bool isExplorable, bool asBadge, bool canEditMembersByModerator, int displayOrder, int usersCount, bool? isAdministrator, bool? isModerator, Map<String, dynamic>? policies, Map<String, dynamic>? condFormula, bool? preserveAssignmentOnMoveAccount
+ String id, DateTime createdAt, DateTime updatedAt, String name, String description, String? color, String? iconUrl, String target, bool isPublic, bool isExplorable, bool asBadge, bool canEditMembersByModerator, int displayOrder, int usersCount, bool? isAdministrator, bool? isModerator, Map<String, MisskeyRolePolicyOverride>? policies, Map<String, dynamic>? condFormula, bool? preserveAssignmentOnMoveAccount
 });
 
 
@@ -82,7 +82,7 @@ as int,usersCount: null == usersCount ? _self.usersCount : usersCount // ignore:
 as int,isAdministrator: freezed == isAdministrator ? _self.isAdministrator : isAdministrator // ignore: cast_nullable_to_non_nullable
 as bool?,isModerator: freezed == isModerator ? _self.isModerator : isModerator // ignore: cast_nullable_to_non_nullable
 as bool?,policies: freezed == policies ? _self.policies : policies // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,condFormula: freezed == condFormula ? _self.condFormula : condFormula // ignore: cast_nullable_to_non_nullable
+as Map<String, MisskeyRolePolicyOverride>?,condFormula: freezed == condFormula ? _self.condFormula : condFormula // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>?,preserveAssignmentOnMoveAccount: freezed == preserveAssignmentOnMoveAccount ? _self.preserveAssignmentOnMoveAccount : preserveAssignmentOnMoveAccount // ignore: cast_nullable_to_non_nullable
 as bool?,
   ));

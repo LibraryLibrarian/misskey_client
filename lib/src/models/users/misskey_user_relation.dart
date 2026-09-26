@@ -9,6 +9,7 @@ part 'misskey_user_relation.g.dart';
 class MisskeyUserRelation with _$MisskeyUserRelation {
   const MisskeyUserRelation({
     required this.id,
+    this.following,
     this.isFollowing = false,
     this.hasPendingFollowRequestFromYou = false,
     this.hasPendingFollowRequestToYou = false,
@@ -27,6 +28,16 @@ class MisskeyUserRelation with _$MisskeyUserRelation {
   /// The target user's ID.
   @override
   final String id;
+
+  /// The raw follow entity returned by some Misskey servers.
+  ///
+  /// This field is not declared by the official `/api/users/relation`
+  /// response schema and may disappear or change without notice. It is kept
+  /// as an immutable raw payload because the current response is a database
+  /// entity, not the packed shape represented by `MisskeyFollowing` (for
+  /// example, it omits `createdAt` and exposes denormalized inbox fields).
+  @override
+  final RawUserRelationFollowing? following;
 
   /// Whether you are following this user.
   @JsonKey(defaultValue: false)
@@ -67,4 +78,66 @@ class MisskeyUserRelation with _$MisskeyUserRelation {
   @JsonKey(defaultValue: false)
   @override
   final bool isRenoteMuted;
+}
+
+/// An immutable snapshot of the schema-undeclared `following` response field.
+///
+/// The payload deliberately makes no typed-field compatibility promise. Use
+/// [json] or [operator []] to inspect the current server-provided wire shape.
+final class RawUserRelationFollowing {
+  /// Creates a deeply immutable snapshot of [json].
+  factory RawUserRelationFollowing(Map<String, dynamic> json) {
+    final snapshot = _freezeMap(json);
+    return RawUserRelationFollowing._(
+      snapshot,
+      const DeepCollectionEquality().hash(snapshot),
+    );
+  }
+
+  const RawUserRelationFollowing._(this.json, this._fingerprint);
+
+  /// Creates a snapshot from a JSON response.
+  factory RawUserRelationFollowing.fromJson(Map<String, dynamic> json) =>
+      RawUserRelationFollowing(json);
+
+  /// The deeply immutable raw JSON snapshot.
+  final Map<String, dynamic> json;
+
+  final int _fingerprint;
+
+  /// Returns the raw value associated with [key].
+  dynamic operator [](Object? key) => json[key];
+
+  /// Returns a detached, mutable JSON representation.
+  Map<String, dynamic> toJson() => _copyMap(json);
+
+  @override
+  bool operator ==(Object other) =>
+      other is RawUserRelationFollowing &&
+      other._fingerprint == _fingerprint &&
+      const DeepCollectionEquality().equals(other.json, json);
+
+  @override
+  int get hashCode => _fingerprint;
+}
+
+Map<String, dynamic> _freezeMap(Map<String, dynamic> json) => Map.unmodifiable(
+  json.map((key, value) => MapEntry(key, _freezeValue(value))),
+);
+
+Object? _freezeValue(Object? value) {
+  if (value is Map<String, dynamic>) return _freezeMap(value);
+  if (value is List<Object?>) {
+    return List<Object?>.unmodifiable(value.map(_freezeValue));
+  }
+  return value;
+}
+
+Map<String, dynamic> _copyMap(Map<String, dynamic> json) =>
+    json.map((key, value) => MapEntry(key, _copyValue(value)));
+
+Object? _copyValue(Object? value) {
+  if (value is Map<String, dynamic>) return _copyMap(value);
+  if (value is List<Object?>) return value.map(_copyValue).toList();
+  return value;
 }

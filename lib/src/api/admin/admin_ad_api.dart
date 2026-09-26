@@ -53,13 +53,16 @@ class AdminAdApi {
   /// Fetches advertisements (`/api/admin/ad/list`).
   ///
   /// Use [limit] (1-100, default 10) to cap the number of results and
-  /// [sinceId] / [untilId] for cursor-based pagination. Set [publishing]
-  /// to `true` to list only currently published ads, or `false` for ads
-  /// that are not currently published.
+  /// [sinceId] / [untilId] for cursor-based pagination. [sinceDate] /
+  /// [untilDate] paginate by Unix timestamp in milliseconds. Set
+  /// [publishing] to `true` to list only currently published ads, or `false`
+  /// for ads that are not currently published.
   Future<List<MisskeyAd>> list({
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
     bool? publishing,
   }) async {
     final res = await http.send<List<dynamic>>(
@@ -68,6 +71,8 @@ class AdminAdApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
         'publishing': ?publishing,
       },
       options: const RequestOptions(idempotent: true),

@@ -2,18 +2,19 @@
 
 # misskey_client
 
-Une bibliothèque cliente Dart pure pour l'API [Misskey](https://misskey-hub.net/). Fournit un accès typé à 25 domaines d'API avec authentification intégrée, logique de réessai et gestion structurée des erreurs.
+Une bibliothèque cliente Dart pure pour l'API [Misskey](https://misskey-hub.net/). Fournit un accès typé à 26 domaines d'API avec authentification intégrée, logique de réessai et gestion structurée des erreurs.
 
 > **Bêta** : L'implémentation de l'API est complète mais la couverture de tests est minimale. Les modèles de réponse et les signatures de méthodes peuvent évoluer suite aux résultats des tests. Voir le [CHANGELOG](CHANGELOG.md) pour plus de détails.
 
 ## Fonctionnalités
 
-- Couverture de 25 domaines de l'API Misskey (Notes, Drive, utilisateurs, Channels, Chat, etc.)
+- Couverture de 26 domaines de l'API Misskey (Notes, Drive, utilisateurs, Channels, Chat, etc.)
 - Authentification par jeton via un callback `TokenProvider` interchangeable
 - Réessai automatique avec un nombre maximum de tentatives configurable
 - Hiérarchie d'exceptions scellées pour une gestion exhaustive des erreurs
 - Modèles de requête et de réponse fortement typés générés avec `json_serializable`
 - API Streaming intégrée avec Channels et événements typés, et reconnexion automatique
+- Assistants Drive pour la pagination automatique, les déplacements en masse, les téléversements par lots avec déduplication et les opérations récursives sur les dossiers, avec des résultats par élément
 - Journalisation configurable via une interface `Logger` interchangeable
 - Dart pur — aucune dépendance Flutter requise
 
@@ -23,7 +24,7 @@ Ajoutez le package à votre `pubspec.yaml` :
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.8
+  misskey_client: ^1.0.0-beta.9
 ```
 
 Puis exécutez :
@@ -63,6 +64,7 @@ void main() async {
 | Propriété | Description |
 |---|---|
 | `account` | Gestion du compte et du profil, registre, 2FA, webhooks |
+| `accountLifecycle` | Validation de l'inscription, réinitialisation du mot de passe, vérification de l'e-mail |
 | `announcements` | Annonces du serveur |
 | `antennas` | Gestion des antennes (flux basés sur des mots-clés) |
 | `ap` | Utilitaires ActivityPub |
@@ -71,7 +73,7 @@ void main() async {
 | `charts` | Graphiques statistiques |
 | `chat` | Salons de Chat et messages |
 | `clips` | Collections de Clips |
-| `drive` | Drive (stockage de fichiers), fichiers, dossiers, statistiques |
+| `drive` | Drive (stockage de fichiers), fichiers, dossiers, statistiques ; assistants pour tout lister, déplacer en masse, téléverser par lots, parcourir les arborescences et supprimer récursivement |
 | `federation` | Informations sur les instances fédérées |
 | `flash` | Scripts Flash (Play) |
 | `following` | Abonnements et demandes d'abonnement |
@@ -88,6 +90,24 @@ void main() async {
 | `sw` | Notifications push (Service Worker) |
 | `streaming` | Fils d'actualité, notifications et mises à jour de Notes capturées en temps réel |
 | `users` | Recherche d'utilisateurs, listes, relations, succès |
+
+## Compatibilité des serveurs
+
+Un serveur peut utiliser une ancienne version de Misskey ou un fork dont la surface d'API diffère. Préférez l'énumération des points de terminaison à l'exécution plutôt que la comparaison de `Meta.version` : les versions des forks ne sont pas nécessairement comparables aux versions de Misskey, tandis que `/api/endpoints` indique les API réellement annoncées par le serveur.
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // Sans préfixe /api/.
+);
+
+if (canCreateDrafts) {
+  // Afficher ou appeler la fonctionnalité de brouillons.
+}
+```
+
+La liste des points de terminaison est mise en cache en mémoire. Passez `refresh: true` à `isEndpointAvailable()` ou `getEndpoints()` après une mise à niveau du serveur ou pour obtenir un nouvel instantané. Cette énumération est une indication préalable, pas une garantie : le serveur peut changer après la vérification, donc gérez toujours `MisskeyNotFoundException` lors de l'appel. Si `/api/endpoints` n'est pas disponible ou échoue sur un fork, appelez directement l'API souhaitée et gérez sa réponse 404 ; une 404 seule peut être ambiguë entre un point de terminaison absent et une ressource absente.
+
+`hasMetaKey('features.x')` vérifie uniquement la présence d'une clé de métadonnées. Cette méthode renvoie `true` même si la valeur est `false` et ne doit donc pas remplacer la détection des points de terminaison.
 
 ## API Streaming
 
@@ -155,7 +175,7 @@ Les points de terminaison nécessitant une authentification injectent le jeton a
 
 ## Gestion des erreurs
 
-Toutes les exceptions étendent la classe scellée `MisskeyClientException`, permettant un filtrage par correspondance de motifs exhaustif :
+Les exceptions d’API et de transport étendent la classe scellée `MisskeyClientException`, permettant un filtrage par correspondance de motifs exhaustif :
 
 ```dart
 try {
@@ -176,6 +196,8 @@ try {
   // Délai d'attente, connexion refusée, etc.
 }
 ```
+
+Les API d’assistance peuvent également lever `ArgumentError` pour des arguments invalides (avant toute requête), `StateError` lorsque des préconditions ne sont pas remplies (par exemple `drive.uploadFromUrlAndWait()` sans abonnement de streaming `main` connecté) et `DriveFolderAmbiguousException`, qui ne fait pas partie de la hiérarchie scellée. Une fois que les assistants par lots qui modifient plusieurs éléments ont commencé à effectuer des modifications, les échecs de chaque opération sont consignés dans un `MisskeyBatchResult` au lieu d’être levés ; une erreur levée par un callback `onProgress` lors du signalement d’un élément traité est relancée après la fin des opérations en cours, sans annuler les modifications effectuées.
 
 ## Journalisation
 
@@ -210,6 +232,14 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | Classes portant les mêmes noms |
 | `kReleaseMode` / `kDebugMode` | Non inclus dans l'API publique ; voir ci-dessous |
 
+### Migration depuis misskey_api_kit
+
+`misskey_api_kit` était un prédécesseur non publié. Supprimez cette dépendance et utilisez un seul `MisskeyClient` au lieu d'une instance distincte de `MisskeyApiKitClient`.
+
+- Remplacez les points d'entrée `account`, `notes`, `notifications`, `channels` et `users` de `MisskeyApiKitClient` par les propriétés de même nom de `MisskeyClient`.
+
+Il ne s'agit pas d'un remplacement direct : certaines méthodes ont été renommées, et de nombreuses réponses qui étaient auparavant des valeurs `Map<String, dynamic>` brutes utilisent maintenant des modèles typés, tandis que certaines API renvoient toujours des maps brutes. Migrez chaque appel en vous reportant à la [référence de l'API](https://librarylibrarian.github.io/misskey_client/).
+
 ### Conflit de nom MisskeyApiException
 
 Les deux packages définissent `MisskeyApiException`, mais les classes ont un contenu différent et aucune relation d'héritage. La version de `misskey_api_core` est une classe simple, tandis que celle de `misskey_client` étend `MisskeyClientException` et exige un `statusCode`. Lorsque les deux packages sont importés pendant la migration, utilisez un préfixe pour éviter le conflit :
@@ -224,7 +254,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### Accès HTTP de bas niveau
 
-L'équivalent de bas niveau de `MisskeyHttpClient.send<T>()` n'est pas public. `misskey_client` couvre 25 domaines d'API ; utilisez donc les méthodes typées. Si un point de terminaison nécessaire manque, veuillez le signaler dans une issue GitHub afin qu'il soit ajouté à l'API typée.
+L'équivalent de bas niveau de `MisskeyHttpClient.send<T>()` n'est pas public. `misskey_client` couvre 26 domaines d'API ; utilisez donc les méthodes typées. Si un point de terminaison nécessaire manque, veuillez le signaler dans une issue GitHub afin qu'il soit ajouté à l'API typée.
 
 ## Migration depuis misskey_streaming
 

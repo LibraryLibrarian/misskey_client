@@ -126,6 +126,22 @@ Future<List<MisskeyNote>> fetchAllFavorites() async {
 }
 ```
 
+## Auto-pagination helpers
+
+Some APIs provide helpers that run the `untilId` loop above for you and return a lazy `Stream`. Currently these are the Drive listing helpers:
+
+- `client.drive.files.listAll()` — files in one folder
+- `client.drive.folders.listAll()` — folders in one parent folder
+- `client.drive.streamAll()` — files across all folders
+
+```dart
+await for (final file in client.drive.files.listAll(pageSize: 100)) {
+  print(file.name);
+}
+```
+
+Requests start only when the stream is listened to, and cancelling the subscription stops further requests. Results are always newest-first by ID; use `maxItems` to stop early. See [Drive Helpers](./advanced/drive-helpers.md#listing-everything) for details.
+
 ## APIs that support pagination
 
 Most list-returning APIs support `sinceId`/`untilId` and `limit`:

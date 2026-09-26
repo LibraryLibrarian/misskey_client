@@ -28,6 +28,26 @@ MisskeyClientException (sealed)
 - `errorId` — UUID identifying the Misskey error type
 - `endpoint` — The API path where the error occurred
 
+## Exceptions outside the hierarchy
+
+`MisskeyClientException` covers API and transport errors. Some helper APIs, such as the [Drive helpers](./advanced/drive-helpers.md), can also throw:
+
+- `ArgumentError` — invalid arguments (for example a non-positive `concurrency` or an out-of-range `pageSize`). It is thrown before any request is sent.
+- `StateError` — unmet preconditions, such as calling `client.drive.uploadFromUrlAndWait()` without a connected `main` streaming subscription.
+- `DriveFolderAmbiguousException` — thrown by `resolvePath()` and `getOrCreate()` when several sibling folders share a name. It is not part of the sealed hierarchy, so `on MisskeyClientException` does not catch it.
+
+```dart
+try {
+  final folder = await client.drive.folders.resolvePath(['Photos', 'Trip']);
+} on DriveFolderAmbiguousException catch (e) {
+  print('${e.candidates.length} folders named "${e.name}"');
+} on MisskeyClientException catch (e) {
+  print('Error: $e');
+}
+```
+
+Once batch helpers that change many items (for example `createMany()`, `moveBulkAll()`, `dissolveFolder()`, and `deleteFolderRecursive()`) have started making changes, individual operation failures are recorded in a `MisskeyBatchResult` (or a result containing one) as a failure with its error, or as a skip with a reason, instead of being thrown. Errors that occur before any change, such as a failed destination check, are still thrown. An error thrown by an `onProgress` callback while reporting a settled item is rethrown after in-flight work finishes, and completed changes are not rolled back.
+
 ## Basic catch patterns
 
 ### Catching all errors

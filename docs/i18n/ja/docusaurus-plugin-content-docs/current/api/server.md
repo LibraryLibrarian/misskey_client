@@ -31,20 +31,16 @@ final fresh = await client.meta.getMeta(refresh: true);
 final lite = await client.meta.getMeta(detail: false);
 ```
 
-### 機能検出
+### メタデータキーの存在確認
 
-`supports()` を呼ぶ前に `getMeta()` を少なくとも一度呼び出してください。
-ドット記法のキーパスでレスポンスのフィールドを確認します。
+`hasMetaKey()` を呼ぶ前に `getMeta()` を少なくとも一度呼び出してください。
+ドット記法のキーパスでレスポンスのフィールドが存在するかだけを確認します。値は解釈しないため、真偽値が `false` でもキーがあれば `true` を返します。
 
 ```dart
 await client.meta.getMeta();
 
-if (client.meta.supports('features.miauth')) {
-  // MiAuth が利用可能
-}
-
-if (client.meta.supports('policies.canInvite')) {
-  // 招待機能が有効
+if (client.meta.hasMetaKey('features.miauth')) {
+  // キーが存在します。有効かどうかは値を確認してください。
 }
 ```
 
@@ -71,6 +67,11 @@ final timestamp = await client.meta.ping();
 // 全エンドポイント名の一覧
 final endpoints = await client.meta.getEndpoints();
 
+// 新しいサーバーバージョンで追加されたAPIの推奨事前判定
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create',
+);
+
 // 特定エンドポイントのパラメーター情報
 final info = await client.meta.getEndpoint(endpoint: 'notes/create');
 if (info != null) {
@@ -79,6 +80,8 @@ if (info != null) {
   }
 }
 ```
+
+エンドポイント列挙はキャッシュされます。サーバー更新後は `refresh: true` を指定してください。独自のバージョン文字列を持つフォークもあるため、`Meta.version` の比較より列挙を優先します。結果はスナップショットにすぎないので、実際の呼び出しでは `MisskeyNotFoundException` も処理してください。`/api/endpoints` 自体が利用できない場合は目的の API を呼び出して、意味が曖昧な可能性がある 404 を処理します。
 
 ### カスタム絵文字
 

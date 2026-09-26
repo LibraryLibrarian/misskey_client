@@ -2,6 +2,14 @@ import 'package:meta/meta.dart';
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../exception/drive_folder_ambiguous_exception.dart';
+import '../../exception/misskey_client_exception.dart';
+import '../../internal/drive/folder_path_resolver.dart';
+import '../../internal/drive/folder_tree_builder.dart';
+import '../../internal/id_paginator.dart';
+import '../../models/drive/drive_folder_ambiguity_policy.dart';
+import '../../models/drive/drive_folder_get_or_create_result.dart';
+import '../../models/drive/drive_folder_tree.dart';
 import '../../models/misskey_drive_folder.dart';
 
 /// Provides Drive folder operations (`/api/drive/folders/*`).
@@ -15,6 +23,62 @@ class DriveFoldersApi {
   /// The HTTP client used for requests.
   @internal
   final MisskeyHttp http;
+
+  /// Lazily retrieves all folders in newest-first ID order.
+  ///
+  /// Results are newest-first by ID. Other orders require collecting the
+  /// results and sorting locally. This is not a snapshot; changes on the
+  /// server during pagination may affect results.
+  ///
+  /// [folderId] selects the parent folder; omit it for root-level items.
+  /// [pageSize] must be 1-100 and [maxItems] must be non-negative, or an
+  /// [ArgumentError] is thrown synchronously. A zero [maxItems] sends no request.
+  ///
+  /// Each call returns a cold, single-subscription stream: requests start only
+  /// when listened to. API errors are delivered as stream errors after any
+  /// already-yielded items.
+  Stream<MisskeyDriveFolder> listAll({
+    String? folderId,
+    int pageSize = 100,
+    int? maxItems,
+  }) {
+    validatePageArgs(pageSize, maxItems);
+    return paginateById(
+      fetchPage: (limit, untilId) =>
+          list(limit: limit, untilId: untilId, folderId: folderId),
+      idOf: (item) => item.id,
+      pageSize: pageSize,
+      maxItems: maxItems,
+    );
+  }
+
+  /// Retrieves an immutable hierarchy of Drive folders.
+  ///
+  /// This makes one or more list requests for each visited folder. It is
+  /// read-only, so any request failure aborts traversal. In-flight requests on
+  /// the same level finish before the first failure by input order is rethrown.
+  /// The result is not a snapshot; folder changes during traversal may be
+  /// reflected inconsistently.
+  ///
+  /// Set [rootFolderId] to start at that folder, or omit it to start at the
+  /// Drive root. [maxDepth] must be non-negative when specified. At the depth
+  /// limit, folders remain in the result but have [DriveFolderNode.childrenLoaded]
+  /// set to `false`. [concurrency] must be at least one. Invalid arguments throw
+  /// [ArgumentError] before a request is made.
+  Future<DriveFolderTree> getTree({
+    String? rootFolderId,
+    int? maxDepth,
+    int concurrency = 4,
+  }) {
+    validateDriveFolderTreeArgs(maxDepth: maxDepth, concurrency: concurrency);
+    return buildDriveFolderTree(
+      show: (folderId) => show(folderId: folderId),
+      listAll: (folderId) => listAll(folderId: folderId),
+      rootFolderId: rootFolderId,
+      maxDepth: maxDepth,
+      concurrency: concurrency,
+    );
+  }
 
   /// Retrieves a list of Drive folders (`/api/drive/folders`).
   ///
@@ -127,4 +191,52 @@ class DriveFoldersApi {
         .map(MisskeyDriveFolder.fromJson)
         .toList();
   }
+
+  /// Resolves [segments] as a path of Drive folder names.
+  ///
+  /// Performs one `folders/find` request for each segment and returns `null`
+  /// when a segment is not found. Names may contain `/`; each list item is one
+  /// complete folder name. An empty list, empty segment, or segment exceeding
+  /// 200 Unicode code points throws [ArgumentError] before making a request.
+  /// A nonexistent [parentId] also returns `null` because the first find
+  /// request returns `[]`.
+  ///
+  /// Misskey permits same-named siblings. Use [onAmbiguous] to select the
+  /// oldest or newest match, or leave its default to throw a
+  /// [DriveFolderAmbiguousException].
+  Future<MisskeyDriveFolder?> resolvePath(
+    List<String> segments, {
+    String? parentId,
+    DriveFolderAmbiguityPolicy onAmbiguous = DriveFolderAmbiguityPolicy.error,
+  }) => resolveDriveFolderPath(
+    segments: segments,
+    parentId: parentId,
+    onAmbiguous: onAmbiguous,
+    find: find,
+  );
+
+  /// Finds a Drive folder or creates it when no matching folder exists.
+  ///
+  /// This is not an atomic operation: concurrent callers can each create a
+  /// folder with the same name. `folders/create` is rate-limited to 10
+  /// requests per hour, subject to role rate-limit factors, and
+  /// [MisskeyRateLimitException] propagates. An empty [name] or a name
+  /// exceeding 200 Unicode code points throws [ArgumentError] before making a
+  /// request.
+  ///
+  /// With the default [onAmbiguous] policy, multiple matching folders throw
+  /// [DriveFolderAmbiguousException]. A nonexistent [parentId] produces no
+  /// find matches, then `folders/create` fails with `NO_SUCH_FOLDER` as a
+  /// [MisskeyApiException].
+  Future<DriveFolderGetOrCreateResult> getOrCreate({
+    required String name,
+    String? parentId,
+    DriveFolderAmbiguityPolicy onAmbiguous = DriveFolderAmbiguityPolicy.error,
+  }) => getOrCreateDriveFolder(
+    name: name,
+    parentId: parentId,
+    onAmbiguous: onAmbiguous,
+    find: find,
+    create: create,
+  );
 }

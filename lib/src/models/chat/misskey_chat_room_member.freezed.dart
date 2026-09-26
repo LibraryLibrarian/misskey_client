@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyChatRoomMember {
 
- String get id; DateTime get createdAt; String get userId; MisskeyUser? get user; String get roomId;
+ String get id; DateTime get createdAt; String get userId; MisskeyUser? get user; String get roomId; MisskeyChatRoom? get room;
 /// Create a copy of MisskeyChatRoomMember
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $MisskeyChatRoomMemberCopyWith<MisskeyChatRoomMember> get copyWith => _$MisskeyC
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyChatRoomMember&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.user, user) || other.user == user)&&(identical(other.roomId, roomId) || other.roomId == roomId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyChatRoomMember&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.user, user) || other.user == user)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.room, room) || other.room == room));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createdAt,userId,user,roomId);
+int get hashCode => Object.hash(runtimeType,id,createdAt,userId,user,roomId,room);
 
 @override
 String toString() {
-  return 'MisskeyChatRoomMember(id: $id, createdAt: $createdAt, userId: $userId, user: $user, roomId: $roomId)';
+  return 'MisskeyChatRoomMember(id: $id, createdAt: $createdAt, userId: $userId, user: $user, roomId: $roomId, room: $room)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyChatRoomMemberCopyWith<$Res>  {
   factory $MisskeyChatRoomMemberCopyWith(MisskeyChatRoomMember value, $Res Function(MisskeyChatRoomMember) _then) = _$MisskeyChatRoomMemberCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime createdAt, String userId, MisskeyUser? user, String roomId
+ String id, DateTime createdAt, String userId, MisskeyUser? user, String roomId, MisskeyChatRoom? room
 });
 
 
@@ -63,14 +63,15 @@ class _$MisskeyChatRoomMemberCopyWithImpl<$Res>
 
 /// Create a copy of MisskeyChatRoomMember
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createdAt = null,Object? userId = null,Object? user = freezed,Object? roomId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createdAt = null,Object? userId = null,Object? user = freezed,Object? roomId = null,Object? room = freezed,}) {
   return _then(MisskeyChatRoomMember(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as MisskeyUser?,roomId: null == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,room: freezed == room ? _self.room : room // ignore: cast_nullable_to_non_nullable
+as MisskeyChatRoom?,
   ));
 }
 

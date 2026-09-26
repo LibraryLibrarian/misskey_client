@@ -25,6 +25,110 @@ void main() {
       expect(user.username, isNotEmpty);
     });
 
+    test('parses present empty MeDetailed-only lists from the i fixture', () {
+      final file = File('test/fixtures/i.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+
+      expect(json.containsKey('unreadAnnouncements'), isTrue);
+      expect(json['unreadAnnouncements'], isEmpty);
+      expect(json.containsKey('securityKeysList'), isTrue);
+      expect(json['securityKeysList'], isEmpty);
+
+      final user = MisskeyUser.fromJson(json);
+      expect(user.unreadAnnouncements, isNotNull);
+      expect(user.unreadAnnouncements, isEmpty);
+      expect(user.securityKeysList, isNotNull);
+      expect(user.securityKeysList, isEmpty);
+    });
+
+    test('keeps missing MeDetailed-only lists as null without defaults', () {
+      final user = MisskeyUser.fromJson(const <String, dynamic>{
+        'id': 'user-1',
+        'username': 'someone',
+      });
+
+      expect(user.unreadAnnouncements, isNull);
+      expect(user.securityKeysList, isNull);
+    });
+
+    test('distinguishes fixture key absence from a present empty list', () {
+      final file = File('test/fixtures/users_show_admin.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+
+      expect(json.containsKey('unreadAnnouncements'), isTrue);
+      expect(json['unreadAnnouncements'], isEmpty);
+      expect(json.containsKey('securityKeysList'), isFalse);
+
+      final user = MisskeyUser.fromJson(json);
+      expect(user.unreadAnnouncements, isEmpty);
+      expect(user.securityKeysList, isNull);
+    });
+
+    test('round-trips populated announcement and security-key lists', () {
+      final source = <String, dynamic>{
+        'id': 'user-1',
+        'username': 'me',
+        'unreadAnnouncements': <Map<String, dynamic>>[
+          <String, dynamic>{
+            'id': 'announcement-1',
+            'createdAt': '2026-08-25T01:02:03.000Z',
+            'updatedAt': null,
+            'title': 'Maintenance',
+            'text': 'Scheduled maintenance',
+            'imageUrl': null,
+            'icon': 'info',
+            'display': 'normal',
+            'needConfirmationToRead': false,
+            'silence': false,
+            'forYou': true,
+            'isRead': false,
+            'isActive': true,
+            'forExistingUsers': true,
+            'userId': null,
+          },
+        ],
+        'securityKeysList': <Map<String, dynamic>>[
+          <String, dynamic>{
+            'id': 'security-key-1',
+            'name': 'Primary passkey',
+            'lastUsed': '2026-08-24T12:34:56.000Z',
+          },
+        ],
+      };
+
+      final user = MisskeyUser.fromJson(source);
+      expect(user.unreadAnnouncements, hasLength(1));
+      expect(user.unreadAnnouncements!.single.title, 'Maintenance');
+      expect(user.securityKeysList, hasLength(1));
+      final securityKey = user.securityKeysList!.single;
+      expect(securityKey.id, 'security-key-1');
+      expect(securityKey.name, 'Primary passkey');
+      expect(securityKey.lastUsed, DateTime.parse('2026-08-24T12:34:56.000Z'));
+
+      final encoded = user.toJson();
+      expect(encoded['unreadAnnouncements'], source['unreadAnnouncements']);
+      expect(encoded['securityKeysList'], source['securityKeysList']);
+      final reparsed = MisskeyUser.fromJson(encoded);
+      expect(reparsed.unreadAnnouncements, user.unreadAnnouncements);
+      expect(reparsed.securityKeysList, user.securityKeysList);
+    });
+
+    test('rejects a malformed required security-key lastUsed timestamp', () {
+      final json = <String, dynamic>{
+        'id': 'user-1',
+        'username': 'me',
+        'securityKeysList': <Map<String, dynamic>>[
+          <String, dynamic>{
+            'id': 'security-key-1',
+            'name': 'Primary passkey',
+            'lastUsed': 'not-a-date-time',
+          },
+        ],
+      };
+
+      expect(() => MisskeyUser.fromJson(json), throwsA(isA<FormatException>()));
+    });
+
     test('parses DateTime fields correctly', () {
       final file = File('test/fixtures/users_show.json');
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -190,16 +294,15 @@ void main() {
       expect(user.canChat, true);
     });
 
-    test('parses policies map from users/show', () {
+    test('parses typed policies from users/show', () {
       final file = File('test/fixtures/users_show.json');
       final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
       final user = MisskeyUser.fromJson(json);
 
       expect(user.policies, isNotNull);
-      expect(user.policies, isA<Map<String, dynamic>>());
-      // canCreateChannel はモデルに専用フィールドを持たないが、
-      // policies が動的Mapのため個別実装なしでアクセスできる
-      expect(user.policies!.containsKey('canCreateChannel'), isTrue);
+      expect(user.policies, isA<MisskeyRolePolicies>());
+      expect(user.policies!.canCreateChannel, isTrue);
+      expect(user.policies!.raw['canCreateChannel'], isTrue);
     });
 
     test('parses email fields from i', () {

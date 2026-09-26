@@ -70,5 +70,33 @@ void main() {
       expect(user, isNotNull);
       expect(user!.username, 'testuser2');
     });
+
+    test('room is null for chat/rooms/members responses', () {
+      expect(list[0].room, isNull);
+    });
+
+    test('parses and round-trips the room populated by joining responses', () {
+      final memberJson =
+          jsonDecode(
+                File('test/fixtures/chat_room_members.json').readAsStringSync(),
+              )
+              as List<dynamic>;
+      final roomJson =
+          jsonDecode(
+                File('test/fixtures/chat_room_show.json').readAsStringSync(),
+              )
+              as Map<String, dynamic>;
+      // joiningのwire形状を、実採取済みmembershipとroom fixtureから構成する。
+      final json = <String, dynamic>{
+        ...memberJson.single as Map<String, dynamic>,
+        'room': roomJson,
+      };
+      final member = MisskeyChatRoomMember.fromJson(json);
+
+      expect(member.room?.id, member.roomId);
+      expect(member.room?.name, 'Test Room');
+      final roundTripped = MisskeyChatRoomMember.fromJson(member.toJson());
+      expect(roundTripped.room, member.room);
+    });
   });
 }

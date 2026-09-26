@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.9] - 2026-09-26
+
+### Added
+
+- Added `MisskeyNote.hasPoll` and the conditionally populated `MisskeyChatRoomMember.room` field. The room is currently included by `chat/rooms/joining` and omitted by `chat/rooms/members` (issue #22)
+- Added immutable raw access to the schema-undeclared `MisskeyUserRelation.following` entity through `RawUserRelationFollowing`. The payload remains untyped because the current database-entity wire shape differs from `MisskeyFollowing` and is not covered by the official response contract (issue #22)
+- Added E2E scenarios for `AdminApi.sendEmail`, `AdminEmojiApi.copy`, and `AdminCaptchaApi.save`, plus an Analyzer AST-based fail-closed coverage audit that classifies all 100 Admin methods as E2E-invoked or explicitly excluded with a destructive-operation reason. The email scenario runs conditionally when Misskey SMTP is preconfigured for Mailpit and otherwise skips without changing shared instance metadata (issue #25)
+- Added the unauthenticated `AccountLifecycleApi` for username and email availability, password-reset requests and completion, and email verification (issue #11)
+- Added typed query, detailed emoji, role summary, and paginated response models for `AdminEmojiApi.listV2` (`/api/v2/admin/emoji/list`) (issue #11)
+- Added typed public metadata fields, including effective role policies, feature flags, client options, advertisements, upload limits, federation/search enums with unknown-value fallbacks, branding URLs, CAPTCHA settings, and Sentry configuration (issue #10)
+- Added `MisskeyRolePolicies` for effective policies on `Meta`, `MisskeyAdminMeta`, `MisskeyUser`, and `MisskeyAdminUserDetail`, preserving newer and fork-specific policy keys through its immutable `raw` payload (issue #10)
+- Added `MisskeyRolePolicyOverride` for the structurally different `{ useDefault, priority, value }` entries returned by `MisskeyRole.policies` (issue #10)
+- Added `MisskeyUser.unreadAnnouncements` and `securityKeysList`, including the typed `MisskeySecurityKey` element model, while preserving the distinction between absent MeDetailed-only fields and present empty lists (issue #21)
+- Exposed schema-defined Unix-millisecond `sinceDate` / `untilDate` arguments on eight Admin list APIs covering abuse reports, ads, announcements, avatar decorations, drive files, local and remote emoji, and moderation logs. The current upstream avatar-decoration handler accepts but ignores its pagination arguments (issue #24)
+- Added cached runtime endpoint capability detection through `MetaApi.isEndpointAvailable()` and `MetaApi.getEndpoints(refresh: ...)`, with refresh support, in-flight request deduplication, deduplicated results, and compatibility guidance in all six READMEs (issue #41)
+- Added the typed `exportedEntity`, `fileId`, `invitation`, and `noteDraft` payloads to `MisskeyNotification`, including a forward-compatible fallback for unknown export entity types (issue #19)
+- Added the embedded `user`, `files`, `channel`, `renote`, and `reply` relationships to `MisskeyNoteDraft`; draft channels use a dedicated partial model matching the server response (issue #20)
+- Added `AdminApi.updateMeta(extra:)` for passing newer upstream or fork-specific instance settings that do not yet have typed parameters (issue #23)
+- Added `DriveFilesApi.listAll`, `DriveFoldersApi.listAll`, and `DriveApi.streamAll` for lazy newest-first pagination, plus the `MisskeyBatchResult` / `MisskeyBatchItemResult` family and `MisskeyCancellationToken` used by batch Drive helpers.
+- Added `DriveFilesApi.moveBulkAll` for sequentially moving any number of Drive files in bulk
+- Added `DriveApi.dissolveFolder` for moving a folder's direct contents into its parent or the root before deletion
+- Added `DriveFoldersApi.getTree` for retrieving immutable Drive folder trees
+- Added `DriveApi.getUsageSummary` for aggregating Drive usage by folder and MIME type
+- Added `DriveApi.deleteFolderRecursive` with dry-run planning, bounded deletion, dependency-aware outcomes, progress, and cooperative cancellation.
+- Added `DriveFoldersApi.resolvePath` and `DriveFoldersApi.getOrCreate` (not atomic), with `DriveFolderAmbiguityPolicy`, `DriveFolderGetOrCreateResult`, and `DriveFolderAmbiguousException` for same-named sibling folders.
+- Added `DriveFilesApi.createDeduplicated()` for MD5-checked uploads with configurable duplicate handling.
+- Added `DriveFilesApi.createMany()` for bounded concurrent Drive batch uploads with progress reporting and duplicate handling.
+- Added `DriveApi.getUploadPreflight()` returning a `DriveUploadPreflight` snapshot whose `check`, `checkAll`, and `afterUpload` report sealed `DriveUploadIssue`s for role-policy file size, Drive capacity, MIME type (advisory), and the instance multipart limit (`Meta.maxFileSize`).
+- Added `DriveApi.uploadFromUrlAndWait` to await URL uploads using an existing main-channel subscription, and `MisskeyStreaming.subscriptions` to inspect registered subscriptions.
+
+### Changed
+
+- Documented migration from the unpublished `misskey_api_kit` predecessor in all six READMEs (issue #31)
+- Redacted authentication tokens and account-lifecycle credentials from HTTP debug request logs without modifying transmitted request bodies (issue #11)
+- **Breaking:** Replaced dynamic policy maps with `MisskeyRolePolicies` on effective-policy responses and with typed `MisskeyRolePolicyOverride` entries on role definitions (issue #10)
+- Added the explicit `MetaApi.hasMetaKey()` name for metadata key-presence checks and deprecated the ambiguous `supports()` alias; key presence does not interpret a boolean metadata value or indicate endpoint availability (issue #41)
+- **Breaking:** `MetaApi.getEndpoints()` now returns an unmodifiable list instead of a mutable list so callers cannot mutate a value that represents the cached endpoint snapshot (issue #41)
+- Corrected the `force` documentation of `DriveFilesApi.create` and `DriveFilesApi.uploadFromUrl`: it bypasses the server's same-content (MD5) deduplication, not a same-name check. Also corrected the `DriveFilesApi.createDeduplicated` documentation: a plain upload without `force` likewise skips destination-folder validation when the server finds a same-content file
+
+### Removed
+
+- **Breaking:** Removed the ineffective typed `proxyAccountId` parameter from `AdminApi.updateMeta()`. Current upstream Misskey does not accept that setting on `/admin/update-meta`; callers targeting an older version or compatible fork may send it through `extra` only after confirming server support (issue #9)
+
+### Fixed
+
+- Fixed WebAssembly compatibility by using the web-safe `logger` entry point, without changing the logging API or output behavior
+- `AdminApi.updateMeta()` now treats an invocation without settings as a no-op instead of sending an empty update that current upstream Misskey rejects with a 500 response
+
+### Notes
+
+- Reversi, Bubble Game, and the server-internal `test` / `reset-db` endpoints are deliberately unsupported. Legacy app/session authentication is deferred pending coordination with `misskey_auth`; the remaining specialized utility endpoints are deferred as lower priority. See [Endpoint support policy](ENDPOINT_SUPPORT.md) (issue #11)
+
 ## [1.0.0-beta.8] - 2026-08-25
 
 ### Changed

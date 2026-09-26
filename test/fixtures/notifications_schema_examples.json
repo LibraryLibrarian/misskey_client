@@ -1,0 +1,111 @@
+{
+  "provenance": {
+    "kind": "upstream-schema-derived-example",
+    "liveServerCaptured": false,
+    "upstreamRepository": "misskey-dev/misskey",
+    "upstreamCommit": "0b49119a3fb93e7be3a611831d64a1fcbb78e44e",
+    "sources": [
+      "packages/backend/src/models/json-schema/notification.ts",
+      "packages/backend/src/models/json-schema/note-draft.ts",
+      "packages/backend/src/models/json-schema/chat-room-invitation.ts",
+      "packages/backend/src/models/json-schema/chat-room.ts",
+      "packages/backend/src/types.ts"
+    ]
+  },
+  "notifications": [
+    {
+      "id": "notification-export-completed",
+      "createdAt": "2026-08-25T00:00:00.000Z",
+      "type": "exportCompleted",
+      "exportedEntity": "customEmoji",
+      "fileId": "file-export-1"
+    },
+    {
+      "id": "notification-chat-invitation",
+      "createdAt": "2026-08-25T00:01:00.000Z",
+      "type": "chatRoomInvitationReceived",
+      "invitation": {
+        "id": "invitation-1",
+        "createdAt": "2026-08-25T00:00:30.000Z",
+        "userId": "user-inviter",
+        "user": {
+          "id": "user-inviter",
+          "name": "Inviter",
+          "username": "inviter",
+          "host": null,
+          "avatarUrl": "https://example.test/identicon/inviter",
+          "avatarBlurhash": null,
+          "avatarDecorations": [],
+          "isBot": false,
+          "isCat": false,
+          "emojis": {},
+          "onlineStatus": "unknown",
+          "badgeRoles": []
+        },
+        "roomId": "room-1",
+        "room": {
+          "id": "room-1",
+          "createdAt": "2026-08-24T00:00:00.000Z",
+          "ownerId": "user-inviter",
+          "owner": {
+            "id": "user-inviter",
+            "name": "Inviter",
+            "username": "inviter",
+            "host": null,
+            "avatarUrl": "https://example.test/identicon/inviter",
+            "avatarBlurhash": null,
+            "avatarDecorations": [],
+            "isBot": false,
+            "isCat": false,
+            "emojis": {},
+            "onlineStatus": "unknown",
+            "badgeRoles": []
+          },
+          "name": "Schema example room",
+          "description": "A schema-derived chat room example.",
+          "isMuted": false,
+          "invitationExists": true
+        }
+      }
+    },
+    {
+      "id": "notification-scheduled-note-failed",
+      "createdAt": "2026-08-25T00:02:00.000Z",
+      "type": "scheduledNotePostFailed",
+      "noteDraft": {
+        "id": "draft-failed-1",
+        "createdAt": "2026-08-25T00:01:30.000Z",
+        "text": "Failed scheduled draft",
+        "cw": null,
+        "userId": "user-author",
+        "user": {
+          "id": "user-author",
+          "name": "Author",
+          "username": "author",
+          "host": null,
+          "avatarUrl": "https://example.test/identicon/author",
+          "avatarBlurhash": null,
+          "avatarDecorations": [],
+          "isBot": false,
+          "isCat": false,
+          "emojis": {},
+          "onlineStatus": "unknown",
+          "badgeRoles": []
+        },
+        "replyId": null,
+        "renoteId": null,
+        "visibility": "public",
+        "visibleUserIds": [],
+        "fileIds": [],
+        "files": [],
+        "hashtag": null,
+        "poll": null,
+        "channelId": null,
+        "localOnly": false,
+        "reactionAcceptance": null,
+        "scheduledAt": null,
+        "isActuallyScheduled": false
+      }
+    }
+  ]
+}

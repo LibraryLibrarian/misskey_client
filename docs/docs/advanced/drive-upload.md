@@ -7,6 +7,8 @@ title: Drive Upload
 
 Misskey's Drive is the file storage system. All files attached to notes must first be uploaded to your Drive. The `client.drive` facade exposes `files`, `folders`, and `stats` sub-APIs.
 
+See also [Drive Helpers](./drive-helpers.md) for operations that combine several requests, such as listing all files, bulk moves, batch uploads, and recursive folder deletion.
+
 ## Uploading a file
 
 ```dart
@@ -31,9 +33,11 @@ final driveFile = await client.drive.files.create(
   filename: 'nsfw.jpg',
   folderId: myFolderId,
   isSensitive: true,
-  force: true, // Upload even if a file with the same name exists
+  force: true, // Upload even if a file with the same content already exists
 );
 ```
+
+Misskey deduplicates uploads by content (MD5 hash), not by name. Without `force`, uploading content that already exists in your Drive returns the existing file, and the requested `folderId`, `name`, and `comment` are ignored. To avoid transferring the bytes at all, see `createDeduplicated()` in [Drive Helpers](./drive-helpers.md#creatededuplicated).
 
 ### Upload progress
 
@@ -58,7 +62,7 @@ await client.drive.files.uploadFromUrl(
 );
 ```
 
-This is a fire-and-forget endpoint; the file appears in Drive asynchronously.
+This is a fire-and-forget endpoint; the file appears in Drive asynchronously. `force` has the same meaning as for `create()`. To wait for the resulting file, use [`uploadFromUrlAndWait()`](./drive-helpers.md#waiting-for-url-uploads).
 
 ## Attaching Drive files to notes
 
@@ -92,10 +96,12 @@ final files = await client.drive.files.list(
 final images = await client.drive.files.list(type: 'image/*');
 
 // Sort by size descending
-final large = await client.drive.files.list(sort: '-size');
+final large = await client.drive.files.list(sort: '+size');
 ```
 
-`sort` accepts: `+createdAt`, `-createdAt`, `+name`, `-name`, `+size`, `-size`.
+`sort` accepts: `+createdAt`, `-createdAt`, `+name`, `-name`, `+size`, `-size` (`+` means descending).
+
+Only `+createdAt` (or no `sort`) is consistent with `untilId` pagination. Other sorts change the order while the cursor still filters by ID, so pages skip or repeat items. To list every file, use `listAll()` and sort locally; see [Drive Helpers](./drive-helpers.md#listing-everything).
 
 ### Stream (all files, no folder filter)
 
@@ -134,7 +140,7 @@ final file = await client.drive.files.showByUrl('https://example.com/file.jpg');
 final updated = await client.drive.files.update(
   fileId: driveFile.id,
   name: 'new-name.jpg',
-  comment: 'Updated alt text',
+  comment: Optional('Updated alt text'), // Optional.null_() clears it
   isSensitive: false,
 );
 ```

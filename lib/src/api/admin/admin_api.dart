@@ -40,9 +40,26 @@ class AdminApi {
   /// Nullable settings use the [Optional] type: pass `Optional('value')`
   /// to set and `Optional.null_()` to clear.
   ///
+  /// Only a commonly used subset of the upstream settings is exposed as typed
+  /// parameters. Pass settings that are not typed yet, including settings
+  /// added by newer Misskey versions or compatible forks, through [extra].
+  /// When [extra] and a typed parameter contain the same key, the typed
+  /// parameter takes precedence. The contents of [extra] are otherwise sent
+  /// without schema or JSON-value validation; callers are responsible for
+  /// ensuring that every key and value is accepted by the target server.
+  ///
+  /// The authentication key `i` is reserved for the client and must not be
+  /// included in [extra]. Current upstream Misskey does not accept
+  /// `proxyAccountId` on this endpoint: sending it alone can fail with a 500
+  /// response, while sending it with other settings can silently ignore it.
+  /// Include that key in [extra] only after confirming that the target server
+  /// version or fork accepts it. An invocation with no typed parameters and a
+  /// null or empty [extra] is a no-op and does not send an empty update.
+  ///
   /// [federation] accepts `all`, `specified`, or `none`. When it is
   /// `specified`, [federationHosts] lists the hosts allowed to federate.
   Future<void> updateMeta({
+    Map<String, dynamic>? extra,
     Optional<String>? name,
     Optional<String>? description,
     Optional<String>? maintainerName,
@@ -51,7 +68,6 @@ class AdminApi {
     Optional<String>? privacyPolicyUrl,
     Optional<String>? impressumUrl,
     Optional<String>? inquiryUrl,
-    Optional<String>? proxyAccountId,
     bool? disableRegistration,
     bool? emailRequiredForSignup,
     bool? enableEmail,
@@ -70,7 +86,15 @@ class AdminApi {
     List<String>? hiddenTags,
     List<String>? preservedUsernames,
   }) async {
+    if (extra?.containsKey('i') ?? false) {
+      throw ArgumentError.value(
+        extra,
+        'extra',
+        'must not contain the reserved authentication key "i"',
+      );
+    }
     final body = <String, dynamic>{
+      ...?extra,
       'disableRegistration': ?disableRegistration,
       'emailRequiredForSignup': ?emailRequiredForSignup,
       'enableEmail': ?enableEmail,
@@ -97,7 +121,9 @@ class AdminApi {
     putOptional(body, 'privacyPolicyUrl', privacyPolicyUrl);
     putOptional(body, 'impressumUrl', impressumUrl);
     putOptional(body, 'inquiryUrl', inquiryUrl);
-    putOptional(body, 'proxyAccountId', proxyAccountId);
+    if (body.isEmpty) {
+      return;
+    }
     await http.send<Object?>('/admin/update-meta', body: body);
   }
 
@@ -263,12 +289,15 @@ class AdminApi {
   ///
   /// Requires moderator privileges. Use [limit] (1-100, default 10) to
   /// cap the number of results and [sinceId] / [untilId] for
-  /// cursor-based pagination. [type] filters by action type, [userId] by
-  /// the moderator who performed the action, and [search] by keyword.
+  /// cursor-based pagination. [sinceDate] / [untilDate] paginate by Unix
+  /// timestamp in milliseconds. [type] filters by action type, [userId]
+  /// by the moderator who performed the action, and [search] by keyword.
   Future<List<MisskeyModerationLog>> showModerationLogs({
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
     String? type,
     String? userId,
     String? search,
@@ -279,6 +308,8 @@ class AdminApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
         'type': ?type,
         'userId': ?userId,
         'search': ?search,

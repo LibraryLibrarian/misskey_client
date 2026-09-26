@@ -13,6 +13,7 @@
 - 網羅的なエラーハンドリングのための sealed 例外クラス階層
 - `json_serializable` で生成された厳密に型付けされたリクエスト・レスポンスモデル
 - 型付きチャンネル・イベント・自動再接続を備えた統合 Streaming API
+- 自動ページネーション、一括移動、重複排除付きの一括アップロード、フォルダの再帰的な操作を項目ごとの結果付きで行うドライブヘルパー
 - 差し替え可能な `Logger` インターフェースによる柔軟なロギング
 - pure Dart — Flutter への依存なし
 
@@ -22,7 +23,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.8
+  misskey_client: ^1.0.0-beta.9
 ```
 
 その後、以下を実行します：
@@ -62,6 +63,7 @@ void main() async {
 | プロパティ | 説明 |
 |---|---|
 | `account` | アカウント・プロフィール管理、レジストリ、二段階認証、Webhook |
+| `accountLifecycle` | サインアップ検証、パスワードリセット、メールアドレス認証 |
 | `announcements` | サーバーのお知らせ |
 | `antennas` | アンテナ（キーワードベースのフィード）管理 |
 | `ap` | ActivityPub ユーティリティ |
@@ -70,7 +72,7 @@ void main() async {
 | `charts` | 統計チャート |
 | `chat` | チャットルームとメッセージ |
 | `clips` | クリップコレクション |
-| `drive` | ドライブ（ファイルストレージ）、ファイル、フォルダ、統計 |
+| `drive` | ドライブ（ファイルストレージ）、ファイル、フォルダ、統計。全項目の取得、一括移動、一括アップロード、フォルダツリー、再帰的な削除のヘルパー |
 | `federation` | 連合インスタンス情報 |
 | `flash` | Flash（Play）スクリプト |
 | `following` | フォローとフォローリクエスト |
@@ -87,6 +89,24 @@ void main() async {
 | `sw` | プッシュ通知（Service Worker） |
 | `streaming` | リアルタイムのタイムライン、通知、キャプチャしたノートの更新 |
 | `users` | ユーザー検索、リスト、関係、アチーブメント |
+
+## サーバー互換性
+
+接続先は古い Misskey のままの場合や、API 構成が異なるフォークの場合があります。`Meta.version` の比較より、実行時のエンドポイント列挙を優先してください。フォークのバージョン文字列は Misskey のリリースと比較できるとは限りませんが、`/api/endpoints` はそのサーバーが実際に公開している API を示します。
+
+```dart
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create', // /api/ は付けません。
+);
+
+if (canCreateDrafts) {
+  // 下書き機能を表示または呼び出します。
+}
+```
+
+エンドポイント一覧はメモリにキャッシュされます。サーバー更新後や最新状態が必要な場合は `isEndpointAvailable()` または `getEndpoints()` に `refresh: true` を指定してください。列挙結果は事前判定用のスナップショットであり、呼び出し成功を保証しません。判定後にサーバーが変化する可能性があるため、実際の呼び出しでは引き続き `MisskeyNotFoundException` を処理してください。フォークで `/api/endpoints` 自体が利用できない、または失敗する場合は、目的の API を直接呼び出して 404 を処理します。ただし、404 だけでは「エンドポイントがない」のか「リソースがない」のか区別できない場合があります。
+
+`hasMetaKey('features.x')` はメタデータのキーが存在するかだけを確認します。値が `false` でも `true` を返すため、エンドポイント判定の代わりには使用しないでください。
 
 ## Streaming API
 
@@ -154,7 +174,7 @@ final client = MisskeyClient(
 
 ## エラーハンドリング
 
-すべての例外は sealed クラス `MisskeyClientException` を継承しており、網羅的なパターンマッチングが可能です：
+API と通信の例外は sealed クラス `MisskeyClientException` を継承しており、網羅的なパターンマッチングが可能です：
 
 ```dart
 try {
@@ -175,6 +195,8 @@ try {
   // タイムアウト、接続拒否など
 }
 ```
+
+ヘルパー API はこのほかに、不正な引数に対する `ArgumentError`（リクエスト送信前）、前提条件が満たされていない場合の `StateError`（`main` ストリーミング購読が接続されていない状態での `drive.uploadFromUrlAndWait()` など）、sealed 階層に含まれない `DriveFolderAmbiguousException` をスローする場合があります。多数の項目を変更するバッチヘルパーでは、変更を開始した後に個々の操作が失敗しても例外はスローされず、`MisskeyBatchResult` に記録されます。完了した項目を通知している最中に `onProgress` コールバックが例外をスローした場合は、実行中の処理が終わった後でそのエラーが再スローされ、完了した変更はロールバックされません。
 
 ## ロギング
 
@@ -209,6 +231,14 @@ final client = MisskeyClient(
 | `Logger` / `FunctionLogger` | 同名クラス |
 | `kReleaseMode` / `kDebugMode` | 公開 API に含めない（下記参照） |
 
+### misskey_api_kit からの移行
+
+`misskey_api_kit` はパッケージレジストリに公開されていない前身パッケージです。この依存関係を削除し、個別の `MisskeyApiKitClient` の代わりに単一の `MisskeyClient` を使用してください。
+
+- `MisskeyApiKitClient` の `account`、`notes`、`notifications`、`channels`、`users` の各エントリーポイントは、`MisskeyClient` の同名プロパティに置き換えます。
+
+これはそのまま置き換えられる互換 API ではありません。一部のメソッド名は変更され、以前は raw の `Map<String, dynamic>` だったレスポンスの多くは型付きモデルになっていますが、raw map を返す API も残っています。[API リファレンス](https://librarylibrarian.github.io/misskey_client/)を参照し、呼び出し単位で移行してください。
+
 ### MisskeyApiException の名前衝突
 
 両パッケージに `MisskeyApiException` が存在しますが、内容も継承関係も異なります。`misskey_api_core` 版は単純なクラスである一方、`misskey_client` 版は `MisskeyClientException` を継承し、`statusCode` が必須です。移行中に両方のパッケージを import する場合は、接頭辞を付けて衝突を回避してください：
@@ -223,7 +253,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 低レベル HTTP アクセス
 
-`MisskeyHttpClient.send<T>()` に相当する低レベル API は公開しません。`misskey_client` は25の API ドメインを網羅しているため、型付きメソッドを使用してください。必要なエンドポイントが未実装の場合は、型付き API に追加できるよう GitHub issue で報告してください。
+`MisskeyHttpClient.send<T>()` に相当する低レベル API は公開しません。`misskey_client` は26の API ドメインを網羅しているため、型付きメソッドを使用してください。必要なエンドポイントが未実装の場合は、型付き API に追加できるよう GitHub issue で報告してください。
 
 ## misskey_streaming からの移行
 

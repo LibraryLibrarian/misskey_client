@@ -39,7 +39,9 @@ MisskeyAdminUserDetail _$MisskeyAdminUserDetailFromJson(
   signins: (json['signins'] as List<dynamic>?)
       ?.map((e) => MisskeySignin.fromJson(e as Map<String, dynamic>))
       .toList(),
-  policies: json['policies'] as Map<String, dynamic>?,
+  policies: json['policies'] == null
+      ? null
+      : MisskeyRolePolicies.fromJson(json['policies'] as Map<String, dynamic>),
   roles: (json['roles'] as List<dynamic>?)
       ?.map((e) => MisskeyRole.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -74,7 +76,7 @@ Map<String, dynamic> _$MisskeyAdminUserDetailToJson(
   ),
   'moderationNote': instance.moderationNote,
   'signins': instance.signins?.map((e) => e.toJson()).toList(),
-  'policies': instance.policies,
+  'policies': instance.policies?.toJson(),
   'roles': instance.roles?.map((e) => e.toJson()).toList(),
   'roleAssigns': instance.roleAssigns?.map((e) => e.toJson()).toList(),
 };

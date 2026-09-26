@@ -31,6 +31,12 @@ void main() {
       expect(draft.userId, 'ak3po4qort4w0001');
     });
 
+    test('includes the owner user returned by the server', () {
+      expect(draft.user, isNotNull);
+      expect(draft.user!.id, draft.userId);
+      expect(draft.user!.username, 'testadmin');
+    });
+
     test('text is correct', () {
       expect(draft.text, 'This is a draft note');
     });
@@ -49,6 +55,10 @@ void main() {
 
     test('fileIds is empty', () {
       expect(draft.fileIds, isEmpty);
+    });
+
+    test('includes the attached files returned by the server', () {
+      expect(draft.files, isEmpty);
     });
 
     test('cw is null', () {
@@ -109,6 +119,86 @@ void main() {
 
     test('expiredAfter is null when no relative deadline was set', () {
       expect(draft.poll!.expiredAfter, isNull);
+    });
+  });
+
+  group('MisskeyNoteDraft.fromJson (with embedded relationships)', () {
+    late MisskeyNoteDraft draft;
+
+    setUp(() {
+      final user = <String, dynamic>{'id': 'user-1', 'username': 'alice'};
+      final note = <String, dynamic>{
+        'id': 'note-1',
+        'createdAt': '2026-08-25T00:00:00.000Z',
+        'userId': 'user-1',
+        'user': user,
+        'text': 'Referenced note',
+      };
+
+      draft = MisskeyNoteDraft.fromJson({
+        'id': 'draft-1',
+        'createdAt': '2026-08-25T01:00:00.000Z',
+        'userId': 'user-1',
+        'user': user,
+        'visibility': 'public',
+        'visibleUserIds': <String>[],
+        'cw': null,
+        'hashtag': null,
+        'localOnly': false,
+        'reactionAcceptance': null,
+        'replyId': 'note-1',
+        'renoteId': 'note-1',
+        'channelId': 'channel-1',
+        'text': 'Draft body',
+        'fileIds': <String>['file-1'],
+        'files': <Map<String, dynamic>>[
+          {
+            'id': 'file-1',
+            'createdAt': '2026-08-25T00:30:00.000Z',
+            'name': 'image.png',
+            'type': 'image/png',
+            'size': 123,
+            'md5': '0123456789abcdef0123456789abcdef',
+            'url': 'https://example.test/files/image.png',
+          },
+        ],
+        'channel': {
+          'id': 'channel-1',
+          'name': 'Draft channel',
+          'color': '#86b300',
+          'isSensitive': false,
+          'allowRenoteToExternal': true,
+          'userId': 'user-1',
+        },
+        'renote': note,
+        'reply': note,
+        'poll': null,
+        'scheduledAt': null,
+        'isActuallyScheduled': false,
+      });
+    });
+
+    test('deserializes a partial channel without full channel fields', () {
+      expect(draft.channel, isNotNull);
+      expect(draft.channel!.id, 'channel-1');
+      expect(draft.channel!.name, 'Draft channel');
+      expect(draft.channel!.color, '#86b300');
+      expect(draft.channel!.isSensitive, isFalse);
+      expect(draft.channel!.allowRenoteToExternal, isTrue);
+      expect(draft.channel!.userId, 'user-1');
+    });
+
+    test('deserializes files, renote, and reply', () {
+      expect(draft.files, hasLength(1));
+      expect(draft.files!.single.id, 'file-1');
+      expect(draft.renote?.id, 'note-1');
+      expect(draft.reply?.id, 'note-1');
+    });
+
+    test('round-trips embedded relationships', () {
+      final roundTripped = MisskeyNoteDraft.fromJson(draft.toJson());
+
+      expect(roundTripped, draft);
     });
   });
 }

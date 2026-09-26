@@ -19,14 +19,17 @@ class AdminAbuseReportsApi {
   /// Fetches abuse reports (`/api/admin/abuse-user-reports`).
   ///
   /// Use [limit] (1-100, default 10) to cap the number of results and
-  /// [sinceId] / [untilId] for cursor-based pagination. [state] filters
-  /// by resolution state (`resolved` or `unresolved`). [reporterOrigin]
-  /// and [targetUserOrigin] filter by origin (`combined`, `local`,
-  /// `remote`).
+  /// [sinceId] / [untilId] for cursor-based pagination. [sinceDate] /
+  /// [untilDate] paginate by Unix timestamp in milliseconds. [state]
+  /// filters by resolution state (`resolved` or `unresolved`).
+  /// [reporterOrigin] and [targetUserOrigin] filter by origin (`combined`,
+  /// `local`, `remote`).
   Future<List<MisskeyAbuseUserReport>> list({
     int? limit,
     String? sinceId,
     String? untilId,
+    int? sinceDate,
+    int? untilDate,
     String? state,
     String? reporterOrigin,
     String? targetUserOrigin,
@@ -37,6 +40,8 @@ class AdminAbuseReportsApi {
         'limit': ?limit,
         'sinceId': ?sinceId,
         'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
         'state': ?state,
         'reporterOrigin': ?reporterOrigin,
         'targetUserOrigin': ?targetUserOrigin,

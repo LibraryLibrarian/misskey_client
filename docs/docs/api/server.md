@@ -31,20 +31,17 @@ Pass `detail: false` for a lightweight response (equivalent to `MetaLite`):
 final lite = await client.meta.getMeta(detail: false);
 ```
 
-### Feature detection
+### Metadata key presence
 
-Call `getMeta()` at least once before using `supports()`. It checks for a key
-in the raw response using a dot-notation path:
+Call `getMeta()` at least once before using `hasMetaKey()`. It only checks for a
+key in the raw response using a dot-notation path; it does not interpret the
+value, so a boolean value of `false` still counts as present:
 
 ```dart
 await client.meta.getMeta();
 
-if (client.meta.supports('features.miauth')) {
-  // MiAuth is available on this server
-}
-
-if (client.meta.supports('policies.canInvite')) {
-  // Invite feature is enabled
+if (client.meta.hasMetaKey('features.miauth')) {
+  // The response contains this key; inspect its value to determine enablement.
 }
 ```
 
@@ -71,6 +68,11 @@ final timestamp = await client.meta.ping();
 // All endpoint names
 final endpoints = await client.meta.getEndpoints();
 
+// Recommended preflight check for APIs added in newer server versions
+final canCreateDrafts = await client.meta.isEndpointAvailable(
+  endpoint: 'notes/drafts/create',
+);
+
 // Parameters for a specific endpoint
 final info = await client.meta.getEndpoint(endpoint: 'notes/create');
 if (info != null) {
@@ -79,6 +81,12 @@ if (info != null) {
   }
 }
 ```
+
+Endpoint enumeration is cached; pass `refresh: true` after a server upgrade.
+Prefer it over comparing `Meta.version`, especially for forks with independent
+version strings. It is only a snapshot, so still handle
+`MisskeyNotFoundException` on the actual call. If `/api/endpoints` is itself
+unavailable, call the desired API and handle its potentially ambiguous 404.
 
 ### Custom emoji
 
