@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.9] - 2026-09-26
+
 ### Added
 
 - Added `MisskeyNote.hasPoll` and the conditionally populated `MisskeyChatRoomMember.room` field. The room is currently included by `chat/rooms/joining` and omitted by `chat/rooms/members` (issue #22)
