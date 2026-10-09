@@ -154,6 +154,7 @@ Die meisten listenrueckgebenden APIs unterstuetzen `sinceId`/`untilId` und `limi
 - `client.mute.list`
 - `client.clips.list`
 - `client.following.requests.list`
+- `client.following.list`
 - `client.antennas.notes`
 - `client.channels.timeline`
 - `client.users.list` (offsetbasiert)

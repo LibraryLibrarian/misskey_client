@@ -138,6 +138,14 @@ final older = await client.antennas.notes(
 );
 ```
 
+### Retirer une note d'une antenne
+
+```dart
+await client.antennas.removeNote(antennaId: antenna.id, noteId: noteId);
+```
+
+Seul le fil de l'antenne est modifié ; la note elle-même n'est pas supprimée. Nécessite Misskey 2026.6.0 ou ultérieur ; les serveurs plus anciens répondent par `MisskeyNotFoundException`.
+
 ### Lister, mettre à jour et supprimer
 
 ```dart

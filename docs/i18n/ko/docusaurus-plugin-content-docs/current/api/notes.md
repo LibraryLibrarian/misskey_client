@@ -234,6 +234,16 @@ final results = await client.notes.search(
 );
 ```
 
+`rangeStartAt` / `rangeEndAt`(Unix 밀리초, 양 끝 포함)로 게시 기간을 제한할 수 있습니다. 페이지네이션 커서인 `sinceDate` / `untilDate`와 달리 이 값들은 검색 조건입니다. Misskey 2026.6.0 이상이 필요하며, 이전 서버는 이 값을 무시하고 기간으로 걸러지지 않은 결과를 반환합니다.
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
+);
+```
+
 ### 해시태그로 검색
 
 ```dart

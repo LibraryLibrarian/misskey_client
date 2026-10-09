@@ -57,6 +57,20 @@ Forcibly removes someone who is following you.
 await client.following.invalidate(userId: userId);
 ```
 
+### List the accounts you follow
+
+```dart
+final follows = await client.following.list(limit: 20);
+for (final follow in follows) {
+  print(follow.followee?.username);
+}
+
+// Only accounts whose new-note notifications are enabled
+final notified = await client.following.list(notification: true);
+```
+
+Paginate with `sinceId` / `untilId` / `sinceDate` / `untilDate`. Requires Misskey 2026.5.2 or later; older servers respond with `MisskeyNotFoundException`. To support them, check with `client.meta.isEndpointAvailable(endpoint: 'following/list')` first.
+
 ## Follow requests (`client.following.requests`)
 
 ### Incoming requests

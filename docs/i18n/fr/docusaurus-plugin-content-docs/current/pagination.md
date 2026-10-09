@@ -154,6 +154,7 @@ La plupart des API renvoyant des listes prennent en charge `sinceId`/`untilId` e
 - `client.mute.list`
 - `client.clips.list`
 - `client.following.requests.list`
+- `client.following.list`
 - `client.antennas.notes`
 - `client.channels.timeline`
 - `client.users.list` (par offset)

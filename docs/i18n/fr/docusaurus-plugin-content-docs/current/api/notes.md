@@ -234,6 +234,16 @@ final results = await client.notes.search(
 );
 ```
 
+Limitez les résultats à une période de publication avec `rangeStartAt` / `rangeEndAt` (horodatages Unix en millisecondes, bornes incluses). Contrairement à `sinceDate` / `untilDate`, qui sont des curseurs de pagination, il s'agit de conditions de recherche. Nécessite Misskey 2026.6.0 ou ultérieur ; les serveurs plus anciens les ignorent et renvoient des résultats sans filtre de période.
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
+);
+```
+
 ### Recherche par hashtag
 
 ```dart

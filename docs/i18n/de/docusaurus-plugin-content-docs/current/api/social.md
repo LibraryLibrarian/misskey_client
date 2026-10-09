@@ -57,6 +57,20 @@ Entfernt jemanden zwangsweise, der Ihnen folgt.
 await client.following.invalidate(userId: userId);
 ```
 
+### Konten auflisten, denen Sie folgen
+
+```dart
+final follows = await client.following.list(limit: 20);
+for (final follow in follows) {
+  print(follow.followee?.username);
+}
+
+// Nur Konten, fuer die Benachrichtigungen ueber neue Notizen aktiviert sind
+final notified = await client.following.list(notification: true);
+```
+
+Paginieren Sie mit `sinceId` / `untilId` / `sinceDate` / `untilDate`. Erfordert Misskey 2026.5.2 oder neuer; aeltere Server antworten mit `MisskeyNotFoundException`. Um auch aeltere Server zu unterstuetzen, pruefen Sie vorher mit `client.meta.isEndpointAvailable(endpoint: 'following/list')`, ob der Endpunkt verfuegbar ist.
+
 ## Folgeanfragen (`client.following.requests`)
 
 ### Eingehende Anfragen

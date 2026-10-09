@@ -57,6 +57,20 @@ await client.following.updateAll(notify: 'none', withReplies: false);
 await client.following.invalidate(userId: userId);
 ```
 
+### フォロー中のアカウント一覧
+
+```dart
+final follows = await client.following.list(limit: 20);
+for (final follow in follows) {
+  print(follow.followee?.username);
+}
+
+// 新しいノートの通知を有効にしているアカウントだけ
+final notified = await client.following.list(notification: true);
+```
+
+`sinceId` / `untilId` / `sinceDate` / `untilDate` でページネーションできます。Misskey 2026.5.2 以降が必要で、それより古いサーバーでは `MisskeyNotFoundException` になります。古いサーバーにも対応する場合は、先に `client.meta.isEndpointAvailable(endpoint: 'following/list')` で確認してください。
+
 ## フォローリクエスト (`client.following.requests`)
 
 ### 受信したリクエスト

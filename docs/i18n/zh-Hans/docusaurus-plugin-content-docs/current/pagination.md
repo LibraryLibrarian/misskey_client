@@ -154,6 +154,7 @@ await for (final file in client.drive.files.listAll(pageSize: 100)) {
 - `client.mute.list`
 - `client.clips.list`
 - `client.following.requests.list`
+- `client.following.list`
 - `client.antennas.notes`
 - `client.channels.timeline`
 - `client.users.list`（偏移量方式）

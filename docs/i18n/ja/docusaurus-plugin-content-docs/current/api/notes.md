@@ -109,6 +109,16 @@ await client.notes.create(
 final results = await client.notes.search(query: 'Misskey');
 ```
 
+`rangeStartAt` / `rangeEndAt`（Unix ミリ秒、両端を含む）で投稿日時の期間を絞り込めます。ページネーション用のカーソルである `sinceDate` / `untilDate` とは異なり、こちらは検索条件です。Misskey 2026.6.0 以降が必要で、それより古いサーバーではこの指定が無視され、期間で絞り込まれていない結果が返ります。
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
+);
+```
+
 ## お気に入り
 
 ```dart

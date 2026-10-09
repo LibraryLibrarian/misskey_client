@@ -234,6 +234,16 @@ final results = await client.notes.search(
 );
 ```
 
+使用 `rangeStartAt` / `rangeEndAt`（Unix 毫秒时间戳，包含两端）将结果限制在某个发布时间段内。与作为分页游标的 `sinceDate` / `untilDate` 不同，这两个参数是搜索条件。需要 Misskey 2026.6.0 或更高版本；更早的服务器会忽略这些参数并返回未按时间段过滤的结果。
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
+);
+```
+
 ### 按话题标签搜索
 
 ```dart

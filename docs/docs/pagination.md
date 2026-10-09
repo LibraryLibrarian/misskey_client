@@ -154,6 +154,7 @@ Most list-returning APIs support `sinceId`/`untilId` and `limit`:
 - `client.mute.list`
 - `client.clips.list`
 - `client.following.requests.list`
+- `client.following.list`
 - `client.antennas.notes`
 - `client.channels.timeline`
 - `client.users.list` (offset-based)
