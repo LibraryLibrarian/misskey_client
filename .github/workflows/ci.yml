@@ -44,7 +44,7 @@ jobs:
         run: git diff --exit-code
 
       - name: Run tests
-        run: dart test --exclude-tags e2e
+        run: dart test
 
       - name: Validate package
         run: dart pub publish --dry-run
