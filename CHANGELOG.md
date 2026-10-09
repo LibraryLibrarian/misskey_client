@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `FollowingApi.list` (`/api/following/list`, Misskey 2026.5.2 or later) for listing the authenticated user's follows, optionally only those with new-note notifications enabled
+
 ## [1.0.0-beta.9] - 2026-09-26
 
 ### Added
