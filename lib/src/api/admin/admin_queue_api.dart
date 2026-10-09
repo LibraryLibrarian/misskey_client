@@ -57,9 +57,10 @@ class AdminQueueApi {
 
   /// Fetches jobs in a queue (`/api/admin/queue/jobs`).
   ///
-  /// [state] accepts job states such as `wait`, `active`, `completed`,
-  /// `failed`, `delayed`, `paused`, and `prioritized`. Use [search] to
-  /// filter jobs by keyword.
+  /// [state] accepts `active`, `wait`, `delayed`, `completed`, and
+  /// `failed`. `paused` is accepted only up to Misskey 2026.7.x and is
+  /// rejected with `INVALID_PARAM` from 2026.9.0. Use [search] to filter
+  /// jobs by keyword.
   Future<List<MisskeyQueueJob>> jobs({
     required String queue,
     required List<String> state,

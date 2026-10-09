@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `AdminQueueApi.pause` / `resume` (`/api/admin/queue/pause`, `/api/admin/queue/resume`, Misskey 2026.6.0 or later) for pausing and resuming job queues
 - Added `AdminApi.unsetMfa` (`/api/admin/unset-mfa`, Misskey 2026.7.0 or later) for removing a user's passkeys, TOTP, and passwordless login
 
+### Changed
+
+- Corrected the `AdminQueueApi.jobs` documentation of accepted `state` values: `prioritized` is not accepted, and `paused` is rejected from Misskey 2026.9.0
+
 ## [1.0.0-beta.9] - 2026-09-26
 
 ### Added
