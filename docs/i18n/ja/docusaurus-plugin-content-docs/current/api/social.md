@@ -15,7 +15,7 @@ title: "ソーシャル"
 final user = await client.following.create(userId: userId);
 ```
 
-対象ユーザーがフォール承認を必要とする設定の場合、即時フォローの代わりにリクエストが送信されます。更新後の `MisskeyUser` が返されます。
+対象ユーザーがフォロー承認を必要とする設定の場合、即時フォローの代わりにリクエストが送信されます。更新後の `MisskeyUser` が返されます。
 
 `withReplies: true` を渡すと、そのユーザーのリプライもタイムラインに表示されます。
 
