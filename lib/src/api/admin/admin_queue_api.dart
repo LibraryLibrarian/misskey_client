@@ -127,6 +127,26 @@ class AdminQueueApi {
     body: <String, dynamic>{'queue': queue},
   );
 
+  /// Pauses a queue (`/api/admin/queue/pause`).
+  ///
+  /// Workers stop picking up jobs from [queue] across the instance until
+  /// [resume] is called; new jobs are still added to the queue. Requires
+  /// Misskey 2026.6.0 or later; older servers respond with a
+  /// `MisskeyNotFoundException`.
+  Future<void> pause({required String queue}) => http.send<Object?>(
+    '/admin/queue/pause',
+    body: <String, dynamic>{'queue': queue},
+  );
+
+  /// Resumes a queue paused by [pause] (`/api/admin/queue/resume`).
+  ///
+  /// Requires Misskey 2026.6.0 or later; older servers respond with a
+  /// `MisskeyNotFoundException`.
+  Future<void> resume({required String queue}) => http.send<Object?>(
+    '/admin/queue/resume',
+    body: <String, dynamic>{'queue': queue},
+  );
+
   /// Clears jobs in a queue (`/api/admin/queue/clear`).
   ///
   /// [state] accepts `*` (all states) or a specific state such as

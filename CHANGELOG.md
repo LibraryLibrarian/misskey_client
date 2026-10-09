@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `FollowingApi.list` (`/api/following/list`, Misskey 2026.5.2 or later) for listing the authenticated user's follows, optionally only those with new-note notifications enabled
 - Added the `rangeStartAt` / `rangeEndAt` posting-period conditions to `NotesApi.search` (Misskey 2026.6.0 or later; older servers ignore them)
 - Added `AntennasApi.removeNote` (`/api/antennas/remove-note`, Misskey 2026.6.0 or later) for removing a single note from an antenna's timeline
+- Added `AdminQueueApi.pause` / `resume` (`/api/admin/queue/pause`, `/api/admin/queue/resume`, Misskey 2026.6.0 or later) for pausing and resuming job queues
 
 ## [1.0.0-beta.9] - 2026-09-26
 
