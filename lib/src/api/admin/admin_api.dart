@@ -222,6 +222,22 @@ class AdminApi {
     return res['password'] as String;
   }
 
+  /// Removes every second factor of a user (`/api/admin/unset-mfa`).
+  ///
+  /// Requires moderator privileges. Deletes all of the user's passkeys and
+  /// security keys, disables TOTP two-factor authentication, and turns off
+  /// passwordless login, so the user can sign in with the password alone.
+  /// Pass the target user ID in [userId]. Requires Misskey 2026.7.0 or
+  /// later; older servers respond with a `MisskeyNotFoundException`.
+  ///
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The user does not exist
+  /// - `ACCESS_DENIED`: The target is another administrator
+  Future<void> unsetMfa({required String userId}) => http.send<Object?>(
+    '/admin/unset-mfa',
+    body: <String, dynamic>{'userId': userId},
+  );
+
   /// Updates the moderation note for a user
   /// (`/api/admin/update-user-note`).
   ///
