@@ -19,6 +19,7 @@ void main() {
       final endpoints = await client.meta.getEndpoints();
 
       expect(endpoints, contains('notes/drafts/create'));
+      expect(endpoints, contains('following/list'));
       expect(
         await client.meta.isEndpointAvailable(
           endpoint: 'users/get-following-users-by-birthday',
