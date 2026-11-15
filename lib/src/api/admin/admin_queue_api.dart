@@ -6,7 +6,7 @@ import '../../models/admin/misskey_queue.dart';
 
 /// Provides job queue management admin APIs (`/api/admin/queue/*`).
 ///
-/// All endpoints require administrator privileges.
+/// All endpoints require moderator privileges.
 ///
 /// The `queue` parameter accepts one of `system`, `endedPollNotification`,
 /// `postScheduledNote`, `deliver`, `inbox`, `db`, `relationship`,
