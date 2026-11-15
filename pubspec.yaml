@@ -19,6 +19,8 @@ dev_dependencies:
   freezed: 3.2.5
   json_serializable: ^6.14.1
   lints: ^6.1.0
+  # source_helper 1.4.0 は json_serializable 6.14.1 と拡張メソッドが衝突し、コード生成に失敗する
+  source_helper: ">=1.3.10 <1.4.0"
   test: ^1.31.0
 repository: https://github.com/LibraryLibrarian/misskey_client
 topics:
