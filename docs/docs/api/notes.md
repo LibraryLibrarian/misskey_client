@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // Cancel all your renotes of a note
 await client.notes.unrenote(noteId: noteId);
 
-// List users who renoted
+// List the renotes of a note
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 
