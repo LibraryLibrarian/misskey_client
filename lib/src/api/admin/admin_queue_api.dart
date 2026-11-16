@@ -6,7 +6,7 @@ import '../../models/admin/misskey_queue.dart';
 
 /// Provides job queue management admin APIs (`/api/admin/queue/*`).
 ///
-/// All endpoints require administrator privileges.
+/// All endpoints require moderator privileges.
 ///
 /// The `queue` parameter accepts one of `system`, `endedPollNotification`,
 /// `postScheduledNote`, `deliver`, `inbox`, `db`, `relationship`,
@@ -57,9 +57,10 @@ class AdminQueueApi {
 
   /// Fetches jobs in a queue (`/api/admin/queue/jobs`).
   ///
-  /// [state] accepts job states such as `wait`, `active`, `completed`,
-  /// `failed`, `delayed`, `paused`, and `prioritized`. Use [search] to
-  /// filter jobs by keyword.
+  /// [state] accepts `active`, `wait`, `delayed`, `completed`, and
+  /// `failed`. `paused` is accepted only up to Misskey 2026.7.x and is
+  /// rejected with `INVALID_PARAM` from 2026.9.0. Use [search] to filter
+  /// jobs by keyword.
   Future<List<MisskeyQueueJob>> jobs({
     required String queue,
     required List<String> state,
@@ -124,6 +125,26 @@ class AdminQueueApi {
   /// (`/api/admin/queue/promote-jobs`).
   Future<void> promoteJobs({required String queue}) => http.send<Object?>(
     '/admin/queue/promote-jobs',
+    body: <String, dynamic>{'queue': queue},
+  );
+
+  /// Pauses a queue (`/api/admin/queue/pause`).
+  ///
+  /// Workers stop picking up jobs from [queue] across the instance until
+  /// [resume] is called; new jobs are still added to the queue. Requires
+  /// Misskey 2026.6.0 or later; older servers respond with a
+  /// `MisskeyNotFoundException`.
+  Future<void> pause({required String queue}) => http.send<Object?>(
+    '/admin/queue/pause',
+    body: <String, dynamic>{'queue': queue},
+  );
+
+  /// Resumes a queue paused by [pause] (`/api/admin/queue/resume`).
+  ///
+  /// Requires Misskey 2026.6.0 or later; older servers respond with a
+  /// `MisskeyNotFoundException`.
+  Future<void> resume({required String queue}) => http.send<Object?>(
+    '/admin/queue/resume',
     body: <String, dynamic>{'queue': queue},
   );
 

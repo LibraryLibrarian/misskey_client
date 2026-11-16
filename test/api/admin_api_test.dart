@@ -105,6 +105,19 @@ void main() {
       expect(adapter.requestCount, 0);
     });
   });
+
+  group('AdminApi.unsetMfa', () {
+    test('sends the target user ID', () async {
+      final adapter = _RecordingHttpClientAdapter();
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      await client.admin.unsetMfa(userId: 'user1');
+
+      expect(adapter.path, '/api/admin/unset-mfa');
+      expect(adapter.body, {'userId': 'user1'});
+    });
+  });
 }
 
 MisskeyClient _createClient(_RecordingHttpClientAdapter adapter) =>

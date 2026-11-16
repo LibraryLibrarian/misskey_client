@@ -634,6 +634,12 @@ class NotesApi {
   /// Pass [host] to filter by host (`"."` for local), [userId] to filter by
   /// a specific user, or [channelId] to filter by channel.
   /// Use [offset] to skip results (default: 0).
+  ///
+  /// Restrict results to a posting period with [rangeStartAt] and
+  /// [rangeEndAt] (Unix timestamps in milliseconds, both inclusive). Unlike
+  /// [sinceDate] / [untilDate], which are pagination cursors, these are
+  /// search conditions. They require Misskey 2026.6.0 or later; older
+  /// servers ignore them and return results without the period filter.
   Future<List<MisskeyNote>> search({
     required String query,
     int? limit,
@@ -645,6 +651,8 @@ class NotesApi {
     String? host,
     String? userId,
     String? channelId,
+    int? rangeStartAt,
+    int? rangeEndAt,
   }) async {
     final body = <String, dynamic>{
       'query': query,
@@ -657,6 +665,8 @@ class NotesApi {
       'host': ?host,
       'userId': ?userId,
       'channelId': ?channelId,
+      'rangeStartAt': ?rangeStartAt,
+      'rangeEndAt': ?rangeEndAt,
     };
     final res = await http.send<List<dynamic>>(
       '/notes/search',
