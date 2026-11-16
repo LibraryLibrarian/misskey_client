@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Corrected the `AdminQueueApi.jobs` documentation of accepted `state` values: `prioritized` is not accepted, and `paused` is rejected from Misskey 2026.9.0
 - Corrected the `AdminQueueApi` documentation of the required privilege: moderator privileges are sufficient, not only administrator
+- Corrected the documentation comment of the default logger: with assertions disabled, as in release builds, it outputs nothing
 
 ## [1.0.0-beta.9] - 2026-09-26
 
