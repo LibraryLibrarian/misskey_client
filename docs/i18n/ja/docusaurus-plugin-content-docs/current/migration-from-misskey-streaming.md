@@ -6,56 +6,82 @@ title: misskey_streamingからの移行
 
 Streaming は `misskey_client` に統合されました。すべての呼び出し元を移行後、単独の `misskey_streaming` 依存を削除し、issue #30を含む最初の `misskey_client` リリースを使用してください。
 
-## クライアントと購読
+## 統合クライアントを作成する
 
 ```dart
 // 移行前
 final streaming = MisskeyStreaming.create(
   origin: Uri.parse('https://misskey.example.com'),
   token: token,
-);
-final handle = await streaming.subscribeChannelStream(
-  channel: 'homeTimeline',
+  enableAutoReconnect: true,
+  debugLog: true,
 );
 
 // 移行後
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => token,
-  streamingConfig: MisskeyStreamingConfig(),
+  streamingConfig: MisskeyStreamingConfig(enableAutoReconnect: true),
 );
 await client.streaming.connect();
-final home = await client.streaming.subscribe(
-  const MisskeyStreamingChannel.homeTimeline(),
-);
 ```
 
-`MisskeyStreaming.fromClient()` は不要です。統合された接続は `MisskeyClient` の URL、トークンプロバイダー、ロガー、ログ設定を共有します。フォーク固有チャンネルには `subscribeRaw()` を使い、非同期になった `unsubscribe()` を `await` してください。
+`MisskeyStreaming.fromClient()` は不要です。統合された接続は `MisskeyClient` の URL、トークンプロバイダー、ロガー、ログ設定を共有します。
 
 既存の `void oldLogger(String level, String message)` コールバックは `FunctionLogger(oldLogger)` でラップしてクライアントの `logger` に渡し、`MisskeyClientConfig.enableLog` を `true` にします。
 
+## 購読とキャプチャの呼び出しを置き換える
+
+```dart
+// 移行前
+final handle = await streaming.subscribeChannelStream(
+  channel: 'homeTimeline',
+  params: {'withRenotes': true},
+);
+handle.stream.listen((message) => print(message.body));
+streaming.captureNote(handle.id, noteId);
+
+// 移行後
+final home = await client.streaming.subscribe(
+  const MisskeyStreamingChannel.homeTimeline(withRenotes: true),
+);
+home.messages.listen((message) => print(message.body));
+home.captureNote(noteId);
+```
+
+フォーク固有チャンネルには `subscribeRaw(channel: ..., params: ..., id: ...)` を使います。`unsubscribe()` は非同期になったため、`await` してください。
+
 | 旧API | 統合API |
 |---|---|
-| `handle.stream` | `messages` / `events` / `notes` / `notifications` |
-| `messagesFor(id)` | 対象ハンドルの `messages` |
+| `MisskeySubscriptionHandle.stream` | ハンドルの `messages`、`events`、`notes`、`notifications` |
+| `MisskeyStreamingClient.messagesFor(id)` | 対象ハンドルの `messages` |
 | `MisskeyStreamingClient.messages` | `client.streaming.messages`（外側の envelope） |
 | `captureNote(handle.id, noteId)` | `handle.captureNote(noteId)` |
 | `uncaptureNote(handle.id, noteId)` | `handle.uncaptureNote(noteId)` |
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
 | 手動の型付きデコード | `MisskeyStreamingEvent` と `MisskeyUnknownEvent` |
-| `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
+
+## ライフサイクルと設定の対応
+
+| 旧API | 統合API |
+|---|---|
+| `status` ストリーム | `stateChanges` と現在の `state` |
+| `isConnected` | `state == MisskeyStreamingConnectionState.connected` |
+| 再接続フィールド | `MisskeyStreamingConfig` の同じフィールド |
+| — | `MisskeyStreamingConfig.subscriptionTimeout` |
 | `origin` | `MisskeyClientConfig.baseUrl` |
 | `token` / `tokenProvider` | `MisskeyClient` の `tokenProvider` 引数 |
 | `debugLog` / `logger` コールバック | クライアントの `enableLog: true` / `logger: FunctionLogger(oldLogger)` |
-| 再接続設定 | `MisskeyStreamingConfig` |
-| — | `MisskeyStreamingConfig.subscriptionTimeout` |
-| `pingInterval` | 廃止（公開application-level ping設定なし） |
-| `customHeaders` / `protocols` | 公開設定なし |
+| `pingInterval` | 廃止（アプリケーションレベルの ping タイマーは公開されません） |
+| `customHeaders` / `protocols` | 公開された統合設定なし |
 | `connector` | 内部テストでの注入専用 |
-| `exceptionMapper` | 型付き例外と `errors` |
+| `exceptionMapper` | 型付き Streaming 例外と `errors` ストリーム |
 
-キャプチャ操作は `home.captureNote(noteId)` / `home.uncaptureNote(noteId)` に移動します。再利用する場合は `disconnect()`、完全終了は `dispose()` または `MisskeyClient.dispose()` を使用します。`MisskeyClient.dispose()` は冪等で、初期化済みの Streaming リソースと HTTP トランスポートの両方を閉じます。`sendToChannel()` の公開代替はありません。上流またはフォークのプロトコルでチャンネルへのイベント送信が必要な場合は、Issue を作成してください。
+接続を再利用する場合は `disconnect()` を使用します。使い終えたら `dispose()` で完全に終了するか、接続を所有する `MisskeyClient` を破棄してください。`MisskeyClient.dispose()` は冪等で、初期化済みの Streaming リソースと HTTP トランスポートの両方を閉じます。
 
-詳細は[Streaming APIガイド](./streaming.md)と[完全な移行リファレンス](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md)を参照してください。
+`sendToChannel()` に対応する統合 API は公開されていません。上流またはフォークのプロトコルでチャンネルへのイベント送信が必要な場合は、Issue を作成してください。
+
+完全な例とイベントの詳細は[Streaming APIガイド](./streaming.md)を参照してください。リポジトリのルートには[完全な移行リファレンス](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md)もあります。
