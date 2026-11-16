@@ -29,7 +29,7 @@ await client.streaming.connect();
 
 Der Token-Provider wird bei jeder neuen Verbindung einschließlich Wiederverbindungen ausgewertet. So wird ein aktualisiertes Token wirksam, ohne den Client neu zu erstellen.
 
-| Mitglied | Zweck |
+| Member | Zweck |
 |---|---|
 | `state` | Aktueller `MisskeyStreamingConnectionState` |
 | `stateChanges` | Zustandsänderungen nach Registrierung des Listeners |
@@ -56,7 +56,7 @@ final home = await client.streaming.subscribe(
 
 Bei bestehender Verbindung wird `subscribe()` abgeschlossen, nachdem der Server die Subscription bestätigt hat. Das Handle bleibt über automatische Wiederverbindungen hinweg registriert und wird automatisch erneut abonniert.
 
-Die API enthält typisierte Definitionen für `main`, die Home-, Local-, Hybrid- und Global-Timelines, Benutzerlisten, Hashtags, Rollen, Antennen, Channels, Drive, Server- und Queue-Statistiken, Administration, Reversi sowie direkte und raumbasierte Chat-Channels.
+Die API enthält typisierte Definitionen für `main`, die Startseiten-, lokale, hybride und globale Timeline, Benutzerlisten, Hashtags, Rollen, Antennen, Channels, Drive, Server- und Queue-Statistiken, Administration, Reversi sowie direkte und raumbasierte Chat-Channels.
 
 ## Event-Ansicht auswählen
 

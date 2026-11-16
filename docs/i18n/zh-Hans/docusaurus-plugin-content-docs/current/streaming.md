@@ -56,7 +56,7 @@ final home = await client.streaming.subscribe(
 
 连接期间，`subscribe()` 会在服务器确认订阅后完成。句柄会在自动重连过程中保持注册，并自动重新订阅。
 
-API 为 `main`、首页／本地／混合／全局时间线、用户列表、话题标签、角色、天线、频道、网盘、服务器和队列统计、管理、Reversi，以及私聊或聊天室频道提供强类型定义。
+API 为 `main`、主页／本地／混合／全局时间线、用户列表、话题标签、角色、天线、频道、网盘、服务器和队列统计、管理、Reversi，以及私聊或聊天室频道提供强类型定义。
 
 ## 选择事件视图
 
@@ -105,7 +105,7 @@ home.uncaptureNote(noteId);
 
 ## 分支特有频道
 
-当 Misskey 分支版本提供没有类型化工厂的频道时，使用 `subscribeRaw()`。
+当 Misskey 分支版本提供没有强类型工厂的频道时，使用 `subscribeRaw()`。
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(
