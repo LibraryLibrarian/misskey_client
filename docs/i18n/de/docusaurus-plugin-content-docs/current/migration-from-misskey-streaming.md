@@ -33,7 +33,7 @@ await client.streaming.connect();
 
 Umschließen Sie einen vorhandenen Callback `void oldLogger(String level, String message)` mit `FunctionLogger(oldLogger)`, übergeben Sie ihn als `logger` des Clients und setzen Sie `MisskeyClientConfig.enableLog` auf `true`.
 
-## Subscription- und Capture-Aufrufe ersetzen
+## Abonnement- und Capture-Aufrufe ersetzen
 
 ```dart
 // Vorher

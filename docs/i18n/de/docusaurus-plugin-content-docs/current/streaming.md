@@ -33,9 +33,9 @@ Der Token-Provider wird bei jeder neuen Verbindung einschließlich Wiederverbind
 |---|---|
 | `state` | Aktueller `MisskeyStreamingConnectionState` |
 | `stateChanges` | Zustandsänderungen nach Registrierung des Listeners |
-| `errors` | Asynchrone Transport-, Protokoll-, Timeout- und Subscription-Fehler |
+| `errors` | Asynchrone Transport-, Protokoll-, Timeout- und Abonnement-Fehler |
 | `connect()` | Wiederverwendbare Verbindung öffnen |
-| `disconnect()` | Verbindung schließen, ohne Subscriptions oder den Streaming-Client freizugeben |
+| `disconnect()` | Verbindung schließen, ohne Abonnements oder den Streaming-Client freizugeben |
 | `reconnect()` | Aktuelle Verbindung ersetzen |
 | `dispose()` | Streaming-Client endgültig freigeben |
 
@@ -54,13 +54,13 @@ final home = await client.streaming.subscribe(
 );
 ```
 
-Bei bestehender Verbindung wird `subscribe()` abgeschlossen, nachdem der Server die Subscription bestätigt hat. Das Handle bleibt über automatische Wiederverbindungen hinweg registriert und wird automatisch erneut abonniert.
+Bei bestehender Verbindung wird `subscribe()` abgeschlossen, nachdem der Server das Abonnement bestätigt hat. Das Handle bleibt über automatische Wiederverbindungen hinweg registriert und wird automatisch erneut abonniert.
 
 Die API enthält typisierte Definitionen für `main`, die Startseiten-, lokale, hybride und globale Timeline, Benutzerlisten, Hashtags, Rollen, Antennen, Channels, Drive, Server- und Queue-Statistiken, Administration, Reversi sowie direkte und raumbasierte Chat-Channels.
 
 ## Event-Ansicht auswählen
 
-Eine Subscription bietet mehrere Ansichten der an sie weitergeleiteten Nachrichten:
+Ein Abonnement bietet mehrere Ansichten der darüber weitergeleiteten Nachrichten:
 
 | Stream | Inhalt |
 |---|---|
@@ -88,7 +88,7 @@ final eventListener = home.events.listen((event) {
 
 `MisskeyUnknownEvent` bewahrt den normalisierten `type`, `body`, die ursprüngliche `raw`-Nachricht und den optionalen `decodeError`. Behalten Sie einen Fallback-Zweig bei, damit auch vom Server neu hinzugefügte Events sichtbar bleiben.
 
-Der globale Stream `client.streaming.messages` bewahrt die äußeren Wire-Envelopes. Über eine Subscription weitergeleitete Nachrichten werden auf ihr inneres Event normalisiert und enthalten die `subscriptionId` der jeweiligen Subscription.
+Der globale Stream `client.streaming.messages` bewahrt die äußeren Wire-Envelopes. Über ein Abonnement weitergeleitete Nachrichten werden auf ihr inneres Event normalisiert und enthalten die `subscriptionId` des jeweiligen Abonnements.
 
 ## Note-Updates erfassen
 
@@ -101,7 +101,7 @@ home.captureNote(noteId);
 home.uncaptureNote(noteId);
 ```
 
-Capture-Aufrufe werden über Subscriptions hinweg referenzgezählt und nach Wiederverbindungen wiederhergestellt. Wiederholte Capture- oder Uncapture-Aufrufe auf demselben Handle sind idempotent.
+Capture-Aufrufe werden über Abonnements hinweg referenzgezählt und nach Wiederverbindungen wiederhergestellt. Wiederholte Capture- oder Uncapture-Aufrufe auf demselben Handle sind idempotent.
 
 ## Fork-spezifische Channels
 
@@ -119,11 +119,11 @@ final listener = forkChannel.messages.listen((message) {
 });
 ```
 
-Dasselbe Verhalten für Bestätigungen, Wiederverbindungen, Nachrichten und Cleanup gilt auch hier. Eine explizit angegebene ID muss unter den registrierten Subscriptions eindeutig sein und darf keine ID wiederverwenden, die in der aktuellen Verbindungsgeneration als Tombstone gespeichert ist.
+Dasselbe Verhalten für Bestätigungen, Wiederverbindungen, Nachrichten und Cleanup gilt auch hier. Eine explizit angegebene ID muss unter den registrierten Abonnements eindeutig sein und darf keine ID wiederverwenden, die in der aktuellen Verbindungsgeneration als Tombstone gespeichert ist.
 
 ## Cleanup
 
-Beenden Sie Dart-Stream-Listener separat und melden Sie anschließend die Channel-Subscription ab.
+Beenden Sie Dart-Stream-Listener separat und melden Sie anschließend das Channel-Abonnement ab.
 
 ```dart
 await listener.cancel();
@@ -136,6 +136,6 @@ await home.unsubscribe();
 await client.dispose();
 ```
 
-`unsubscribe()` und `MisskeyClient.dispose()` können sicher wiederholt oder gleichzeitig aufgerufen werden. Ein Client unterstützt höchstens 32 aktive Streaming-Subscriptions. Nach dem Freigeben des Clients löst ein Zugriff auf `client.streaming` einen `StateError` aus.
+`unsubscribe()` und `MisskeyClient.dispose()` können sicher wiederholt oder gleichzeitig aufgerufen werden. Ein Client unterstützt höchstens 32 aktive Streaming-Abonnements. Nach dem Freigeben des Clients löst ein Zugriff auf `client.streaming` einen `StateError` aus.
 
 Zur Migration aus dem eigenständigen Paket siehe [Migration von misskey_streaming](./migration-from-misskey-streaming.md).

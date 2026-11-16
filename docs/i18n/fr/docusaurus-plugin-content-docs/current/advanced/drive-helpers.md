@@ -395,7 +395,7 @@ final result = await client.drive.files.createMany(
 
 ## Attendre la fin des téléversements par URL {#waiting-for-url-uploads}
 
-`uploadFromUrl()` renvoie dès que le serveur accepte la requête ; le fichier apparaît ultérieurement. `uploadFromUrlAndWait()` attend également l’événement `urlUploadFinished` sur le canal de streaming `main` et renvoie le fichier obtenu. La méthode ne s’abonne pas et ne se connecte pas à votre place : abonnez-vous à `MisskeyStreamingChannel.main()` et connectez-vous au préalable :
+`uploadFromUrl()` renvoie dès que le serveur accepte la requête ; le fichier apparaît ultérieurement. `uploadFromUrlAndWait()` attend également l’événement `urlUploadFinished` sur le canal de streaming `main` et renvoie le fichier obtenu. La méthode ne souscrit pas et ne se connecte pas à votre place : souscrivez à `MisskeyStreamingChannel.main()` et connectez-vous au préalable :
 
 ```dart
 final main = await client.streaming.subscribe(
@@ -416,13 +416,13 @@ try {
 ```
 
 - Le jeton doit disposer des autorisations `write:drive` et `read:account`.
-- `mainSubscription` permet de sélectionner un abonnement `main` précis ; sinon, le premier abonnement `main` enregistré dans `client.streaming.subscriptions` est utilisé. Un abonnement absent ou inactif, ou un client de streaming déconnecté, provoque une exception `StateError`.
+- `mainSubscription` permet de sélectionner une souscription `main` précise ; sinon, la première souscription `main` enregistrée dans `client.streaming.subscriptions` est utilisée. Une souscription absente ou inactive, ou un client de streaming déconnecté, provoque une exception `StateError`.
 - Le serveur n’envoie aucun événement en cas d’échec du téléversement ; celui-ci n’est donc détectable que par expiration du délai. L’expiration n’annule pas le téléversement côté serveur. Le délai `timeout` (2 minutes par défaut) commence après la fin de la requête de téléversement.
 - Les événements reçus pendant la reconnexion sont perdus.
 - Un `marker` unique est généré à chaque appel. Si vous en fournissez un, il doit être non vide et unique pour chaque téléversement.
 - La déduplication côté serveur peut renvoyer un fichier existant situé dans un autre dossier.
 
-Consultez [API Streaming](../streaming.md) pour les détails sur la connexion et les abonnements.
+Consultez [API Streaming](../streaming.md) pour les détails sur la connexion et les souscriptions.
 
 ## Limites de débit {#rate-limits}
 
