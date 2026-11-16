@@ -4,7 +4,7 @@ title: Streaming API
 
 # Streaming API
 
-통합 Streaming API는 WebSocket으로 타임라인, 알림 및 캡처한 노트 업데이트를 제공합니다. 지연 생성되는 `MisskeyClient.streaming`은 클라이언트의 기본 URL, 토큰 제공자, 로거 및 로그 설정을 공유합니다.
+통합 Streaming API는 WebSocket으로 타임라인, 알림 및 캡처한 노트 업데이트를 제공합니다. 지연 생성되는 `MisskeyClient.streaming`은 클라이언트의 베이스 URL, 토큰 제공자, 로거 및 로그 설정을 공유합니다.
 
 ## 구성 및 연결
 
@@ -54,7 +54,7 @@ final home = await client.streaming.subscribe(
 );
 ```
 
-연결 중 `subscribe()`는 서버가 구독을 승인한 후 완료됩니다. 핸들은 자동 재연결 중에도 등록된 상태로 유지되며 자동으로 다시 구독됩니다.
+연결 중 `subscribe()`는 서버가 구독을 승인한 후 완료됩니다. 핸들은 자동 재연결 후에도 등록된 상태로 유지되며 자동으로 다시 구독됩니다.
 
 `main`, 홈·로컬·하이브리드·글로벌 타임라인, 사용자 목록, 해시태그, 역할, 안테나, 채널, 드라이브, 서버 및 큐 통계, 관리, Reversi, 다이렉트 또는 룸 채팅 채널에 타입 지정 정의를 사용할 수 있습니다.
 

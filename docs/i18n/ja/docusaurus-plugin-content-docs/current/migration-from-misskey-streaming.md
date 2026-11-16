@@ -82,6 +82,6 @@ home.captureNote(noteId);
 
 接続を再利用する場合は `disconnect()` を使用します。使い終えたら `dispose()` で完全に終了するか、接続を所有する `MisskeyClient` を破棄してください。`MisskeyClient.dispose()` は冪等で、初期化済みの Streaming リソースと HTTP トランスポートの両方を閉じます。
 
-`sendToChannel()` に対応する統合 API は公開されていません。上流またはフォークのプロトコルでチャンネルへのイベント送信が必要な場合は、Issue を作成してください。
+`sendToChannel()` に対応する統合API は公開されていません。上流またはフォークのプロトコルでチャンネルへのイベント送信が必要な場合は、Issue を作成してください。
 
 完全な例とイベントの詳細は[Streaming APIガイド](./streaming.md)を参照してください。リポジトリのルートには[完全な移行リファレンス](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md)もあります。
