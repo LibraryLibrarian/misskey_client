@@ -70,7 +70,7 @@ print(me.username); // Benutzername (ohne @)
 
 ### API-Struktur
 
-Die wichtigsten API-Domaenen sind als Eigenschaften auf `MisskeyClient` zugaenglich. Administrator-APIs (`admin*`) und einige weitere Domaenen sind hier nicht aufgelistet:
+Die wichtigsten API-Domaenen sind als Eigenschaften auf `MisskeyClient` zugaenglich. Administrator-APIs (`admin*`) und `accountLifecycle` sind hier nicht aufgelistet:
 
 ```dart
 client.account       // Konto- und Profilverwaltung (/api/i/*)
