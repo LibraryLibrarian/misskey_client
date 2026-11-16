@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // 해당 노트에 대한 자신의 리노트 모두 취소
 await client.notes.unrenote(noteId: noteId);
 
-// 리노트한 사용자 목록
+// 해당 노트의 리노트 목록
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 

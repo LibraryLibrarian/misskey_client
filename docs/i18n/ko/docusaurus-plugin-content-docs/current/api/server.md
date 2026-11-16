@@ -204,7 +204,7 @@ final notes = await client.roles.notes(roleId: role.id, limit: 20);
 final members = await client.roles.users(roleId: role.id, limit: 20);
 ```
 
-모든 목록 메서드는 페이지네이션을 위해 `sinceId`, `untilId`, `sinceDate`, `untilDate`를 지원합니다.
+`notes()`와 `users()`는 페이지네이션을 위해 `sinceId`, `untilId`, `sinceDate`, `untilDate`를 지원합니다.
 
 ## ChartsApi
 

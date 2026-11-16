@@ -152,7 +152,7 @@ final expiresAt = DateTime.now()
 await client.mute.create(userId: userId, expiresAt: expiresAt);
 ```
 
-### Rétablir le son
+### Lever la mise en sourdine
 
 ```dart
 await client.mute.delete(userId: userId);

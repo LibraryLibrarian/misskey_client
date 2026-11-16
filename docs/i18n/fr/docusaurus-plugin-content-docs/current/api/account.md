@@ -76,7 +76,7 @@ Les deux méthodes retournent le `MisskeyUser` mis à jour.
 ```dart
 final favs = await client.account.favorites(limit: 20);
 for (final fav in favs) {
-  print(fav.note.text);
+  print(fav.note?.text);
 }
 ```
 

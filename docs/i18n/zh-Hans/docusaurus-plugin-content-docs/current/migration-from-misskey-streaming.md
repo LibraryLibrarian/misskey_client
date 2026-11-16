@@ -40,14 +40,18 @@ final home = await client.streaming.subscribe(
 |---|---|
 | `handle.stream` | `messages` / `events` / `notes` / `notifications` |
 | `messagesFor(id)` | 对应句柄的 `messages` |
+| `MisskeyStreamingClient.messages` | `client.streaming.messages`（外层信封）|
 | `captureNote(handle.id, noteId)` | `handle.captureNote(noteId)` |
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
+| 手动进行强类型解码 | `MisskeyStreamingEvent` 和 `MisskeyUnknownEvent` |
 | `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
 | `origin` | `MisskeyClientConfig.baseUrl` |
 | `tokenProvider` / `logger` 回调 | `tokenProvider` / `logger: FunctionLogger(oldLogger)`（`enableLog: true`） |
 | 重连设置 | `MisskeyStreamingConfig` |
+| — | `MisskeyStreamingConfig.subscriptionTimeout` |
 | `pingInterval` | 已移除；没有公开的应用层 ping 设置 |
 | `customHeaders` / `protocols` | 无公开集成设置 |
+| `connector` | 仅供内部测试注入使用 |
 | `exceptionMapper` | 强类型异常和 `errors` |
 
 捕获操作改为 `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`。需要复用连接时使用 `disconnect()`，彻底结束时使用 `dispose()` 或 `MisskeyClient.dispose()`。`sendToChannel()` 没有公开替代项。

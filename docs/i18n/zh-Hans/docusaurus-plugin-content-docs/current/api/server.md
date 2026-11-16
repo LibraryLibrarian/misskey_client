@@ -186,7 +186,7 @@ await client.federation.updateRemoteUser(userId: remoteUserId);
 
 ## RolesApi
 
-`client.roles` 公开公开的角色信息。
+`client.roles` 提供公开的角色信息。
 
 ```dart
 // 列出所有公开的、可探索的角色（需要认证）
@@ -204,7 +204,7 @@ final notes = await client.roles.notes(roleId: role.id, limit: 20);
 final members = await client.roles.users(roleId: role.id, limit: 20);
 ```
 
-所有列表方法均支持 `sinceId`、`untilId`、`sinceDate` 和 `untilDate` 进行分页。
+`notes()` 和 `users()` 支持 `sinceId`、`untilId`、`sinceDate` 和 `untilDate` 进行分页。
 
 ## ChartsApi
 

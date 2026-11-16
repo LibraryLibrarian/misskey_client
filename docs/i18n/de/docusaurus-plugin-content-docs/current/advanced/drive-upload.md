@@ -140,7 +140,7 @@ final file = await client.drive.files.showByUrl('https://example.com/file.jpg');
 final updated = await client.drive.files.update(
   fileId: driveFile.id,
   name: 'new-name.jpg',
-  comment: Optional('Updated alt text'), // Optional.null_() clears it
+  comment: Optional('Updated alt text'), // Optional.null_() loescht den Wert
   isSensitive: false,
 );
 ```

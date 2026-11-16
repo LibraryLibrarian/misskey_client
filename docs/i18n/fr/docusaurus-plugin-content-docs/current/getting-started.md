@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-Pour rediriger les journaux vers votre propre destination, passez une implémentation de `Logger` au constructeur :
+Pour rediriger les journaux vers votre propre destination, passez également une implémentation de `Logger` au constructeur (les journaux sont transmis uniquement lorsque `enableLog` vaut `true`) :
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

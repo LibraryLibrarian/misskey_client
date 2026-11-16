@@ -24,7 +24,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-每次新建连接（包括重连）时都会重新获取令牌。通过 `state` 读取当前状态，通过 `stateChanges` 监听后续变化，通过 `errors` 接收异步传输、协议和订阅错误。`connect()`、`disconnect()` 和 `reconnect()` 控制可复用连接，`dispose()` 则永久释放它。
+每次新建连接（包括重连）时都会重新获取令牌。通过 `state` 读取当前状态，通过 `stateChanges` 监听后续变化，通过 `errors` 接收异步传输、协议、超时和订阅错误。如果应用需要显示自动重连或重新订阅时的失败，请在连接前监听 `errors`。`connect()`、`disconnect()` 和 `reconnect()` 控制可复用连接，`dispose()` 则永久释放它。
 
 ## 订阅官方频道
 
@@ -92,6 +92,8 @@ await home.unsubscribe();
 await client.dispose();
 ```
 
-`unsubscribe()` 和 `MisskeyClient.dispose()` 可安全地重复或并发调用。活动订阅上限为 32 个。
+显式指定的 ID 必须在已注册的订阅中唯一，且不能复用当前连接代次中已被标记为失效（tombstone）的订阅 ID。
+
+`unsubscribe()` 和 `MisskeyClient.dispose()` 可安全地重复或并发调用。活动订阅上限为 32 个。客户端释放后再访问 `client.streaming` 会抛出 `StateError`。
 
 从旧包迁移时，请参阅[从misskey_streaming迁移](./migration-from-misskey-streaming.md)。

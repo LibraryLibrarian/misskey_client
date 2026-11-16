@@ -54,7 +54,7 @@ final client = MisskeyClient(
 );
 ```
 
-`FunctionLogger` hat Vorrang vor dem `enableLog`-Flag. Wenn Sie einen benutzerdefinierten Logger angeben, empfaengt er alle Protokollaufrufe unabhaengig von `enableLog`.
+Ein benutzerdefinierter Logger ersetzt den Standard-`StdoutLogger`, umgeht aber nicht `enableLog`: Er empfaengt Protokollaufrufe nur, solange `enableLog` auf `true` gesetzt ist.
 
 ## Einen benutzerdefinierten Logger implementieren
 
@@ -80,6 +80,7 @@ class MyLogger implements Logger {
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: MyLogger(),
@@ -90,7 +91,7 @@ final client = MisskeyClient(
 
 Wenn `enableLog: true` gesetzt ist und kein benutzerdefinierter `logger` angegeben wurde, wird der `StdoutLogger` verwendet. Dieser delegiert intern an das `logger`-Paket.
 
-In Debug-Builds werden alle Protokollebenen (Debug und hoeher) ausgegeben. In Release-Builds werden nur Warnungen und Fehler ausgegeben.
+HTTP-Anfrage-, Antwort- und Wiederholungsprotokolle werden nur ausgegeben, wenn `enableLog` auf `true` gesetzt ist und die App kein Release-Build ist. Der Standard-`StdoutLogger` verwendet den Entwicklungsfilter des `logger`-Pakets, der bei deaktivierten Assertions (wie in Release-Builds) alle Ausgaben unterdrueckt. Streaming-Protokollaufrufe haengen nur von `enableLog` ab, sodass ein benutzerdefinierter Logger sie auch in Release-Builds empfangen kann.
 
 Protokollformat:
 

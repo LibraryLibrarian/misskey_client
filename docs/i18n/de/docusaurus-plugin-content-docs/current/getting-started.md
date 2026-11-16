@@ -73,7 +73,7 @@ print(me.username); // Benutzername (ohne @)
 Jede API-Domaene ist als Eigenschaft auf `MisskeyClient` zugaenglich:
 
 ```dart
-client.account       // Konto- und Profielverwaltung (/api/i/*)
+client.account       // Konto- und Profilverwaltung (/api/i/*)
 client.announcements // Serverankuendigungen
 client.antennas      // Antennenverwaltung (Schluesselwort-Monitoring)
 client.ap            // ActivityPub-Endpunkte
@@ -86,7 +86,7 @@ client.drive         // Dateispeicher (drive.files, drive.folders, drive.stats)
 client.federation    // Informationen zu foederierten Instanzen
 client.flash         // Play (Flash)-Verwaltung
 client.following     // Folgen / Entfolgen
-client.gallery       // Galerie-Beitrageverwaltung
+client.gallery       // Verwaltung von Galerie-Beitraegen
 client.hashtags      // Hashtag-Informationen
 client.invite        // Einladungscodeverwaltung
 client.meta          // Server-Metadaten
@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-Um Protokolle an eine eigene Ausgabe weiterzuleiten, uebergeben Sie eine `Logger`-Implementierung an den Konstruktor:
+Um Protokolle an eine eigene Ausgabe weiterzuleiten, uebergeben Sie zusaetzlich eine `Logger`-Implementierung an den Konstruktor (Protokolle werden nur uebermittelt, solange `enableLog` auf `true` gesetzt ist):
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

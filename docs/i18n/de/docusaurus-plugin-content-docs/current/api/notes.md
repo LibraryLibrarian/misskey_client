@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // Alle eigenen Renotes einer Notiz zuruecknehmen
 await client.notes.unrenote(noteId: noteId);
 
-// Benutzer auflisten, die renotiert haben
+// Renotes einer Notiz auflisten
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 
@@ -259,7 +259,7 @@ final results = await client.notes.searchByTag(
 );
 ```
 
-## Favoriten und Entwerfe
+## Favoriten und Entwuerfe
 
 ```dart
 // Favoriten hinzufuegen / entfernen
@@ -269,7 +269,7 @@ await client.notes.favoritesDelete(noteId: noteId);
 // Eigene Favoriten abrufen
 final favs = await client.account.favorites(limit: 20);
 
-// Entwerfe auflisten
+// Entwuerfe auflisten
 final drafts = await client.notes.draftsList(limit: 20);
 
 // Entwurfanzahl

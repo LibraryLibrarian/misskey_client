@@ -204,7 +204,7 @@ final notes = await client.roles.notes(roleId: role.id, limit: 20);
 final members = await client.roles.users(roleId: role.id, limit: 20);
 ```
 
-Alle Listen-Methoden akzeptieren `sinceId`, `untilId`, `sinceDate` und `untilDate` fuer die Seitennavigation.
+`notes()` und `users()` akzeptieren `sinceId`, `untilId`, `sinceDate` und `untilDate` fuer die Seitennavigation.
 
 ## ChartsApi
 

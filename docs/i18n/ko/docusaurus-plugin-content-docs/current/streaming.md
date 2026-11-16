@@ -24,7 +24,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-토큰 제공자는 재연결을 포함한 새 연결마다 평가됩니다. 현재 상태는 `state`, 이후 변경은 `stateChanges`, 비동기 전송·프로토콜·구독 오류는 `errors`로 확인합니다. 재사용 가능한 연결은 `connect()`, `disconnect()`, `reconnect()`로 제어하고 `dispose()`로 완전히 종료합니다.
+토큰 제공자는 재연결을 포함한 새 연결마다 평가됩니다. 현재 상태는 `state`, 이후 변경은 `stateChanges`, 비동기 전송·프로토콜·타임아웃·구독 오류는 `errors`로 확인합니다. 자동 재연결이나 재구독 실패를 처리해야 한다면 연결하기 전에 `errors`를 구독하세요. 재사용 가능한 연결은 `connect()`, `disconnect()`, `reconnect()`로 제어하고 `dispose()`로 완전히 종료합니다.
 
 ## 공식 채널 구독
 
@@ -91,6 +91,8 @@ await eventListener.cancel();
 await home.unsubscribe();
 await client.dispose();
 ```
+
+명시적으로 지정한 `id`는 등록된 구독 사이에서 고유해야 하며, 현재 연결 세대의 tombstone에 남아 있는 ID도 재사용할 수 없습니다.
 
 `unsubscribe()`와 `MisskeyClient.dispose()`는 반복 또는 동시 호출해도 안전합니다. 활성 구독은 최대 32개입니다.
 

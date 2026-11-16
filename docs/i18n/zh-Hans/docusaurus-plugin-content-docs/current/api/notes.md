@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // 取消你对某条笔记的所有转发
 await client.notes.unrenote(noteId: noteId);
 
-// 列出转发该笔记的用户
+// 列出该笔记的转发
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 

@@ -5,7 +5,7 @@ title: "Inhalte"
 
 # Inhalte
 
-Diese Seite behandelt vier inhaltsorientierte APIs: Clips zum Lesezeichen von Notizen, Play (Flash) fuer AiScript-Mini-Apps, Gallery fuer Fotosammlungen und Pages fuer Rich-Text-Dokumente.
+Diese Seite behandelt vier inhaltsorientierte APIs: Clips zum Speichern von Notizen als Lesezeichen, Play (Flash) fuer AiScript-Mini-Apps, Gallery fuer Fotosammlungen und Pages fuer Rich-Text-Dokumente.
 
 ## Clips
 
@@ -127,7 +127,7 @@ await client.gallery.postsUnlike(postId: postId);
 
 ## Pages
 
-Pages sind reichhaltige Dokumente, die aus Inhaltsloecken und AiScript-Variablen zusammengesetzt sind.
+Pages sind reichhaltige Dokumente, die aus Inhaltsbloecken und AiScript-Variablen zusammengesetzt sind.
 
 ### Seiten abrufen
 

@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-如需将日志路由到自定义目标，可在构造函数中传入 `Logger` 实现：
+如需将日志路由到自定义目标，还需在构造函数中传入 `Logger` 实现（仅在 `enableLog` 为 `true` 时传递日志）：
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

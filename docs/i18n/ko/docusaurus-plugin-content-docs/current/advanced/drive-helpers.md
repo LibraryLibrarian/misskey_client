@@ -416,7 +416,7 @@ try {
 ```
 
 - 토큰에는 `write:drive` 및 `read:account` 권한이 필요합니다.
-- `mainSubscription`은 특정 main 구독을 선택합니다. 생략하면 `client.streaming.subscriptions`의 첫 등록 항목을 사용합니다. 구독이 없거나 비활성 상태이거나 스트리밍 클라이언트가 연결되지 않은 경우 `StateError`가 발생합니다.
+- `mainSubscription`은 특정 main 구독을 선택합니다. 생략하면 `client.streaming.subscriptions`에서 처음 등록된 `main` 채널 구독을 사용합니다. 구독이 없거나 비활성 상태이거나 스트리밍 클라이언트가 연결되지 않은 경우 `StateError`가 발생합니다.
 - 업로드 실패 시 서버는 이벤트를 보내지 않으므로 타임아웃으로만 실패를 확인할 수 있습니다. 타임아웃은 서버 측 업로드를 취소하지 않습니다. `timeout`(기본값 2분)은 업로드 요청 완료 후 시작됩니다.
 - 연결 재설정 중 도착한 이벤트는 유실됩니다.
 - 호출마다 고유한 `marker`가 생성됩니다. 직접 전달하는 경우 비어 있지 않아야 하며 업로드마다 고유해야 합니다.

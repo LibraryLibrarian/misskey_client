@@ -107,9 +107,9 @@ final isLastPage = page.length < limit;
 ## Alle Seiten durchlaufen
 
 ```dart
-Future<List<MisskeyNote>> fetchAllFavorites() async {
+Future<List<MisskeyNoteFavorite>> fetchAllFavorites() async {
   const limit = 100;
-  final all = <MisskeyNote>[];
+  final all = <MisskeyNoteFavorite>[];
   String? untilId;
 
   while (true) {

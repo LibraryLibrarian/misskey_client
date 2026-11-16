@@ -8,7 +8,7 @@ sidebar_position: 1
 
 `MisskeyClientConfig.enableLog` のデフォルトは `false` で、ログは無効です。`enableLog: true` を設定し、カスタム `logger` を指定しない場合は、`StdoutLogger` が `logger` パッケージを通じて標準出力にログを出力します。
 
-HTTP リクエスト・レスポンス・リトライのログは、`enableLog` が `true` で、リリースビルドではない場合にのみ出力されます。
+HTTP リクエスト・レスポンス・リトライのログは、`enableLog` が `true` で、リリースビルドではない場合にのみ出力されます。デフォルトの `StdoutLogger` は `logger` パッケージの development filter を使用するため、リリースビルドのように assert が無効な場合はすべての出力が抑制されます。Streaming のログ呼び出しは `enableLog` のみに依存するため、カスタム logger はリリースビルドでも受け取れます。
 
 ## ログの無効化
 

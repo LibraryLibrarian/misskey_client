@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-로그를 직접 처리하려면 생성자에 `Logger` 구현체를 전달합니다:
+로그를 직접 처리하려면 생성자에 `Logger` 구현체도 전달합니다 (`enableLog`가 `true`인 동안에만 로그가 전달됩니다):
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

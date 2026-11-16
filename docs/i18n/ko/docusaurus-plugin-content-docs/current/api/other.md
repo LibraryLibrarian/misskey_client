@@ -152,7 +152,9 @@ final active = await client.announcements.list(limit: 10);
 final all = await client.announcements.list(isActive: false, limit: 20);
 
 // 단일 공지사항 상세 정보
-final ann = await client.announcements.show(announcementId: ann.id);
+final ann = await client.announcements.show(
+  announcementId: active.first.id,
+);
 print(ann.title);
 print(ann.text);
 ```
