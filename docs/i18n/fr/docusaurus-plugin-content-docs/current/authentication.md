@@ -131,7 +131,7 @@ final client = MisskeyClient(
 );
 
 // Works without a token
-final info = await client.meta.fetch();
+final info = await client.meta.getMeta();
 final notes = await client.notes.timelineLocal(limit: 10);
 ```
 

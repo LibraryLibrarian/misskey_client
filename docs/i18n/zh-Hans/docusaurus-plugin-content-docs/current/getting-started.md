@@ -55,7 +55,7 @@ final client = MisskeyClient(
 获取服务器信息（无需认证）：
 
 ```dart
-final serverInfo = await client.meta.fetch();
+final serverInfo = await client.meta.getMeta();
 print(serverInfo.name);        // 服务器名称
 print(serverInfo.description); // 服务器描述
 ```

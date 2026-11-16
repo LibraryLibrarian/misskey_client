@@ -55,7 +55,7 @@ final client = MisskeyClient(
 Abruf von Serverinformationen (keine Authentifizierung erforderlich):
 
 ```dart
-final serverInfo = await client.meta.fetch();
+final serverInfo = await client.meta.getMeta();
 print(serverInfo.name);        // Servername
 print(serverInfo.description); // Serverbeschreibung
 ```

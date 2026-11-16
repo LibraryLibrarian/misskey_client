@@ -131,7 +131,7 @@ final client = MisskeyClient(
 );
 
 // 无需令牌即可工作
-final info = await client.meta.fetch();
+final info = await client.meta.getMeta();
 final notes = await client.notes.timelineLocal(limit: 10);
 ```
 

@@ -55,7 +55,7 @@ final client = MisskeyClient(
 Récupérer les informations du serveur (aucune authentification requise) :
 
 ```dart
-final serverInfo = await client.meta.fetch();
+final serverInfo = await client.meta.getMeta();
 print(serverInfo.name);        // Nom du serveur
 print(serverInfo.description); // Description du serveur
 ```

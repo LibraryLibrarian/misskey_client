@@ -198,7 +198,7 @@ await client.account.registry.set(
 
 ```dart
 // TOTP 등록 시작
-final reg = await client.account.twoFactor.registerTotp(password: 'mypassword');
+final reg = await client.account.twoFactor.register(password: 'mypassword');
 print(reg.qr); // UI에 표시할 QR 코드 데이터 URL
 
 // 인증 앱의 첫 번째 코드로 TOTP 확인 및 활성화

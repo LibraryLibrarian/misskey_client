@@ -55,7 +55,7 @@ final client = MisskeyClient(
 서버 정보 가져오기 (인증 불필요):
 
 ```dart
-final serverInfo = await client.meta.fetch();
+final serverInfo = await client.meta.getMeta();
 print(serverInfo.name);        // 서버 이름
 print(serverInfo.description); // 서버 설명
 ```
