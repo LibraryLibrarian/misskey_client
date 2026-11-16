@@ -56,6 +56,6 @@ Umschließen Sie einen vorhandenen Callback `void oldLogger(String level, String
 | `connector` | Nur für interne Testinjektion |
 | `exceptionMapper` | Typisierte Ausnahmen und `errors` |
 
-Capture-Aufrufe werden zu `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`. Nutzen Sie `disconnect()` zur Wiederverwendung und `dispose()` oder `MisskeyClient.dispose()` zum endgültigen Beenden. `MisskeyClient.dispose()` ist idempotent und schliesst sowohl initialisierte Streaming-Ressourcen als auch den HTTP-Transport. Für `sendToChannel()` gibt es keinen öffentlichen Ersatz. Erstellen Sie ein Issue, wenn ein Upstream- oder Fork-Protokoll das Senden von Channel-Events erfordert.
+Capture-Aufrufe werden zu `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`. Nutzen Sie `disconnect()` zur Wiederverwendung und `dispose()` oder `MisskeyClient.dispose()` zum endgültigen Beenden. `MisskeyClient.dispose()` ist idempotent und schließt sowohl initialisierte Streaming-Ressourcen als auch den HTTP-Transport. Für `sendToChannel()` gibt es keinen öffentlichen Ersatz. Erstellen Sie ein Issue, wenn ein Upstream- oder Fork-Protokoll das Senden von Channel-Events erfordert.
 
 Details stehen im [Streaming-API-Leitfaden](./streaming.md) und in der [vollständigen Migrationsreferenz](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md).

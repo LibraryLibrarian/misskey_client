@@ -45,7 +45,7 @@ final home = await client.streaming.subscribe(
 
 | ストリーム | 内容 |
 |---|---|
-| `messages` | envelope を保持した正規化済み `MisskeyStreamingMessage` |
+| `messages` | デコード済みの envelope を `raw` に保持した正規化済み `MisskeyStreamingMessage` |
 | `events` | 型付き `MisskeyStreamingEvent` |
 | `notes` | ノートイベントから抽出した `MisskeyNote` |
 | `notifications` | 通知イベントから抽出した `MisskeyNotification` |
@@ -64,9 +64,11 @@ final eventListener = home.events.listen((event) {
 });
 ```
 
-`MisskeyUnknownEvent` は `type`、`body`、元の `raw` メッセージ、任意の `decodeError` を保持します。サーバー側で追加されたイベントも確認できるように、フォールバック分岐を残してください。グローバルの `client.streaming.messages` は外側の envelope を保持し、購読の `messages` は内側のイベントに正規化され、その購読の `subscriptionId` を持ちます。
+`MisskeyUnknownEvent` は `type`、`body`、元の `raw` メッセージ、任意の `decodeError` を保持します。サーバー側で追加されたイベントも確認できるように、フォールバック分岐を残してください。グローバルの `client.streaming.messages` は外側の wire envelope を保持し、購読の `messages` は内側のイベントに正規化され、その購読の `subscriptionId` を持ちます。
 
 ## ノートの更新をキャプチャする
+
+更新を受け取るハンドルを通じて、既知のノートをキャプチャします。
 
 ```dart
 home.captureNote(noteId);
@@ -78,7 +80,7 @@ home.uncaptureNote(noteId);
 
 ## フォーク固有チャンネルと終了処理
 
-`subscribeRaw()` にも、同じ ACK・再接続・メッセージ・クリーンアップの挙動が適用されます。Dart ストリームのリスナーは個別にキャンセルしてから、チャンネルの購読を解除してください。
+Misskey のフォークが型付きファクトリのないチャンネルを公開している場合は、`subscribeRaw()` を使います。 `subscribeRaw()` にも、同じ ACK・再接続・メッセージ・クリーンアップの挙動が適用されます。Dart ストリームのリスナーは個別にキャンセルしてから、チャンネルの購読を解除してください。
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(

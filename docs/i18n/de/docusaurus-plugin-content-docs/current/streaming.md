@@ -8,7 +8,7 @@ Die integrierte Streaming API liefert Timelines, Benachrichtigungen und Updates 
 
 ## Konfigurieren und verbinden
 
-Uebergeben Sie `MisskeyStreamingConfig` nur, wenn Sie das Verbindungsverhalten aendern muessen.
+Übergeben Sie `MisskeyStreamingConfig` nur, wenn Sie das Verbindungsverhalten ändern müssen.
 
 ```dart
 final client = MisskeyClient(
@@ -26,7 +26,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-Der Token-Provider wird bei jeder neuen Verbindung einschließlich Wiederverbindungen ausgewertet. So wird ein aktualisiertes Token wirksam, ohne den Client neu zu erstellen. `state` enthält den aktuellen Zustand, `stateChanges` spätere Änderungen und `errors` asynchrone Transport-, Protokoll-, Timeout- und Subscription-Fehler. Registrieren Sie vor dem Verbindungsaufbau einen Listener fuer `errors`, wenn die Anwendung Fehler bei der automatischen Wiederverbindung oder beim erneuten Abonnieren behandeln soll. `connect()`, `disconnect()` und `reconnect()` steuern die wiederverwendbare Verbindung; `dispose()` beendet sie endgültig. `disconnect()` schliesst die Verbindung, ohne Subscriptions oder den Streaming-Client freizugeben.
+Der Token-Provider wird bei jeder neuen Verbindung einschließlich Wiederverbindungen ausgewertet. So wird ein aktualisiertes Token wirksam, ohne den Client neu zu erstellen. `state` enthält den aktuellen Zustand, `stateChanges` spätere Änderungen und `errors` asynchrone Transport-, Protokoll-, Timeout- und Subscription-Fehler. Registrieren Sie vor dem Verbindungsaufbau einen Listener für `errors`, wenn die Anwendung Fehler bei der automatischen Wiederverbindung oder beim erneuten Abonnieren behandeln soll. `connect()`, `disconnect()` und `reconnect()` steuern die wiederverwendbare Verbindung; `dispose()` beendet sie endgültig. `disconnect()` schließt die Verbindung, ohne Subscriptions oder den Streaming-Client freizugeben.
 
 ## Offiziellen Channel abonnieren
 
@@ -48,7 +48,7 @@ Während einer Verbindung wird `subscribe()` nach der `connected`-Bestätigung d
 | `messages` | Normalisierte `MisskeyStreamingMessage` mit Raw-Envelope |
 | `events` | Typisierte `MisskeyStreamingEvent` |
 | `notes` | Aus Note-Events extrahierte `MisskeyNote` |
-| `notifications` | Aus Events extrahierte `MisskeyNotification` |
+| `notifications` | Aus Benachrichtigungs-Events extrahierte `MisskeyNotification` |
 
 ```dart
 final noteListener = home.notes.listen((note) => print(note.text));
@@ -64,9 +64,11 @@ final eventListener = home.events.listen((event) {
 });
 ```
 
-`MisskeyUnknownEvent` bewahrt `type`, `body`, die ursprüngliche `raw`-Nachricht und den optionalen `decodeError`. Behalten Sie einen Fallback-Zweig bei, damit auch vom Server neu hinzugefuegte Events sichtbar bleiben. Der globale Stream `client.streaming.messages` bewahrt die äußere Wire-Envelope; Subscription-`messages` sind auf das innere Event normalisiert und enthalten die `subscriptionId` der jeweiligen Subscription.
+`MisskeyUnknownEvent` bewahrt `type`, `body`, die ursprüngliche `raw`-Nachricht und den optionalen `decodeError`. Behalten Sie einen Fallback-Zweig bei, damit auch vom Server neu hinzugefügte Events sichtbar bleiben. Der globale Stream `client.streaming.messages` bewahrt die äußere Wire-Envelope; Subscription-`messages` sind auf das innere Event normalisiert und enthalten die `subscriptionId` der jeweiligen Subscription.
 
 ## Note-Updates erfassen
+
+Erfassen Sie eine bekannte Note über das Handle, das ihre Updates erhalten soll:
 
 ```dart
 home.captureNote(noteId);
@@ -78,7 +80,7 @@ Captures werden über Subscriptions hinweg referenzgezählt und nach Wiederverbi
 
 ## Fork-spezifische Channels und Cleanup
 
-Dasselbe Verhalten fuer Bestaetigungen, Wiederverbindungen, Nachrichten und Cleanup gilt auch fuer `subscribeRaw()`. Beenden Sie Dart-Stream-Listener separat und melden Sie anschliessend die Channel-Subscription ab.
+Verwenden Sie `subscribeRaw()`, wenn ein Misskey-Fork einen Channel bereitstellt, für den es keine typisierte Factory gibt. Dasselbe Verhalten für Bestätigungen, Wiederverbindungen, Nachrichten und Cleanup gilt auch für `subscribeRaw()`. Beenden Sie Dart-Stream-Listener separat und melden Sie anschließend die Channel-Subscription ab.
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(

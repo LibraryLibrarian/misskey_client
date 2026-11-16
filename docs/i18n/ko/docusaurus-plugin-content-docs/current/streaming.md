@@ -68,6 +68,8 @@ final eventListener = home.events.listen((event) {
 
 ## 노트 업데이트 캡처
 
+업데이트를 받을 핸들을 통해 알려진 노트를 캡처합니다.
+
 ```dart
 home.captureNote(noteId);
 // events에서 reacted, unreacted, deleted, pollVoted를 수신합니다.
@@ -78,7 +80,7 @@ home.uncaptureNote(noteId);
 
 ## 포크 전용 채널 및 정리
 
-`subscribeRaw()`에도 동일한 승인, 재연결, 메시지 및 정리 동작이 적용됩니다. Dart 스트림 리스너는 별도로 취소한 뒤 채널 구독을 해제하세요.
+Misskey 포크가 타입이 지정된 팩토리가 없는 채널을 제공하는 경우 `subscribeRaw()`를 사용합니다. `subscribeRaw()`에도 동일한 승인, 재연결, 메시지 및 정리 동작이 적용됩니다. Dart 스트림 리스너는 별도로 취소한 뒤 채널 구독을 해제하세요.
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(

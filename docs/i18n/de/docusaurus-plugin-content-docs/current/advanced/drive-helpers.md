@@ -418,7 +418,7 @@ try {
 ```
 
 - Das Token benötigt die Berechtigungen `write:drive` und `read:account`.
-- Mit `mainSubscription` kann ein bestimmtes `main`-Abonnement ausgewählt werden; andernfalls wird das zuerst in `client.streaming.subscriptions` registrierte verwendet. Ein fehlendes oder inaktives Abonnement oder eine nicht verbundene Streaming-Verbindung löst `StateError` aus.
+- Mit `mainSubscription` kann ein bestimmtes `main`-Abonnement ausgewählt werden; andernfalls wird das zuerst in `client.streaming.subscriptions` registrierte `main`-Channel-Abonnement verwendet. Ein fehlendes oder inaktives Abonnement oder eine nicht verbundene Streaming-Verbindung löst `StateError` aus.
 - Bei einem fehlgeschlagenen Upload sendet der Server kein Ereignis, daher ist ein Fehler nur als Timeout erkennbar. Ein Timeout bricht den serverseitigen Upload nicht ab. `timeout` (Standardwert 2 Minuten) beginnt nach Abschluss der Upload-Anfrage.
 - Während einer Wiederverbindung eintreffende Ereignisse gehen verloren.
 - Für jeden Aufruf wird ein eindeutiger `marker` generiert. Ein eigener Wert darf nicht leer sein und muss für jeden Upload eindeutig sein.

@@ -68,6 +68,8 @@ final eventListener = home.events.listen((event) {
 
 ## Capturer les mises à jour d'une Note
 
+Capturez une Note connue via le handle qui doit recevoir ses mises à jour :
+
 ```dart
 home.captureNote(noteId);
 // events reçoit reacted, unreacted, deleted et pollVoted.
@@ -78,7 +80,7 @@ Les captures sont comptées par référence entre souscriptions et restaurées a
 
 ## Channels propres aux forks et nettoyage
 
-Les mêmes comportements d'accusé de réception, de reconnexion, de message et de nettoyage s'appliquent à `subscribeRaw()`. Annulez séparément les écouteurs de flux Dart, puis résiliez la souscription au Channel.
+Utilisez `subscribeRaw()` lorsqu'un fork de Misskey expose un channel sans fabrique typée. Les mêmes comportements d'accusé de réception, de reconnexion, de message et de nettoyage s'appliquent à `subscribeRaw()`. Annulez séparément les écouteurs de flux Dart, puis résiliez la souscription au Channel.
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(

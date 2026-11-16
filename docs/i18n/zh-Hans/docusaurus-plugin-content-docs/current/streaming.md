@@ -68,6 +68,8 @@ final eventListener = home.events.listen((event) {
 
 ## 捕获笔记更新
 
+通过应接收更新的句柄捕获已知笔记：
+
 ```dart
 home.captureNote(noteId);
 // events 可接收 reacted、unreacted、deleted 和 pollVoted。
@@ -78,7 +80,7 @@ home.uncaptureNote(noteId);
 
 ## 分支特有频道与清理
 
-`subscribeRaw()` 同样适用上述确认、重连、消息和清理行为。请单独取消 Dart 流监听器，然后取消频道订阅。
+当 Misskey 分支版本提供没有类型化工厂的频道时，使用 `subscribeRaw()`。 `subscribeRaw()` 同样适用上述确认、重连、消息和清理行为。请单独取消 Dart 流监听器，然后取消频道订阅。
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(
