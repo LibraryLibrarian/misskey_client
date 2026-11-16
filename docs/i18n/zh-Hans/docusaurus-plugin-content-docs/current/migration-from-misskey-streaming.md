@@ -32,7 +32,7 @@ final home = await client.streaming.subscribe(
 );
 ```
 
-不再需要 `MisskeyStreaming.fromClient()`。分支特有频道使用 `subscribeRaw()`，并对现在为异步的 `unsubscribe()` 使用 `await`。
+不再需要 `MisskeyStreaming.fromClient()`。集成连接共享 `MisskeyClient` 的 URL、令牌提供器、日志记录器和日志设置。分支特有频道使用 `subscribeRaw()`，并对现在为异步的 `unsubscribe()` 使用 `await`。
 
 请用 `FunctionLogger(oldLogger)` 包装现有的 `void oldLogger(String level, String message)` 回调，将其传给客户端的 `logger`，并将 `MisskeyClientConfig.enableLog` 设为 `true`。
 
@@ -42,11 +42,13 @@ final home = await client.streaming.subscribe(
 | `messagesFor(id)` | 对应句柄的 `messages` |
 | `MisskeyStreamingClient.messages` | `client.streaming.messages`（外层信封）|
 | `captureNote(handle.id, noteId)` | `handle.captureNote(noteId)` |
+| `uncaptureNote(handle.id, noteId)` | `handle.uncaptureNote(noteId)` |
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
 | 手动进行强类型解码 | `MisskeyStreamingEvent` 和 `MisskeyUnknownEvent` |
 | `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
 | `origin` | `MisskeyClientConfig.baseUrl` |
-| `tokenProvider` / `logger` 回调 | `tokenProvider` / `logger: FunctionLogger(oldLogger)`（`enableLog: true`） |
+| `token` / `tokenProvider` | `MisskeyClient` 的 `tokenProvider` 参数 |
+| `debugLog` / `logger` 回调 | 客户端的 `enableLog: true` / `logger: FunctionLogger(oldLogger)` |
 | 重连设置 | `MisskeyStreamingConfig` |
 | — | `MisskeyStreamingConfig.subscriptionTimeout` |
 | `pingInterval` | 已移除；没有公开的应用层 ping 设置 |
@@ -54,6 +56,6 @@ final home = await client.streaming.subscribe(
 | `connector` | 仅供内部测试注入使用 |
 | `exceptionMapper` | 强类型异常和 `errors` |
 
-捕获操作改为 `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`。需要复用连接时使用 `disconnect()`，彻底结束时使用 `dispose()` 或 `MisskeyClient.dispose()`。`sendToChannel()` 没有公开替代项。
+捕获操作改为 `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`。需要复用连接时使用 `disconnect()`，彻底结束时使用 `dispose()` 或 `MisskeyClient.dispose()`。`MisskeyClient.dispose()` 是幂等的，会关闭已初始化的 Streaming 资源和 HTTP 传输层。`sendToChannel()` 没有公开替代项。如果上游或分支协议需要向频道发送事件，请提交 issue。
 
 详情请参阅[Streaming API指南](./streaming.md)和[完整迁移参考](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md)。

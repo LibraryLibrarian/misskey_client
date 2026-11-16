@@ -54,7 +54,7 @@ final client = MisskeyClient(
 );
 ```
 
-Ein benutzerdefinierter Logger ersetzt den Standard-`StdoutLogger`, umgeht aber nicht `enableLog`: Er empfaengt Protokollaufrufe nur, solange `enableLog` auf `true` gesetzt ist.
+Ein benutzerdefinierter Logger ersetzt den Standard-`StdoutLogger`, umgeht `enableLog` jedoch nicht: Er empfaengt Protokollaufrufe nur, solange `enableLog` auf `true` gesetzt ist.
 
 ## Einen benutzerdefinierten Logger implementieren
 
@@ -91,7 +91,7 @@ final client = MisskeyClient(
 
 Wenn `enableLog: true` gesetzt ist und kein benutzerdefinierter `logger` angegeben wurde, wird der `StdoutLogger` verwendet. Dieser delegiert intern an das `logger`-Paket.
 
-HTTP-Anfrage-, Antwort- und Wiederholungsprotokolle werden nur ausgegeben, wenn `enableLog` auf `true` gesetzt ist und die App kein Release-Build ist. Der Standard-`StdoutLogger` verwendet den Entwicklungsfilter des `logger`-Pakets, der bei deaktivierten Assertions (wie in Release-Builds) alle Ausgaben unterdrueckt. Streaming-Protokollaufrufe haengen nur von `enableLog` ab, sodass ein benutzerdefinierter Logger sie auch in Release-Builds empfangen kann.
+Protokolle zu HTTP-Anfragen, -Antworten und Wiederholungsversuchen werden nur ausgegeben, wenn `enableLog` auf `true` gesetzt ist und es sich nicht um einen Release-Build handelt. Der Standard-`StdoutLogger` verwendet den Entwicklungsfilter des `logger`-Pakets, der bei deaktivierten Assertions (wie in Release-Builds) alle Ausgaben unterdrueckt. Streaming-Protokollaufrufe haengen nur von `enableLog` ab, sodass ein benutzerdefinierter Logger sie auch in Release-Builds empfangen kann.
 
 Protokollformat:
 

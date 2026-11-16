@@ -8,6 +8,8 @@ L'API Streaming intégrée fournit les fils d'actualité, notifications et mises
 
 ## Configuration et connexion
 
+Ne passez `MisskeyStreamingConfig` que si vous devez modifier le comportement de connexion.
+
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
@@ -24,7 +26,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-Le fournisseur de jeton est évalué à chaque nouvelle connexion, reconnexions comprises. `state` donne l'état actuel, `stateChanges` les changements ultérieurs et `errors` les erreurs asynchrones de transport, de protocole, de dépassement de délai et de souscription. Écoutez `errors` avant de vous connecter si l'application doit gérer les échecs de reconnexion automatique ou de renouvellement des souscriptions. `connect()`, `disconnect()` et `reconnect()` contrôlent la connexion réutilisable ; `dispose()` y met fin définitivement.
+Le fournisseur de jeton est évalué à chaque nouvelle connexion, reconnexions comprises. Cela permet de prendre en compte un jeton actualisé sans recréer le client. `state` donne l'état actuel, `stateChanges` les changements ultérieurs et `errors` les erreurs asynchrones de transport, de protocole, de dépassement de délai et de souscription. Écoutez `errors` avant de vous connecter si l'application doit gérer les échecs de reconnexion automatique ou de renouvellement des souscriptions. `connect()`, `disconnect()` et `reconnect()` contrôlent la connexion réutilisable ; `dispose()` y met fin définitivement. `disconnect()` ferme la connexion sans libérer les souscriptions ni le client Streaming.
 
 ## Souscrire à un Channel officiel
 
@@ -62,7 +64,7 @@ final eventListener = home.events.listen((event) {
 });
 ```
 
-`MisskeyUnknownEvent` conserve `type`, `body`, le message source `raw` et l'éventuel `decodeError`. Le flux global `client.streaming.messages` conserve l'enveloppe réseau externe ; les `messages` d'une souscription sont normalisés vers l'événement interne.
+`MisskeyUnknownEvent` conserve `type`, `body`, le message source `raw` et l'éventuel `decodeError`. Conservez une branche de repli pour que les événements ajoutés par le serveur restent observables. Le flux global `client.streaming.messages` conserve l'enveloppe réseau externe ; les `messages` d'une souscription sont normalisés vers l'événement interne et portent le `subscriptionId` de cette souscription.
 
 ## Capturer les mises à jour d'une Note
 
@@ -75,6 +77,8 @@ home.uncaptureNote(noteId);
 Les captures sont comptées par référence entre souscriptions et restaurées après reconnexion. Les appels répétés sur le même handle sont idempotents.
 
 ## Channels propres aux forks et nettoyage
+
+Les mêmes comportements d'accusé de réception, de reconnexion, de message et de nettoyage s'appliquent à `subscribeRaw()`. Annulez séparément les écouteurs de flux Dart, puis résiliez la souscription au Channel.
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(

@@ -4,9 +4,11 @@ title: Streaming API
 
 # Streaming API
 
-集成的 Streaming API 通过 WebSocket 提供时间线、通知和已捕获帖子的更新。延迟创建的 `MisskeyClient.streaming` 会共享客户端的 URL、令牌提供器、日志记录器和日志设置。
+集成的 Streaming API 通过 WebSocket 提供时间线、通知和已捕获笔记的更新。延迟创建的 `MisskeyClient.streaming` 会共享客户端的 URL、令牌提供器、日志记录器和日志设置。
 
 ## 配置并连接
+
+仅在需要更改连接行为时传入 `MisskeyStreamingConfig`。
 
 ```dart
 final client = MisskeyClient(
@@ -24,7 +26,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-每次新建连接（包括重连）时都会重新获取令牌。通过 `state` 读取当前状态，通过 `stateChanges` 监听后续变化，通过 `errors` 接收异步传输、协议、超时和订阅错误。如果应用需要显示自动重连或重新订阅时的失败，请在连接前监听 `errors`。`connect()`、`disconnect()` 和 `reconnect()` 控制可复用连接，`dispose()` 则永久释放它。
+每次新建连接（包括重连）时都会重新获取令牌。这样无需重新创建客户端即可使更新后的令牌生效。通过 `state` 读取当前状态，通过 `stateChanges` 监听后续变化，通过 `errors` 接收异步传输、协议、超时和订阅错误。如果应用需要处理自动重连或重新订阅时的失败，请在连接前监听 `errors`。`connect()`、`disconnect()` 和 `reconnect()` 控制可复用连接，`dispose()` 则永久释放它。`disconnect()` 关闭连接，但不会释放订阅或 Streaming 客户端。
 
 ## 订阅官方频道
 
@@ -45,7 +47,7 @@ final home = await client.streaming.subscribe(
 |---|---|
 | `messages` | 保留原始信封的标准化 `MisskeyStreamingMessage` |
 | `events` | 强类型 `MisskeyStreamingEvent` |
-| `notes` | 从帖子事件中提取的 `MisskeyNote` |
+| `notes` | 从笔记事件中提取的 `MisskeyNote` |
 | `notifications` | 从通知事件中提取的 `MisskeyNotification` |
 
 ```dart
@@ -62,9 +64,9 @@ final eventListener = home.events.listen((event) {
 });
 ```
 
-`MisskeyUnknownEvent` 保留 `type`、`body`、源 `raw` 消息和可选的 `decodeError`。全局 `client.streaming.messages` 保留外层网络信封，而订阅的 `messages` 会标准化为内层事件。
+`MisskeyUnknownEvent` 保留 `type`、`body`、源 `raw` 消息和可选的 `decodeError`。请保留兜底分支，以便仍能观察到服务器新增的事件。全局 `client.streaming.messages` 保留外层网络信封，而订阅的 `messages` 会标准化为内层事件，并携带该订阅的 `subscriptionId`。
 
-## 捕获帖子更新
+## 捕获笔记更新
 
 ```dart
 home.captureNote(noteId);
@@ -75,6 +77,8 @@ home.uncaptureNote(noteId);
 捕获在订阅之间进行引用计数，并会在重连后恢复。同一句柄上的重复调用是幂等的。
 
 ## 分支特有频道与清理
+
+`subscribeRaw()` 同样适用上述确认、重连、消息和清理行为。请单独取消 Dart 流监听器，然后取消频道订阅。
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(

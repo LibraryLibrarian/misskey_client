@@ -32,7 +32,7 @@ final home = await client.streaming.subscribe(
 );
 ```
 
-`MisskeyStreaming.fromClient()` ist nicht mehr nötig. Für Fork-spezifische Channels dient `subscribeRaw()`; das jetzt asynchrone `unsubscribe()` muss mit `await` aufgerufen werden.
+`MisskeyStreaming.fromClient()` ist nicht mehr nötig. Die integrierte Verbindung verwendet URL, Token-Provider, Logger und Log-Einstellung von `MisskeyClient` gemeinsam. Für Fork-spezifische Channels dient `subscribeRaw()`; das jetzt asynchrone `unsubscribe()` muss mit `await` aufgerufen werden.
 
 Umschließen Sie einen vorhandenen Callback `void oldLogger(String level, String message)` mit `FunctionLogger(oldLogger)`, übergeben Sie ihn als `logger` des Clients und setzen Sie `MisskeyClientConfig.enableLog` auf `true`.
 
@@ -42,11 +42,13 @@ Umschließen Sie einen vorhandenen Callback `void oldLogger(String level, String
 | `messagesFor(id)` | `messages` des passenden Handles |
 | `MisskeyStreamingClient.messages` | `client.streaming.messages` (äußere Envelopes) |
 | `captureNote(handle.id, noteId)` | `handle.captureNote(noteId)` |
+| `uncaptureNote(handle.id, noteId)` | `handle.uncaptureNote(noteId)` |
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
 | Manuelle typisierte Dekodierung | `MisskeyStreamingEvent` und `MisskeyUnknownEvent` |
 | `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
 | `origin` | `MisskeyClientConfig.baseUrl` |
-| `tokenProvider` / `logger`-Callback | `tokenProvider` / `logger: FunctionLogger(oldLogger)` (`enableLog: true`) |
+| `token` / `tokenProvider` | Argument `tokenProvider` von `MisskeyClient` |
+| `debugLog` / `logger`-Callback | `enableLog: true` / `logger: FunctionLogger(oldLogger)` des Clients |
 | Wiederverbindungseinstellungen | `MisskeyStreamingConfig` |
 | — | `MisskeyStreamingConfig.subscriptionTimeout` |
 | `pingInterval` | Entfernt; keine öffentliche anwendungsseitige Ping-Einstellung |
@@ -54,6 +56,6 @@ Umschließen Sie einen vorhandenen Callback `void oldLogger(String level, String
 | `connector` | Nur für interne Testinjektion |
 | `exceptionMapper` | Typisierte Ausnahmen und `errors` |
 
-Capture-Aufrufe werden zu `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`. Nutzen Sie `disconnect()` zur Wiederverwendung und `dispose()` oder `MisskeyClient.dispose()` zum endgültigen Beenden. Für `sendToChannel()` gibt es keinen öffentlichen Ersatz.
+Capture-Aufrufe werden zu `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`. Nutzen Sie `disconnect()` zur Wiederverwendung und `dispose()` oder `MisskeyClient.dispose()` zum endgültigen Beenden. `MisskeyClient.dispose()` ist idempotent und schliesst sowohl initialisierte Streaming-Ressourcen als auch den HTTP-Transport. Für `sendToChannel()` gibt es keinen öffentlichen Ersatz. Erstellen Sie ein Issue, wenn ein Upstream- oder Fork-Protokoll das Senden von Channel-Events erfordert.
 
 Details stehen im [Streaming-API-Leitfaden](./streaming.md) und in der [vollständigen Migrationsreferenz](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md).

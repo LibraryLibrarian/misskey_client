@@ -32,7 +32,7 @@ final home = await client.streaming.subscribe(
 );
 ```
 
-`MisskeyStreaming.fromClient()` は不要です。フォーク固有チャンネルには `subscribeRaw()` を使い、非同期になった `unsubscribe()` を `await` してください。
+`MisskeyStreaming.fromClient()` は不要です。統合された接続は `MisskeyClient` の URL、トークンプロバイダー、ロガー、ログ設定を共有します。フォーク固有チャンネルには `subscribeRaw()` を使い、非同期になった `unsubscribe()` を `await` してください。
 
 既存の `void oldLogger(String level, String message)` コールバックは `FunctionLogger(oldLogger)` でラップしてクライアントの `logger` に渡し、`MisskeyClientConfig.enableLog` を `true` にします。
 
@@ -40,8 +40,9 @@ final home = await client.streaming.subscribe(
 |---|---|
 | `handle.stream` | `messages` / `events` / `notes` / `notifications` |
 | `messagesFor(id)` | 対象ハンドルの `messages` |
-| `MisskeyStreamingClient.messages` | `client.streaming.messages`（外側のエンベロープ） |
+| `MisskeyStreamingClient.messages` | `client.streaming.messages`（外側の envelope） |
 | `captureNote(handle.id, noteId)` | `handle.captureNote(noteId)` |
+| `uncaptureNote(handle.id, noteId)` | `handle.uncaptureNote(noteId)` |
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
 | 手動の型付きデコード | `MisskeyStreamingEvent` と `MisskeyUnknownEvent` |
 | `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
@@ -55,6 +56,6 @@ final home = await client.streaming.subscribe(
 | `connector` | 内部テストでの注入専用 |
 | `exceptionMapper` | 型付き例外と `errors` |
 
-キャプチャ操作は `home.captureNote(noteId)` / `home.uncaptureNote(noteId)` に移動します。再利用する場合は `disconnect()`、完全終了は `dispose()` または `MisskeyClient.dispose()` を使用します。`sendToChannel()` の公開代替はありません。
+キャプチャ操作は `home.captureNote(noteId)` / `home.uncaptureNote(noteId)` に移動します。再利用する場合は `disconnect()`、完全終了は `dispose()` または `MisskeyClient.dispose()` を使用します。`MisskeyClient.dispose()` は冪等で、初期化済みの Streaming リソースと HTTP トランスポートの両方を閉じます。`sendToChannel()` の公開代替はありません。上流またはフォークのプロトコルでチャンネルへのイベント送信が必要な場合は、Issue を作成してください。
 
 詳細は[Streaming APIガイド](./streaming.md)と[完全な移行リファレンス](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md)を参照してください。

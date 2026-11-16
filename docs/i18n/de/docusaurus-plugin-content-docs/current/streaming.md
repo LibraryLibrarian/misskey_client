@@ -8,6 +8,8 @@ Die integrierte Streaming API liefert Timelines, Benachrichtigungen und Updates 
 
 ## Konfigurieren und verbinden
 
+Uebergeben Sie `MisskeyStreamingConfig` nur, wenn Sie das Verbindungsverhalten aendern muessen.
+
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
@@ -24,7 +26,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-Der Token-Provider wird bei jeder neuen Verbindung einschließlich Wiederverbindungen ausgewertet. `state` enthält den aktuellen Zustand, `stateChanges` spätere Änderungen und `errors` asynchrone Transport-, Protokoll-, Timeout- und Subscription-Fehler. Abonnieren Sie `errors` vor dem Verbindungsaufbau, wenn die Anwendung Fehler bei der automatischen Wiederverbindung oder beim erneuten Abonnieren behandeln soll. `connect()`, `disconnect()` und `reconnect()` steuern die wiederverwendbare Verbindung; `dispose()` beendet sie endgültig.
+Der Token-Provider wird bei jeder neuen Verbindung einschließlich Wiederverbindungen ausgewertet. So wird ein aktualisiertes Token wirksam, ohne den Client neu zu erstellen. `state` enthält den aktuellen Zustand, `stateChanges` spätere Änderungen und `errors` asynchrone Transport-, Protokoll-, Timeout- und Subscription-Fehler. Registrieren Sie vor dem Verbindungsaufbau einen Listener fuer `errors`, wenn die Anwendung Fehler bei der automatischen Wiederverbindung oder beim erneuten Abonnieren behandeln soll. `connect()`, `disconnect()` und `reconnect()` steuern die wiederverwendbare Verbindung; `dispose()` beendet sie endgültig. `disconnect()` schliesst die Verbindung, ohne Subscriptions oder den Streaming-Client freizugeben.
 
 ## Offiziellen Channel abonnieren
 
@@ -62,7 +64,7 @@ final eventListener = home.events.listen((event) {
 });
 ```
 
-`MisskeyUnknownEvent` bewahrt `type`, `body`, die ursprüngliche `raw`-Nachricht und den optionalen `decodeError`. Der globale Stream `client.streaming.messages` bewahrt die äußere Wire-Envelope; Subscription-`messages` sind auf das innere Event normalisiert.
+`MisskeyUnknownEvent` bewahrt `type`, `body`, die ursprüngliche `raw`-Nachricht und den optionalen `decodeError`. Behalten Sie einen Fallback-Zweig bei, damit auch vom Server neu hinzugefuegte Events sichtbar bleiben. Der globale Stream `client.streaming.messages` bewahrt die äußere Wire-Envelope; Subscription-`messages` sind auf das innere Event normalisiert und enthalten die `subscriptionId` der jeweiligen Subscription.
 
 ## Note-Updates erfassen
 
@@ -75,6 +77,8 @@ home.uncaptureNote(noteId);
 Captures werden über Subscriptions hinweg referenzgezählt und nach Wiederverbindungen wiederhergestellt. Wiederholte Aufrufe auf demselben Handle sind idempotent.
 
 ## Fork-spezifische Channels und Cleanup
+
+Dasselbe Verhalten fuer Bestaetigungen, Wiederverbindungen, Nachrichten und Cleanup gilt auch fuer `subscribeRaw()`. Beenden Sie Dart-Stream-Listener separat und melden Sie anschliessend die Channel-Subscription ab.
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(

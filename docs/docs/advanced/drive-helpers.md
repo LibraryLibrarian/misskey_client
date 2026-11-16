@@ -416,7 +416,7 @@ try {
 ```
 
 - The token needs the `write:drive` and `read:account` permissions.
-- `mainSubscription` selects a specific main subscription; otherwise the first registered one in `client.streaming.subscriptions` is used. A missing or inactive subscription, or a disconnected streaming client, throws `StateError`.
+- `mainSubscription` selects a specific main subscription; otherwise the first registered `main` channel subscription in `client.streaming.subscriptions` is used. A missing or inactive subscription, or a disconnected streaming client, throws `StateError`.
 - The server sends no event when the upload fails, so a failure is only visible as a timeout. A timeout does not cancel the server-side upload. `timeout` (default 2 minutes) starts after the upload request completes.
 - Events that arrive while the connection is reconnecting are lost.
 - A unique `marker` is generated for each call. If you pass your own, it must be non-empty and unique per upload.

@@ -264,7 +264,7 @@ if (!result.isComplete) {
 ### deleteFolderRecursive
 
 :::danger 不可逆操作
-`deleteFolderRecursive()` 会永久删除文件夹、所有子文件夹以及其中的所有文件。已删除的文件无法恢复。使用已删除文件的帖子和图库帖子会保留指向该文件的失效引用，聊天消息则会失去附件。请先使用 `dryRun: true` 运行并检查计划。
+`deleteFolderRecursive()` 会永久删除文件夹、所有子文件夹以及其中的所有文件。已删除的文件无法恢复。使用已删除文件的笔记和图库帖子会保留指向该文件的失效引用，聊天消息则会失去附件。请先使用 `dryRun: true` 运行并检查计划。
 :::
 
 ```dart
@@ -416,7 +416,7 @@ try {
 ```
 
 - 令牌需要 `write:drive` 和 `read:account` 权限。
-- `mainSubscription` 可指定某个 main 订阅；否则会使用 `client.streaming.subscriptions` 中最先注册的订阅。订阅不存在、未激活或流式客户端尚未连接时会抛出 `StateError`。
+- `mainSubscription` 可指定某个 main 订阅；否则会使用 `client.streaming.subscriptions` 中最先注册的 `main` 频道订阅。订阅不存在、未激活或流式客户端尚未连接时会抛出 `StateError`。
 - 上传失败时服务器不会发送事件，因此只能通过超时发现失败。超时不会取消服务器端的上传。`timeout`（默认值为 2 分钟）从上传请求完成后开始计时。
 - 连接重连期间到达的事件会丢失。
 - 每次调用都会生成唯一的 `marker`。如果自行传入，该值必须非空且在每次上传中唯一。

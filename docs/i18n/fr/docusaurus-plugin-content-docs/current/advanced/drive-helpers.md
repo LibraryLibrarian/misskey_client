@@ -416,7 +416,7 @@ try {
 ```
 
 - Le jeton doit disposer des autorisations `write:drive` et `read:account`.
-- `mainSubscription` permet de sélectionner un abonnement `main` précis ; sinon, le premier abonnement enregistré dans `client.streaming.subscriptions` est utilisé. Un abonnement absent ou inactif, ou un client de streaming déconnecté, provoque une exception `StateError`.
+- `mainSubscription` permet de sélectionner un abonnement `main` précis ; sinon, le premier abonnement `main` enregistré dans `client.streaming.subscriptions` est utilisé. Un abonnement absent ou inactif, ou un client de streaming déconnecté, provoque une exception `StateError`.
 - Le serveur n’envoie aucun événement en cas d’échec du téléversement ; celui-ci n’est donc détectable que par expiration du délai. L’expiration n’annule pas le téléversement côté serveur. Le délai `timeout` (2 minutes par défaut) commence après la fin de la requête de téléversement.
 - Les événements reçus pendant la reconnexion sont perdus.
 - Un `marker` unique est généré à chaque appel. Si vous en fournissez un, il doit être non vide et unique pour chaque téléversement.

@@ -8,6 +8,8 @@ title: Streaming API
 
 ## 設定と接続
 
+接続動作を変更する必要がある場合にのみ `MisskeyStreamingConfig` を渡してください。
+
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
@@ -24,7 +26,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-トークンプロバイダーは再接続を含む新しい接続ごとに評価されます。現在値は `state`、以後の変化は `stateChanges`、非同期の通信・プロトコル・タイムアウト・購読エラーは `errors` から取得します。自動再接続や再購読の失敗を扱う場合は、接続前に `errors` を購読してください。再利用可能な接続は `connect()` / `disconnect()` / `reconnect()` で制御し、`dispose()` で完全に終了します。
+トークンプロバイダーは再接続を含む新しい接続ごとに評価されます。これにより、クライアントを作り直さずに更新されたトークンを反映できます。現在値は `state`、以後の変化は `stateChanges`、非同期の通信・プロトコル・タイムアウト・購読エラーは `errors` から取得します。自動再接続や再購読の失敗を扱う場合は、接続前に `errors` のリスナーを登録してください。再利用可能な接続は `connect()` / `disconnect()` / `reconnect()` で制御し、`dispose()` で完全に終了します。`disconnect()` は購読や Streaming クライアントを破棄せずに接続を閉じます。
 
 ## 公式チャンネルを購読する
 
@@ -43,7 +45,7 @@ final home = await client.streaming.subscribe(
 
 | ストリーム | 内容 |
 |---|---|
-| `messages` | raw envelopeを保持した正規化済み `MisskeyStreamingMessage` |
+| `messages` | envelope を保持した正規化済み `MisskeyStreamingMessage` |
 | `events` | 型付き `MisskeyStreamingEvent` |
 | `notes` | ノートイベントから抽出した `MisskeyNote` |
 | `notifications` | 通知イベントから抽出した `MisskeyNotification` |
@@ -62,7 +64,7 @@ final eventListener = home.events.listen((event) {
 });
 ```
 
-`MisskeyUnknownEvent` は `type`、`body`、元の `raw` メッセージ、任意の `decodeError` を保持します。グローバルの `client.streaming.messages` は外側の wire envelope を保持し、購読の `messages` は内側のイベントに正規化されます。
+`MisskeyUnknownEvent` は `type`、`body`、元の `raw` メッセージ、任意の `decodeError` を保持します。サーバー側で追加されたイベントも確認できるように、フォールバック分岐を残してください。グローバルの `client.streaming.messages` は外側の envelope を保持し、購読の `messages` は内側のイベントに正規化され、その購読の `subscriptionId` を持ちます。
 
 ## ノートの更新をキャプチャする
 
@@ -75,6 +77,8 @@ home.uncaptureNote(noteId);
 キャプチャは購読間で参照カウントされ、再接続後も復元されます。同じハンドルでの繰り返し呼び出しは冪等です。
 
 ## フォーク固有チャンネルと終了処理
+
+`subscribeRaw()` にも、同じ ACK・再接続・メッセージ・クリーンアップの挙動が適用されます。Dart ストリームのリスナーは個別にキャンセルしてから、チャンネルの購読を解除してください。
 
 ```dart
 final forkChannel = await client.streaming.subscribeRaw(

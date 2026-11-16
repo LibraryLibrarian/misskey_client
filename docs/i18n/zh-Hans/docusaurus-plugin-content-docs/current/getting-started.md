@@ -97,7 +97,7 @@ client.pages         // 页面管理
 client.renoteMute    // 转发静音管理
 client.roles         // 角色管理
 client.sw            // Service Worker 推送通知注册
-client.streaming     // 实时时间线、通知和帖子更新
+client.streaming     // 实时时间线、通知和笔记更新
 client.users         // 用户搜索、关注列表、用户列表
 ```
 
