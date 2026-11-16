@@ -6,27 +6,34 @@ sidebar_position: 2
 
 ## Misskeyのトークン認証
 
-misskey_client はトークンベースの認証を使用します。すべてのAPIリクエストのボディに `i` フィールドとしてアクセストークンが自動的に付与されます。
+misskey_client はトークンベースの認証を使用します。認証を伴う POST リクエストでは、ボディの `i` フィールドにアクセストークンが自動的に付与されます。
 
 ## TokenProvider
 
-`TokenProvider` はトークンを供給するインターフェースです。リクエストのたびに呼び出されるため、動的なトークン管理が可能です。
+`TokenProvider` は `FutureOr<String?> Function()` を表す型エイリアスです。認証が必要なリクエストごとに呼び出されるため、動的なトークン管理が可能です。
 
-最もシンプルな実装は `StaticTokenProvider` です。
+固定のトークンを使う場合は、トークンを返すコールバックを指定します。
 
 ```dart
-final tokenProvider = StaticTokenProvider('your_access_token');
+final client = MisskeyClient(
+  config: MisskeyClientConfig(
+    baseUrl: Uri.parse('https://misskey.example.com'),
+  ),
+  tokenProvider: () => 'your_access_token',
+);
 ```
 
-トークンをキーチェーンや暗号化ストレージから取得する場合は、カスタム実装を作成します。
+`baseUrl` にはスキームを含む `Uri` を指定します。`tokenProvider` は `FutureOr<String?>` を返すコールバックで、認証が必要なリクエストごとに呼び出されます。
+
+トークンをキーチェーンや暗号化ストレージから取得する場合は、非同期のコールバックを指定します。
 
 ```dart
-class SecureTokenProvider implements TokenProvider {
-  @override
-  Future<String?> getToken() async {
-    return await secureStorage.read(key: 'misskey_token');
-  }
-}
+final client = MisskeyClient(
+  config: MisskeyClientConfig(
+    baseUrl: Uri.parse('https://misskey.example.com'),
+  ),
+  tokenProvider: () async => await secureStorage.read(key: 'misskey_token'),
+);
 ```
 
 ## AuthMode
@@ -35,11 +42,11 @@ class SecureTokenProvider implements TokenProvider {
 
 | AuthMode | 説明 |
 |---|---|
-| `required` | トークン必須（デフォルト）。未設定の場合はリクエスト前にエラー |
+| `required` | トークン必須（デフォルト）。未設定の場合は認証エラー |
 | `optional` | トークンがあれば付与、なければ匿名リクエスト |
 | `none` | トークンを付与しない（公開エンドポイント用） |
 
-`TokenProvider.getToken()` が `null` を返し、AuthModeが `required` の場合は `MisskeyClientException` がスローされます。
+`tokenProvider` が `null` を返し、`AuthMode` が `required` の場合は `MisskeyUnauthorizedException` がスローされます。
 
 ## MiAuthフロー概要
 
@@ -65,4 +72,4 @@ final data = jsonDecode(response.body);
 final token = data['token'] as String;
 ```
 
-取得したトークンを `StaticTokenProvider` や独自の `TokenProvider` に渡してクライアントを構築します。
+取得したトークンを返すコールバックを `tokenProvider` に渡してクライアントを構築します。

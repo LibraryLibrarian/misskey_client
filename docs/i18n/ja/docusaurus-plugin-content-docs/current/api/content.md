@@ -105,7 +105,7 @@ final post = await client.gallery.postsShow(postId: postId);
 
 ### 投稿の作成と管理
 
-`fileIds` には Drive ファイル ID を 1〜32 個指定できます。
+`fileIds` には、重複しない Drive ファイル ID を 1〜32 個指定できます。
 
 ```dart
 final post = await client.gallery.postsCreate(

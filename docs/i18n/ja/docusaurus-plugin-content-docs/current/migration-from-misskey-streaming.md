@@ -44,7 +44,8 @@ final home = await client.streaming.subscribe(
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
 | `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
 | `origin` | `MisskeyClientConfig.baseUrl` |
-| `tokenProvider` / `logger` callback | `tokenProvider` / `logger: FunctionLogger(oldLogger)`（`enableLog: true`） |
+| `token` / `tokenProvider` | `MisskeyClient` の `tokenProvider` 引数 |
+| `debugLog` / `logger` コールバック | クライアントの `enableLog: true` / `logger: FunctionLogger(oldLogger)` |
 | 再接続設定 | `MisskeyStreamingConfig` |
 | `pingInterval` | 廃止（公開application-level ping設定なし） |
 | `customHeaders` / `protocols` | 公開設定なし |

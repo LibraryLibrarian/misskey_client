@@ -30,23 +30,23 @@ dart pub get
 
 ## 基本的な使い方
 
-`MisskeyClient` を使うには、`MisskeyClientConfig` と `TokenProvider` を用意します。
+`MisskeyClient` を使うには、`MisskeyClientConfig` とトークンを返すコールバックを用意します。
 
 ```dart
 import 'package:misskey_client/misskey_client.dart';
 
 final config = MisskeyClientConfig(
-  baseUrl: 'https://misskey.example.com',
+  baseUrl: Uri.parse('https://misskey.example.com'),
   userAgent: 'MyApp/1.0.0',
 );
 
-final tokenProvider = StaticTokenProvider('your_access_token');
-
 final client = MisskeyClient(
   config: config,
-  tokenProvider: tokenProvider,
+  tokenProvider: () => 'your_access_token',
 );
 ```
+
+`baseUrl` にはスキームを含む `Uri` を指定します。`tokenProvider` は `FutureOr<String?>` を返すコールバックで、認証が必要なリクエストごとに呼び出されます。
 
 ## 最初のAPI呼び出し
 
@@ -71,16 +71,16 @@ print(meta.version);
 | `client.meta` | サーバーメタ情報 |
 | `client.streaming` | リアルタイムのタイムライン、通知、ノート更新 |
 
-すべてのAPIはHTTP POSTで通信します。トークンはリクエストボディの `i` フィールドとして送信されます。
+認証を伴う POST リクエストでは、ボディの `i` フィールドにアクセストークンが自動的に付与されます。
 
 ## ログ制御
 
-デフォルトでは `StdoutLogger` がログを出力します。ログを無効にするには `enableLog: false` を設定します。
+HTTP リクエスト・レスポンスのログはデフォルトで無効です。`enableLog: true` を設定すると、カスタム `logger` を指定していない場合は `StdoutLogger` がログを出力します。HTTP ログはリリースビルドでは出力されません。
 
 ```dart
 final config = MisskeyClientConfig(
-  baseUrl: 'https://misskey.example.com',
-  enableLog: false,
+  baseUrl: Uri.parse('https://misskey.example.com'),
+  enableLog: true,
 );
 ```
 

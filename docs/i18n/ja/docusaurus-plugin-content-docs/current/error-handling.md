@@ -12,7 +12,7 @@ misskey_client の例外はすべて `MisskeyClientException` を頂点とする
 MisskeyClientException (sealed)
 ├── MisskeyApiException      - サーバーからのエラーレスポンス
 │   ├── statusCode: int      - HTTPステータスコード
-│   ├── errorCode: String?   - Misskeyエラーコード
+│   ├── code: String?        - Misskeyエラーコード
 │   └── message: String?     - エラーメッセージ
 └── MisskeyNetworkException  - ネットワーク到達不能・タイムアウト
     └── cause: Object?       - 元の例外
@@ -44,7 +44,7 @@ try {
 try {
   final note = await client.notes.show(noteId: 'abc123');
 } on MisskeyApiException catch (e) {
-  print('APIエラー: ${e.statusCode} - ${e.errorCode}');
+  print('APIエラー: ${e.statusCode} - ${e.code}');
 } on MisskeyNetworkException catch (e) {
   print('ネットワークエラー: ${e.cause}');
 } on MisskeyClientException catch (e) {
@@ -97,7 +97,7 @@ Future<T> withRateLimitRetry<T>(Future<T> Function() fn) async {
 
 // 使用例
 final notes = await withRateLimitRetry(
-  () => client.notes.timeline(),
+  () => client.notes.timelineHome(),
 );
 ```
 

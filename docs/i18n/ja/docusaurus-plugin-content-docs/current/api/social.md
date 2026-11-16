@@ -51,7 +51,7 @@ await client.following.updateAll(notify: 'none', withReplies: false);
 
 ### フォロワーを削除する
 
-自分をフォローしているユーザーを強制的に削除します。
+自分をフォローしているユーザーのフォローを強制的に解除します。
 
 ```dart
 await client.following.invalidate(userId: userId);
