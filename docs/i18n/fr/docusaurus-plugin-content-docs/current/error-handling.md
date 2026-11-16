@@ -33,7 +33,7 @@ MisskeyClientException (sealed)
 `MisskeyClientException` couvre les erreurs d’API et de transport. Certaines API d’assistance, comme les [assistants Drive](./advanced/drive-helpers.md), peuvent également lever :
 
 - `ArgumentError` — arguments invalides (par exemple une valeur `concurrency` non positive ou une `pageSize` hors limites). L’exception est levée avant l’envoi de toute requête.
-- `StateError` — préconditions non satisfaites, comme l’appel de `client.drive.uploadFromUrlAndWait()` sans abonnement de streaming `main` connecté.
+- `StateError` — préconditions non satisfaites, comme l’appel de `client.drive.uploadFromUrlAndWait()` sans souscription de streaming `main` connectée.
 - `DriveFolderAmbiguousException` — levée par `resolvePath()` et `getOrCreate()` lorsque plusieurs dossiers frères portent le même nom. Elle ne fait pas partie de la hiérarchie scellée ; `on MisskeyClientException` ne l’intercepte donc pas.
 
 ```dart
