@@ -94,6 +94,6 @@ await client.dispose();
 
 명시적으로 지정한 `id`는 등록된 구독 사이에서 고유해야 하며, 현재 연결 세대의 tombstone에 남아 있는 ID도 재사용할 수 없습니다.
 
-`unsubscribe()`와 `MisskeyClient.dispose()`는 반복 또는 동시 호출해도 안전합니다. 활성 구독은 최대 32개입니다.
+`unsubscribe()`와 `MisskeyClient.dispose()`는 반복 또는 동시 호출해도 안전합니다. 활성 구독은 최대 32개입니다. 클라이언트를 dispose한 뒤 `client.streaming`에 접근하면 `StateError`가 발생합니다.
 
 이전 패키지에서 이전하려면 [misskey_streaming에서 마이그레이션](./migration-from-misskey-streaming.md)을 참조하세요.

@@ -24,7 +24,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-Der Token-Provider wird bei jeder neuen Verbindung einschließlich Wiederverbindungen ausgewertet. `state` enthält den aktuellen Zustand, `stateChanges` spätere Änderungen und `errors` asynchrone Transport-, Protokoll- und Subscription-Fehler. `connect()`, `disconnect()` und `reconnect()` steuern die wiederverwendbare Verbindung; `dispose()` beendet sie endgültig.
+Der Token-Provider wird bei jeder neuen Verbindung einschließlich Wiederverbindungen ausgewertet. `state` enthält den aktuellen Zustand, `stateChanges` spätere Änderungen und `errors` asynchrone Transport-, Protokoll-, Timeout- und Subscription-Fehler. Abonnieren Sie `errors` vor dem Verbindungsaufbau, wenn die Anwendung Fehler bei der automatischen Wiederverbindung oder beim erneuten Abonnieren behandeln soll. `connect()`, `disconnect()` und `reconnect()` steuern die wiederverwendbare Verbindung; `dispose()` beendet sie endgültig.
 
 ## Offiziellen Channel abonnieren
 
@@ -92,6 +92,8 @@ await home.unsubscribe();
 await client.dispose();
 ```
 
-`unsubscribe()` und `MisskeyClient.dispose()` können sicher wiederholt oder gleichzeitig aufgerufen werden. Es sind höchstens 32 aktive Subscriptions möglich.
+Eine explizit angegebene `id` muss unter den registrierten Subscriptions eindeutig sein und darf keine ID wiederverwenden, die in der aktuellen Verbindungsgeneration als Tombstone gespeichert ist.
+
+`unsubscribe()` und `MisskeyClient.dispose()` können sicher wiederholt oder gleichzeitig aufgerufen werden. Es sind höchstens 32 aktive Subscriptions möglich. Nach dem Freigeben des Clients mit `dispose()` löst ein Zugriff auf `client.streaming` einen `StateError` aus.
 
 Zur Migration siehe [Migration von misskey_streaming](./migration-from-misskey-streaming.md).

@@ -40,14 +40,18 @@ final home = await client.streaming.subscribe(
 |---|---|
 | `handle.stream` | `messages` / `events` / `notes` / `notifications` |
 | `messagesFor(id)` | 해당 핸들의 `messages` |
+| `MisskeyStreamingClient.messages` | `client.streaming.messages` (바깥쪽 envelope) |
 | `captureNote(handle.id, noteId)` | `handle.captureNote(noteId)` |
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
+| 수동 타입 지정 디코딩 | `MisskeyStreamingEvent` 및 `MisskeyUnknownEvent` |
 | `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
 | `origin` | `MisskeyClientConfig.baseUrl` |
 | `tokenProvider` / `logger` 콜백 | `tokenProvider` / `logger: FunctionLogger(oldLogger)` (`enableLog: true`) |
 | 재연결 설정 | `MisskeyStreamingConfig` |
+| — | `MisskeyStreamingConfig.subscriptionTimeout` |
 | `pingInterval` | 제거됨; 공개 애플리케이션 수준 ping 설정 없음 |
 | `customHeaders` / `protocols` | 공개 통합 설정 없음 |
+| `connector` | 내부 테스트 주입 전용 |
 | `exceptionMapper` | 타입 지정 예외 및 `errors` |
 
 캡처는 `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`로 변경합니다. 재사용하려면 `disconnect()`, 완전히 종료하려면 `dispose()` 또는 `MisskeyClient.dispose()`를 사용하세요. `sendToChannel()`의 공개 대체 API는 없습니다.

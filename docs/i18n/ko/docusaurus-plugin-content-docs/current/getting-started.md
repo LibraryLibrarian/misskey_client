@@ -91,7 +91,7 @@ client.hashtags      // 해시태그 정보
 client.invite        // 초대 코드 관리
 client.meta          // 서버 메타데이터
 client.mute          // 사용자 뮤트
-client.notes         // 노트 작업 (타임라인, 작성, 반응 등)
+client.notes         // 노트 작업 (타임라인, 작성, 리액션 등)
 client.notifications // 알림 조회 및 관리
 client.pages         // 페이지 관리
 client.renoteMute    // 리노트 뮤트 관리

@@ -40,14 +40,18 @@ Enveloppez un rappel existant `void oldLogger(String level, String message)` ave
 |---|---|
 | `handle.stream` | `messages` / `events` / `notes` / `notifications` |
 | `messagesFor(id)` | `messages` du handle correspondant |
+| `MisskeyStreamingClient.messages` | `client.streaming.messages` (enveloppes externes) |
 | `captureNote(handle.id, noteId)` | `handle.captureNote(noteId)` |
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
+| Décodage typé manuel | `MisskeyStreamingEvent` et `MisskeyUnknownEvent` |
 | `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
 | `origin` | `MisskeyClientConfig.baseUrl` |
 | `tokenProvider` / rappel `logger` | `tokenProvider` / `logger: FunctionLogger(oldLogger)` (`enableLog: true`) |
 | Réglages de reconnexion | `MisskeyStreamingConfig` |
+| — | `MisskeyStreamingConfig.subscriptionTimeout` |
 | `pingInterval` | Supprimé ; aucun réglage public de ping applicatif |
 | `customHeaders` / `protocols` | Aucun réglage public intégré |
+| `connector` | Injection réservée aux tests internes |
 | `exceptionMapper` | Exceptions typées et `errors` |
 
 La capture devient `home.captureNote(noteId)` / `home.uncaptureNote(noteId)`. Utilisez `disconnect()` pour réutiliser la connexion et `dispose()` ou `MisskeyClient.dispose()` pour la terminer. `sendToChannel()` n'a pas de remplacement public.

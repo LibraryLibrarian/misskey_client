@@ -81,4 +81,4 @@ final client = MisskeyClient(
 | `enableLog: true` と `logger: FunctionLogger(...)` | コールバック関数へ転送 |
 | `enableLog: true` と `logger: MyLogger()` | カスタム実装へ転送 |
 
-HTTP のリクエスト・レスポンス・リトライのログはリリースビルドでは出力されません。デフォルトの `StdoutLogger` は logger パッケージの development filter を使うため、アサーションが無効なリリースビルドでは何も出力しません。Streaming のログは `enableLog` だけで判定されるため、カスタム logger にはリリースビルドでも届きます。
+デフォルトの `StdoutLogger` は `logger` パッケージの development filter を使うため、アサーションが無効なリリースビルドでは何も出力しません。Streaming のログは `enableLog` だけで判定されるため、カスタム logger にはリリースビルドでも届きます。

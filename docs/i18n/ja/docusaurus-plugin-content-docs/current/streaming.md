@@ -24,7 +24,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-トークンプロバイダーは再接続を含む新しい接続ごとに評価されます。現在値は `state`、以後の変化は `stateChanges`、非同期の通信・プロトコル・購読エラーは `errors` から取得します。再利用可能な接続は `connect()` / `disconnect()` / `reconnect()` で制御し、`dispose()` で完全に終了します。
+トークンプロバイダーは再接続を含む新しい接続ごとに評価されます。現在値は `state`、以後の変化は `stateChanges`、非同期の通信・プロトコル・タイムアウト・購読エラーは `errors` から取得します。自動再接続や再購読の失敗を扱う場合は、接続前に `errors` を購読してください。再利用可能な接続は `connect()` / `disconnect()` / `reconnect()` で制御し、`dispose()` で完全に終了します。
 
 ## 公式チャンネルを購読する
 
@@ -92,6 +92,8 @@ await home.unsubscribe();
 await client.dispose();
 ```
 
-`unsubscribe()` と `MisskeyClient.dispose()` は繰り返し・同時呼び出しに対応します。アクティブな購読の上限は32件です。
+明示的に指定する `id` は登録済みの購読間で一意である必要があり、現在の接続世代の tombstone に残っている ID も再利用できません。
+
+`unsubscribe()` と `MisskeyClient.dispose()` は繰り返し・同時呼び出しに対応します。アクティブな購読の上限は32件です。クライアントの破棄後に `client.streaming` にアクセスすると `StateError` がスローされます。
 
 旧パッケージからの移行は[misskey_streamingからの移行](./migration-from-misskey-streaming.md)を参照してください。

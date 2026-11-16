@@ -40,15 +40,19 @@ final home = await client.streaming.subscribe(
 |---|---|
 | `handle.stream` | `messages` / `events` / `notes` / `notifications` |
 | `messagesFor(id)` | 対象ハンドルの `messages` |
+| `MisskeyStreamingClient.messages` | `client.streaming.messages`（外側のエンベロープ） |
 | `captureNote(handle.id, noteId)` | `handle.captureNote(noteId)` |
 | `MisskeyMessage` | `MisskeyStreamingMessage` |
+| 手動の型付きデコード | `MisskeyStreamingEvent` と `MisskeyUnknownEvent` |
 | `status` / `isConnected` | `stateChanges` / `state == MisskeyStreamingConnectionState.connected` |
 | `origin` | `MisskeyClientConfig.baseUrl` |
 | `token` / `tokenProvider` | `MisskeyClient` の `tokenProvider` 引数 |
 | `debugLog` / `logger` コールバック | クライアントの `enableLog: true` / `logger: FunctionLogger(oldLogger)` |
 | 再接続設定 | `MisskeyStreamingConfig` |
+| — | `MisskeyStreamingConfig.subscriptionTimeout` |
 | `pingInterval` | 廃止（公開application-level ping設定なし） |
 | `customHeaders` / `protocols` | 公開設定なし |
+| `connector` | 内部テストでの注入専用 |
 | `exceptionMapper` | 型付き例外と `errors` |
 
 キャプチャ操作は `home.captureNote(noteId)` / `home.uncaptureNote(noteId)` に移動します。再利用する場合は `disconnect()`、完全終了は `dispose()` または `MisskeyClient.dispose()` を使用します。`sendToChannel()` の公開代替はありません。

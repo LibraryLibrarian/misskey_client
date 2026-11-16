@@ -24,7 +24,7 @@ final client = MisskeyClient(
 await client.streaming.connect();
 ```
 
-Le fournisseur de jeton est évalué à chaque nouvelle connexion, reconnexions comprises. `state` donne l'état actuel, `stateChanges` les changements ultérieurs et `errors` les erreurs asynchrones de transport, protocole et souscription. `connect()`, `disconnect()` et `reconnect()` contrôlent la connexion réutilisable ; `dispose()` y met fin définitivement.
+Le fournisseur de jeton est évalué à chaque nouvelle connexion, reconnexions comprises. `state` donne l'état actuel, `stateChanges` les changements ultérieurs et `errors` les erreurs asynchrones de transport, de protocole, de dépassement de délai et de souscription. Écoutez `errors` avant de vous connecter si l'application doit gérer les échecs de reconnexion automatique ou de renouvellement des souscriptions. `connect()`, `disconnect()` et `reconnect()` contrôlent la connexion réutilisable ; `dispose()` y met fin définitivement.
 
 ## Souscrire à un Channel officiel
 
@@ -92,6 +92,8 @@ await home.unsubscribe();
 await client.dispose();
 ```
 
-`unsubscribe()` et `MisskeyClient.dispose()` peuvent être appelés plusieurs fois ou simultanément. La limite est de 32 souscriptions actives.
+Un `id` explicite doit être unique parmi les souscriptions enregistrées et ne peut pas réutiliser un ID conservé comme tombstone dans la génération de connexion actuelle.
+
+`unsubscribe()` et `MisskeyClient.dispose()` peuvent être appelés plusieurs fois ou simultanément. La limite est de 32 souscriptions actives. Après la libération du client par `dispose()`, tout accès à `client.streaming` lève une `StateError`.
 
 Pour migrer, consultez [Migration depuis misskey_streaming](./migration-from-misskey-streaming.md).

@@ -43,10 +43,10 @@ final msg = await client.chat.messages.createToUser(
 // 메시지 삭제
 await client.chat.messages.delete(messageId: msg.id);
 
-// 메시지에 반응
+// 메시지에 리액션 추가
 await client.chat.messages.react(messageId: msg.id, reaction: ':heart:');
 
-// 반응 제거
+// 리액션 제거
 await client.chat.messages.unreact(messageId: msg.id, reaction: ':heart:');
 ```
 
