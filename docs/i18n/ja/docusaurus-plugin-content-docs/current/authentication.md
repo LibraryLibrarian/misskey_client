@@ -10,7 +10,7 @@ misskey_client はトークンベースの認証を使用します。認証を�
 
 ## TokenProvider
 
-`TokenProvider` は `FutureOr<String?> Function()` を表す型エイリアスです。認証が必要なリクエストごとに呼び出されるため、動的なトークン管理が可能です。
+`TokenProvider` は `FutureOr<String?> Function()` を表す型エイリアスです。認証を伴うリクエストごとに呼び出されるため、動的なトークン管理が可能です。
 
 固定のトークンを使う場合は、トークンを返すコールバックを指定します。
 
@@ -23,7 +23,7 @@ final client = MisskeyClient(
 );
 ```
 
-`baseUrl` にはスキームを含む `Uri` を指定します。`tokenProvider` は `FutureOr<String?>` を返すコールバックで、認証が必要なリクエストごとに呼び出されます。
+`baseUrl` にはスキームを含む `Uri` を指定します。
 
 トークンをキーチェーンや暗号化ストレージから取得する場合は、非同期のコールバックを指定します。
 

@@ -34,7 +34,7 @@ final home = await client.streaming.subscribe(
 
 `MisskeyStreaming.fromClient()` は不要です。フォーク固有チャンネルには `subscribeRaw()` を使い、非同期になった `unsubscribe()` を `await` してください。
 
-既存の `void oldLogger(String level, String message)` callbackは `FunctionLogger(oldLogger)` でラップしてclientの `logger` に渡し、`MisskeyClientConfig.enableLog` を `true` にします。
+既存の `void oldLogger(String level, String message)` コールバックは `FunctionLogger(oldLogger)` でラップしてクライアントの `logger` に渡し、`MisskeyClientConfig.enableLog` を `true` にします。
 
 | 旧API | 統合API |
 |---|---|

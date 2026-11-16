@@ -46,14 +46,14 @@ final client = MisskeyClient(
 );
 ```
 
-`baseUrl` にはスキームを含む `Uri` を指定します。`tokenProvider` は `FutureOr<String?>` を返すコールバックで、認証が必要なリクエストごとに呼び出されます。
+`baseUrl` にはスキームを含む `Uri` を指定します。`tokenProvider` は `FutureOr<String?>` を返すコールバックで、認証を伴うリクエストごとに呼び出されます。認証が不要なエンドポイントだけを使う場合は省略できます。
 
 ## 最初のAPI呼び出し
 
-`meta.fetch` でサーバー情報を取得できます。
+`meta.getMeta` でサーバー情報を取得できます。
 
 ```dart
-final meta = await client.meta.fetch();
+final meta = await client.meta.getMeta();
 print(meta.name);
 print(meta.version);
 ```

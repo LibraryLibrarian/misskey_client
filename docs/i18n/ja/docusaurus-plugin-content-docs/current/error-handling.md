@@ -13,7 +13,7 @@ MisskeyClientException (sealed)
 ├── MisskeyApiException      - サーバーからのエラーレスポンス
 │   ├── statusCode: int      - HTTPステータスコード
 │   ├── code: String?        - Misskeyエラーコード
-│   └── message: String?     - エラーメッセージ
+│   └── message: String      - エラーメッセージ
 └── MisskeyNetworkException  - ネットワーク到達不能・タイムアウト
     └── cause: Object?       - 元の例外
 ```

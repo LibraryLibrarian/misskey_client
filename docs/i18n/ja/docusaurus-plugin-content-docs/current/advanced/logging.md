@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## デフォルトの動作
 
-`MisskeyClientConfig.enableLog` のデフォルトは `false` で、HTTP ログは無効です。`enableLog: true` を設定し、カスタム `logger` を指定しない場合は、`StdoutLogger` が `logger` パッケージを通じて標準出力にログを出力します。
+`MisskeyClientConfig.enableLog` のデフォルトは `false` で、ログは無効です。`enableLog: true` を設定し、カスタム `logger` を指定しない場合は、`StdoutLogger` が `logger` パッケージを通じて標準出力にログを出力します。
 
 HTTP リクエスト・レスポンス・リトライのログは、`enableLog` が `true` で、リリースビルドではない場合にのみ出力されます。
 
@@ -39,7 +39,7 @@ final logger = FunctionLogger((level, message) {
 
 final client = MisskeyClient(
   config: config,
-  tokenProvider: tokenProvider,
+  tokenProvider: () => 'token',
   logger: logger,
 );
 ```
@@ -61,13 +61,13 @@ class MyLogger implements Logger {
 
   @override
   void error(String message, [Object? error, StackTrace? stackTrace]) {
-    // 任意の例外とスタックトレースを伴うエラーログを処理する
+    // 省略可能な例外とスタックトレースを伴うエラーログを処理する
   }
 }
 
 final client = MisskeyClient(
   config: config,
-  tokenProvider: tokenProvider,
+  tokenProvider: () => 'token',
   logger: MyLogger(),
 );
 ```
@@ -81,4 +81,4 @@ final client = MisskeyClient(
 | `enableLog: true` と `logger: FunctionLogger(...)` | コールバック関数へ転送 |
 | `enableLog: true` と `logger: MyLogger()` | カスタム実装へ転送 |
 
-HTTP ログはリリースビルドでは出力されません。
+HTTP のリクエスト・レスポンス・リトライのログはリリースビルドでは出力されません。デフォルトの `StdoutLogger` は logger パッケージの development filter を使うため、アサーションが無効なリリースビルドでは何も出力しません。Streaming のログは `enableLog` だけで判定されるため、カスタム logger にはリリースビルドでも届きます。
