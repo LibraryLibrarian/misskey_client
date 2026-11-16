@@ -60,7 +60,7 @@ print(meta.version);
 
 ## API構造の概要
 
-`MisskeyClient` は25のAPIドメインを提供します。
+`MisskeyClient` は、主なAPIドメインをプロパティとして提供します。管理者向けAPI（`admin*`）など、ここに載せていないドメインもあります。
 
 | プロパティ | 説明 |
 |---|---|

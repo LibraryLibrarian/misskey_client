@@ -70,7 +70,7 @@ print(me.username); // 用户名（不含 @）
 
 ### API 结构
 
-`MisskeyClient` 上的每个属性对应一个 API 域：
+`MisskeyClient` 的属性提供主要的 API 域。管理员 API（`admin*`）等部分域未在此列出：
 
 ```dart
 client.account       // 账户和个人资料管理 (/api/i/*)

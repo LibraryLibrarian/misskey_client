@@ -70,7 +70,7 @@ print(me.username); // 사용자명 (@ 없이)
 
 ### API 구조
 
-모든 API 도메인은 `MisskeyClient`의 속성으로 제공됩니다:
+주요 API 도메인은 `MisskeyClient`의 속성으로 제공됩니다. 관리자 API(`admin*`)를 비롯해 여기에 싣지 않은 도메인도 있습니다:
 
 ```dart
 client.account       // 계정 및 프로필 관리 (/api/i/*)

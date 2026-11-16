@@ -107,10 +107,10 @@ final authUrl = Uri.parse('$baseUrl/miauth/$session').replace(
 
 ### Schritt 2: Sitzung gegen Token eintauschen
 
-Nachdem der Benutzer die Anfrage genehmigt hat, rufen Sie den Check-Endpunkt auf. Dies ist ein einfaches HTTP-GET und verwendet nicht den authentifizierten Pfad der Bibliothek:
+Nachdem der Benutzer die Anfrage genehmigt hat, rufen Sie den Check-Endpunkt auf. Dies ist ein einfaches HTTP-POST und verwendet nicht den authentifizierten Pfad der Bibliothek:
 
 ```dart
-final response = await http.get(
+final response = await http.post(
   Uri.parse('$baseUrl/api/miauth/$session/check'),
 );
 final json = jsonDecode(response.body) as Map<String, dynamic>;
