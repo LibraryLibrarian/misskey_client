@@ -138,4 +138,4 @@ await client.dispose();
 
 `unsubscribe()`와 `MisskeyClient.dispose()`는 반복 또는 동시 호출해도 안전합니다. 클라이언트 하나당 활성 Streaming 구독은 최대 32개입니다. 클라이언트를 해제한 뒤 `client.streaming`에 접근하면 `StateError`가 발생합니다.
 
-이전 패키지에서 이전하려면 [misskey_streaming에서 마이그레이션](./migration-from-misskey-streaming.md)을 참조하세요.
+독립형 `misskey_streaming` 패키지에서 마이그레이션하려면 [misskey_streaming에서 마이그레이션](./migration-from-misskey-streaming.md)을 참조하세요.
