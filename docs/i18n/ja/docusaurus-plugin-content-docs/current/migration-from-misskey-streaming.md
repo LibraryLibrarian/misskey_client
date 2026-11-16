@@ -4,7 +4,7 @@ title: misskey_streamingからの移行
 
 # misskey_streamingからの移行
 
-Streaming は `misskey_client` に統合されました。すべての呼び出し元を移行後、単独の `misskey_streaming` 依存を削除し、issue #30を含む最初の `misskey_client` リリースを使用してください。
+Streaming は `misskey_client` に統合されました。すべての呼び出し元を移行後、単独の `misskey_streaming` 依存を削除し、Issue #30 を含む最初の `misskey_client` リリースを使用してください。
 
 ## 統合クライアントを作成する
 
