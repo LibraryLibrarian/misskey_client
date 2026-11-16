@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-To route logs to your own sink, pass a `Logger` implementation to the constructor:
+To route logs to your own sink, also pass a `Logger` implementation to the constructor (logs are delivered only while `enableLog` is `true`):
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

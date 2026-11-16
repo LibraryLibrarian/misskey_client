@@ -80,6 +80,7 @@ class MyLogger implements Logger {
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: MyLogger(),
@@ -90,7 +91,7 @@ final client = MisskeyClient(
 
 When `enableLog: true` is set and no custom `logger` is supplied, the `StdoutLogger` is used. It delegates to the `logger` package internally.
 
-HTTP request, response, and retry logs are emitted only when `enableLog` is `true` and the app is not a release build. In release builds the `StdoutLogger` itself outputs only warnings and errors.
+HTTP request, response, and retry logs are emitted only when `enableLog` is `true` and the app is not a release build. The default `StdoutLogger` uses the `logger` package's development filter, which suppresses all output when assertions are disabled (as in release builds). Streaming log calls depend only on `enableLog`, so a custom logger can receive them in release builds as well.
 
 Log format:
 
