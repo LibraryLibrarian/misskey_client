@@ -157,7 +157,7 @@ if (instance != null) {
 ### Followers and following for a host
 
 ```dart
-// Relationships followed from a remote instance
+// Follow relationships for a remote instance
 final followers = await client.federation.followers(
   host: 'mastodon.social',
   limit: 20,
