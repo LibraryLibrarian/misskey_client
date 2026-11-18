@@ -151,7 +151,7 @@ if (instance != null) {
 ### 某主机的粉丝与关注
 
 ```dart
-// 从远程实例关注的关系
+// 远程实例的关注关系
 final followers = await client.federation.followers(
   host: 'mastodon.social',
   limit: 20,

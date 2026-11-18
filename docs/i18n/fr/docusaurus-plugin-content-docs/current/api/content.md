@@ -41,7 +41,7 @@ await client.clips.delete(clipId: clip.id);
 
 ## Play
 
-Play (anciennement appelé Flash dans l'API) permet aux utilisateurs de créer et d'exécuter des mini-applications utilisant AiScript.
+Play (qui conserve le nom historique Flash dans l'API) permet aux utilisateurs de créer et d'exécuter des mini-applications utilisant AiScript.
 
 ### Créer un Play
 

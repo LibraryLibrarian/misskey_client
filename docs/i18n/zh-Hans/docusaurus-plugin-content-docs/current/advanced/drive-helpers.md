@@ -359,7 +359,7 @@ print('${result.file.id}: ${result.outcome.name}');
 | `uploadAnyway` | 跳过查找并上传另一个副本 |
 
 - `result.outcome` 为 `uploaded`、`reusedExisting` 或 `movedExisting`。结果可能受并发上传影响：查找后，另一个并发上传可能先完成，且不一定能检测到这类竞争。
-- 已有文件会保留其名称和备注。`isSensitive: true` 会将已有的非敏感文件升级为敏感文件。
+- 已有文件会保留其名称和备注。`isSensitive: true` 会将已有的非敏感文件标记为敏感文件。
 - 传入 `md5`（32 个十六进制字符）可避免对大型输入进行哈希计算。否则会在调用方 isolate 上同步计算哈希（`uploadAnyway` 除外）。
 - 找到匹配的已有文件时，不会验证 `folderId`，因此使用 `reuseExisting` 时，即使文件夹不存在或属于其他用户也不会报错。不带 `force` 的普通 `create()` 行为相同，因为服务器会在查找文件夹前返回匹配项。
 

@@ -5,7 +5,7 @@ title: Notizen
 
 # Notizen
 
-Mit der `client.notes`-API können Sie Notizen (Beiträge) abrufen und erstellen sowie mit ihnen interagieren.
+Mit der `client.notes`-API koennen Sie Notizen (Beitraege) abrufen und erstellen sowie mit ihnen interagieren.
 
 ## Notizen abrufen
 

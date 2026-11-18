@@ -359,7 +359,7 @@ print('${result.file.id}: ${result.outcome.name}');
 | `uploadAnyway` | Skips the lookup and uploads another copy |
 
 - `result.outcome` is `uploaded`, `reusedExisting`, or `movedExisting`. It is best-effort: a concurrent upload can win after the lookup, and such races are not always detectable.
-- Existing files keep their name and comment. `isSensitive: true` upgrades an existing non-sensitive file.
+- Existing files keep their name and comment. `isSensitive: true` marks an existing non-sensitive file as sensitive.
 - Pass `md5` (32 hexadecimal characters) to avoid hashing large inputs. Otherwise the hash is computed synchronously on the calling isolate (except with `uploadAnyway`).
 - When an existing file matches, `folderId` is not validated, so a nonexistent or foreign folder does not cause an error with `reuseExisting`. A plain `create()` without `force` behaves the same way, because the server returns the match before looking up the folder.
 

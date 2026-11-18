@@ -151,7 +151,7 @@ if (instance != null) {
 ### Abonnés et abonnements pour un hôte
 
 ```dart
-// Relationships followed from a remote instance
+// Relations d'abonnement pour une instance distante
 final followers = await client.federation.followers(
   host: 'mastodon.social',
   limit: 20,
@@ -162,7 +162,7 @@ final following = await client.federation.following(
   limit: 20,
 );
 
-// Users known from a remote instance
+// Utilisateurs connus d'une instance distante
 final users = await client.federation.users(
   host: 'mastodon.social',
   limit: 20,

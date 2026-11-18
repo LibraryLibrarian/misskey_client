@@ -151,7 +151,7 @@ if (instance != null) {
 ### 호스트별 팔로워 및 팔로잉
 
 ```dart
-// 원격 인스턴스에서 팔로우된 관계
+// 원격 인스턴스의 팔로우 관계
 final followers = await client.federation.followers(
   host: 'mastodon.social',
   limit: 20,
