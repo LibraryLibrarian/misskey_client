@@ -5,7 +5,7 @@ title: Notes
 
 # Notes
 
-L'API `client.notes` fournit des opérations pour récupérer, créer et interagir avec les notes (publications).
+L'API `client.notes` permet de récupérer et de créer des notes (publications), ainsi que d'interagir avec elles.
 
 ## Récupération de notes
 

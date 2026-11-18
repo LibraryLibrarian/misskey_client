@@ -14,7 +14,7 @@ Si vous constatez des modèles de réponse incorrects ou un comportement inatten
 
 :::
 
-misskey_client est une bibliothèque cliente Misskey API écrite en Dart pur.
+misskey_client est une bibliothèque écrite en Dart pur qui permet d'utiliser l'API Misskey.
 Elle fonctionne dans tout environnement Dart : Flutter, Dart côté serveur, outils CLI, et bien d'autres.
 
 ## Installation

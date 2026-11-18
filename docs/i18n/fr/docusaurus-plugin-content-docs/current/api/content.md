@@ -41,7 +41,7 @@ await client.clips.delete(clipId: clip.id);
 
 ## Play
 
-Play (connu sous le nom legacy Flash dans l'API) permet aux utilisateurs de créer et d'exécuter de petites mini-applications alimentées par AiScript.
+Play (anciennement appelé Flash dans l'API) permet aux utilisateurs de créer et d'exécuter des mini-applications utilisant AiScript.
 
 ### Créer un Play
 

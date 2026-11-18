@@ -51,7 +51,7 @@ await client.following.updateAll(notify: 'none', withReplies: false);
 
 ### Supprimer un abonné
 
-Supprime de force quelqu'un qui vous suit.
+Met fin à l'abonnement d'un utilisateur à votre compte.
 
 ```dart
 await client.following.invalidate(userId: userId);
