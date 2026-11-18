@@ -387,7 +387,7 @@ final result = await client.drive.files.createMany(
 
 - `concurrency`(기본값 2)는 병렬 업로드 수를 제한합니다.
 - 요청 제한(HTTP 429)이 발생하면 새 업로드를 중단하고 남은 입력을 `rateLimited`로 표시하며 진행 중인 업로드는 완료됩니다. 오류 발생 후 중단하려면 `stopOnError: true`를 설정하세요. 남은 입력은 `stoppedAfterError`로 건너뜁니다.
-- `deduplicate`를 지정하면 각 입력은 해당 정책을 적용해 `createDeduplicated()`와 같이 처리됩니다. 같은 배치의 동일한 입력은 순서가 있는 체인을 구성합니다. 각 후속 입력은 선행 입력을 기다리고(작업자 하나를 점유), 정책에 따라 선행 입력의 최신 결과를 사용합니다. `moveExisting`에서는 마지막 입력의 폴더에 파일이 위치합니다. 후속 입력의 파일명, 이름 및 설명은 무시되며 `isSensitive`는 파일을 `true`로만 승격할 수 있습니다. 선행 입력이 실패하거나 건너뛰면 이미 실행 중인 후속 입력은 `dependencyFailed`로 건너뜁니다. `uploadAnyway`에서는 각 입력이 독립적으로 업로드됩니다.
+- `deduplicate`를 지정하면 각 입력은 해당 정책을 적용해 `createDeduplicated()`와 같이 처리됩니다. 같은 배치의 동일한 입력은 순서가 있는 체인을 구성합니다. 각 후속 입력은 선행 입력을 기다리고(작업자 하나를 점유), 정책에 따라 선행 입력의 최신 결과를 사용합니다. `moveExisting`에서는 마지막 입력의 폴더에 파일이 위치합니다. 후속 입력의 파일명, 이름 및 설명은 무시되며 파일의 `isSensitive` 값은 `true`로만 바꿀 수 있고, 해제할 수는 없습니다. 선행 입력이 실패하거나 건너뛰면 이미 실행 중인 후속 입력은 `dependencyFailed`로 건너뜁니다. `uploadAnyway`에서는 각 입력이 독립적으로 업로드됩니다.
 - `deduplicate`를 사용하지 않아도 서버는 같은 콘텐츠의 기존 파일을 반환할 수 있지만 결과는 `uploaded`로 보고됩니다.
 - `onProgress`는 항목 수(`completedItems`, `succeededItems`, `failedItems`, `totalItems`)와 `itemIndex` 항목의 바이트 진행 상황(`sent`, `total`)을 담은 `DriveBatchUploadProgress`를 받습니다.
 - 자동 재시도는 없습니다. 서버가 파일을 저장한 뒤 네트워크 오류가 나면 실패로 보고됩니다. `deduplicate` 없이 다시 실행하거나 `reuseExisting` 또는 `moveExisting` 정책으로 다시 실행하면 서버 측 중복 제거(`force: false`)에 의해 사본을 추가하는 대신 저장된 파일이 반환됩니다. `uploadAnyway`(`force: true`)로 다시 실행하면 사본이 추가로 생성될 수 있습니다.
