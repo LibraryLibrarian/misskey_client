@@ -69,7 +69,7 @@ void onTokenRefreshed(String newToken) {
 |------|----------|
 | `AuthMode.required` | 注入令牌；如未提供则抛出异常（默认） |
 | `AuthMode.optional` | 有令牌时注入；无令牌时请求照常进行 |
-| `AuthMode.none` | 无论提供者如何，从不注入令牌 |
+| `AuthMode.none` | 无论是否提供令牌，都不会注入令牌 |
 
 这是库内部的机制，作为使用者只需提供 `tokenProvider`，库会自动处理注入。
 

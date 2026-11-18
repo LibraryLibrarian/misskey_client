@@ -295,7 +295,7 @@ if (!result.isComplete) {
 
 该操作分三个阶段（`DriveRecursiveDeletePhase`）运行：`planning` 会加载文件夹树及其文件，不做任何更改；`deletingFiles` 会删除计划中的文件；`deletingFolders` 会从最深层开始删除文件夹。进度计数按阶段计算，并包含已跳过的项目。
 
-- **规划失败会抛出异常**，且不会删除任何内容。开始删除后，各项失败会返回在 `result.files` 和 `result.folders` 中。
+- **规划失败会抛出异常**，且不会删除任何内容。开始删除后，各项操作的失败信息会包含在返回结果的 `result.files` 和 `result.folders` 中。
 - **试运行不会冻结目标。** 随后不带 `dryRun` 再次调用时会生成新计划，可能包含期间新增的项目。即使计划中的项目在规划后被移动到其他位置，也会被删除。
 - **部分结果：** 计划内容未全部成功处理的文件夹不会尝试删除，其祖先也不会尝试删除。已经不存在的文件和文件夹会视为删除成功。
 - **频率限制**会停止启动新工作。
@@ -358,7 +358,7 @@ print('${result.file.id}: ${result.outcome.name}');
 | `moveExisting` | 如果已有文件位于其他位置，则将它移动到 `folderId` |
 | `uploadAnyway` | 跳过查找并上传另一个副本 |
 
-- `result.outcome` 为 `uploaded`、`reusedExisting` 或 `movedExisting`。这是尽力而为的结果：查找后并发上传可能先完成，这类竞争不一定都能检测到。
+- `result.outcome` 为 `uploaded`、`reusedExisting` 或 `movedExisting`。结果可能受并发上传影响：查找后，另一个并发上传可能先完成，且不一定能检测到这类竞争。
 - 已有文件会保留其名称和备注。`isSensitive: true` 会将已有的非敏感文件升级为敏感文件。
 - 传入 `md5`（32 个十六进制字符）可避免对大型输入进行哈希计算。否则会在调用方 isolate 上同步计算哈希（`uploadAnyway` 除外）。
 - 找到匹配的已有文件时，不会验证 `folderId`，因此使用 `reuseExisting` 时，即使文件夹不存在或属于其他用户也不会报错。不带 `force` 的普通 `create()` 行为相同，因为服务器会在查找文件夹前返回匹配项。
@@ -387,7 +387,7 @@ final result = await client.drive.files.createMany(
 
 - `concurrency`（默认值为 2）限制并行上传数。
 - 触发频率限制（HTTP 429）时会停止启动新上传，并将剩余输入标记为 `rateLimited`；正在进行的上传会继续完成。设置 `stopOnError: true` 可在发生任何错误后停止，剩余输入会以 `stoppedAfterError` 跳过。
-- 设置 `deduplicate` 后，每个输入都会按照对应策略执行 `createDeduplicated()`。同一批次中内容相同的输入会形成有序链：每个后续项都会等待其前一项（等待期间会占用一个并发工作单元），并根据策略使用前一项的最新结果。采用 `moveExisting` 时，文件最终位于最后一个输入指定的文件夹。后续项的文件名、名称和备注会被忽略，而 `isSensitive` 只能将文件升级为 `true`。如果前一项失败或被跳过，已经运行的后续项会以 `dependencyFailed` 跳过。使用 `uploadAnyway` 时，每个输入都会独立上传。
+- 设置 `deduplicate` 后，每个输入都会按照对应策略执行 `createDeduplicated()`。同一批次中内容相同的输入会形成有序链：每个后续项都会等待其前一项（等待期间会占用一个并发工作单元），并根据策略使用前一项的最新结果。采用 `moveExisting` 时，文件最终位于最后一个输入指定的文件夹。后续项的文件名、名称和备注会被忽略，而 `isSensitive` 只能将文件的敏感标记设为 `true`，不能取消。如果前一项失败或被跳过，已经运行的后续项会以 `dependencyFailed` 跳过。使用 `uploadAnyway` 时，每个输入都会独立上传。
 - 不设置 `deduplicate` 时，服务器仍可能返回内容相同的已有文件，但它会报告为 `uploaded`。
 - `onProgress` 会收到 `DriveBatchUploadProgress`，其中包含项目计数（`completedItems`、`succeededItems`、`failedItems`、`totalItems`），以及 `itemIndex` 对应项目的字节进度（`sent`、`total`）。
 - 不会自动重试。服务器存储文件后发生的网络故障会报告为失败。不使用 `deduplicate`、或使用 `reuseExisting` 或 `moveExisting` 重新运行时，会返回已存储的文件而非创建另一个文件，因为这些上传使用服务器端去重（`force: false`）。使用 `uploadAnyway`（`force: true`）重新运行则可能创建额外副本。

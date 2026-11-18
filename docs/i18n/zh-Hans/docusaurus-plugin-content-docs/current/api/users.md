@@ -115,7 +115,7 @@ await client.following.invalidate(userId: userId);
 ### 关注申请
 
 ```dart
-// 列出待处理的收到的申请
+// 列出已收到但尚未处理的申请
 final requests = await client.following.requests.list();
 
 // 接受或拒绝
