@@ -151,7 +151,7 @@ if (instance != null) {
 ### Follower und Folgende fuer einen Host
 
 ```dart
-// Beziehungen, die von einer entfernten Instanz gefolgt werden
+// Folgebeziehungen von einer entfernten Instanz
 final followers = await client.federation.followers(
   host: 'mastodon.social',
   limit: 20,

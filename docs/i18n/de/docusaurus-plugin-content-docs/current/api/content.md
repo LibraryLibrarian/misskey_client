@@ -127,7 +127,7 @@ await client.gallery.postsUnlike(postId: postId);
 
 ## Pages
 
-Pages sind reichhaltige Dokumente, die aus Inhaltsbloecken und AiScript-Variablen zusammengesetzt sind.
+Pages sind Dokumente, die aus Inhaltsbloecken und AiScript-Variablen bestehen.
 
 ### Seiten abrufen
 

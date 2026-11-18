@@ -299,7 +299,7 @@ Der Vorgang wird in drei Phasen ausgeführt (`DriveRecursiveDeletePhase`): `plan
 
 - **Fehler bei der Planung lösen eine Ausnahme aus**, bevor etwas gelöscht wird. Einzelne Fehler nach Beginn des Löschvorgangs werden in `result.files` und `result.folders` zurückgegeben.
 - **Ein Dry-Run fixiert die Ziele nicht.** Ein späterer Aufruf ohne `dryRun` erstellt einen neuen Plan, der zwischenzeitlich hinzugefügte Elemente enthalten kann. Geplante Elemente werden auch dann gelöscht, wenn sie nach der Planung an einen anderen Ort verschoben wurden.
-- **Teilergebnisse:** Ordner, deren geplanter Inhalt nicht vollständig erfolgreich war, werden nicht gelöscht; dasselbe gilt für ihre übergeordneten Ordner. Bereits entfernte Dateien und Ordner gelten als erfolgreich gelöscht.
+- **Teilergebnisse:** Ordner, deren zur Löschung vorgesehene Inhalte nicht vollständig gelöscht werden konnten, werden nicht gelöscht; dasselbe gilt für ihre übergeordneten Ordner. Bereits entfernte Dateien und Ordner gelten als erfolgreich gelöscht.
 - **Bei Ratenbegrenzung** werden keine neuen Vorgänge gestartet.
 - **Der Abbruch** erfolgt kooperativ. Ein Abbruch während der Planung stoppt noch nicht gestartete Datei-Auflistungen und gibt alle geplanten Elemente als mit `cancelled` übersprungen zurück; Löschanfragen werden nicht gesendet.
 - **Wiederholungen bei `HAS_CHILD_FILES_OR_FOLDERS`:** Misskey entfernt den Datenbankeintrag einer Datei erst nach der Antwort auf die Löschanfrage. Wird der Ordner sofort danach gelöscht, kann `HAS_CHILD_FILES_OR_FOLDERS` auftreten. Bei Ordnern, deren geplante untergeordnete Elemente gelöscht wurden, wird bei diesem Fehler mit exponentiellem Backoff ab 200 ms erneut versucht, wobei insgesamt höchstens fünf Versuche erfolgen. Andere Schreibfehler werden nicht wiederholt.
@@ -360,7 +360,7 @@ print('${result.file.id}: ${result.outcome.name}');
 | `moveExisting` | Verschiebt die vorhandene Datei nach `folderId`, falls sie sich an einem anderen Ort befindet |
 | `uploadAnyway` | Überspringt die Suche und lädt eine weitere Kopie hoch |
 
-- `result.outcome` ist `uploaded`, `reusedExisting` oder `movedExisting`. Das Ergebnis ist bestmöglich: Ein gleichzeitiger Upload kann nach der Suche zuerst abgeschlossen werden, und solche Konflikte lassen sich nicht immer erkennen.
+- `result.outcome` ist `uploaded`, `reusedExisting` oder `movedExisting`. Das gemeldete Ergebnis lässt sich nicht in jedem Fall zuverlässig bestimmen: Ein gleichzeitiger Upload kann nach der Suche zuerst abgeschlossen werden, und solche Konflikte lassen sich nicht immer erkennen.
 - Name und Kommentar vorhandener Dateien bleiben erhalten. `isSensitive: true` stuft eine vorhandene nicht-sensible Datei als sensibel ein.
 - Übergeben Sie `md5` (32 hexadezimale Zeichen), um das Hashing großer Eingaben zu vermeiden. Andernfalls wird der Hash synchron im aufrufenden Isolate berechnet (außer bei `uploadAnyway`).
 - Wenn eine vorhandene Datei übereinstimmt, wird `folderId` nicht validiert; ein nicht existierender oder fremder Ordner verursacht daher bei `reuseExisting` keinen Fehler. Ein einfaches `create()` ohne `force` verhält sich genauso, da der Server den Treffer zurückgibt, bevor er den Ordner abfragt.

@@ -17,7 +17,7 @@ final user = await client.following.create(userId: userId);
 
 Wenn der Zielbenutzer eine Folgebestaetigung erfordert, wird eine Anfrage gesendet statt eines sofortigen Follows. Die Methode gibt den aktualisierten `MisskeyUser` zurueck.
 
-Uebergeben Sie `withReplies: true`, um Antworten des gefolgten Benutzers in Ihrer Timeline einzuschliessen:
+Uebergeben Sie `withReplies: true`, um Antworten des Benutzers, dem Sie folgen, in Ihre Timeline aufzunehmen:
 
 ```dart
 await client.following.create(userId: userId, withReplies: true);

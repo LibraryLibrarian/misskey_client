@@ -140,7 +140,7 @@ await for (final file in client.drive.files.listAll(pageSize: 100)) {
 }
 ```
 
-Anfragen beginnen erst, wenn der Stream abonniert wird; durch Abbrechen des Abonnements werden weitere Anfragen gestoppt. Die Ergebnisse sind immer nach ID neueste zuerst sortiert; verwenden Sie `maxItems`, um frühzeitig zu beenden. Details finden Sie unter [Drive-Helfer](./advanced/drive-helpers.md#listing-everything).
+Anfragen beginnen erst, wenn der Stream abonniert wird; durch Abbrechen des Abonnements werden weitere Anfragen gestoppt. Die Ergebnisse werden immer nach ID sortiert zurückgegeben, mit den neuesten Einträgen zuerst; verwenden Sie `maxItems`, um die Ausgabe frühzeitig zu beenden. Details finden Sie unter [Drive-Helfer](./advanced/drive-helpers.md#listing-everything).
 
 ## APIs mit Paginierungsunterstuetzung
 
