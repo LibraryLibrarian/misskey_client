@@ -74,6 +74,8 @@ class FederationApi {
   /// (`/api/federation/show-instance`).
   ///
   /// No authentication required. Returns `null` if the instance is unknown.
+  /// Throws a [FormatException] if the server responds with anything other
+  /// than a JSON object or an empty body.
   /// Pass [host] as the host name to look up.
   Future<MisskeyFederationInstance?> showInstance({
     required String host,
@@ -83,7 +85,7 @@ class FederationApi {
       body: <String, dynamic>{'host': host},
       options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
-    final json = nullableJsonObject(res);
+    final json = nullableJsonObject(res, '/federation/show-instance');
     if (json == null) return null;
     return MisskeyFederationInstance.fromJson(json);
   }

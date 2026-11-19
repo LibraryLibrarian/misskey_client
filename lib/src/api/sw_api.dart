@@ -87,7 +87,9 @@ class SwApi {
 
   /// Checks push notification registration (`/api/sw/show-registration`).
   ///
-  /// Returns `null` if the registration does not exist.
+  /// Returns `null` if the registration does not exist. Throws a
+  /// [FormatException] if the server responds with anything other than a JSON
+  /// object or an empty body.
   ///
   /// Pass the endpoint URL to check in [endpoint].
   Future<MisskeySwSubscription?> showRegistration({
@@ -98,7 +100,7 @@ class SwApi {
       body: <String, dynamic>{'endpoint': endpoint},
       options: const RequestOptions(idempotent: true),
     );
-    final json = nullableJsonObject(res);
+    final json = nullableJsonObject(res, '/sw/show-registration');
     if (json == null) return null;
     return MisskeySwSubscription.fromJson(json);
   }

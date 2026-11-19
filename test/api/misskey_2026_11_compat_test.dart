@@ -128,10 +128,7 @@ void main() {
             final client = _createClient(adapter);
             addTearDown(client.dispose);
 
-            await expectLater(
-              lookup.value.call(client),
-              throwsA(anyOf(isA<TypeError>(), isA<FormatException>())),
-            );
+            await expectLater(lookup.value.call(client), throwsFormatException);
           },
         );
       }

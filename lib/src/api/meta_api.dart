@@ -166,14 +166,16 @@ class MetaApi {
   /// Retrieves parameter information for a specific endpoint (`/api/endpoint`).
   ///
   /// Specify the target endpoint name in [endpoint].
-  /// Returns `null` if the endpoint does not exist.
+  /// Returns `null` if the endpoint does not exist. Throws a [FormatException]
+  /// if the server responds with anything other than a JSON object or an
+  /// empty body.
   Future<EndpointInfo?> getEndpoint({required String endpoint}) async {
     final res = await http.send<Object?>(
       '/endpoint',
       body: <String, dynamic>{'endpoint': endpoint},
       options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
-    final json = nullableJsonObject(res);
+    final json = nullableJsonObject(res, '/endpoint');
     if (json == null) return null;
     return EndpointInfo.fromJson(json);
   }
