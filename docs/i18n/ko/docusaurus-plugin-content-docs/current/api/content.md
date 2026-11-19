@@ -9,7 +9,7 @@ title: "콘텐츠"
 
 ## 클립
 
-클립은 북마크한 노트의 이름이 붙은 컬렉션입니다.
+클립은 북마크한 노트를 모아 둔 컬렉션으로, 각 클립에는 이름이 있습니다.
 
 ```dart
 final clip = await client.clips.create(

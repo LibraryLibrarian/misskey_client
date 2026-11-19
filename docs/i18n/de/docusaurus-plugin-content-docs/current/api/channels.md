@@ -138,6 +138,14 @@ final older = await client.antennas.notes(
 );
 ```
 
+### Eine Notiz aus einer Antenne entfernen
+
+```dart
+await client.antennas.removeNote(antennaId: antenna.id, noteId: noteId);
+```
+
+Nur die Timeline der Antenne aendert sich; die Notiz selbst wird nicht geloescht. Erfordert Misskey 2026.6.0 oder neuer; aeltere Server antworten mit `MisskeyNotFoundException`.
+
 ### Auflisten, aktualisieren und loeschen
 
 ```dart

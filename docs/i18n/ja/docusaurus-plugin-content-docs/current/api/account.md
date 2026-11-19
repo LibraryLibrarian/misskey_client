@@ -76,7 +76,7 @@ final updated = await client.account.unpin(noteId: noteId);
 ```dart
 final favs = await client.account.favorites(limit: 20);
 for (final fav in favs) {
-  print(fav.note.text);
+  print(fav.note?.text);
 }
 ```
 
@@ -198,7 +198,7 @@ await client.account.registry.set(
 
 ```dart
 // TOTP の登録を開始する
-final reg = await client.account.twoFactor.registerTotp(password: 'mypassword');
+final reg = await client.account.twoFactor.register(password: 'mypassword');
 print(reg.qr); // UIに表示するQRコードのデータURL
 
 // 認証アプリの最初のコードで TOTP を確認・有効化する

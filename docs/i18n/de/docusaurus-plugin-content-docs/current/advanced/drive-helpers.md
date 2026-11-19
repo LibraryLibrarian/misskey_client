@@ -299,7 +299,7 @@ Der Vorgang wird in drei Phasen ausgeführt (`DriveRecursiveDeletePhase`): `plan
 
 - **Fehler bei der Planung lösen eine Ausnahme aus**, bevor etwas gelöscht wird. Einzelne Fehler nach Beginn des Löschvorgangs werden in `result.files` und `result.folders` zurückgegeben.
 - **Ein Dry-Run fixiert die Ziele nicht.** Ein späterer Aufruf ohne `dryRun` erstellt einen neuen Plan, der zwischenzeitlich hinzugefügte Elemente enthalten kann. Geplante Elemente werden auch dann gelöscht, wenn sie nach der Planung an einen anderen Ort verschoben wurden.
-- **Teilergebnisse:** Ordner, deren geplanter Inhalt nicht vollständig erfolgreich war, werden nicht gelöscht; dasselbe gilt für ihre übergeordneten Ordner. Bereits entfernte Dateien und Ordner gelten als erfolgreich gelöscht.
+- **Teilergebnisse:** Ordner, deren zur Löschung vorgesehene Inhalte nicht vollständig gelöscht werden konnten, werden nicht gelöscht; dasselbe gilt für ihre übergeordneten Ordner. Bereits entfernte Dateien und Ordner gelten als erfolgreich gelöscht.
 - **Bei Ratenbegrenzung** werden keine neuen Vorgänge gestartet.
 - **Der Abbruch** erfolgt kooperativ. Ein Abbruch während der Planung stoppt noch nicht gestartete Datei-Auflistungen und gibt alle geplanten Elemente als mit `cancelled` übersprungen zurück; Löschanfragen werden nicht gesendet.
 - **Wiederholungen bei `HAS_CHILD_FILES_OR_FOLDERS`:** Misskey entfernt den Datenbankeintrag einer Datei erst nach der Antwort auf die Löschanfrage. Wird der Ordner sofort danach gelöscht, kann `HAS_CHILD_FILES_OR_FOLDERS` auftreten. Bei Ordnern, deren geplante untergeordnete Elemente gelöscht wurden, wird bei diesem Fehler mit exponentiellem Backoff ab 200 ms erneut versucht, wobei insgesamt höchstens fünf Versuche erfolgen. Andere Schreibfehler werden nicht wiederholt.
@@ -360,7 +360,7 @@ print('${result.file.id}: ${result.outcome.name}');
 | `moveExisting` | Verschiebt die vorhandene Datei nach `folderId`, falls sie sich an einem anderen Ort befindet |
 | `uploadAnyway` | Überspringt die Suche und lädt eine weitere Kopie hoch |
 
-- `result.outcome` ist `uploaded`, `reusedExisting` oder `movedExisting`. Das Ergebnis ist bestmöglich: Ein gleichzeitiger Upload kann nach der Suche zuerst abgeschlossen werden, und solche Konflikte lassen sich nicht immer erkennen.
+- `result.outcome` ist `uploaded`, `reusedExisting` oder `movedExisting`. Das gemeldete Ergebnis lässt sich nicht in jedem Fall zuverlässig bestimmen: Ein gleichzeitiger Upload kann nach der Suche zuerst abgeschlossen werden, und solche Konflikte lassen sich nicht immer erkennen.
 - Name und Kommentar vorhandener Dateien bleiben erhalten. `isSensitive: true` stuft eine vorhandene nicht-sensible Datei als sensibel ein.
 - Übergeben Sie `md5` (32 hexadezimale Zeichen), um das Hashing großer Eingaben zu vermeiden. Andernfalls wird der Hash synchron im aufrufenden Isolate berechnet (außer bei `uploadAnyway`).
 - Wenn eine vorhandene Datei übereinstimmt, wird `folderId` nicht validiert; ein nicht existierender oder fremder Ordner verursacht daher bei `reuseExisting` keinen Fehler. Ein einfaches `create()` ohne `force` verhält sich genauso, da der Server den Treffer zurückgibt, bevor er den Ordner abfragt.
@@ -389,7 +389,7 @@ final result = await client.drive.files.createMany(
 
 - `concurrency` (Standardwert 2) begrenzt die Anzahl paralleler Uploads.
 - Bei einer Ratenbegrenzung (HTTP 429) werden keine neuen Uploads gestartet und die übrigen Eingaben als `rateLimited` markiert; laufende Uploads werden beendet. Setzen Sie `stopOnError: true`, um nach einem beliebigen Fehler anzuhalten und die übrigen Eingaben als `stoppedAfterError` zu überspringen.
-- Mit `deduplicate` wird jede Eingabe wie `createDeduplicated()` mit der angegebenen Richtlinie behandelt. Identische Eingaben im selben Batch bilden eine geordnete Kette: Jedes Folgeelement wartet auf seinen Vorgänger (und belegt dabei einen Worker) und verwendet gemäß der Richtlinie dessen aktuellstes Ergebnis. Bei `moveExisting` landet die Datei im Ordner des letzten Elements. Dateiname, Name und Kommentar späterer Eingaben werden ignoriert; `isSensitive` kann die Datei nur auf `true` setzen. Schlägt ein Vorgänger fehl oder wird übersprungen, wird ein bereits laufendes Folgeelement als `dependencyFailed` übersprungen. Bei `uploadAnyway` wird jede Eingabe unabhängig hochgeladen.
+- Mit `deduplicate` wird jede Eingabe wie `createDeduplicated()` mit der angegebenen Richtlinie behandelt. Identische Eingaben im selben Batch bilden eine geordnete Kette: Jedes Folgeelement wartet auf seinen Vorgänger (und belegt dabei einen Worker) und verwendet gemäß der Richtlinie dessen aktuellstes Ergebnis. Bei `moveExisting` landet die Datei im Ordner des letzten Elements. Dateiname, Name und Kommentar späterer Eingaben werden ignoriert; das `isSensitive`-Flag der Datei kann nur auf `true` gesetzt, aber nicht deaktiviert werden. Schlägt ein Vorgänger fehl oder wird übersprungen, wird ein bereits laufendes Folgeelement als `dependencyFailed` übersprungen. Bei `uploadAnyway` wird jede Eingabe unabhängig hochgeladen.
 - Ohne `deduplicate` kann der Server dennoch eine vorhandene Datei mit identischem Inhalt zurückgeben; sie wird dann als `uploaded` gemeldet.
 - `onProgress` erhält ein `DriveBatchUploadProgress` mit Elementzählern (`completedItems`, `succeededItems`, `failedItems`, `totalItems`) und dem Byte-Fortschritt (`sent`, `total`) des Elements bei `itemIndex`.
 - Es gibt keine automatischen Wiederholungen. Ein Netzwerkfehler, nachdem der Server eine Datei gespeichert hat, wird als Fehler gemeldet. Bei einer erneuten Ausführung ohne `deduplicate` oder mit `reuseExisting` beziehungsweise `moveExisting` wird die gespeicherte Datei zurückgegeben, statt eine weitere anzulegen, da diese Uploads serverseitig dedupliziert werden (`force: false`). Bei `uploadAnyway` (`force: true`) kann eine erneute Ausführung zusätzliche Kopien erzeugen.
@@ -418,7 +418,7 @@ try {
 ```
 
 - Das Token benötigt die Berechtigungen `write:drive` und `read:account`.
-- Mit `mainSubscription` kann ein bestimmtes `main`-Abonnement ausgewählt werden; andernfalls wird das zuerst in `client.streaming.subscriptions` registrierte verwendet. Ein fehlendes oder inaktives Abonnement oder eine nicht verbundene Streaming-Verbindung löst `StateError` aus.
+- Mit `mainSubscription` kann ein bestimmtes `main`-Abonnement ausgewählt werden; andernfalls wird das zuerst in `client.streaming.subscriptions` registrierte `main`-Channel-Abonnement verwendet. Ein fehlendes oder inaktives Abonnement oder eine nicht verbundene Streaming-Verbindung löst `StateError` aus.
 - Bei einem fehlgeschlagenen Upload sendet der Server kein Ereignis, daher ist ein Fehler nur als Timeout erkennbar. Ein Timeout bricht den serverseitigen Upload nicht ab. `timeout` (Standardwert 2 Minuten) beginnt nach Abschluss der Upload-Anfrage.
 - Während einer Wiederverbindung eintreffende Ereignisse gehen verloren.
 - Für jeden Aufruf wird ein eindeutiger `marker` generiert. Ein eigener Wert darf nicht leer sein und muss für jeden Upload eindeutig sein.

@@ -15,7 +15,7 @@ title: "ソーシャル"
 final user = await client.following.create(userId: userId);
 ```
 
-対象ユーザーがフォール承認を必要とする設定の場合、即時フォローの代わりにリクエストが送信されます。更新後の `MisskeyUser` が返されます。
+対象ユーザーがフォロー承認を必要とする設定の場合、即時フォローの代わりにリクエストが送信されます。更新後の `MisskeyUser` が返されます。
 
 `withReplies: true` を渡すと、そのユーザーのリプライもタイムラインに表示されます。
 
@@ -51,11 +51,25 @@ await client.following.updateAll(notify: 'none', withReplies: false);
 
 ### フォロワーを削除する
 
-自分をフォローしているユーザーを強制的に削除します。
+自分をフォローしているユーザーのフォローを強制的に解除します。
 
 ```dart
 await client.following.invalidate(userId: userId);
 ```
+
+### フォロー中のアカウント一覧
+
+```dart
+final follows = await client.following.list(limit: 20);
+for (final follow in follows) {
+  print(follow.followee?.username);
+}
+
+// 新しいノートの通知を有効にしているアカウントだけ
+final notified = await client.following.list(notification: true);
+```
+
+`sinceId` / `untilId` / `sinceDate` / `untilDate` でページネーションできます。Misskey 2026.5.2 以降が必要で、それより古いサーバーでは `MisskeyNotFoundException` になります。古いサーバーにも対応する場合は、先に `client.meta.isEndpointAvailable(endpoint: 'following/list')` で確認してください。
 
 ## フォローリクエスト (`client.following.requests`)
 

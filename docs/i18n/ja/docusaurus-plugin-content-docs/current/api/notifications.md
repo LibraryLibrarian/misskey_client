@@ -6,6 +6,8 @@ sidebar_position: 3
 
 ## 通知の取得
 
+通知は取得時に既読になります。既読にしない場合は `markAsRead: false` を指定します。
+
 ```dart
 final notifications = await client.notifications.list();
 
@@ -40,12 +42,6 @@ final reactions = await client.notifications.list(
 await client.notifications.markAllAsRead();
 ```
 
-### 特定の通知を既読にする
-
-```dart
-await client.notifications.read(notificationId: 'notif_id');
-```
-
 ## カスタム通知の作成
 
 アプリ内でカスタム通知を送ることができます。
@@ -63,7 +59,7 @@ await client.notifications.create(
 通知の動作確認用にテスト通知を送信します。
 
 ```dart
-await client.notifications.test();
+await client.notifications.testNotification();
 ```
 
 通知設定が正しく機能しているかを確認するために使用します。

@@ -297,7 +297,7 @@ The operation runs in three phases (`DriveRecursiveDeletePhase`): `planning` loa
 
 - **Planning failures throw** before anything is deleted. Once deletion starts, individual failures are returned in `result.files` and `result.folders`.
 - **A dry run does not freeze the targets.** A later non-dry-run call builds a new plan, which may include items added in the meantime. Planned items are deleted even if they are moved elsewhere after planning.
-- **Partial results:** a folder whose planned contents did not all succeed is not attempted, and neither are its ancestors. Files and folders that are already gone count as successfully deleted.
+- **Partial results:** if deleting any planned content of a folder fails or is skipped, that folder and its ancestors are not deleted. Files and folders that are already gone count as successfully deleted.
 - **Rate limiting** stops new work.
 - **Cancellation** is cooperative. Cancelling during planning stops unstarted file listings and returns every planned item as skipped with `cancelled`; no deletes are sent.
 - **`HAS_CHILD_FILES_OR_FOLDERS` retries:** Misskey removes a file's database row only after responding to the delete request, so deleting its folder right away can fail with `HAS_CHILD_FILES_OR_FOLDERS`. Folders whose planned children were deleted retry this error with exponential backoff starting at 200 ms, for at most five attempts. Other write failures are not retried.
@@ -359,7 +359,7 @@ print('${result.file.id}: ${result.outcome.name}');
 | `uploadAnyway` | Skips the lookup and uploads another copy |
 
 - `result.outcome` is `uploaded`, `reusedExisting`, or `movedExisting`. It is best-effort: a concurrent upload can win after the lookup, and such races are not always detectable.
-- Existing files keep their name and comment. `isSensitive: true` upgrades an existing non-sensitive file.
+- Existing files keep their name and comment. `isSensitive: true` marks an existing non-sensitive file as sensitive.
 - Pass `md5` (32 hexadecimal characters) to avoid hashing large inputs. Otherwise the hash is computed synchronously on the calling isolate (except with `uploadAnyway`).
 - When an existing file matches, `folderId` is not validated, so a nonexistent or foreign folder does not cause an error with `reuseExisting`. A plain `create()` without `force` behaves the same way, because the server returns the match before looking up the folder.
 
@@ -387,7 +387,7 @@ final result = await client.drive.files.createMany(
 
 - `concurrency` (default 2) bounds parallel uploads.
 - A rate limit (HTTP 429) stops new uploads and marks the remaining inputs as `rateLimited`; in-flight uploads finish. Set `stopOnError: true` to stop after any error; remaining inputs are skipped as `stoppedAfterError`.
-- With `deduplicate`, each input is handled like `createDeduplicated()` with that policy. Identical inputs in the same batch form an ordered chain: each follower waits for its predecessor (occupying a worker) and uses its latest result according to the policy. With `moveExisting`, the file ends up in the last member's folder. A follower's filename, name, and comment are ignored, while `isSensitive` can only upgrade the file to `true`. If the predecessor fails or is skipped, a follower that is already running is skipped as `dependencyFailed`. With `uploadAnyway`, every input uploads independently.
+- With `deduplicate`, each input is handled like `createDeduplicated()` with that policy. Identical inputs in the same batch form an ordered chain: each follower waits for its predecessor (occupying a worker) and uses its latest result according to the policy. With `moveExisting`, the file ends up in the last member's folder. A follower's filename, name, and comment are ignored, while `isSensitive` can only turn the file's sensitive flag on to `true`, never clear it. If the predecessor fails or is skipped, a follower that is already running is skipped as `dependencyFailed`. With `uploadAnyway`, every input uploads independently.
 - Without `deduplicate`, the server can still return an existing file with the same content, but it is reported as `uploaded`.
 - `onProgress` receives a `DriveBatchUploadProgress` with item counts (`completedItems`, `succeededItems`, `failedItems`, `totalItems`) and the byte progress (`sent`, `total`) of the item at `itemIndex`.
 - Nothing is retried automatically. A network failure after the server stored a file is reported as a failure. Rerunning without `deduplicate`, or with `reuseExisting` or `moveExisting`, returns the stored file instead of creating another, because these uploads use server-side deduplication (`force: false`). With `uploadAnyway` (`force: true`), a rerun can create additional copies.
@@ -416,7 +416,7 @@ try {
 ```
 
 - The token needs the `write:drive` and `read:account` permissions.
-- `mainSubscription` selects a specific main subscription; otherwise the first registered one in `client.streaming.subscriptions` is used. A missing or inactive subscription, or a disconnected streaming client, throws `StateError`.
+- `mainSubscription` selects a specific main subscription; otherwise the first registered `main` channel subscription in `client.streaming.subscriptions` is used. A missing or inactive subscription, or a disconnected streaming client, throws `StateError`.
 - The server sends no event when the upload fails, so a failure is only visible as a timeout. A timeout does not cancel the server-side upload. `timeout` (default 2 minutes) starts after the upload request completes.
 - Events that arrive while the connection is reconnecting are lost.
 - A unique `marker` is generated for each call. If you pass your own, it must be non-empty and unique per upload.

@@ -43,10 +43,10 @@ final msg = await client.chat.messages.createToUser(
 // 메시지 삭제
 await client.chat.messages.delete(messageId: msg.id);
 
-// 메시지에 반응
+// 메시지에 리액션 추가
 await client.chat.messages.react(messageId: msg.id, reaction: ':heart:');
 
-// 반응 제거
+// 리액션 제거
 await client.chat.messages.unreact(messageId: msg.id, reaction: ':heart:');
 ```
 
@@ -152,7 +152,9 @@ final active = await client.announcements.list(limit: 10);
 final all = await client.announcements.list(isActive: false, limit: 20);
 
 // 단일 공지사항 상세 정보
-final ann = await client.announcements.show(announcementId: ann.id);
+final ann = await client.announcements.show(
+  announcementId: active.first.id,
+);
 print(ann.title);
 print(ann.text);
 ```

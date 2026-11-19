@@ -30,7 +30,7 @@ final notifications = await client.notifications.list(
 
 ### 分组通知
 
-同一条笔记上的反应和转发会合并为单个条目：
+同一条笔记上的回应和转发会合并为单个条目：
 
 ```dart
 final grouped = await client.notifications.listGrouped(limit: 20);
@@ -39,7 +39,7 @@ final grouped = await client.notifications.listGrouped(limit: 20);
 ### 按类型过滤
 
 ```dart
-// 仅获取提及和反应
+// 仅获取提及和回应
 final notifications = await client.notifications.list(
   includeTypes: ['mention', 'reaction'],
 );
@@ -50,7 +50,7 @@ final notifications = await client.notifications.list(
 );
 ```
 
-常见通知类型：`follow`（关注）、`mention`（提及）、`reply`（回复）、`renote`（转发）、`quote`（引用）、`reaction`（反应）、`pollEnded`（投票结束）、`achievementEarned`（获得成就）、`app`（应用）。
+常见通知类型：`follow`（关注）、`mention`（提及）、`reply`（回复）、`renote`（转发）、`quote`（引用）、`reaction`（回应）、`pollEnded`（投票结束）、`achievementEarned`（获得成就）、`app`（应用）。
 
 ### 分页
 

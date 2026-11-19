@@ -54,7 +54,7 @@ final client = MisskeyClient(
 );
 ```
 
-`FunctionLogger` 优先级高于 `enableLog` 标志。如果你提供了自定义日志记录器，它将接收所有日志调用，与 `enableLog` 的值无关。
+自定义日志记录器会替换默认的 `StdoutLogger`，但不会绕过 `enableLog`：只有在 `enableLog` 为 `true` 时才会接收日志调用。
 
 ## 实现自定义 Logger
 
@@ -73,13 +73,14 @@ class MyLogger implements Logger {
 
   @override
   void error(String message, [Object? error, StackTrace? stackTrace]) {
-    // Handle error with optional stack trace
+    // 处理错误及可选的堆栈跟踪
   }
 }
 
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: MyLogger(),
@@ -90,7 +91,7 @@ final client = MisskeyClient(
 
 当设置了 `enableLog: true` 且未提供自定义 `logger` 时，使用 `StdoutLogger`。它在内部委托给 `logger` 包。
 
-在调试构建中，所有日志级别（debug 及以上）均会输出。在发布构建中，只输出警告和错误。
+HTTP 请求、响应和重试日志仅在 `enableLog` 为 `true` 且不是发布构建时输出。默认的 `StdoutLogger` 使用 `logger` 包的 development filter，在断言被禁用时（如发布构建）会抑制所有输出。Streaming 日志调用仅取决于 `enableLog`，因此自定义日志记录器在发布构建中也能接收这些调用。
 
 日志格式：
 

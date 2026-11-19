@@ -201,7 +201,7 @@ Helper APIs can additionally throw `ArgumentError` for invalid arguments (before
 
 ## Logging
 
-Enable the built-in stdout logger via `MisskeyClientConfig.enableLog`, or supply a custom `Logger` implementation:
+Set `MisskeyClientConfig.enableLog` to `true` to enable logging. To redirect the logs, also supply a custom `Logger` implementation:
 
 ```dart
 class MyLogger implements Logger {
@@ -212,7 +212,10 @@ class MyLogger implements Logger {
 }
 
 final client = MisskeyClient(
-  config: MisskeyClientConfig(baseUrl: Uri.parse('https://misskey.example.com')),
+  config: MisskeyClientConfig(
+    baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
+  ),
   logger: MyLogger(),
 );
 ```

@@ -10,11 +10,11 @@ IDまたはユーザー名でユーザーを取得します。
 
 ```dart
 // IDで取得
-final user = await client.users.show(userId: 'user_id');
+final user = await client.users.showOneByUserId('user_id');
 
 // ユーザー名とホストで取得
-final user = await client.users.show(
-  username: 'alice',
+final user = await client.users.showOneByUsername(
+  'alice',
   host: 'misskey.example.com',
 );
 
@@ -28,16 +28,16 @@ print(user.followersCount);
 
 ```dart
 // ユーザーリストを作成
-final list = await client.userLists.create(name: '友達');
+final list = await client.users.lists.create(name: '友達');
 
 // リストにユーザーを追加
-await client.userLists.push(
+await client.users.lists.push(
   listId: list.id,
   userId: 'user_id',
 );
 
 // リストのタイムラインを取得
-final timeline = await client.notes.userListTimeline(
+final timeline = await client.notes.timelineUserList(
   listId: list.id,
 );
 ```
@@ -52,10 +52,10 @@ await client.following.create(userId: 'user_id');
 await client.following.delete(userId: 'user_id');
 
 // フォロワー一覧
-final followers = await client.users.followers(userId: 'user_id');
+final followers = await client.users.followersByUserId('user_id');
 
 // フォロー中一覧
-final following = await client.users.following(userId: 'user_id');
+final following = await client.users.followingByUserId('user_id');
 ```
 
 ## ブロック
@@ -90,8 +90,8 @@ final muted = await client.mute.list();
 
 ```dart
 await client.account.update(
-  name: '新しい表示名',
-  description: 'プロフィールの説明文',
+  name: Optional('新しい表示名'),
+  description: Optional('プロフィールの説明文'),
   isLocked: false,
 );
 ```

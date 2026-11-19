@@ -55,7 +55,7 @@ final client = MisskeyClient(
 서버 정보 가져오기 (인증 불필요):
 
 ```dart
-final serverInfo = await client.meta.fetch();
+final serverInfo = await client.meta.getMeta();
 print(serverInfo.name);        // 서버 이름
 print(serverInfo.description); // 서버 설명
 ```
@@ -70,7 +70,7 @@ print(me.username); // 사용자명 (@ 없이)
 
 ### API 구조
 
-모든 API 도메인은 `MisskeyClient`의 속성으로 제공됩니다:
+주요 API 도메인은 `MisskeyClient`의 속성으로 제공됩니다. 관리자 API(`admin*`)를 비롯해 여기에 싣지 않은 도메인도 있습니다:
 
 ```dart
 client.account       // 계정 및 프로필 관리 (/api/i/*)
@@ -91,7 +91,7 @@ client.hashtags      // 해시태그 정보
 client.invite        // 초대 코드 관리
 client.meta          // 서버 메타데이터
 client.mute          // 사용자 뮤트
-client.notes         // 노트 작업 (타임라인, 작성, 반응 등)
+client.notes         // 노트 작업 (타임라인, 작성, 리액션 등)
 client.notifications // 알림 조회 및 관리
 client.pages         // 페이지 관리
 client.renoteMute    // 리노트 뮤트 관리
@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-로그를 직접 처리하려면 생성자에 `Logger` 구현체를 전달합니다:
+로그를 직접 처리하려면 생성자에 `Logger` 구현체도 전달합니다 (`enableLog`가 `true`인 동안에만 로그가 전달됩니다):
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

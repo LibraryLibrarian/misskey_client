@@ -151,7 +151,7 @@ if (instance != null) {
 ### Abonnés et abonnements pour un hôte
 
 ```dart
-// Relationships followed from a remote instance
+// Relations d'abonnement pour une instance distante
 final followers = await client.federation.followers(
   host: 'mastodon.social',
   limit: 20,
@@ -162,7 +162,7 @@ final following = await client.federation.following(
   limit: 20,
 );
 
-// Users known from a remote instance
+// Utilisateurs connus d'une instance distante
 final users = await client.federation.users(
   host: 'mastodon.social',
   limit: 20,
@@ -204,7 +204,7 @@ final notes = await client.roles.notes(roleId: role.id, limit: 20);
 final members = await client.roles.users(roleId: role.id, limit: 20);
 ```
 
-Toutes les méthodes de liste acceptent `sinceId`, `untilId`, `sinceDate` et `untilDate` pour la pagination.
+`notes()` et `users()` acceptent `sinceId`, `untilId`, `sinceDate` et `untilDate` pour la pagination.
 
 ## ChartsApi
 

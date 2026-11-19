@@ -115,8 +115,8 @@ await client.following.invalidate(userId: userId);
 ### 关注申请
 
 ```dart
-// 列出待处理的收到的申请
-final requests = await client.following.requests.listReceived();
+// 列出已收到但尚未处理的申请
+final requests = await client.following.requests.list();
 
 // 接受或拒绝
 await client.following.requests.accept(userId: userId);
@@ -171,9 +171,9 @@ print(me.description);
 
 ```dart
 final updated = await client.account.update(
-  name: 'Alice',
-  description: 'Hello from Misskey!',
-  lang: 'en',
+  name: Optional('Alice'),
+  description: Optional('Hello from Misskey!'),
+  lang: Optional('en'),
 );
 ```
 
