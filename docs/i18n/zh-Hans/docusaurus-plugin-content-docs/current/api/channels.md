@@ -138,6 +138,14 @@ final older = await client.antennas.notes(
 );
 ```
 
+### 从天线中移除笔记
+
+```dart
+await client.antennas.removeNote(antennaId: antenna.id, noteId: noteId);
+```
+
+只会改变天线的时间线，笔记本身不会被删除。需要 Misskey 2026.6.0 或更高版本；更早的服务器会返回 `MisskeyNotFoundException`。
+
 ### 列出、更新与删除
 
 ```dart

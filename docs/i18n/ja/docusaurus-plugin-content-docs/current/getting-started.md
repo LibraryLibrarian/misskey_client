@@ -30,37 +30,37 @@ dart pub get
 
 ## 基本的な使い方
 
-`MisskeyClient` を使うには、`MisskeyClientConfig` と `TokenProvider` を用意します。
+`MisskeyClient` を使うには、`MisskeyClientConfig` とトークンを返すコールバックを用意します。
 
 ```dart
 import 'package:misskey_client/misskey_client.dart';
 
 final config = MisskeyClientConfig(
-  baseUrl: 'https://misskey.example.com',
+  baseUrl: Uri.parse('https://misskey.example.com'),
   userAgent: 'MyApp/1.0.0',
 );
 
-final tokenProvider = StaticTokenProvider('your_access_token');
-
 final client = MisskeyClient(
   config: config,
-  tokenProvider: tokenProvider,
+  tokenProvider: () => 'your_access_token',
 );
 ```
 
+`baseUrl` にはスキームを含む `Uri` を指定します。`tokenProvider` は `FutureOr<String?>` を返すコールバックで、認証を伴うリクエストごとに呼び出されます。認証が不要なエンドポイントだけを使う場合は省略できます。
+
 ## 最初のAPI呼び出し
 
-`meta.fetch` でサーバー情報を取得できます。
+`meta.getMeta` でサーバー情報を取得できます。
 
 ```dart
-final meta = await client.meta.fetch();
+final meta = await client.meta.getMeta();
 print(meta.name);
 print(meta.version);
 ```
 
 ## API構造の概要
 
-`MisskeyClient` は25のAPIドメインを提供します。
+`MisskeyClient` は、主なAPIドメインをプロパティとして提供します。管理者向けAPI（`admin*`）など、ここに載せていないドメインもあります。
 
 | プロパティ | 説明 |
 |---|---|
@@ -71,16 +71,16 @@ print(meta.version);
 | `client.meta` | サーバーメタ情報 |
 | `client.streaming` | リアルタイムのタイムライン、通知、ノート更新 |
 
-すべてのAPIはHTTP POSTで通信します。トークンはリクエストボディの `i` フィールドとして送信されます。
+認証を伴う POST リクエストでは、ボディの `i` フィールドにアクセストークンが自動的に付与されます。
 
 ## ログ制御
 
-デフォルトでは `StdoutLogger` がログを出力します。ログを無効にするには `enableLog: false` を設定します。
+HTTP リクエスト・レスポンスのログはデフォルトで無効です。`enableLog: true` を設定すると、カスタム `logger` を指定していない場合は `StdoutLogger` がログを出力します。HTTP ログはリリースビルドでは出力されません。
 
 ```dart
 final config = MisskeyClientConfig(
-  baseUrl: 'https://misskey.example.com',
-  enableLog: false,
+  baseUrl: Uri.parse('https://misskey.example.com'),
+  enableLog: true,
 );
 ```
 

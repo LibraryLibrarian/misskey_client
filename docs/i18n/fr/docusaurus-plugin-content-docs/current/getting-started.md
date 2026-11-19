@@ -14,7 +14,7 @@ Si vous constatez des modèles de réponse incorrects ou un comportement inatten
 
 :::
 
-misskey_client est une bibliothèque cliente Misskey API écrite en Dart pur.
+misskey_client est une bibliothèque écrite en Dart pur qui permet d'utiliser l'API Misskey.
 Elle fonctionne dans tout environnement Dart : Flutter, Dart côté serveur, outils CLI, et bien d'autres.
 
 ## Installation
@@ -55,7 +55,7 @@ final client = MisskeyClient(
 Récupérer les informations du serveur (aucune authentification requise) :
 
 ```dart
-final serverInfo = await client.meta.fetch();
+final serverInfo = await client.meta.getMeta();
 print(serverInfo.name);        // Nom du serveur
 print(serverInfo.description); // Description du serveur
 ```
@@ -70,7 +70,7 @@ print(me.username); // Nom d'utilisateur (sans @)
 
 ### Structure de l'API
 
-Chaque domaine d'API est exposé en tant que propriété de `MisskeyClient` :
+Les principaux domaines d'API sont exposés en tant que propriétés de `MisskeyClient`. Les API d'administration (`admin*`) et `accountLifecycle` ne sont pas listés ici :
 
 ```dart
 client.account       // Gestion du compte et du profil (/api/i/*)
@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-Pour rediriger les journaux vers votre propre destination, passez une implémentation de `Logger` au constructeur :
+Pour rediriger les journaux vers votre propre destination, passez également une implémentation de `Logger` au constructeur (les journaux sont transmis uniquement lorsque `enableLog` vaut `true`) :
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

@@ -5,7 +5,7 @@ title: Téléversement Drive
 
 # Téléversement Drive
 
-Le Drive de Misskey est le système de stockage de fichiers. Tous les fichiers joints aux notes doivent d'abord être téléversés vers votre Drive. La facade `client.drive` expose les sous-API `files`, `folders` et `stats`.
+Le Drive de Misskey est le système de stockage de fichiers. Tous les fichiers joints aux notes doivent d'abord être téléversés vers votre Drive. La façade `client.drive` expose les sous-API `files`, `folders` et `stats`.
 
 Consultez également [Assistants Drive](./drive-helpers.md) pour les opérations regroupant plusieurs requêtes, comme la liste de tous les fichiers, les déplacements en masse, les téléversements par lots et la suppression récursive de dossiers.
 

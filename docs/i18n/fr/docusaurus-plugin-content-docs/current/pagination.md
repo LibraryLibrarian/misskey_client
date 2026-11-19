@@ -107,9 +107,9 @@ final isLastPage = page.length < limit;
 ## Parcourir toutes les pages
 
 ```dart
-Future<List<MisskeyNote>> fetchAllFavorites() async {
+Future<List<MisskeyNoteFavorite>> fetchAllFavorites() async {
   const limit = 100;
-  final all = <MisskeyNote>[];
+  final all = <MisskeyNoteFavorite>[];
   String? untilId;
 
   while (true) {
@@ -154,6 +154,7 @@ La plupart des API renvoyant des listes prennent en charge `sinceId`/`untilId` e
 - `client.mute.list`
 - `client.clips.list`
 - `client.following.requests.list`
+- `client.following.list`
 - `client.antennas.notes`
 - `client.channels.timeline`
 - `client.users.list` (par offset)

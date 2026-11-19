@@ -107,10 +107,10 @@ final authUrl = Uri.parse('$baseUrl/miauth/$session').replace(
 
 ### Étape 2 : Échanger la session contre un jeton
 
-Une fois que l'utilisateur a approuvé la demande, appelez le point d'accès de vérification. Il s'agit d'une simple requête HTTP GET qui ne passe pas par le chemin authentifié de la bibliothèque :
+Une fois que l'utilisateur a approuvé la demande, appelez le point d'accès de vérification. Il s'agit d'une simple requête HTTP POST qui ne passe pas par le chemin authentifié de la bibliothèque :
 
 ```dart
-final response = await http.get(
+final response = await http.post(
   Uri.parse('$baseUrl/api/miauth/$session/check'),
 );
 final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -131,7 +131,7 @@ final client = MisskeyClient(
 );
 
 // Works without a token
-final info = await client.meta.fetch();
+final info = await client.meta.getMeta();
 final notes = await client.notes.timelineLocal(limit: 10);
 ```
 

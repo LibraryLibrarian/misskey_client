@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // Cancel all your renotes of a note
 await client.notes.unrenote(noteId: noteId);
 
-// List users who renoted
+// List the renotes of a note
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 
@@ -231,6 +231,16 @@ final results = await client.notes.search(
   query: 'hello',
   userId: someUserId,
   channelId: someChannelId,
+);
+```
+
+Restrict results to a posting period with `rangeStartAt` / `rangeEndAt` (Unix timestamps in milliseconds, both inclusive). Unlike `sinceDate` / `untilDate`, which are pagination cursors, these are search conditions. Requires Misskey 2026.6.0 or later; older servers ignore them and return results without the period filter.
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
 );
 ```
 

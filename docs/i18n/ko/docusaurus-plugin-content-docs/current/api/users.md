@@ -116,7 +116,7 @@ await client.following.invalidate(userId: userId);
 
 ```dart
 // 대기 중인 수신 요청 목록
-final requests = await client.following.requests.listReceived();
+final requests = await client.following.requests.list();
 
 // 수락 또는 거절
 await client.following.requests.accept(userId: userId);
@@ -171,9 +171,9 @@ print(me.description);
 
 ```dart
 final updated = await client.account.update(
-  name: 'Alice',
-  description: 'Hello from Misskey!',
-  lang: 'en',
+  name: Optional('Alice'),
+  description: Optional('Hello from Misskey!'),
+  lang: Optional('en'),
 );
 ```
 

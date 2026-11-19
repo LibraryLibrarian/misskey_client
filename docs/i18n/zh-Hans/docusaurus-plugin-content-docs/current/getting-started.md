@@ -55,7 +55,7 @@ final client = MisskeyClient(
 获取服务器信息（无需认证）：
 
 ```dart
-final serverInfo = await client.meta.fetch();
+final serverInfo = await client.meta.getMeta();
 print(serverInfo.name);        // 服务器名称
 print(serverInfo.description); // 服务器描述
 ```
@@ -70,7 +70,7 @@ print(me.username); // 用户名（不含 @）
 
 ### API 结构
 
-`MisskeyClient` 上的每个属性对应一个 API 域：
+`MisskeyClient` 的属性提供主要的 API 域。管理员 API（`admin*`）等部分域未在此列出：
 
 ```dart
 client.account       // 账户和个人资料管理 (/api/i/*)
@@ -97,7 +97,7 @@ client.pages         // 页面管理
 client.renoteMute    // 转发静音管理
 client.roles         // 角色管理
 client.sw            // Service Worker 推送通知注册
-client.streaming     // 实时时间线、通知和帖子更新
+client.streaming     // 实时时间线、通知和笔记更新
 client.users         // 用户搜索、关注列表、用户列表
 ```
 
@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-如需将日志路由到自定义目标，可在构造函数中传入 `Logger` 实现：
+如需将日志路由到自定义目标，还需在构造函数中传入 `Logger` 实现（仅在 `enableLog` 为 `true` 时传递日志）：
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

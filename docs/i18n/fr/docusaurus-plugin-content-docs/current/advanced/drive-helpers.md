@@ -297,7 +297,7 @@ L’opération comporte trois phases (`DriveRecursiveDeletePhase`) : `planning` 
 
 - **Les échecs de planification provoquent une exception** avant toute suppression. Une fois la suppression commencée, les échecs individuels sont renvoyés dans `result.files` et `result.folders`.
 - **Une simulation ne fige pas les éléments ciblés.** Un appel ultérieur sans simulation établit un nouveau plan, qui peut inclure les éléments ajoutés entre-temps. Les éléments planifiés sont supprimés même s’ils sont déplacés ailleurs après la planification.
-- **Résultats partiels :** la suppression d’un dossier n’est pas tentée si tous les éléments prévus qu’il contient n’ont pas été supprimés ; il en va de même pour ses dossiers parents. Les fichiers et dossiers déjà absents sont considérés comme supprimés avec succès.
+- **Résultats partiels :** si la suppression d’au moins un élément prévu échoue ou est ignorée, la suppression de ce dossier et de tous ses dossiers parents n’est pas tentée. Les fichiers et dossiers déjà absents sont considérés comme supprimés avec succès.
 - **La limitation de débit** arrête le lancement de nouvelles opérations.
 - **L’annulation** est coopérative. Une annulation pendant la planification arrête les listes de fichiers non commencées et renvoie tous les éléments planifiés comme ignorés avec `cancelled` ; aucune suppression n’est envoyée.
 - **Nouvelles tentatives pour `HAS_CHILD_FILES_OR_FOLDERS` :** Misskey ne supprime la ligne d’un fichier de la base de données qu’après avoir répondu à la requête de suppression ; supprimer immédiatement son dossier peut donc échouer avec `HAS_CHILD_FILES_OR_FOLDERS`. Les dossiers dont les enfants prévus ont été supprimés font l’objet de nouvelles tentatives en cas de cette erreur, avec un délai exponentiel à partir de 200 ms, cinq tentatives au maximum. Les autres échecs d’écriture ne sont pas réessayés.
@@ -358,7 +358,7 @@ print('${result.file.id}: ${result.outcome.name}');
 | `moveExisting` | Déplace le fichier existant vers `folderId` s’il se trouve ailleurs |
 | `uploadAnyway` | Ignore la recherche et téléverse une autre copie |
 
-- `result.outcome` vaut `uploaded`, `reusedExisting` ou `movedExisting`. Le résultat est fourni au mieux : un téléversement concurrent peut aboutir après la recherche, et ces courses ne sont pas toujours détectables.
+- `result.outcome` vaut `uploaded`, `reusedExisting` ou `movedExisting`. L'opération peut être devancée par un téléversement concurrent effectué après la recherche ; cette situation de concurrence n'est pas toujours détectable.
 - Les fichiers existants conservent leur nom et leur commentaire. `isSensitive: true` rend sensible un fichier existant qui ne l’était pas.
 - Passez `md5` (32 caractères hexadécimaux) pour éviter de calculer le hachage d’entrées volumineuses. Sinon, le hachage est calculé de manière synchrone sur l’isolate appelant (sauf avec `uploadAnyway`).
 - Lorsqu’un fichier existant correspond, `folderId` n’est pas validé ; un dossier inexistant ou appartenant à un autre utilisateur ne provoque donc pas d’erreur avec `reuseExisting`. Un appel simple à `create()` sans `force` se comporte de la même manière, car le serveur renvoie le fichier correspondant avant de rechercher le dossier.
@@ -387,7 +387,7 @@ final result = await client.drive.files.createMany(
 
 - `concurrency` (2 par défaut) limite le nombre de téléversements parallèles.
 - Une limitation de débit (HTTP 429) arrête le lancement de nouveaux téléversements et marque les entrées restantes `rateLimited` ; les téléversements en cours vont jusqu’à leur terme. Définissez `stopOnError: true` pour arrêter après toute erreur ; les entrées restantes sont ignorées avec `stoppedAfterError`.
-- Avec `deduplicate`, chaque entrée est traitée comme avec `createDeduplicated()` selon la politique indiquée. Les entrées identiques d’un même lot forment une chaîne ordonnée : chaque entrée suivante attend la précédente (en occupant un worker) et utilise son résultat le plus récent selon la politique. Avec `moveExisting`, le fichier se retrouve dans le dossier de la dernière entrée. Le nom de fichier, le nom et le commentaire d’une entrée suivante sont ignorés, tandis que `isSensitive` ne peut que faire passer le fichier à `true`. Si l’entrée précédente échoue ou est ignorée, une entrée suivante déjà en cours est ignorée avec `dependencyFailed`. Avec `uploadAnyway`, chaque entrée est téléversée indépendamment.
+- Avec `deduplicate`, chaque entrée est traitée comme avec `createDeduplicated()` selon la politique indiquée. Les entrées identiques d’un même lot forment une chaîne ordonnée : chaque entrée suivante attend la précédente (en occupant un worker) et utilise son résultat le plus récent selon la politique. Avec `moveExisting`, le fichier se retrouve dans le dossier de la dernière entrée. Le nom de fichier, le nom et le commentaire d’une entrée suivante sont ignorés, tandis que la propriété `isSensitive` du fichier peut uniquement passer à `true` et ne peut pas être désactivée. Si l’entrée précédente échoue ou est ignorée, une entrée suivante déjà en cours est ignorée avec `dependencyFailed`. Avec `uploadAnyway`, chaque entrée est téléversée indépendamment.
 - Sans `deduplicate`, le serveur peut tout de même renvoyer un fichier existant de même contenu, mais le résultat est signalé comme `uploaded`.
 - `onProgress` reçoit un `DriveBatchUploadProgress` contenant le nombre d’éléments (`completedItems`, `succeededItems`, `failedItems`, `totalItems`) et la progression en octets (`sent`, `total`) de l’élément situé à `itemIndex`.
 - Aucune nouvelle tentative n’est effectuée automatiquement. Une erreur réseau survenant après l’enregistrement du fichier par le serveur est signalée comme un échec. Une nouvelle exécution sans `deduplicate`, ou avec `reuseExisting` ou `moveExisting`, renvoie le fichier enregistré au lieu d’en créer un autre, car ces téléversements utilisent la déduplication côté serveur (`force: false`). Avec `uploadAnyway` (`force: true`), une nouvelle exécution peut créer des copies supplémentaires.
@@ -395,7 +395,7 @@ final result = await client.drive.files.createMany(
 
 ## Attendre la fin des téléversements par URL {#waiting-for-url-uploads}
 
-`uploadFromUrl()` renvoie dès que le serveur accepte la requête ; le fichier apparaît ultérieurement. `uploadFromUrlAndWait()` attend également l’événement `urlUploadFinished` sur le canal de streaming `main` et renvoie le fichier obtenu. La méthode ne s’abonne pas et ne se connecte pas à votre place : abonnez-vous à `MisskeyStreamingChannel.main()` et connectez-vous au préalable :
+`uploadFromUrl()` renvoie dès que le serveur accepte la requête ; le fichier apparaît ultérieurement. `uploadFromUrlAndWait()` attend également l’événement `urlUploadFinished` sur le canal de streaming `main` et renvoie le fichier obtenu. La méthode ne souscrit pas et ne se connecte pas à votre place : souscrivez à `MisskeyStreamingChannel.main()` et connectez-vous au préalable :
 
 ```dart
 final main = await client.streaming.subscribe(
@@ -416,13 +416,13 @@ try {
 ```
 
 - Le jeton doit disposer des autorisations `write:drive` et `read:account`.
-- `mainSubscription` permet de sélectionner un abonnement `main` précis ; sinon, le premier abonnement enregistré dans `client.streaming.subscriptions` est utilisé. Un abonnement absent ou inactif, ou un client de streaming déconnecté, provoque une exception `StateError`.
+- `mainSubscription` permet de sélectionner une souscription `main` précise ; sinon, la première souscription `main` enregistrée dans `client.streaming.subscriptions` est utilisée. Une souscription absente ou inactive, ou un client de streaming déconnecté, provoque une exception `StateError`.
 - Le serveur n’envoie aucun événement en cas d’échec du téléversement ; celui-ci n’est donc détectable que par expiration du délai. L’expiration n’annule pas le téléversement côté serveur. Le délai `timeout` (2 minutes par défaut) commence après la fin de la requête de téléversement.
 - Les événements reçus pendant la reconnexion sont perdus.
 - Un `marker` unique est généré à chaque appel. Si vous en fournissez un, il doit être non vide et unique pour chaque téléversement.
 - La déduplication côté serveur peut renvoyer un fichier existant situé dans un autre dossier.
 
-Consultez [API Streaming](../streaming.md) pour les détails sur la connexion et les abonnements.
+Consultez [API Streaming](../streaming.md) pour les détails sur la connexion et les souscriptions.
 
 ## Limites de débit {#rate-limits}
 

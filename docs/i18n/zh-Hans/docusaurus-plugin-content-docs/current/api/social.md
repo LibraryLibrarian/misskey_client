@@ -57,6 +57,20 @@ await client.following.updateAll(notify: 'none', withReplies: false);
 await client.following.invalidate(userId: userId);
 ```
 
+### 列出已关注的账户
+
+```dart
+final follows = await client.following.list(limit: 20);
+for (final follow in follows) {
+  print(follow.followee?.username);
+}
+
+// 仅返回开启了新笔记通知的账户
+final notified = await client.following.list(notification: true);
+```
+
+使用 `sinceId` / `untilId` / `sinceDate` / `untilDate` 分页。需要 Misskey 2026.5.2 或更高版本；更早的服务器会返回 `MisskeyNotFoundException`。如需兼容这些服务器，请先用 `client.meta.isEndpointAvailable(endpoint: 'following/list')` 检查。
+
 ## 关注申请（`client.following.requests`）
 
 ### 收到的申请
