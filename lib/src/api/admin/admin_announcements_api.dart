@@ -21,6 +21,11 @@ class AdminAnnouncementsApi {
   /// [icon] is `info`, `warning`, `error`, or `success` (default `info`).
   /// [display] is `normal`, `banner`, or `dialog` (default `normal`).
   /// Pass [userId] to create a user-specific announcement.
+  /// [autoArchiveAt] schedules archiving at a Unix timestamp in milliseconds
+  /// (Misskey 2026.10.1 or later). Past timestamps are not allowed.
+  ///
+  /// Common errors:
+  /// - `INVALID_AUTO_ARCHIVE_AT`: The scheduled archive time is in the past
   Future<MisskeyAdminAnnouncement> create({
     required String title,
     required String text,
@@ -31,6 +36,7 @@ class AdminAnnouncementsApi {
     bool? silence,
     bool? needConfirmationToRead,
     String? userId,
+    int? autoArchiveAt,
   }) async {
     final res = await http.send<Map<String, dynamic>>(
       '/admin/announcements/create',
@@ -45,6 +51,7 @@ class AdminAnnouncementsApi {
         'silence': ?silence,
         'needConfirmationToRead': ?needConfirmationToRead,
         'userId': ?userId,
+        'autoArchiveAt': ?autoArchiveAt,
       },
     );
     return MisskeyAdminAnnouncement.fromJson(res);
@@ -89,10 +96,13 @@ class AdminAnnouncementsApi {
   ///
   /// Only the parameters that are provided are sent; omitted parameters
   /// remain unchanged. Set [isActive] to `false` to archive the
-  /// announcement.
+  /// announcement. It is also treated as inactive once [autoArchiveAt] passes.
   ///
   /// For [imageUrl], use the [Optional] type: pass `Optional('value')` to set
   /// and `Optional.null_()` to clear.
+  /// [autoArchiveAt] schedules archiving at a non-negative Unix timestamp in
+  /// milliseconds (Misskey 2026.10.1 or later); use `Optional.null_()` to clear
+  /// the schedule.
   ///
   /// Beware that this endpoint always overwrites `imageUrl`: the server
   /// evaluates it as `imageUrl || null`, so omitting the parameter clears the
@@ -103,6 +113,7 @@ class AdminAnnouncementsApi {
   ///
   /// Common errors:
   /// - `NO_SUCH_ANNOUNCEMENT`: The specified announcement does not exist
+  /// - `INVALID_AUTO_ARCHIVE_AT`: The scheduled archive time is negative
   Future<void> update({
     required String id,
     String? title,
@@ -114,6 +125,7 @@ class AdminAnnouncementsApi {
     bool? silence,
     bool? needConfirmationToRead,
     bool? isActive,
+    Optional<int>? autoArchiveAt,
   }) {
     final body = <String, dynamic>{
       'id': id,
@@ -127,6 +139,7 @@ class AdminAnnouncementsApi {
       'isActive': ?isActive,
     };
     putOptional(body, 'imageUrl', imageUrl);
+    putOptional(body, 'autoArchiveAt', autoArchiveAt);
     return http.send<Object?>('/admin/announcements/update', body: body);
   }
 

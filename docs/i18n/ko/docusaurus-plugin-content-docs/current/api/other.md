@@ -246,7 +246,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw`는 서비스 워커 푸시 알림 구독을 관리합니다. 모든 엔드포인트는 인증이 필요합니다.
+`client.sw`는 서비스 워커 푸시 알림 구독을 관리합니다. Misskey 2026.10.0 이상의 `unregister`를 제외한 엔드포인트는 인증이 필요합니다.
 
 ### 등록
 
@@ -286,5 +286,9 @@ await client.sw.updateRegistration(
 ```dart
 await client.sw.unregister(
   endpoint: 'https://push.example.com/subscribe/abc123',
+  auth: 'auth-secret',
+  publickey: 'vapid-public-key',
 );
 ```
+
+Misskey 2026.10.0부터는 `auth`와 `publickey`가 필수입니다. `register`에 사용한 값과 동일한 값을 전달하세요. 이전 서버에서는 무시됩니다. Misskey 2026.10.0 이상의 `unregister`는 액세스 토큰 없이 호출할 수 있으며, 시간당 30회로 제한됩니다(HTTP 429).

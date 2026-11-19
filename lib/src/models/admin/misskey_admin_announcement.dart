@@ -23,6 +23,7 @@ class MisskeyAdminAnnouncement with _$MisskeyAdminAnnouncement {
     this.icon,
     this.display,
     this.isActive,
+    this.autoArchiveAt,
     this.forExistingUsers,
     this.silence,
     this.needConfirmationToRead,
@@ -70,8 +71,15 @@ class MisskeyAdminAnnouncement with _$MisskeyAdminAnnouncement {
   final String? display;
 
   /// Whether the announcement is active.
+  ///
+  /// Treated as `false` once [autoArchiveAt] has passed.
   @override
   final bool? isActive;
+
+  /// The scheduled archive date and time (Misskey 2026.10.1 or later).
+  @SafeDateTimeConverter()
+  @override
+  final DateTime? autoArchiveAt;
 
   /// Whether the announcement targets existing users only.
   @override

@@ -121,6 +121,10 @@ MisskeyUser _$MisskeyUserFromJson(Map<String, dynamic> json) => MisskeyUser(
   autoSensitive: json['autoSensitive'] as bool? ?? false,
   carefulBot: json['carefulBot'] as bool? ?? false,
   autoAcceptFollowed: json['autoAcceptFollowed'] as bool? ?? false,
+  followApprovalLocalSeconds: (json['followApprovalLocalSeconds'] as num?)
+      ?.toInt(),
+  followApprovalRemoteSeconds: (json['followApprovalRemoteSeconds'] as num?)
+      ?.toInt(),
   chatScope: json['chatScope'] as String?,
   canChat: json['canChat'] as bool? ?? false,
   hasUnreadSpecifiedNotes: json['hasUnreadSpecifiedNotes'] as bool? ?? false,
@@ -254,6 +258,8 @@ Map<String, dynamic> _$MisskeyUserToJson(
   'autoSensitive': instance.autoSensitive,
   'carefulBot': instance.carefulBot,
   'autoAcceptFollowed': instance.autoAcceptFollowed,
+  'followApprovalLocalSeconds': instance.followApprovalLocalSeconds,
+  'followApprovalRemoteSeconds': instance.followApprovalRemoteSeconds,
   'chatScope': instance.chatScope,
   'canChat': instance.canChat,
   'hasUnreadSpecifiedNotes': instance.hasUnreadSpecifiedNotes,

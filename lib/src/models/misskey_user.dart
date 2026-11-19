@@ -94,6 +94,8 @@ class MisskeyUser with _$MisskeyUser {
     this.autoSensitive,
     this.carefulBot,
     this.autoAcceptFollowed,
+    this.followApprovalLocalSeconds,
+    this.followApprovalRemoteSeconds,
     this.chatScope,
     this.canChat,
     this.hasUnreadSpecifiedNotes,
@@ -473,6 +475,22 @@ class MisskeyUser with _$MisskeyUser {
   @override
   @JsonKey(defaultValue: false)
   final bool? autoAcceptFollowed;
+
+  /// Requires approval for follows from local accounts younger than this age
+  /// in seconds.
+  ///
+  /// Included only in the authenticated user's MeDetailed response on Misskey
+  /// 2026.10.1 and later. `null` disables this setting.
+  @override
+  final int? followApprovalLocalSeconds;
+
+  /// Requires approval for follows from remote accounts younger than this age
+  /// in seconds.
+  ///
+  /// Included only in the authenticated user's MeDetailed response on Misskey
+  /// 2026.10.1 and later. `null` disables this setting.
+  @override
+  final int? followApprovalRemoteSeconds;
 
   /// The scope of who can initiate a chat with this user.
   @override

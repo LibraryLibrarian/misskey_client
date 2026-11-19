@@ -246,7 +246,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw` 管理 Service Worker 推送通知订阅。所有端点均需要认证。
+`client.sw` 管理 Service Worker 推送通知订阅。除 Misskey 2026.10.0 及更高版本的 `unregister` 外，所有端点都需要认证。
 
 ### 注册
 
@@ -286,5 +286,9 @@ await client.sw.updateRegistration(
 ```dart
 await client.sw.unregister(
   endpoint: 'https://push.example.com/subscribe/abc123',
+  auth: 'auth-secret',
+  publickey: 'vapid-public-key',
 );
 ```
+
+Misskey 2026.10.0 及更高版本要求提供 `auth` 和 `publickey`，其值应与 `register` 时相同。旧版本服务器会忽略这两个参数。在 Misskey 2026.10.0 及更高版本中，`unregister` 无需访问令牌即可调用，但每小时最多允许调用 30 次（HTTP 429）。

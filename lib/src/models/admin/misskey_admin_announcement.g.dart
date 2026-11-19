@@ -22,6 +22,9 @@ MisskeyAdminAnnouncement _$MisskeyAdminAnnouncementFromJson(
   icon: json['icon'] as String?,
   display: json['display'] as String?,
   isActive: json['isActive'] as bool?,
+  autoArchiveAt: const SafeDateTimeConverter().fromJson(
+    json['autoArchiveAt'] as String?,
+  ),
   forExistingUsers: json['forExistingUsers'] as bool?,
   silence: json['silence'] as bool?,
   needConfirmationToRead: json['needConfirmationToRead'] as bool?,
@@ -41,6 +44,7 @@ Map<String, dynamic> _$MisskeyAdminAnnouncementToJson(
   'icon': instance.icon,
   'display': instance.display,
   'isActive': instance.isActive,
+  'autoArchiveAt': const SafeDateTimeConverter().toJson(instance.autoArchiveAt),
   'forExistingUsers': instance.forExistingUsers,
   'silence': instance.silence,
   'needConfirmationToRead': instance.needConfirmationToRead,

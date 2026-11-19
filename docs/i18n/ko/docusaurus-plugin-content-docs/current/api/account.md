@@ -199,11 +199,14 @@ await client.account.registry.set(
 ```dart
 // TOTP 등록 시작
 final reg = await client.account.twoFactor.register(password: 'mypassword');
-print(reg.qr); // UI에 표시할 QR 코드 데이터 URL
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // UI에 표시할 QR 코드 데이터 URL
 
 // 인증 앱의 첫 번째 코드로 TOTP 확인 및 활성화
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Misskey 2026.11.0부터는 `qr`이 반환되지 않습니다. 이 예제의 `generateQrDataUrl`은 QR 코드 라이브러리를 사용하여 `reg.url`의 `otpauth` URL을 QR 이미지 데이터 URL로 변환하도록 앱에서 구현하는 함수입니다.
 
 ### 웹훅
 

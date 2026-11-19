@@ -199,11 +199,14 @@ await client.account.registry.set(
 ```dart
 // Begin TOTP registration
 final reg = await client.account.twoFactor.register(password: 'mypassword');
-print(reg.qr); // QR code data URL to show in the UI
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // QR code data URL to show in the UI
 
 // Confirm and activate TOTP with the first code from the authenticator app
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Misskey 2026.11.0 and later omit `qr`. In this example, `generateQrDataUrl` is a function provided by your application that encodes the `otpauth` URL in `reg.url` as a QR image data URL using a QR code library.
 
 ### Webhooks
 

@@ -9,7 +9,7 @@ part 'misskey_totp_registration.g.dart';
 @JsonSerializable()
 class MisskeyTotpRegistration with _$MisskeyTotpRegistration {
   const MisskeyTotpRegistration({
-    required this.qr,
+    this.qr,
     required this.url,
     required this.secret,
     required this.label,
@@ -22,8 +22,11 @@ class MisskeyTotpRegistration with _$MisskeyTotpRegistration {
   Map<String, dynamic> toJson() => _$MisskeyTotpRegistrationToJson(this);
 
   /// Data URL of the QR code image.
+  ///
+  /// Omitted on Misskey 2026.11.0 and later; generate the QR code from [url]
+  /// when this is `null`.
   @override
-  final String qr;
+  final String? qr;
 
   /// The `otpauth` URL for authenticator apps.
   @override

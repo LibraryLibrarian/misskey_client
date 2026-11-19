@@ -247,7 +247,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw` gère les abonnements aux notifications push Service Worker. Tous les points d'accès nécessitent une authentification.
+`client.sw` gère les abonnements aux notifications push du Service Worker. Tous les points d'accès nécessitent une authentification, sauf `unregister` depuis Misskey 2026.10.0.
 
 ### Enregistrer
 
@@ -287,5 +287,9 @@ await client.sw.updateRegistration(
 ```dart
 await client.sw.unregister(
   endpoint: 'https://push.example.com/subscribe/abc123',
+  auth: 'auth-secret',
+  publickey: 'vapid-public-key',
 );
 ```
+
+Depuis Misskey 2026.10.0, `auth` et `publickey` sont obligatoires ; utilisez les mêmes valeurs que pour `register`. Les serveurs plus anciens les ignorent. Depuis Misskey 2026.10.0, `unregister` peut être appelé sans jeton d’accès et est limité à 30 requêtes par heure (HTTP 429).

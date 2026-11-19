@@ -199,11 +199,14 @@ await client.account.registry.set(
 ```dart
 // TOTP-Registrierung beginnen
 final reg = await client.account.twoFactor.register(password: 'mypassword');
-print(reg.qr); // QR-Code-Daten-URL zur Anzeige in der Benutzeroberflaeche
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // QR-Code-Daten-URL zur Anzeige in der Benutzeroberflaeche
 
 // TOTP mit dem ersten Code der Authenticator-App bestaetigen und aktivieren
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Ab Misskey 2026.11.0 wird `qr` nicht mehr zurueckgegeben. In diesem Beispiel ist `generateQrDataUrl` eine von Ihrer Anwendung bereitgestellte Funktion, die die `otpauth`-URL in `reg.url` mit einer QR-Code-Bibliothek in eine QR-Bild-Daten-URL umwandelt.
 
 ### Webhooks
 

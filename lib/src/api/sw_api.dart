@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 
+import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/sw/misskey_sw_registration.dart';
@@ -25,6 +26,9 @@ class SwApi {
   /// secret in [auth], and the client-side VAPID public key in [publickey].
   /// Set [sendReadMessage] to `true` to also receive read message
   /// notifications (default: false).
+  ///
+  /// Common errors:
+  /// - `INVALID_ENDPOINT`: The push service endpoint is invalid
   Future<MisskeySwRegistration> register({
     required String endpoint,
     required String auth,
@@ -46,12 +50,29 @@ class SwApi {
 
   /// Unregisters from push notifications (`/api/sw/unregister`).
   ///
-  /// Pass the endpoint URL to unregister in [endpoint].
-  Future<void> unregister({required String endpoint}) async {
+  /// Pass the endpoint URL to unregister in [endpoint]. [auth] and [publickey]
+  /// are the subscription's authentication secret and public key, using the
+  /// same values as [register]. They are required on Misskey 2026.10.0 and
+  /// later; older servers ignore them.
+  ///
+  /// On Misskey 2026.10.0 and later, this endpoint can be called without
+  /// an access token and is limited to 30 requests per hour (HTTP 429).
+  Future<void> unregister({
+    required String endpoint,
+    String? auth,
+    String? publickey,
+  }) async {
     await http.send<void>(
       '/sw/unregister',
-      body: <String, dynamic>{'endpoint': endpoint},
-      options: const RequestOptions(idempotent: true),
+      body: <String, dynamic>{
+        'endpoint': endpoint,
+        'auth': ?auth,
+        'publickey': ?publickey,
+      },
+      options: const RequestOptions(
+        authMode: AuthMode.optional,
+        idempotent: true,
+      ),
     );
   }
 

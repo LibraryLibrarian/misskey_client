@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `autoArchiveAt` to `AdminAnnouncementsApi.create` / `update` and `MisskeyAdminAnnouncement` for scheduled archiving (Misskey 2026.10.1 or later)
+- Added `followApprovalLocalSeconds` / `followApprovalRemoteSeconds` to `AccountApi.update` and `MisskeyUser` for requiring follow approval based on account age (Misskey 2026.10.1 or later)
+- Added optional `auth` / `publickey` arguments to `SwApi.unregister`, required by Misskey 2026.10.0 or later
 - Added `FollowingApi.list` (`/api/following/list`, Misskey 2026.5.2 or later) for listing the authenticated user's follows, optionally only those with new-note notifications enabled
 - Added the `rangeStartAt` / `rangeEndAt` posting-period conditions to `NotesApi.search` (Misskey 2026.6.0 or later; older servers ignore them)
 - Added `AntennasApi.removeNote` (`/api/antennas/remove-note`, Misskey 2026.6.0 or later) for removing a single note from an antenna's timeline
@@ -17,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** MisskeyTotpRegistration.qr is now nullable because Misskey 2026.11.0 no longer returns it; generate the QR code from url when it is null
+- `SwApi.unregister` now allows requests without an access token, as supported by Misskey 2026.10.0 or later
 - Corrected the `AdminQueueApi.jobs` documentation of accepted `state` values: `prioritized` is not accepted, and `paused` is rejected from Misskey 2026.9.0
 - Corrected the `AdminQueueApi` documentation of the required privilege: moderator privileges are sufficient, not only administrator
 - Corrected the documentation comment of the default logger: with assertions disabled, as in release builds, it outputs nothing
