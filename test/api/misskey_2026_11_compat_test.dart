@@ -53,20 +53,6 @@ void main() {
   });
 
   group('SwApi.showRegistration', () {
-    test('returns null when the server responds with an empty body', () async {
-      // 未登録のとき Misskey は空の本文を返す（2026.5.1 〜 2026.11.0 で共通）
-      final adapter = _RecordingAdapter(rawBody: '');
-      final client = _createClient(adapter);
-      addTearDown(client.dispose);
-
-      final result = await client.sw.showRegistration(
-        endpoint: 'https://push.example.com/subscription',
-      );
-
-      expect(adapter.path, '/api/sw/show-registration');
-      expect(result, isNull);
-    });
-
     test('parses the registration when it exists', () async {
       final adapter = _RecordingAdapter(
         response: {
@@ -86,6 +72,111 @@ void main() {
       expect(result?.sendReadMessage, isTrue);
     });
   });
+
+  final nullableLookups =
+      <String, ({String path, Future<Object?> Function(MisskeyClient) call})>{
+        'SwApi.showRegistration': (
+          path: '/api/sw/show-registration',
+          call: (client) => client.sw.showRegistration(
+            endpoint: 'https://push.example.com/subscription',
+          ),
+        ),
+        'MetaApi.getEndpoint': (
+          path: '/api/endpoint',
+          call: (client) =>
+              client.meta.getEndpoint(endpoint: 'missing-endpoint'),
+        ),
+        'FederationApi.showInstance': (
+          path: '/api/federation/show-instance',
+          call: (client) =>
+              client.federation.showInstance(host: 'unknown.example.com'),
+        ),
+      };
+
+  for (final lookup in nullableLookups.entries) {
+    group('${lookup.key} nullable response', () {
+      test(
+        'returns null for HTTP 204 without Content-Type or a body',
+        () async {
+          // 存在しない対象に対する Misskey の実際の応答を再現する
+          final adapter = _RecordingAdapter(
+            rawBody: '',
+            statusCode: 204,
+            headers: const {},
+          );
+          final client = _createClient(adapter);
+          addTearDown(client.dispose);
+
+          expect(await lookup.value.call(client), isNull);
+          expect(adapter.path, lookup.value.path);
+        },
+      );
+
+      test('returns null for JSON null', () async {
+        final adapter = _RecordingAdapter();
+        final client = _createClient(adapter);
+        addTearDown(client.dispose);
+
+        expect(await lookup.value.call(client), isNull);
+      });
+
+      for (final invalid in <Object>['unexpected response', <dynamic>[]]) {
+        test(
+          'rejects a JSON ${invalid is String ? 'string' : 'array'}',
+          () async {
+            final adapter = _RecordingAdapter(response: invalid);
+            final client = _createClient(adapter);
+            addTearDown(client.dispose);
+
+            await expectLater(
+              lookup.value.call(client),
+              throwsA(anyOf(isA<TypeError>(), isA<FormatException>())),
+            );
+          },
+        );
+      }
+    });
+  }
+
+  test('MetaApi.getEndpoint parses an existing endpoint object', () async {
+    final adapter = _RecordingAdapter(
+      response: {
+        'params': [
+          {'name': 'endpoint', 'type': 'String'},
+        ],
+      },
+    );
+    final client = _createClient(adapter);
+    addTearDown(client.dispose);
+
+    final result = await client.meta.getEndpoint(endpoint: 'endpoint');
+
+    expect(result?.params.single.name, 'endpoint');
+    expect(result?.params.single.type, 'String');
+  });
+
+  test(
+    'FederationApi.showInstance parses an existing instance object',
+    () async {
+      final adapter = _RecordingAdapter(
+        response: {
+          'id': 'instance-id',
+          'host': 'known.example.com',
+          'firstRetrievedAt': '2026-11-01T00:00:00.000Z',
+        },
+      );
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      final result = await client.federation.showInstance(
+        host: 'known.example.com',
+      );
+
+      expect(result?.id, 'instance-id');
+      expect(result?.host, 'known.example.com');
+      expect(result?.firstRetrievedAt, DateTime.utc(2026, 11, 1));
+    },
+  );
 
   group('AdminAnnouncementsApi', () {
     test('create omits an unspecified autoArchiveAt', () async {
@@ -268,13 +359,23 @@ MisskeyClient _createClient(_RecordingAdapter adapter, {String? token}) =>
     );
 
 final class _RecordingAdapter implements HttpClientAdapter {
-  _RecordingAdapter({this.response, this.rawBody, this.initialFailures = 0});
+  _RecordingAdapter({
+    this.response,
+    this.rawBody,
+    this.initialFailures = 0,
+    this.statusCode = 200,
+    this.headers = const {
+      Headers.contentTypeHeader: ['application/json'],
+    },
+  });
 
   final Object? response;
 
-  /// 指定すると JSON エンコードせずにそのまま本文として返す（空の本文など）
+  // 指定すると JSON エンコードせずにそのまま本文として返す（空の本文など）
   final String? rawBody;
   final int initialFailures;
+  final int statusCode;
+  final Map<String, List<String>> headers;
   int requestCount = 0;
   String? path;
   Map<String, dynamic>? body;
@@ -292,10 +393,8 @@ final class _RecordingAdapter implements HttpClientAdapter {
     extra = options.extra;
     return ResponseBody.fromString(
       rawBody ?? jsonEncode(response),
-      requestCount <= initialFailures ? 503 : 200,
-      headers: {
-        Headers.contentTypeHeader: ['application/json'],
-      },
+      requestCount <= initialFailures ? 503 : statusCode,
+      headers: headers,
     );
   }
 

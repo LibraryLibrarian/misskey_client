@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/nullable_json_object.dart';
 import '../models/meta.dart';
 import '../models/misskey_custom_emoji.dart';
 import '../models/misskey_user.dart';
@@ -167,13 +168,14 @@ class MetaApi {
   /// Specify the target endpoint name in [endpoint].
   /// Returns `null` if the endpoint does not exist.
   Future<EndpointInfo?> getEndpoint({required String endpoint}) async {
-    final res = await http.send<Map<String, dynamic>?>(
+    final res = await http.send<Object?>(
       '/endpoint',
       body: <String, dynamic>{'endpoint': endpoint},
       options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
-    if (res == null) return null;
-    return EndpointInfo.fromJson(res);
+    final json = nullableJsonObject(res);
+    if (json == null) return null;
+    return EndpointInfo.fromJson(json);
   }
 
   /// Retrieves the list of local custom emoji (`/api/emojis`).

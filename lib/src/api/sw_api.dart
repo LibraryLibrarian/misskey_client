@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/nullable_json_object.dart';
 import '../models/sw/misskey_sw_registration.dart';
 import '../models/sw/misskey_sw_subscription.dart';
 
@@ -97,9 +98,9 @@ class SwApi {
       body: <String, dynamic>{'endpoint': endpoint},
       options: const RequestOptions(idempotent: true),
     );
-    // 未登録のときサーバーは空の本文を返すため、Map 以外は未登録として扱う
-    if (res is! Map<String, dynamic>) return null;
-    return MisskeySwSubscription.fromJson(res);
+    final json = nullableJsonObject(res);
+    if (json == null) return null;
+    return MisskeySwSubscription.fromJson(json);
   }
 
   /// Updates push notification registration (`/api/sw/update-registration`).

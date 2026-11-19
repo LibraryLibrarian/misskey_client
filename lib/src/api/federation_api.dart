@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/nullable_json_object.dart';
 import '../models/federation/misskey_federation_instance.dart';
 import '../models/federation/misskey_federation_stats.dart';
 import '../models/misskey_following.dart';
@@ -77,13 +78,14 @@ class FederationApi {
   Future<MisskeyFederationInstance?> showInstance({
     required String host,
   }) async {
-    final res = await http.send<Map<String, dynamic>?>(
+    final res = await http.send<Object?>(
       '/federation/show-instance',
       body: <String, dynamic>{'host': host},
       options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
-    if (res == null) return null;
-    return MisskeyFederationInstance.fromJson(res);
+    final json = nullableJsonObject(res);
+    if (json == null) return null;
+    return MisskeyFederationInstance.fromJson(json);
   }
 
   /// Retrieves the list of followers from a specified instance

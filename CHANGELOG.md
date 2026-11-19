@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed `SwApi.showRegistration` failing with a type error instead of returning `null` when the registration does not exist; Misskey responds with an empty body in that case
+- Fixed `SwApi.showRegistration`, `MetaApi.getEndpoint`, and `FederationApi.showInstance` failing with a type error instead of returning `null` when the target does not exist and Misskey responds with an empty body
 
 ## [1.0.0-beta.9] - 2026-09-26
 
