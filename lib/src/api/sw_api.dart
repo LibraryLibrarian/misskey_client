@@ -29,6 +29,7 @@ class SwApi {
   ///
   /// Common errors:
   /// - `INVALID_ENDPOINT`: The push service endpoint is invalid
+  ///   (Misskey 2026.10.0 or later)
   Future<MisskeySwRegistration> register({
     required String endpoint,
     required String auth,
@@ -55,8 +56,15 @@ class SwApi {
   /// same values as [register]. They are required on Misskey 2026.10.0 and
   /// later; older servers ignore them.
   ///
-  /// On Misskey 2026.10.0 and later, this endpoint can be called without
-  /// an access token and is limited to 30 requests per hour (HTTP 429).
+  /// This endpoint does not require an access token on any supported Misskey
+  /// version. Misskey 2026.10.0 and later limit it to 30 requests per hour
+  /// (HTTP 429).
+  ///
+  /// On upstream Misskey 2026.11.0, supplying an access token restricts deletion
+  /// to the authenticated user's registrations. Without a token, registrations
+  /// for all accounts matching [endpoint], [auth], and [publickey] are deleted.
+  /// Use a client without an access token to remove all accounts' registrations
+  /// for the subscription.
   Future<void> unregister({
     required String endpoint,
     String? auth,

@@ -68,33 +68,25 @@ void main() {
       });
     });
 
-    test(
-      'create sends autoArchiveAt and parses the scheduled response',
-      () async {
-        final adapter = _RecordingAdapter(
-          response: {
-            ..._announcement,
-            'autoArchiveAt': '2026-12-01T00:00:00.000Z',
-          },
-        );
-        final client = _createClient(adapter);
-        addTearDown(client.dispose);
+    test('create sends autoArchiveAt', () async {
+      final adapter = _RecordingAdapter(response: _announcement);
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
 
-        final announcement = await client.adminAnnouncements.create(
-          title: 'News',
-          text: 'Details',
-          autoArchiveAt: 1796083200000,
-        );
+      await client.adminAnnouncements.create(
+        title: 'News',
+        text: 'Details',
+        autoArchiveAt: 1796083200000,
+      );
 
-        expect(adapter.body, {
-          'title': 'News',
-          'text': 'Details',
-          'imageUrl': null,
-          'autoArchiveAt': 1796083200000,
-        });
-        expect(announcement.autoArchiveAt, DateTime.utc(2026, 12, 1));
-      },
-    );
+      expect(adapter.path, '/api/admin/announcements/create');
+      expect(adapter.body, {
+        'title': 'News',
+        'text': 'Details',
+        'imageUrl': null,
+        'autoArchiveAt': 1796083200000,
+      });
+    });
 
     for (final schedule in <Optional<int>?>[
       null,

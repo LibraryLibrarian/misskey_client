@@ -23,6 +23,7 @@ class AdminAnnouncementsApi {
   /// Pass [userId] to create a user-specific announcement.
   /// [autoArchiveAt] schedules archiving at a Unix timestamp in milliseconds
   /// (Misskey 2026.10.1 or later). Past timestamps are not allowed.
+  /// Earlier servers ignore this parameter without returning an error.
   ///
   /// Common errors:
   /// - `INVALID_AUTO_ARCHIVE_AT`: The scheduled archive time is in the past
@@ -102,7 +103,8 @@ class AdminAnnouncementsApi {
   /// and `Optional.null_()` to clear.
   /// [autoArchiveAt] schedules archiving at a non-negative Unix timestamp in
   /// milliseconds (Misskey 2026.10.1 or later); use `Optional.null_()` to clear
-  /// the schedule.
+  /// the schedule. Earlier servers ignore this parameter without returning
+  /// an error.
   ///
   /// Beware that this endpoint always overwrites `imageUrl`: the server
   /// evaluates it as `imageUrl || null`, so omitting the parameter clears the

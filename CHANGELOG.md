@@ -20,8 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking:** MisskeyTotpRegistration.qr is now nullable because Misskey 2026.11.0 no longer returns it; generate the QR code from url when it is null
-- `SwApi.unregister` now allows requests without an access token, as supported by Misskey 2026.10.0 or later
+- **Breaking:** `MisskeyTotpRegistration.qr` is now nullable because Misskey 2026.11.0 no longer returns it; generate the QR code from `url` when it is null
+- `SwApi.unregister` now uses optional authentication so it can be called without an access token, matching the endpoint's existing behavior across server versions
 - Corrected the `AdminQueueApi.jobs` documentation of accepted `state` values: `prioritized` is not accepted, and `paused` is rejected from Misskey 2026.9.0
 - Corrected the `AdminQueueApi` documentation of the required privilege: moderator privileges are sufficient, not only administrator
 - Corrected the documentation comment of the default logger: with assertions disabled, as in release builds, it outputs nothing

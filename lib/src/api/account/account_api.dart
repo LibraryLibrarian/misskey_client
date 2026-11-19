@@ -117,7 +117,9 @@ class AccountApi {
   ///
   /// Common errors:
   /// - `AVATAR_IS_SENSITIVE`: The avatar image is marked as sensitive
+  ///   (Misskey 2026.10.1 or later)
   /// - `BANNER_IS_SENSITIVE`: The banner image is marked as sensitive
+  ///   (Misskey 2026.10.1 or later)
   Future<MisskeyUser> update({
     Optional<String>? name,
     Optional<String>? description,

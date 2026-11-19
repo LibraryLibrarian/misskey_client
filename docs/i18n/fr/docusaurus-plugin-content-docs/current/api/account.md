@@ -197,12 +197,12 @@ await client.account.registry.set(
 ### Authentification à deux facteurs
 
 ```dart
-// Démarrer l’inscription TOTP
+// Begin TOTP registration
 final reg = await client.account.twoFactor.register(password: 'mypassword');
 final qr = reg.qr ?? generateQrDataUrl(reg.url);
-print(qr); // URL de données du code QR à afficher dans l’interface
+print(qr); // QR code data URL to show in the UI
 
-// Confirmer et activer TOTP avec le premier code de l’application d’authentification
+// Confirm and activate TOTP with the first code from the authenticator app
 await client.account.twoFactor.done(token: '123456');
 ```
 

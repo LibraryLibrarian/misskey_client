@@ -72,11 +72,16 @@ class MisskeyAdminAnnouncement with _$MisskeyAdminAnnouncement {
 
   /// Whether the announcement is active.
   ///
-  /// Treated as `false` once [autoArchiveAt] has passed.
+  /// Included only in `/admin/announcements/list` responses; `null` in the
+  /// result of `AdminAnnouncementsApi.create`. In list responses, this is
+  /// `false` once [autoArchiveAt] has passed.
   @override
   final bool? isActive;
 
   /// The scheduled archive date and time (Misskey 2026.10.1 or later).
+  ///
+  /// Included only in `/admin/announcements/list` responses; `null` in the
+  /// result of `AdminAnnouncementsApi.create`.
   @SafeDateTimeConverter()
   @override
   final DateTime? autoArchiveAt;

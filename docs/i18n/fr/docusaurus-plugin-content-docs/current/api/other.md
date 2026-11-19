@@ -247,7 +247,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw` gère les abonnements aux notifications push du Service Worker. Tous les points d'accès nécessitent une authentification, sauf `unregister` depuis Misskey 2026.10.0.
+`client.sw` gère les abonnements aux notifications push du Service Worker. Tous les points d'accès nécessitent une authentification, sauf `unregister`, qui peut être appelé sans jeton d’accès dans toutes les versions de Misskey prises en charge.
 
 ### Enregistrer
 
@@ -292,4 +292,6 @@ await client.sw.unregister(
 );
 ```
 
-Depuis Misskey 2026.10.0, `auth` et `publickey` sont obligatoires ; utilisez les mêmes valeurs que pour `register`. Les serveurs plus anciens les ignorent. Depuis Misskey 2026.10.0, `unregister` peut être appelé sans jeton d’accès et est limité à 30 requêtes par heure (HTTP 429).
+Depuis Misskey 2026.10.0, `auth` et `publickey` sont obligatoires ; utilisez les mêmes valeurs que pour `register`. Les serveurs plus anciens les ignorent. `unregister` peut être appelé sans jeton d’accès dans toutes les versions de Misskey prises en charge. Depuis Misskey 2026.10.0, il est limité à 30 requêtes par heure (HTTP 429).
+
+Dans la version amont de Misskey 2026.11.0, fournir un jeton d’accès limite la suppression aux inscriptions de l’utilisateur authentifié. Sans jeton, les inscriptions de tous les comptes associées à un abonnement dont `endpoint`, `auth` et `publickey` correspondent sont supprimées. Pour supprimer les inscriptions de tous les comptes pour cet abonnement, appelez `unregister` avec un client sans jeton d’accès.
