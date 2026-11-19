@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected the `AdminQueueApi` documentation of the required privilege: moderator privileges are sufficient, not only administrator
 - Corrected the documentation comment of the default logger: with assertions disabled, as in release builds, it outputs nothing
 
+### Fixed
+
+- Fixed `SwApi.showRegistration` failing with a type error instead of returning `null` when the registration does not exist; Misskey responds with an empty body in that case
+
 ## [1.0.0-beta.9] - 2026-09-26
 
 ### Added

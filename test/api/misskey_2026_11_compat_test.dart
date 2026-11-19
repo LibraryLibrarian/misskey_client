@@ -52,6 +52,41 @@ void main() {
     });
   });
 
+  group('SwApi.showRegistration', () {
+    test('returns null when the server responds with an empty body', () async {
+      // 未登録のとき Misskey は空の本文を返す（2026.5.1 〜 2026.11.0 で共通）
+      final adapter = _RecordingAdapter(rawBody: '');
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      final result = await client.sw.showRegistration(
+        endpoint: 'https://push.example.com/subscription',
+      );
+
+      expect(adapter.path, '/api/sw/show-registration');
+      expect(result, isNull);
+    });
+
+    test('parses the registration when it exists', () async {
+      final adapter = _RecordingAdapter(
+        response: {
+          'userId': 'user1',
+          'endpoint': 'https://push.example.com/subscription',
+          'sendReadMessage': true,
+        },
+      );
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      final result = await client.sw.showRegistration(
+        endpoint: 'https://push.example.com/subscription',
+      );
+
+      expect(result?.endpoint, 'https://push.example.com/subscription');
+      expect(result?.sendReadMessage, isTrue);
+    });
+  });
+
   group('AdminAnnouncementsApi', () {
     test('create omits an unspecified autoArchiveAt', () async {
       final adapter = _RecordingAdapter(response: _announcement);
@@ -233,9 +268,12 @@ MisskeyClient _createClient(_RecordingAdapter adapter, {String? token}) =>
     );
 
 final class _RecordingAdapter implements HttpClientAdapter {
-  _RecordingAdapter({this.response, this.initialFailures = 0});
+  _RecordingAdapter({this.response, this.rawBody, this.initialFailures = 0});
 
   final Object? response;
+
+  /// 指定すると JSON エンコードせずにそのまま本文として返す（空の本文など）
+  final String? rawBody;
   final int initialFailures;
   int requestCount = 0;
   String? path;
@@ -253,7 +291,7 @@ final class _RecordingAdapter implements HttpClientAdapter {
     body = Map<String, dynamic>.from(options.data as Map<String, dynamic>);
     extra = options.extra;
     return ResponseBody.fromString(
-      jsonEncode(response),
+      rawBody ?? jsonEncode(response),
       requestCount <= initialFailures ? 503 : 200,
       headers: {
         Headers.contentTypeHeader: ['application/json'],

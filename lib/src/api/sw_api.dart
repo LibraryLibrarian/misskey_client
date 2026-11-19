@@ -92,12 +92,13 @@ class SwApi {
   Future<MisskeySwSubscription?> showRegistration({
     required String endpoint,
   }) async {
-    final res = await http.send<Map<String, dynamic>?>(
+    final res = await http.send<Object?>(
       '/sw/show-registration',
       body: <String, dynamic>{'endpoint': endpoint},
       options: const RequestOptions(idempotent: true),
     );
-    if (res == null) return null;
+    // 未登録のときサーバーは空の本文を返すため、Map 以外は未登録として扱う
+    if (res is! Map<String, dynamic>) return null;
     return MisskeySwSubscription.fromJson(res);
   }
 
