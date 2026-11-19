@@ -4,8 +4,10 @@ import '../client/constants.dart';
 
 /// Provides the shared logger instance for the misskey_client library.
 ///
-/// In debug builds, verbose logs at debug/trace level are emitted. In release
-/// builds, only warnings and above are output.
+/// The level is `debug` outside release builds and `warning` in release
+/// builds, but the package's default `DevelopmentFilter` only lets logs
+/// through while assertions are enabled (debug builds). With assertions
+/// disabled, as in release builds, nothing is output.
 final pkg.Logger clientLog = pkg.Logger(
   level: kReleaseMode ? pkg.Level.warning : pkg.Level.debug,
   printer: _CustomLogPrinter(),
