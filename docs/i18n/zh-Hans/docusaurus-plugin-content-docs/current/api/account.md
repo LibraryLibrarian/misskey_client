@@ -199,11 +199,14 @@ await client.account.registry.set(
 ```dart
 // 开始 TOTP 注册
 final reg = await client.account.twoFactor.register(password: 'mypassword');
-print(reg.qr); // 在 UI 中显示的 QR 码数据 URL
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // 在 UI 中显示的 QR 码数据 URL
 
 // 使用认证器应用中的第一个验证码确认并激活 TOTP
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Misskey 2026.11.0 及更高版本不再返回 `qr`。此示例中的 `generateQrDataUrl` 需要由应用实现，使用 QR 码库将 `reg.url` 中的 `otpauth` URL 编码为 QR 码图像的数据 URL。
 
 ### Webhook
 

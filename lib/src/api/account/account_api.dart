@@ -72,7 +72,12 @@ class AccountApi {
   /// [publicReactions] makes reactions public when true.
   /// [carefulBot] requires approval for follows from bots when true.
   /// [autoAcceptFollowed] automatically accepts follow requests from users
-  /// the account already follows. [noCrawle] refuses search engine indexing.
+  /// the account already follows.
+  /// [followApprovalLocalSeconds] and [followApprovalRemoteSeconds] require
+  /// follow approval for local and remote accounts younger than the specified
+  /// age (Misskey 2026.10.1 or later). Each accepts 0-2592000 seconds (30 days);
+  /// pass `Optional.null_()` to clear and disable the setting.
+  /// [noCrawle] refuses search engine indexing.
   /// [preventAiLearning] refuses AI learning. [isBot] marks the account as
   /// a bot and [isCat] marks it as a cat account.
   /// [injectFeaturedNote] injects featured notes into the timeline.
@@ -109,6 +114,12 @@ class AccountApi {
   /// `{"type": "list", "userListId": "<id>"}`.
   /// [emailNotificationTypes] lists the notification types to receive by
   /// email.
+  ///
+  /// Common errors:
+  /// - `AVATAR_IS_SENSITIVE`: The avatar image is marked as sensitive
+  ///   (Misskey 2026.10.1 or later)
+  /// - `BANNER_IS_SENSITIVE`: The banner image is marked as sensitive
+  ///   (Misskey 2026.10.1 or later)
   Future<MisskeyUser> update({
     Optional<String>? name,
     Optional<String>? description,
@@ -125,6 +136,8 @@ class AccountApi {
     bool? publicReactions,
     bool? carefulBot,
     bool? autoAcceptFollowed,
+    Optional<int>? followApprovalLocalSeconds,
+    Optional<int>? followApprovalRemoteSeconds,
     bool? noCrawle,
     bool? preventAiLearning,
     bool? isBot,
@@ -168,6 +181,12 @@ class AccountApi {
     if (autoAcceptFollowed != null) {
       body['autoAcceptFollowed'] = autoAcceptFollowed;
     }
+    putOptional(body, 'followApprovalLocalSeconds', followApprovalLocalSeconds);
+    putOptional(
+      body,
+      'followApprovalRemoteSeconds',
+      followApprovalRemoteSeconds,
+    );
     if (noCrawle != null) body['noCrawle'] = noCrawle;
     if (preventAiLearning != null) {
       body['preventAiLearning'] = preventAiLearning;

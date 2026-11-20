@@ -9,7 +9,7 @@ part of 'misskey_totp_registration.dart';
 MisskeyTotpRegistration _$MisskeyTotpRegistrationFromJson(
   Map<String, dynamic> json,
 ) => MisskeyTotpRegistration(
-  qr: json['qr'] as String,
+  qr: json['qr'] as String?,
   url: json['url'] as String,
   secret: json['secret'] as String,
   label: json['label'] as String,

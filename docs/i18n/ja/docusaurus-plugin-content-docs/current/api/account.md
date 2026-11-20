@@ -199,11 +199,14 @@ await client.account.registry.set(
 ```dart
 // TOTP の登録を開始する
 final reg = await client.account.twoFactor.register(password: 'mypassword');
-print(reg.qr); // UIに表示するQRコードのデータURL
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // UI に表示する QR コードのデータ URL
 
 // 認証アプリの最初のコードで TOTP を確認・有効化する
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Misskey 2026.11.0 以降では `qr` が返されません。この例の `generateQrDataUrl` はアプリ側で用意する関数です。QR コードライブラリを使い、`reg.url` の `otpauth` URL から QR 画像のデータ URL を生成します。
 
 ### Webhook
 

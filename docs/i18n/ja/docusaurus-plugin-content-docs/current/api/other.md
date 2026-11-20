@@ -246,7 +246,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw` はService Workerのプッシュ通知サブスクリプションを管理します。すべてのエンドポイントで認証が必要です。
+`client.sw` は Service Worker のプッシュ通知の購読を管理します。`unregister` を除き、認証が必要です。`unregister` は対応するすべての Misskey バージョンでアクセストークンなしで呼び出せます。
 
 ### 登録
 
@@ -286,5 +286,11 @@ await client.sw.updateRegistration(
 ```dart
 await client.sw.unregister(
   endpoint: 'https://push.example.com/subscribe/abc123',
+  auth: 'auth-secret',
+  publickey: 'vapid-public-key',
 );
 ```
+
+Misskey 2026.10.0 以降では `auth` と `publickey` が必須です。`register` と同じ値を渡してください。それ以前のサーバーでは無視されます。`unregister` は対応するすべての Misskey バージョンでアクセストークンなしで呼び出せます。Misskey 2026.10.0 以降では、1 時間に 30 回の制限があります（HTTP 429）。
+
+本家 Misskey 2026.11.0 では、アクセストークンを渡すと、そのユーザー自身の登録だけが削除されます。トークンを渡さない場合、`endpoint`・`auth`・`publickey` が一致する購読に紐づく全アカウント分の登録が削除されます。その購読の全アカウント分を削除するには、アクセストークンを持たないクライアントで `unregister` を呼び出してください。

@@ -248,7 +248,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw` verwaltet Service-Worker-Push-Benachrichtigungsabonnements. Alle Endpunkte erfordern Authentifizierung.
+`client.sw` verwaltet Service-Worker-Push-Benachrichtigungsabonnements. Mit Ausnahme von `unregister` ist eine Authentifizierung erforderlich. `unregister` kann in allen unterstuetzten Misskey-Versionen ohne Zugriffstoken aufgerufen werden.
 
 ### Registrieren
 
@@ -288,5 +288,11 @@ await client.sw.updateRegistration(
 ```dart
 await client.sw.unregister(
   endpoint: 'https://push.example.com/subscribe/abc123',
+  auth: 'auth-secret',
+  publickey: 'vapid-public-key',
 );
 ```
+
+Ab Misskey 2026.10.0 sind `auth` und `publickey` erforderlich; uebergeben Sie dieselben Werte wie bei `register`. Aeltere Server ignorieren diese Parameter. `unregister` kann in allen unterstuetzten Misskey-Versionen ohne Zugriffstoken aufgerufen werden. Ab Misskey 2026.10.0 gilt eine Begrenzung auf 30 Anfragen pro Stunde (HTTP 429).
+
+In der Upstream-Version Misskey 2026.11.0 werden bei Angabe eines Zugriffstokens nur die Registrierungen des authentifizierten Benutzers geloescht. Ohne Token werden die Registrierungen aller Konten geloescht, deren Abonnement mit `endpoint`, `auth` und `publickey` uebereinstimmt. Um die Registrierungen aller Konten fuer dieses Abonnement zu entfernen, rufen Sie `unregister` mit einem Client ohne Zugriffstoken auf.
