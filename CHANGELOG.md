@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.10] - 2026-11-22
+
 ### Added
 
 - Added `MisskeyAdminMeta.ugcVisibilityForVisitor` and the optional `AdminApi.updateMeta(ugcVisibilityForVisitor:)` argument for controlling content visible to visitors who are not signed in (Misskey 2025.5.1 or later)
