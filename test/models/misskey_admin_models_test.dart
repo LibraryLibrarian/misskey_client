@@ -59,6 +59,13 @@ void main() {
       // プロキシアカウント(instance.actor)は自動作成されるためIDが入る
       expect(meta.proxyAccountId, isNotEmpty);
     });
+
+    test('reads the VAPID public key from swPublickey', () {
+      final meta = MisskeyAdminMeta.fromJson({'swPublickey': 'BPublicKey'});
+
+      expect(meta.swPublicKey, 'BPublicKey');
+      expect(meta.toJson()['swPublickey'], 'BPublicKey');
+    });
   });
 
   group('MisskeyAdminServerInfo.fromJson', () {

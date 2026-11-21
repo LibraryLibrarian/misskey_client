@@ -210,7 +210,11 @@ class MisskeyAdminMeta with _$MisskeyAdminMeta {
   final bool? enableTurnstile;
 
   /// The service worker VAPID public key.
+  ///
+  /// Read from the `swPublickey` response key, the same key as
+  /// `Meta.swPublickey`.
   @override
+  @JsonKey(name: 'swPublickey')
   final String? swPublicKey;
 
   /// A map holding all response JSON fields, including ones not typed above.
