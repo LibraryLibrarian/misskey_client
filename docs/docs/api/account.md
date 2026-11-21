@@ -132,6 +132,12 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
+`revokeTokenById` takes the token's record ID (for example, from `client.account.apps()`); `revokeTokenByToken` takes the token string. The endpoint was added in Misskey 12.27.0, and the string form in 2023.11.0. Both forms are supported in 2026.5.1, 2026.7.0, 2026.9.0, and 2026.9.1.
+
+Authentication is required. Misskey 2026.5.1 and 2026.7.0 require the user's primary API token. Since Misskey 2026.9.0, a third-party access token can revoke itself by passing its own ID or string; it cannot revoke another access token owned by the user. A primary API token can revoke any access token owned by that user.
+
+Both methods return no content (HTTP 204). A missing or unowned target is a no-op, as is an empty token string. In Misskey 2026.9.0 and later, common errors are `CREDENTIAL_REQUIRED` (no credentials) and `PERMISSION_DENIED` (an access token attempts to revoke another owned token).
+
 ## Export and import
 
 All export operations are queued as asynchronous jobs. A notification is sent upon completion.

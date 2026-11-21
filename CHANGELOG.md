@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `MisskeyAdminMeta.ugcVisibilityForVisitor` and the optional `AdminApi.updateMeta(ugcVisibilityForVisitor:)` argument for controlling content visible to visitors who are not signed in
 - Added `autoArchiveAt` to `AdminAnnouncementsApi.create` / `update` and `MisskeyAdminAnnouncement` for scheduled archiving (Misskey 2026.10.1 or later)
 - Added `followApprovalLocalSeconds` / `followApprovalRemoteSeconds` to `AccountApi.update` and `MisskeyUser` for requiring follow approval based on account age (Misskey 2026.10.1 or later)
 - Added optional `auth` / `publickey` arguments to `SwApi.unregister`, required by Misskey 2026.10.0 or later
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Corrected the `AdminApi.resetPassword` documentation of common errors and the `AccountApi.revokeTokenById` / `revokeTokenByToken` documentation of authentication, errors, and version support
 - **Breaking:** `NotesApi.translate` now returns `MisskeyNoteTranslation?`, returning `null` when there is no text to translate; update callers to handle `null`
 - **Breaking:** `MisskeyTotpRegistration.qr` is now nullable because Misskey 2026.11.0 no longer returns it; generate the QR code from `url` when it is null
 - `SwApi.unregister` now uses optional authentication so it can be called without an access token, matching the endpoint's existing behavior across server versions

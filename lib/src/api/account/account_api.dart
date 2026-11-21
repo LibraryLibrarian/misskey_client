@@ -414,13 +414,43 @@ class AccountApi {
         body: <String, dynamic>{'password': password},
       );
 
-  /// Revokes an authorized token by token ID (`/api/i/revoke-token`).
+  /// Revokes an access token by its record ID (`/api/i/revoke-token`).
+  ///
+  /// Pass the ID returned by [apps], rather than the token string. Only tokens
+  /// owned by the authenticated user can be revoked. Available since Misskey
+  /// 12.27.0; the token-string form was added in Misskey 2023.11.0.
+  ///
+  /// Requires authentication. Misskey 2026.5.1 and 2026.7.0 require the user's
+  /// primary API token (a third-party access token is rejected). Since Misskey
+  /// 2026.9.0, a third-party access token can revoke only itself; a primary API
+  /// token can revoke any access token owned by the user.
+  /// Returns no content (HTTP 204), including when no owned token matches.
+  ///
+  /// Common errors (Misskey 2026.9.0 and later):
+  /// - `CREDENTIAL_REQUIRED`: No authentication credentials were supplied
+  /// - `PERMISSION_DENIED`: An access token attempts to revoke another owned token
   Future<void> revokeTokenById(String tokenId) => http.send<Object?>(
     '/i/revoke-token',
     body: <String, dynamic>{'tokenId': tokenId},
   );
 
-  /// Revokes an authorized token by token string (`/api/i/revoke-token`).
+  /// Revokes an access token by its string value (`/api/i/revoke-token`).
+  ///
+  /// Use this form when the token string is known but its record ID is not.
+  /// Available since Misskey 2023.11.0, including Misskey 2026.5.1 and later.
+  /// Only tokens owned by the authenticated user can be revoked. An empty
+  /// string or a token that does not match an owned token is a no-op.
+  /// Returns no content (HTTP 204).
+  ///
+  /// Requires authentication. Misskey 2026.5.1 and 2026.7.0 require the user's
+  /// primary API token. Since Misskey 2026.9.0, a third-party access token can
+  /// revoke itself by passing its own string as [token]; it cannot revoke
+  /// another owned token. A primary API token can revoke any owned access token.
+  /// See [revokeTokenById] to revoke a token by its record ID instead.
+  ///
+  /// Common errors (Misskey 2026.9.0 and later):
+  /// - `CREDENTIAL_REQUIRED`: No authentication credentials were supplied
+  /// - `PERMISSION_DENIED`: An access token attempts to revoke another owned token
   Future<void> revokeTokenByToken(String token) => http.send<Object?>(
     '/i/revoke-token',
     body: <String, dynamic>{'token': token},

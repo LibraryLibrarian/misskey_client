@@ -58,6 +58,15 @@ class AdminApi {
   ///
   /// [federation] accepts `all`, `specified`, or `none`. When it is
   /// `specified`, [federationHosts] lists the hosts allowed to federate.
+  ///
+  /// [ugcVisibilityForVisitor] controls user-generated content visible without
+  /// signing in: `all` allows local and remote content, `local` allows only
+  /// local content, and `none` hides it. Available in Misskey 2026.5.1 and later.
+  /// In Misskey 2026.10/2026.11, `none` makes unauthenticated requests to
+  /// `notes/featured`, `notes/global-timeline`, `channels/timeline`,
+  /// `users/notes`, `notes/search-by-tag`, and `notes/conversation` return empty
+  /// lists and suppresses note delivery over unauthenticated WebSockets.
+  /// With `local`, remote users are excluded from unauthenticated `users/show`.
   Future<void> updateMeta({
     Map<String, dynamic>? extra,
     Optional<String>? name,
@@ -77,6 +86,7 @@ class AdminApi {
     bool? cacheRemoteFiles,
     bool? cacheRemoteSensitiveFiles,
     String? federation,
+    String? ugcVisibilityForVisitor,
     List<String>? federationHosts,
     List<String>? blockedHosts,
     List<String>? silencedHosts,
@@ -104,6 +114,7 @@ class AdminApi {
       'cacheRemoteFiles': ?cacheRemoteFiles,
       'cacheRemoteSensitiveFiles': ?cacheRemoteSensitiveFiles,
       'federation': ?federation,
+      'ugcVisibilityForVisitor': ?ugcVisibilityForVisitor,
       'federationHosts': ?federationHosts,
       'blockedHosts': ?blockedHosts,
       'silencedHosts': ?silencedHosts,
@@ -214,6 +225,10 @@ class AdminApi {
   ///
   /// Requires moderator privileges. Returns the newly generated password
   /// (8 characters).
+  ///
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The specified user does not exist
+  /// - `ACCESS_DENIED`: The target is another administrator
   Future<String> resetPassword({required String userId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/admin/reset-password',
