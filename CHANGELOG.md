@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** `AccountApi.pages`, `pageLikes`, `apps`, and `authorizedApps` now return lists of `MisskeyPage`, `MisskeyPageLike`, `MisskeyAccessToken`, and `MisskeyAuthorizedApp`, and `AdminDriveApi.showFile` returns `MisskeyAdminDriveFile`; replace map key lookups with the corresponding model properties
 - **Breaking:** `MisskeyAdminServerInfo.redis` is now nullable, and parsing no longer fails when the server cannot read the Redis version and omits the key; handle `null` where the value is used
 
 ### Fixed

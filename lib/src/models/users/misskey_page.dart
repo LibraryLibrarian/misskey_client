@@ -7,7 +7,7 @@ import '../misskey_user.dart';
 part 'misskey_page.freezed.dart';
 part 'misskey_page.g.dart';
 
-/// A Misskey Page from the `/api/users/pages` response.
+/// A Misskey Page from the Pages, account, or users APIs.
 @freezed
 @JsonSerializable()
 class MisskeyPage with _$MisskeyPage {
