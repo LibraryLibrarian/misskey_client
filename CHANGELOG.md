@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** `TwoFactorApi.updateKey` now requires `name`, as Misskey does; pass the new key name
+
+### Changed
+
 - **Breaking:** `MisskeyAdminServerInfo.redis` is now nullable, and parsing no longer fails when the server cannot read the Redis version and omits the key; handle `null` where the value is used
 
 ### Fixed
