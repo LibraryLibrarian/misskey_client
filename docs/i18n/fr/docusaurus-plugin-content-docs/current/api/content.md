@@ -147,7 +147,7 @@ final featured = await client.pages.featured();
 
 ### Créer une page
 
-`content` est une liste d'objets blocs ; `variables` est une liste de définitions de variables ; `script` est du AiScript exécuté au chargement de la page.
+`content` est une liste d'objets blocs ; `variables` est une liste de définitions de variables ; `script` est du code AiScript exécuté au chargement de la page.
 
 ```dart
 final page = await client.pages.create(

@@ -157,7 +157,7 @@ await client.account.exportUserLists();
 
 ### Importation des données
 
-Passez l'identifiant du fichier Drive du fichier préalablement exporté.
+Passez l’identifiant Drive du fichier préalablement exporté.
 
 ```dart
 // Upload the file to Drive first, then pass its ID

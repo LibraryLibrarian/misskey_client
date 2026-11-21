@@ -62,7 +62,7 @@ Future<List<MisskeyNote>> pollNewNotes() async {
 
 ## Pagination basée sur horodatage
 
-Utilisez `sinceDate` et `untilDate` lorsque vous devez paginer par temps plutôt que par ID.
+Utilisez `sinceDate` et `untilDate` pour paginer par date plutôt que par ID.
 
 ```dart
 final now = DateTime.now().millisecondsSinceEpoch;
