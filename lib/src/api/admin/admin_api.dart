@@ -63,8 +63,10 @@ class AdminApi {
   /// signing in: `all` allows local and remote content, `local` allows only
   /// local content, and `none` hides it. Available in Misskey 2025.5.1 and
   /// later (default `local`). Since Misskey 2026.10.0 the setting also applies
-  /// to note lists, search, and streaming for unauthenticated requests: `none`
-  /// returns no notes and `local` excludes remote notes and users.
+  /// to timelines, search, and streaming for unauthenticated requests: `none`
+  /// returns no notes, and `local` excludes remote notes from those lists and
+  /// remote users from `users/show`. Remote notes attached to a local note, such
+  /// as a reply or a renote, can still be returned.
   Future<void> updateMeta({
     Map<String, dynamic>? extra,
     Optional<String>? name,
