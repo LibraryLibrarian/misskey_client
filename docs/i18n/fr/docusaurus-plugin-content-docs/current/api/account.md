@@ -132,7 +132,7 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
-`revokeTokenById` prend l’identifiant de l’enregistrement du jeton (par exemple, obtenu avec `client.account.apps()`), tandis que `revokeTokenByToken` prend la chaîne du jeton. Ce point d’accès a été ajouté dans Misskey 12.27.0, et la forme utilisant une chaîne dans 2023.11.0. Les deux formes sont prises en charge dans 2026.5.1, 2026.7.0, 2026.9.0 et 2026.9.1.
+`revokeTokenById` prend l’identifiant de l’enregistrement du jeton (par exemple, obtenu avec `client.account.apps()`), tandis que `revokeTokenByToken` prend la chaîne du jeton. Ce point d’accès a été ajouté dans Misskey 12.27.0, et la forme utilisant une chaîne dans 2023.11.0. Les deux formes sont prises en charge à partir de 2026.5.1.
 
 L’authentification est requise. Misskey 2026.5.1 et 2026.7.0 nécessitent le jeton API principal de l’utilisateur. Depuis Misskey 2026.9.0, un jeton d’accès d’une application tierce peut se révoquer lui-même en passant son propre identifiant ou sa propre chaîne ; il ne peut pas révoquer un autre jeton d’accès du même utilisateur. Un jeton API principal peut révoquer tout jeton d’accès appartenant à cet utilisateur.
 

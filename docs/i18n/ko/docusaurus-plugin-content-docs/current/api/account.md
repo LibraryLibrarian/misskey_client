@@ -132,7 +132,7 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
-`revokeTokenById`에는 토큰의 레코드 ID(`client.account.apps()` 등으로 조회)를, `revokeTokenByToken`에는 토큰 문자열을 전달합니다. 이 엔드포인트는 Misskey 12.27.0에서, 문자열 지정 방식은 2023.11.0에서 추가되었습니다. 두 방식 모두 2026.5.1, 2026.7.0, 2026.9.0, 2026.9.1에서 지원됩니다.
+`revokeTokenById`에는 토큰의 레코드 ID(`client.account.apps()` 등으로 조회)를, `revokeTokenByToken`에는 토큰 문자열을 전달합니다. 이 엔드포인트는 Misskey 12.27.0에서, 문자열 지정 방식은 2023.11.0에서 추가되었습니다. 두 방식 모두 2026.5.1 이후 버전에서 지원됩니다.
 
 인증이 필요합니다. Misskey 2026.5.1과 2026.7.0에서는 사용자의 기본 API 토큰이 필요합니다. 2026.9.0부터는 서드파티 액세스 토큰도 자신의 ID 또는 문자열을 전달하여 자기 자신을 폐기할 수 있습니다. 같은 사용자가 소유한 다른 액세스 토큰은 폐기할 수 없습니다. 기본 API 토큰으로는 해당 사용자가 소유한 모든 액세스 토큰을 폐기할 수 있습니다.
 

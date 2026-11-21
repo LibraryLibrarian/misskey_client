@@ -132,7 +132,7 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
-`revokeTokenById` takes the token's record ID (for example, from `client.account.apps()`); `revokeTokenByToken` takes the token string. The endpoint was added in Misskey 12.27.0, and the string form in 2023.11.0. Both forms are supported in 2026.5.1, 2026.7.0, 2026.9.0, and 2026.9.1.
+`revokeTokenById` takes the token's record ID (for example, from `client.account.apps()`); `revokeTokenByToken` takes the token string. The endpoint was added in Misskey 12.27.0, and the string form in 2023.11.0. Both forms are supported in 2026.5.1 and later.
 
 Authentication is required. Misskey 2026.5.1 and 2026.7.0 require the user's primary API token. Since Misskey 2026.9.0, a third-party access token can revoke itself by passing its own ID or string; it cannot revoke another access token owned by the user. A primary API token can revoke any access token owned by that user.
 

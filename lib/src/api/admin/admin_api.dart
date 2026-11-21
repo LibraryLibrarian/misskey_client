@@ -61,12 +61,10 @@ class AdminApi {
   ///
   /// [ugcVisibilityForVisitor] controls user-generated content visible without
   /// signing in: `all` allows local and remote content, `local` allows only
-  /// local content, and `none` hides it. Available in Misskey 2026.5.1 and later.
-  /// In Misskey 2026.10/2026.11, `none` makes unauthenticated requests to
-  /// `notes/featured`, `notes/global-timeline`, `channels/timeline`,
-  /// `users/notes`, `notes/search-by-tag`, and `notes/conversation` return empty
-  /// lists and suppresses note delivery over unauthenticated WebSockets.
-  /// With `local`, remote users are excluded from unauthenticated `users/show`.
+  /// local content, and `none` hides it. Available in Misskey 2025.5.1 and
+  /// later (default `local`). Since Misskey 2026.10.0 the setting also applies
+  /// to note lists, search, and streaming for unauthenticated requests: `none`
+  /// returns no notes and `local` excludes remote notes and users.
   Future<void> updateMeta({
     Map<String, dynamic>? extra,
     Optional<String>? name,
@@ -226,9 +224,12 @@ class AdminApi {
   /// Requires moderator privileges. Returns the newly generated password
   /// (8 characters).
   ///
-  /// Common errors:
+  /// Common errors (Misskey 2026.7.0 and later):
   /// - `NO_SUCH_USER`: The specified user does not exist
   /// - `ACCESS_DENIED`: The target is another administrator
+  ///
+  /// On Misskey 2026.5.1 a missing user results in `INTERNAL_ERROR`, and only
+  /// the root user is protected from a reset.
   Future<String> resetPassword({required String userId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/admin/reset-password',

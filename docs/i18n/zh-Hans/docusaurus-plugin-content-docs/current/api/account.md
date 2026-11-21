@@ -132,7 +132,7 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
-`revokeTokenById` 接受令牌的记录 ID（例如通过 `client.account.apps()` 获取），`revokeTokenByToken` 接受令牌字符串。此端点于 Misskey 12.27.0 加入，字符串形式于 2023.11.0 加入。两种形式均支持 2026.5.1、2026.7.0、2026.9.0 和 2026.9.1。
+`revokeTokenById` 接受令牌的记录 ID（例如通过 `client.account.apps()` 获取），`revokeTokenByToken` 接受令牌字符串。此端点于 Misskey 12.27.0 加入，字符串形式于 2023.11.0 加入。两种形式均支持 2026.5.1 及以后的版本。
 
 此操作需要认证。Misskey 2026.5.1 和 2026.7.0 要求使用用户的主 API 令牌。自 2026.9.0 起，第三方访问令牌也可以传入自身的 ID 或字符串来撤销自身，但不能撤销同一用户拥有的其他访问令牌。主 API 令牌可以撤销该用户拥有的任意访问令牌。
 

@@ -132,7 +132,7 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
-`revokeTokenById` にはトークンのレコードID（`client.account.apps()` などで取得）、`revokeTokenByToken` にはトークン文字列を渡します。このエンドポイントは Misskey 12.27.0 で、文字列による指定は 2023.11.0 で追加されました。どちらも 2026.5.1、2026.7.0、2026.9.0、2026.9.1 で利用できます。
+`revokeTokenById` にはトークンのレコードID（`client.account.apps()` などで取得）、`revokeTokenByToken` にはトークン文字列を渡します。このエンドポイントは Misskey 12.27.0 で、文字列による指定は 2023.11.0 で追加されました。どちらも 2026.5.1 以降で利用できます。
 
 認証が必要です。Misskey 2026.5.1 と 2026.7.0 ではユーザーのプライマリAPIトークンが必要です。2026.9.0 以降は、サードパーティのアクセストークンでも、自身のIDまたは文字列を渡して自分自身を失効できます。同じユーザーが所有する別のアクセストークンは失効できません。プライマリAPIトークンでは、そのユーザーが所有する任意のアクセストークンを失効できます。
 

@@ -144,7 +144,8 @@ class MisskeyAdminMeta with _$MisskeyAdminMeta {
   /// `all` allows local and remote content, `local` allows only local content,
   /// and `none` hides user-generated content. This administrator-only setting
   /// is not returned by the public meta endpoint. Null on older servers that
-  /// do not return this field; available in Misskey 2026.5.1 and later.
+  /// do not return this field; available in Misskey 2025.5.1 and later (default
+  /// `local`).
   @override
   final String? ugcVisibilityForVisitor;
 

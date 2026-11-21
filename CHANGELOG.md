@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `MisskeyAdminMeta.ugcVisibilityForVisitor` and the optional `AdminApi.updateMeta(ugcVisibilityForVisitor:)` argument for controlling content visible to visitors who are not signed in
+- Added `MisskeyAdminMeta.ugcVisibilityForVisitor` and the optional `AdminApi.updateMeta(ugcVisibilityForVisitor:)` argument for controlling content visible to visitors who are not signed in (Misskey 2025.5.1 or later)
 - Added `autoArchiveAt` to `AdminAnnouncementsApi.create` / `update` and `MisskeyAdminAnnouncement` for scheduled archiving (Misskey 2026.10.1 or later)
 - Added `followApprovalLocalSeconds` / `followApprovalRemoteSeconds` to `AccountApi.update` and `MisskeyUser` for requiring follow approval based on account age (Misskey 2026.10.1 or later)
 - Added optional `auth` / `publickey` arguments to `SwApi.unregister`, required by Misskey 2026.10.0 or later
