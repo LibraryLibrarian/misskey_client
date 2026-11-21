@@ -14,14 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Breaking:** `TwoFactorApi.updateKey` now requires `name`, as Misskey does; pass the new key name
+- **Breaking:** `AccountApi.pages`, `pageLikes`, `apps`, and `authorizedApps` now return lists of `MisskeyPage`, `MisskeyPageLike`, `MisskeyAccessToken`, and `MisskeyAuthorizedApp`, and `AdminDriveApi.showFile` returns `MisskeyAdminDriveFile`; replace map key lookups with the corresponding model properties
+- **Breaking:** `MisskeyAdminServerInfo.redis` is now nullable, and parsing no longer fails when the server cannot read the Redis version and omits the key; handle `null` where the value is used
 - `MisskeyValidationException` is now also thrown for Misskey's input validation error, `INVALID_PARAM` (HTTP 400), in addition to HTTP 422; its `statusCode` holds the actual status. Previously `INVALID_PARAM` surfaced as a plain `MisskeyApiException`
 - Corrected the error handling documentation and example: `notes.show` reports a missing note as HTTP 400 with `NO_SUCH_NOTE`, not as `MisskeyNotFoundException`
 - `NotesApi.searchByTag`, `UsersApi.searchByUsernameAndHost`, `AdminDriveApi.showFile`, and `AdminEmojiApi.update` now throw `ArgumentError` before sending the request when both arguments of their required pair are omitted. Previously only a debug-mode assertion checked this, or nothing did for `searchByUsernameAndHost`, and release builds received an `INVALID_PARAM` error from the server
-
-### Changed
-
-- **Breaking:** `AccountApi.pages`, `pageLikes`, `apps`, and `authorizedApps` now return lists of `MisskeyPage`, `MisskeyPageLike`, `MisskeyAccessToken`, and `MisskeyAuthorizedApp`, and `AdminDriveApi.showFile` returns `MisskeyAdminDriveFile`; replace map key lookups with the corresponding model properties
-- **Breaking:** `MisskeyAdminServerInfo.redis` is now nullable, and parsing no longer fails when the server cannot read the Redis version and omits the key; handle `null` where the value is used
 
 ### Fixed
 
