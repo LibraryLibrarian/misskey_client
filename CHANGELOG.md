@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** Unknown values no longer masquerade as known ones: `MisskeyNote.visibility` maps a visibility this client does not know to the new `MisskeyNoteVisibility.unknown` instead of `public`, and `MisskeyRelay.status` maps an unknown status to the new `MisskeyRelayStatus.unknown` instead of `requesting`; handle `unknown` in exhaustive `switch` statements
+- **Breaking:** `ApShowResult.fromJson` returns the new `ApShowUnknown` for a type other than `User` or `Note` instead of throwing `FormatException`; handle `ApShowUnknown` in exhaustive `switch` statements
 - **Breaking:** `TwoFactorApi.updateKey` now requires `name`, as Misskey does; pass the new key name
 - **Breaking:** `AccountApi.pages`, `pageLikes`, `apps`, and `authorizedApps` now return lists of `MisskeyPage`, `MisskeyPageLike`, `MisskeyAccessToken`, and `MisskeyAuthorizedApp`, and `AdminDriveApi.showFile` returns `MisskeyAdminDriveFile`; replace map key lookups with the corresponding model properties
 - **Breaking:** `MisskeyAdminServerInfo.redis` is now nullable, and parsing no longer fails when the server cannot read the Redis version and omits the key; handle `null` where the value is used

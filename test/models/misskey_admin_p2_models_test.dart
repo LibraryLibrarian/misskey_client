@@ -47,13 +47,22 @@ void main() {
   });
 
   group('MisskeyRelay.fromJson', () {
-    test('deserializes and maps unknown status safely', () {
+    test('deserializes a known status', () {
       final relay = MisskeyRelay.fromJson(const {
         'id': 'relay1',
         'inbox': 'https://relay.example.test/inbox',
         'status': 'accepted',
       });
       expect(relay.status, MisskeyRelayStatus.accepted);
+    });
+
+    test('maps an unknown status to unknown, not requesting', () {
+      final relay = MisskeyRelay.fromJson(const {
+        'id': 'relay1',
+        'inbox': 'https://relay.example.test/inbox',
+        'status': 'someFutureStatus',
+      });
+      expect(relay.status, MisskeyRelayStatus.unknown);
     });
   });
 }

@@ -101,7 +101,7 @@ void main() {
       expect(note.reactionCount, 0);
     });
 
-    test('visibility falls back to public for a value not yet known to '
+    test('visibility falls back to unknown for a value not yet known to '
         'this client', () {
       final file = File('test/fixtures/notes_show.json');
       final json = (jsonDecode(file.readAsStringSync()) as Map<String, dynamic>)
@@ -109,9 +109,8 @@ void main() {
 
       final note = MisskeyNote.fromJson(json);
 
-      // MisskeyNoteVisibility には専用のunknown値が無く、
-      // 実装上はpublicへフォールバックする
-      expect(note.visibility, MisskeyNoteVisibility.public);
+      // 公開範囲を誤って public と表示しないよう、unknown で受ける
+      expect(note.visibility, MisskeyNoteVisibility.unknown);
     });
 
     test('reactionAcceptance falls back to unknown for a value not yet '
