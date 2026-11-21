@@ -283,5 +283,9 @@ final translation = await client.notes.translate(
   noteId: noteId,
   targetLang: 'en',
 );
-print(translation.text);
+if (translation != null) {
+  print(translation.text);
+} else {
+  // 笔记正文和 CW 均为空时，没有可翻译的文本。
+}
 ```

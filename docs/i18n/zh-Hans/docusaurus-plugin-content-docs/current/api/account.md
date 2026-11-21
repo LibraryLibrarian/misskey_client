@@ -179,6 +179,8 @@ for (final entry in history) {
 
 注册表为客户端应用存储任意键值数据（相当于浏览器的 localStorage，但可跨设备同步）。
 
+使用 `registry.set` 存储 `null` 时，`registry.get` 返回 `null`。存储的字符串会原样返回。
+
 ```dart
 // 读取值
 final value = await client.account.registry.get(

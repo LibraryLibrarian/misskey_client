@@ -75,6 +75,11 @@ void main() {
 
   final nullableLookups =
       <String, ({String path, Future<Object?> Function(MisskeyClient) call})>{
+        'NotesApi.translate': (
+          path: '/api/notes/translate',
+          call: (client) =>
+              client.notes.translate(noteId: 'note-id', targetLang: 'en'),
+        ),
         'SwApi.showRegistration': (
           path: '/api/sw/show-registration',
           call: (client) => client.sw.showRegistration(
@@ -98,7 +103,7 @@ void main() {
       test(
         'returns null for HTTP 204 without Content-Type or a body',
         () async {
-          // 存在しない対象に対する Misskey の実際の応答を再現する
+          // null/undefined に対する Misskey の実際の空応答を再現する
           final adapter = _RecordingAdapter(
             rawBody: '',
             statusCode: 204,
@@ -174,6 +179,179 @@ void main() {
       expect(result?.firstRetrievedAt, DateTime.utc(2026, 11, 1));
     },
   );
+
+  test('NotesApi.translate parses a translation object', () async {
+    final adapter = _RecordingAdapter(
+      response: {'sourceLang': 'JA', 'text': 'Hello'},
+    );
+    final client = _createClient(adapter);
+    addTearDown(client.dispose);
+
+    final MisskeyNoteTranslation? result = await client.notes.translate(
+      noteId: 'note-id',
+      targetLang: 'en',
+    );
+
+    expect(
+      result,
+      const MisskeyNoteTranslation(sourceLang: 'JA', text: 'Hello'),
+    );
+    expect(adapter.body, {'noteId': 'note-id', 'targetLang': 'en'});
+  });
+
+  test('MisskeyHttp.send preserves HTTP 204 data by default', () async {
+    final adapter = _RecordingAdapter(
+      rawBody: '',
+      statusCode: 204,
+      headers: const {},
+    );
+    final client = _createClient(adapter);
+    addTearDown(client.dispose);
+
+    expect(
+      await client.http.send<Object?>(
+        '/i/registry/get',
+        body: const <String, dynamic>{'key': 'setting'},
+      ),
+      '',
+    );
+  });
+
+  group('RegistryApi.get', () {
+    test('returns null for HTTP 204 without Content-Type or a body', () async {
+      final adapter = _RecordingAdapter(
+        rawBody: '',
+        statusCode: 204,
+        headers: const {},
+      );
+      final client = _createClient(adapter, token: 'access-token');
+      addTearDown(client.dispose);
+
+      expect(
+        await client.account.registry.get(
+          key: 'setting',
+          scope: ['my-app'],
+          domain: 'example.com',
+        ),
+        isNull,
+      );
+      expect(adapter.path, '/api/i/registry/get');
+      expect(adapter.body, {
+        'key': 'setting',
+        'scope': ['my-app'],
+        'domain': 'example.com',
+        'i': 'access-token',
+      });
+    });
+
+    // Misskey は文字列を JSON.stringify して text/plain で返す
+    // （ApiCallService.ts: reply.send(typeof x === 'string' ? JSON.stringify(x) : x)）
+    const plainText = {
+      Headers.contentTypeHeader: ['text/plain; charset=utf-8'],
+    };
+    for (final (raw, expected) in <(String, String)>[
+      ('"dark"', 'dark'),
+      ('""', ''),
+      (r'"say \"hi\""', 'say "hi"'),
+      (r'"line\nbreak"', 'line\nbreak'),
+      (r'"\"quoted\""', '"quoted"'),
+    ]) {
+      test('unquotes the JSON text string $raw sent as text/plain', () async {
+        final adapter = _RecordingAdapter(rawBody: raw, headers: plainText);
+        final client = _createClient(adapter);
+        addTearDown(client.dispose);
+
+        expect(await client.account.registry.get(key: 'setting'), expected);
+      });
+    }
+
+    // Content-Type が JSON のときは Dio が復号済みなので、保存された値が
+    // 引用符つきの文字列でも二重に復号しない
+    for (final stored in <String>['"dark"', 'line\nbreak', '"a\nb"']) {
+      test(
+        'does not decode twice when the response is typed as JSON',
+        () async {
+          final adapter = _RecordingAdapter(response: stored);
+          final client = _createClient(adapter);
+          addTearDown(client.dispose);
+
+          expect(await client.account.registry.get(key: 'setting'), stored);
+        },
+      );
+    }
+
+    // JSON と判定する Content-Type は Dio の判定に合わせる
+    for (final contentType in <String>[
+      'application/JSON',
+      'Application/Json; charset=utf-8',
+      'application/activity+JSON',
+    ]) {
+      test('treats $contentType as JSON and does not decode twice', () async {
+        final adapter = _RecordingAdapter(
+          response: '"dark"',
+          headers: {
+            Headers.contentTypeHeader: [contentType],
+          },
+        );
+        final client = _createClient(adapter);
+        addTearDown(client.dispose);
+
+        expect(await client.account.registry.get(key: 'setting'), '"dark"');
+      });
+    }
+
+    test('leaves text that is not a quoted JSON string unchanged', () async {
+      final adapter = _RecordingAdapter(rawBody: 'plain', headers: plainText);
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      expect(await client.account.registry.get(key: 'setting'), 'plain');
+    });
+
+    for (final value in <Object>[
+      '',
+      'dark',
+      42,
+      1.5,
+      {'theme': 'dark'},
+      true,
+      false,
+      <Object>[1, 'two'],
+    ]) {
+      test('preserves the JSON value $value for HTTP 200', () async {
+        final adapter = _RecordingAdapter(response: value);
+        final client = _createClient(adapter);
+        addTearDown(client.dispose);
+
+        expect(await client.account.registry.get(key: 'setting'), value);
+      });
+    }
+
+    test('keeps idempotent retries enabled', () async {
+      final adapter = _RecordingAdapter(
+        initialFailures: 1,
+        rawBody: '',
+        statusCode: 204,
+        headers: const {},
+      );
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      expect(await client.account.registry.get(key: 'setting'), isNull);
+      expect(adapter.requestCount, 2);
+    });
+
+    test('preserves converted HTTP errors', () async {
+      final adapter = _RecordingAdapter(statusCode: 401);
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      await expectLater(
+        client.account.registry.get(key: 'setting'),
+        throwsA(isA<MisskeyUnauthorizedException>()),
+      );
+    });
+  });
 
   group('AdminAnnouncementsApi', () {
     test('create omits an unspecified autoArchiveAt', () async {

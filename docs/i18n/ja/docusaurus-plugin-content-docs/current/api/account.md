@@ -179,6 +179,8 @@ for (final entry in history) {
 
 レジストリはクライアントアプリケーション向けの任意のキーバリューストアです（ブラウザのローカルストレージに相当し、デバイス間で同期されます）。
 
+`registry.set` で `null` を保存すると、`registry.get` は `null` を返します。保存した文字列は、そのままの文字列として返ります。
+
 ```dart
 // 値を読み取る
 final value = await client.account.registry.get(
