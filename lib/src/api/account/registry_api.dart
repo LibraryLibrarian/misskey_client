@@ -20,6 +20,9 @@ class RegistryApi {
   /// [key] specifies the registry key name. [scope] is the scope array and
   /// defaults to empty. [domain] defaults to the access token's domain.
   ///
+  /// Returns `null` when the stored value is `null` (HTTP 204).
+  /// A stored empty string is returned unchanged.
+  ///
   /// Throws a `NO_SUCH_KEY` error from the server if the key does not exist.
   Future<dynamic> get({
     required String key,
@@ -29,6 +32,7 @@ class RegistryApi {
     '/i/registry/get',
     body: <String, dynamic>{'key': key, 'scope': scope, 'domain': ?domain},
     options: const RequestOptions(idempotent: true),
+    nullOnNoContent: true,
   );
 
   /// Retrieves all key-value pairs within a scope

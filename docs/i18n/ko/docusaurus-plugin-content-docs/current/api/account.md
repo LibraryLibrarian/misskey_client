@@ -179,6 +179,8 @@ for (final entry in history) {
 
 레지스트리는 클라이언트 애플리케이션을 위한 임의의 키-값 데이터를 저장합니다 (브라우저의 localStorage와 동일하지만 기기 간에 동기화됩니다).
 
+`registry.set`으로 `null`을 저장하면 `registry.get`은 `null`을 반환합니다. 빈 문자열을 저장하면 빈 문자열을 반환합니다.
+
 ```dart
 // 값 읽기
 final value = await client.account.registry.get(

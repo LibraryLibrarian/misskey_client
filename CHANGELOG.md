@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** `NotesApi.translate` now returns `MisskeyNoteTranslation?`, returning `null` when there is no text to translate; update callers to handle `null`
 - **Breaking:** `MisskeyTotpRegistration.qr` is now nullable because Misskey 2026.11.0 no longer returns it; generate the QR code from `url` when it is null
 - `SwApi.unregister` now uses optional authentication so it can be called without an access token, matching the endpoint's existing behavior across server versions
 - Corrected the `AdminQueueApi.jobs` documentation of accepted `state` values: `prioritized` is not accepted, and `paused` is rejected from Misskey 2026.9.0
@@ -28,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed `RegistryApi.get` returning an empty string instead of `null` for a stored `null` value when Misskey responds with HTTP 204
 - Fixed `SwApi.showRegistration`, `MetaApi.getEndpoint`, and `FederationApi.showInstance` failing with a type error instead of returning `null` when the target does not exist and Misskey responds with an empty body
 
 ## [1.0.0-beta.9] - 2026-09-26

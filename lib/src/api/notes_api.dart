@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/nullable_json_object.dart';
 import '../internal/optional.dart';
 import '../internal/request_body.dart';
 import '../models/misskey_clip.dart';
@@ -775,16 +776,21 @@ class NotesApi {
   ///
   /// Specify the note to translate in [noteId] and the target language
   /// code in [targetLang] (e.g., `'ja'`, `'en'`).
-  Future<MisskeyNoteTranslation> translate({
+  ///
+  /// Returns `null` when there is no text to translate (both the note body
+  /// and its content warning are empty).
+  /// Throws [FormatException] for any other unexpected response shape.
+  Future<MisskeyNoteTranslation?> translate({
     required String noteId,
     required String targetLang,
   }) async {
-    final res = await http.send<Map<String, dynamic>>(
+    final res = await http.send<Object?>(
       '/notes/translate',
       body: <String, dynamic>{'noteId': noteId, 'targetLang': targetLang},
       options: const RequestOptions(idempotent: true),
     );
-    return MisskeyNoteTranslation.fromJson(res);
+    final data = nullableJsonObject(res, '/notes/translate');
+    return data == null ? null : MisskeyNoteTranslation.fromJson(data);
   }
 
   /// Fetches the user list timeline (`/api/notes/user-list-timeline`).

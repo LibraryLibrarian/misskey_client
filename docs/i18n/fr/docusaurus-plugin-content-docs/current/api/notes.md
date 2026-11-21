@@ -283,5 +283,9 @@ final translation = await client.notes.translate(
   noteId: noteId,
   targetLang: 'en',
 );
-print(translation.text);
+if (translation != null) {
+  print(translation.text);
+} else {
+  // Si le texte de la note et le CW sont vides, il n’y a rien à traduire.
+}
 ```

@@ -179,6 +179,8 @@ for (final entry in history) {
 
 Die Registry speichert beliebige Schluessel-Wert-Daten fuer Client-Anwendungen (entspricht dem Browser-localStorage, aber geraeteuebergreifend synchronisiert).
 
+Wenn Sie mit `registry.set` den Wert `null` speichern, gibt `registry.get` den Wert `null` zurueck. Eine gespeicherte leere Zeichenfolge wird als leere Zeichenfolge zurueckgegeben.
+
 ```dart
 // Einen Wert lesen
 final value = await client.account.registry.get(

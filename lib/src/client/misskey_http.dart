@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:meta/meta.dart';
 import 'package:retry/retry.dart';
 
 import '../exception/misskey_client_exception.dart';
@@ -64,6 +65,9 @@ class MisskeyHttp {
   /// or `null`.
   ///
   /// Use [onSendProgress] to receive upload progress callbacks.
+  ///
+  /// Internal callers may set [nullOnNoContent] to return `null` for HTTP 204
+  /// while preserving the response data for all other status codes.
   Future<T> send<T>(
     String path, {
     String method = 'POST',
@@ -71,6 +75,7 @@ class MisskeyHttp {
     ro.RequestOptions options = const ro.RequestOptions(),
     CancelToken? cancelToken,
     void Function(int, int)? onSendProgress,
+    @internal bool nullOnNoContent = false,
   }) async {
     final r = RetryOptions(
       maxAttempts: options.idempotent ? config.maxRetries : 1,
@@ -108,7 +113,8 @@ class MisskeyHttp {
           }
         },
       );
-      return result.data as T;
+      return (nullOnNoContent && result.statusCode == 204 ? null : result.data)
+          as T;
     } on DioException catch (e) {
       throw convertDioException(e, path);
     } on Exception catch (e) {
