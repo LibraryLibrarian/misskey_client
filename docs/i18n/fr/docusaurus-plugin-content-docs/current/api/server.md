@@ -209,7 +209,7 @@ final members = await client.roles.users(roleId: role.id, limit: 20);
 ## ChartsApi
 
 `client.charts` retourne des données de séries temporelles. Toutes les méthodes acceptent `span` (`'day'` ou `'hour'`),
-`limit` (1-500, défaut 30) et `offset`.
+`limit` (1–500, 30 par défaut) et `offset`.
 
 ```dart
 // Active users over the last 30 days

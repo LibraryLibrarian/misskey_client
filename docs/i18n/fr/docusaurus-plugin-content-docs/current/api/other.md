@@ -225,7 +225,7 @@ final users = await client.hashtags.users(
 
 ## InviteApi
 
-`client.invite` gère les codes d'invitation sur les serveurs sur invitation uniquement. Tous les points d'accès nécessitent une authentification et la politique de rôle `canInvite`.
+`client.invite` gère les codes d’invitation sur les serveurs accessibles uniquement sur invitation. Tous les points d’accès nécessitent une authentification et l’autorisation d’inviter définie par la politique de rôle `canInvite`.
 
 ```dart
 // Create an invite code

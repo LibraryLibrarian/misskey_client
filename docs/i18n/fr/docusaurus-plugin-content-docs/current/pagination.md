@@ -5,7 +5,7 @@ title: Pagination
 
 # Pagination
 
-Misskey utilise une pagination basée sur curseur. Les API qui renvoient des listes acceptent directement les paramètres de pagination et retournent un `List<T>` — il n'existe pas de type enveloppe. L'appelant passe les paramètres et vérifie la longueur du résultat retourné pour savoir s'il reste des pages.
+Misskey utilise une pagination par curseur. Les API qui renvoient des listes acceptent directement les paramètres de pagination et retournent un `List<T>` — il n'existe pas de type enveloppe. L'appelant passe les paramètres et vérifie la longueur du résultat retourné pour savoir s'il reste des pages.
 
 ## Paramètres de pagination
 
@@ -20,7 +20,7 @@ Misskey utilise une pagination basée sur curseur. Les API qui renvoient des lis
 
 Toutes les API ne prennent pas en charge tous les paramètres. Consultez la référence API de chaque point de terminaison.
 
-## Pagination basée sur curseur (par ID)
+## Pagination par curseur (par ID)
 
 Utilisez `untilId` pour charger des pages plus anciennes et `sinceId` pour les pages plus récentes.
 
@@ -60,9 +60,9 @@ Future<List<MisskeyNote>> pollNewNotes() async {
 }
 ```
 
-## Pagination basée sur horodatage
+## Pagination par horodatage
 
-Utilisez `sinceDate` et `untilDate` lorsque vous devez paginer par temps plutôt que par ID.
+Utilisez `sinceDate` et `untilDate` pour paginer par date plutôt que par ID.
 
 ```dart
 final now = DateTime.now().millisecondsSinceEpoch;
