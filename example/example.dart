@@ -95,13 +95,18 @@ void main() async {
   // 6. Error handling
   // -------------------------------------------------------
   try {
-    await client.notes.show(noteId: 'invalid_id');
-  } on MisskeyNotFoundException {
-    print('Note not found');
+    await client.notes.show(noteId: '0000000000');
   } on MisskeyUnauthorizedException {
     print('Invalid token');
   } on MisskeyRateLimitException catch (e) {
     print('Rate limited — retry after ${e.retryAfter}');
+  } on MisskeyApiException catch (e) {
+    // notes/show は 404 ではなく 400 の NO_SUCH_NOTE を返す
+    if (e.code == 'NO_SUCH_NOTE') {
+      print('Note not found');
+    } else {
+      print('API error: $e');
+    }
   } on MisskeyClientException catch (e) {
     print('Error: $e');
   }

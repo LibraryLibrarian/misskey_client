@@ -65,7 +65,19 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
         endpoint: endpoint,
         raw: e,
       ),
+      // Misskey は入力検証エラーを 400 の INVALID_PARAM で返す
+      400 when code == 'INVALID_PARAM' => MisskeyValidationException(
+        statusCode: status,
+        message: message,
+        code: code,
+        errorId: errorId,
+        kind: kind,
+        info: info,
+        endpoint: endpoint,
+        raw: e,
+      ),
       422 => MisskeyValidationException(
+        statusCode: status,
         message: message,
         code: code,
         errorId: errorId,

@@ -188,8 +188,8 @@ try {
   // 404 — resource not found
 } on MisskeyRateLimitException catch (e) {
   // 429 — rate limited; check e.retryAfter
-} on MisskeyValidationException {
-  // 422 — invalid request body
+} on MisskeyValidationException catch (e) {
+  // INVALID_PARAM (400) or 422 — invalid parameters; see e.info
 } on MisskeyServerException {
   // 5xx — server-side error
 } on MisskeyNetworkException {

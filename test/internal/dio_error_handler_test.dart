@@ -53,6 +53,43 @@ void main() {
     test('422 maps to MisskeyValidationException', () {
       final result = convertDioException(_errorWithStatus(422));
       expect(result, isA<MisskeyValidationException>());
+      expect((result as MisskeyApiException).statusCode, 422);
+    });
+
+    test('400 INVALID_PARAM maps to MisskeyValidationException', () {
+      final result = convertDioException(
+        _errorWithStatus(
+          400,
+          data: {
+            'error': {
+              'message': 'Invalid param.',
+              'code': 'INVALID_PARAM',
+              'id': '3d81ceae-475f-4600-b2a8-2bc116157532',
+              'kind': 'client',
+              'info': {'param': '#/properties/limit/maximum', 'reason': 'x'},
+            },
+          },
+        ),
+      );
+      expect(result, isA<MisskeyValidationException>());
+      final api = result as MisskeyApiException;
+      expect(api.statusCode, 400);
+      expect(api.code, 'INVALID_PARAM');
+      expect(api.info, {'param': '#/properties/limit/maximum', 'reason': 'x'});
+    });
+
+    test('400 with another code stays a plain MisskeyApiException', () {
+      final result = convertDioException(
+        _errorWithStatus(
+          400,
+          data: {
+            'error': {'code': 'NO_SUCH_NOTE', 'message': 'No such note.'},
+          },
+        ),
+      );
+      expect(result, isA<MisskeyApiException>());
+      expect(result, isNot(isA<MisskeyValidationException>()));
+      expect((result as MisskeyApiException).statusCode, 400);
     });
 
     test('429 maps to MisskeyRateLimitException', () {

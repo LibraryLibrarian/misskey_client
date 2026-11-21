@@ -17,7 +17,7 @@ MisskeyClientException (sealed)
 │   ├── MisskeyNotFoundException     // 404 - 资源不存在
 │   ├── MisskeyRateLimitException    // 429 - 触发频率限制
 │   │   └── retryAfter               //   服务器建议的等待时长
-│   ├── MisskeyValidationException   // 422 - 请求体无效
+│   ├── MisskeyValidationException   // 400 INVALID_PARAM 或 422 - 参数无效
 │   └── MisskeyServerException       // 5xx - 服务端错误
 └── MisskeyNetworkException          // 超时、连接被拒等网络错误
 ```
@@ -66,13 +66,13 @@ try {
 
 ```dart
 try {
-  final note = await client.notes.show(noteId: noteId);
+  final user = await client.users.show(userId: userId);
 } on MisskeyNotFoundException {
-  print('Note not found');
+  print('User not found');
 } on MisskeyUnauthorizedException {
   print('Token is invalid. Please re-authenticate');
 } on MisskeyForbiddenException {
-  print('You do not have permission to view this note');
+  print('You do not have permission to view this user');
 } on MisskeyRateLimitException catch (e) {
   final wait = e.retryAfter ?? const Duration(seconds: 60);
   print('Rate limited. Retry after $wait');
@@ -82,6 +82,8 @@ try {
   print('Check your network connection');
 }
 ```
+
+资源不存在时，并不总是返回 HTTP 404。`users.show` 会返回 404 和 `NO_SUCH_USER`，但包括 `notes.show` 在内的许多端点会返回 HTTP 400 和 `NO_SUCH_NOTE` 等错误码。此时请像下一节那样检查 `code`。
 
 ### 检查 Misskey 错误码
 

@@ -59,6 +59,8 @@ try {
 ```dart
 try {
   await client.notes.create(text: 'Hello, Misskey!');
+} on MisskeyValidationException catch (e) {
+  print('リクエストの内容が不正です: ${e.message} ${e.info}');
 } on MisskeyApiException catch (e) {
   switch (e.statusCode) {
     case 401:
@@ -67,13 +69,17 @@ try {
       print('この操作は許可されていません。');
     case 404:
       print('リソースが見つかりません。');
-    case 422:
-      print('リクエストの内容が不正です: ${e.message}');
     default:
-      print('サーバーエラー: ${e.statusCode}');
+      print('APIエラー: ${e.statusCode} - ${e.code}');
   }
 }
 ```
+
+入力検証のエラーは、HTTP 400 の `INVALID_PARAM` と HTTP 422 のどちらも `MisskeyValidationException` になります。
+
+`MisskeyApiException` の `kind` には、Misskey が返すエラーの分類(`client`、`server`、`permission`)が入ります。`info` には、JSON から読み取った追加の情報が入ります。たとえば `INVALID_PARAM` では、不正な引数とその理由です。追加の情報がない場合は `null` です。
+
+対象が見つからないときに、404 が返るとは限りません。`users.show` は 404(`NO_SUCH_USER`)を返しますが、`notes.show` など多くのエンドポイントは 400 と `NO_SUCH_NOTE` などのコードを返します。この場合は `code` で判定してください。
 
 ## レート制限リトライ
 

@@ -118,19 +118,22 @@ class MisskeyRateLimitException extends MisskeyApiException {
   final Duration? retryAfter;
 }
 
-/// Validation error (HTTP 422).
+/// Validation error.
 ///
-/// Thrown when the request body is invalid.
+/// Thrown when Misskey rejects the request parameters with `INVALID_PARAM`
+/// (HTTP 400), or when it responds with HTTP 422. For `INVALID_PARAM`,
+/// [info] names the invalid parameter and the reason.
 class MisskeyValidationException extends MisskeyApiException {
   const MisskeyValidationException({
-    super.message = 'Unprocessable entity',
+    super.statusCode = 422,
+    super.message = 'Invalid request',
     super.code,
     super.errorId,
     super.kind,
     super.info,
     super.endpoint,
     super.raw,
-  }) : super(statusCode: 422);
+  });
 }
 
 /// Server error (HTTP 5xx).
