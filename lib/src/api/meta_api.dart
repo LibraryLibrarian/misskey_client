@@ -290,16 +290,6 @@ class MetaApi {
     return true;
   }
 
-  /// Whether a key path exists in cached metadata.
-  ///
-  /// This checks key presence only. It does not interpret the stored value as
-  /// a capability flag; use [isEndpointAvailable] for endpoint support.
-  @Deprecated(
-    'Use hasMetaKey for metadata key presence or isEndpointAvailable for '
-    'endpoint support.',
-  )
-  bool supports(String keyPath) => hasMetaKey(keyPath);
-
   static bool _isValidEndpointName(String endpoint) {
     return endpoint.isNotEmpty &&
         endpoint.trim() == endpoint &&
