@@ -6,6 +6,7 @@ import '../../models/misskey_invite_code.dart';
 
 /// Provides invite code management admin APIs (`/api/admin/invite/*`).
 class AdminInviteApi {
+  @internal
   const AdminInviteApi({required this.http});
 
   @internal

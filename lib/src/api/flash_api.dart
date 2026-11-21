@@ -12,6 +12,7 @@ import '../models/users/misskey_flash_like.dart';
 /// Use [my] for the authenticated user's Flashes, or `UsersApi.flashs`
 /// for another user's Flashes.
 class FlashApi {
+  @internal
   const FlashApi({required this.http});
 
   @internal

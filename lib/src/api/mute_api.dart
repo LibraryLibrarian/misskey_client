@@ -8,6 +8,7 @@ import '../models/misskey_muting.dart';
 ///
 /// Supports muting, unmuting, and listing muted users.
 class MuteApi {
+  @internal
   const MuteApi({required this.http});
 
   @internal

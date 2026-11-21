@@ -11,6 +11,7 @@ import '../../models/admin/misskey_admin_announcement.dart';
 ///
 /// All endpoints require moderator privileges.
 class AdminAnnouncementsApi {
+  @internal
   const AdminAnnouncementsApi({required this.http});
 
   @internal

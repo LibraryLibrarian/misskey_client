@@ -11,6 +11,7 @@ import '../models/account/misskey_username_availability.dart';
 /// These endpoints support sign-up validation, password reset, and email
 /// verification. They never attach the client's authentication token.
 class AccountLifecycleApi {
+  @internal
   const AccountLifecycleApi({required this.http});
 
   @internal

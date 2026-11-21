@@ -12,6 +12,7 @@ import '../../models/chat/misskey_chat_room_member.dart';
 /// member retrieval, and invitation management.
 /// All endpoints require authentication.
 class ChatRoomsApi {
+  @internal
   const ChatRoomsApi({required this.http});
 
   @internal

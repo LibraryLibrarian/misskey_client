@@ -11,6 +11,7 @@ import '../../models/admin/misskey_abuse_user_report.dart';
 ///
 /// All endpoints require moderator privileges unless noted otherwise.
 class AdminAbuseReportsApi {
+  @internal
   const AdminAbuseReportsApi({required this.http});
 
   @internal

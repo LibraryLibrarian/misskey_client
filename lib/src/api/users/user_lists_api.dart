@@ -8,6 +8,7 @@ import '../../models/users/misskey_user_list_membership.dart';
 
 /// Provides user list API endpoints (`/api/users/lists/*`).
 class UserListsApi {
+  @internal
   const UserListsApi({required this.http});
 
   @internal

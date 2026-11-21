@@ -10,6 +10,7 @@ import '../../models/account/misskey_registry_scope.dart';
 /// Operates a key-value store for client settings and similar data.
 /// All endpoints require authentication.
 class RegistryApi {
+  @internal
   const RegistryApi({required this.http});
 
   @internal

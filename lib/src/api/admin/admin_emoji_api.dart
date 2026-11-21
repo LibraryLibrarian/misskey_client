@@ -11,6 +11,7 @@ import '../../models/server/emoji_detailed.dart';
 ///
 /// All endpoints require moderator privileges unless noted otherwise.
 class AdminEmojiApi {
+  @internal
   const AdminEmojiApi({required this.http});
 
   @internal

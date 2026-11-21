@@ -25,6 +25,7 @@ import '../../models/misskey_note.dart';
 /// Authentication is handled by [MisskeyHttp]'s interceptor.
 class DriveFilesApi {
   /// Creates a [DriveFilesApi] instance.
+  @internal
   const DriveFilesApi({required this.http});
 
   /// The HTTP client used for requests.

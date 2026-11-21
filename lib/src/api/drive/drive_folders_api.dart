@@ -18,6 +18,7 @@ import '../../models/misskey_drive_folder.dart';
 /// Authentication is handled by [MisskeyHttp]'s interceptor.
 class DriveFoldersApi {
   /// Creates a [DriveFoldersApi] instance.
+  @internal
   const DriveFoldersApi({required this.http});
 
   /// The HTTP client used for requests.

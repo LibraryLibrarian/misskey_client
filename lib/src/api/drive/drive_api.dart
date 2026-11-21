@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_cancellation_token.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -27,6 +29,7 @@ import 'drive_stats_api.dart';
 /// and also provides top-level `/api/drive/*` endpoints directly.
 class DriveApi {
   /// Creates a [DriveApi] instance.
+  @internal
   DriveApi({required MisskeyHttp http, MisskeyStreaming Function()? streaming})
     : _http = http,
       _streaming = streaming,

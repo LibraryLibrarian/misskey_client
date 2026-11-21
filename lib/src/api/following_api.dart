@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
 import '../models/misskey_following.dart';
@@ -11,6 +13,7 @@ import 'following_requests_api.dart';
 /// follows.
 /// Use [requests] for follow request operations.
 class FollowingApi {
+  @internal
   FollowingApi({required MisskeyHttp http})
     : _http = http,
       requests = FollowingRequestsApi(http: http);

@@ -11,6 +11,7 @@ import '../../models/drive/drive_capacity_info.dart';
 /// `/api/charts/user/drive` endpoints via [MisskeyHttp].
 class DriveStatsApi {
   /// Creates a [DriveStatsApi] instance.
+  @internal
   const DriveStatsApi({required this.http});
 
   /// The HTTP client used for requests.

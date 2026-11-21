@@ -10,6 +10,7 @@ import '../models/misskey_invite_code.dart';
 /// remaining invite quota on invitation-only servers.
 /// All endpoints require authentication and the `canInvite` role policy.
 class InviteApi {
+  @internal
   const InviteApi({required this.http});
 
   @internal

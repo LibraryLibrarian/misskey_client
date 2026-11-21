@@ -7,6 +7,7 @@ import '../models/ap_show_result.dart';
 ///
 /// Resolves ActivityPub objects from remote servers.
 class ApApi {
+  @internal
   const ApApi({required this.http});
 
   @internal

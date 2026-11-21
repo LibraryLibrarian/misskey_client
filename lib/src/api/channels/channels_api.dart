@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -12,6 +14,7 @@ import 'channel_mute_api.dart';
 /// Offers endpoints under `channels/*`.
 /// Use the [mute] sub-API for mute operations.
 class ChannelsApi {
+  @internal
   ChannelsApi({required MisskeyHttp http})
     : _http = http,
       mute = ChannelMuteApi(http: http);

@@ -20,6 +20,7 @@ import '../models/server/server_info.dart';
 /// subsequent calls skip the network request.
 class MetaApi {
   /// Creates an instance that operates the metadata API using [http].
+  @internal
   MetaApi({required this.http});
 
   /// HTTP client.

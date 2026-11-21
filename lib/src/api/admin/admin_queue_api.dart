@@ -12,6 +12,7 @@ import '../../models/admin/misskey_queue.dart';
 /// `postScheduledNote`, `deliver`, `inbox`, `db`, `relationship`,
 /// `objectStorage`, `userWebhookDeliver`, or `systemWebhookDeliver`.
 class AdminQueueApi {
+  @internal
   const AdminQueueApi({required this.http});
 
   @internal

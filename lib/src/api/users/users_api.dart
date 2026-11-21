@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -20,6 +22,7 @@ import 'user_lists_api.dart';
 /// Covers `users/*` endpoints.
 /// Use [lists] for list operations.
 class UsersApi {
+  @internal
   UsersApi({required MisskeyHttp http})
     : _http = http,
       lists = UserListsApi(http: http);

@@ -9,6 +9,7 @@ import '../../models/account/misskey_totp_registration.dart';
 /// passwordless login toggle. All endpoints require authentication
 /// and secure communication.
 class TwoFactorApi {
+  @internal
   const TwoFactorApi({required this.http});
 
   @internal

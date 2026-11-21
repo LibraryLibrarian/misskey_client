@@ -21,6 +21,7 @@ import 'webhooks_api.dart';
 
 /// Provides APIs for the currently authenticated user (`/api/i/*`).
 class AccountApi {
+  @internal
   AccountApi({required this.http})
     : registry = RegistryApi(http: http),
       twoFactor = TwoFactorApi(http: http),

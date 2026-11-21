@@ -55,6 +55,10 @@ class MisskeyClient {
   ///
   /// Pass [httpClientAdapter] to customize the underlying HTTP transport
   /// (e.g. trusting a private CA in test environments, or proxying).
+  /// The adapter is a `HttpClientAdapter` from `package:dio` 5.x, so add
+  /// `dio` to your own dependencies to create one. Because this type is part
+  /// of the public API, moving to a new major version of dio is a breaking
+  /// change of this package.
   /// Pass [streamingConfig] to customize Streaming API connection and
   /// reconnection behavior.
   MisskeyClient({

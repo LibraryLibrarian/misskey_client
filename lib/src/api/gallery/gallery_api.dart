@@ -13,6 +13,7 @@ import '../../models/gallery/misskey_gallery_post.dart';
 /// Use `AccountApi.galleryPosts` for the authenticated user's posts,
 /// or `UsersApi.galleryPosts` for another user's posts.
 class GalleryApi {
+  @internal
   const GalleryApi({required this.http});
 
   @internal

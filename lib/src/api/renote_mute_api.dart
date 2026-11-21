@@ -10,6 +10,7 @@ import '../models/misskey_renote_muting.dart';
 /// Unlike regular muting, the target user's original notes
 /// remain visible in the timeline.
 class RenoteMuteApi {
+  @internal
   const RenoteMuteApi({required this.http});
 
   @internal

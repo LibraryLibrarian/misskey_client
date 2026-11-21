@@ -16,6 +16,7 @@ import '../models/misskey_note_translation.dart';
 
 /// Provides note-related API endpoints.
 class NotesApi {
+  @internal
   const NotesApi({required this.http});
 
   @internal

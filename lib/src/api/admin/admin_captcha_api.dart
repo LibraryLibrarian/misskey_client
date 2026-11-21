@@ -8,6 +8,7 @@ import '../../models/admin/misskey_captcha_settings.dart';
 ///
 /// All endpoints require administrator privileges.
 class AdminCaptchaApi {
+  @internal
   const AdminCaptchaApi({required this.http});
 
   @internal

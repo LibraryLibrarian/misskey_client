@@ -12,6 +12,7 @@ import '../models/misskey_role_user.dart';
 /// Supports listing, showing details, fetching notes, and retrieving users
 /// for public roles.
 class RolesApi {
+  @internal
   const RolesApi({required this.http});
 
   @internal

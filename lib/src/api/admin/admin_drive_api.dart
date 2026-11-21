@@ -9,6 +9,7 @@ import '../../models/misskey_drive_file.dart';
 ///
 /// All endpoints require moderator privileges.
 class AdminDriveApi {
+  @internal
   const AdminDriveApi({required this.http});
 
   @internal

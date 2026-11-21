@@ -10,6 +10,7 @@ import '../../models/account/misskey_webhook.dart';
 /// Offers creation, retrieval, updating, deletion, and test delivery of
 /// user webhooks.
 class WebhooksApi {
+  @internal
   const WebhooksApi({required this.http});
 
   @internal

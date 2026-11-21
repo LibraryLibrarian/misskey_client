@@ -10,6 +10,7 @@ import '../models/misskey_announcement.dart';
 /// Retrieves server announcements.
 /// Use `AccountApi.readAnnouncement` to mark announcements as read.
 class AnnouncementsApi {
+  @internal
   const AnnouncementsApi({required this.http});
 
   @internal

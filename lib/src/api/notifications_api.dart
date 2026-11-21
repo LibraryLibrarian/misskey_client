@@ -6,6 +6,7 @@ import '../models/misskey_notification.dart';
 
 /// Provides notification-related API endpoints.
 class NotificationsApi {
+  @internal
   const NotificationsApi({required this.http});
 
   @internal
