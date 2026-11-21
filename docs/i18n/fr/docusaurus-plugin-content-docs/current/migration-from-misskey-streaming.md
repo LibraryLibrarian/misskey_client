@@ -4,7 +4,7 @@ title: Migration depuis misskey_streaming
 
 # Migration depuis misskey_streaming
 
-Streaming est désormais intégré à `misskey_client`. Après avoir migré tous les appels, supprimez la dépendance autonome `misskey_streaming` et utilisez la première version de `misskey_client` contenant l'issue #30.
+Streaming est désormais intégré à `misskey_client`. Après avoir migré tous les appels, supprimez la dépendance autonome `misskey_streaming` et utilisez la première version de `misskey_client` contenant l'Issue #30.
 
 ## Créer le client intégré
 
@@ -82,6 +82,6 @@ Utilisez `subscribeRaw(channel: ..., params: ..., id: ...)` pour un Channel prop
 
 Utilisez `disconnect()` si la connexion doit être réutilisée. Pour terminer, appelez `dispose()` afin de la libérer définitivement, ou libérez le `MisskeyClient` qui la possède. `MisskeyClient.dispose()` est idempotent et ferme à la fois les ressources Streaming initialisées et le transport HTTP.
 
-`sendToChannel()` n'a pas de remplacement public dans l'API intégrée. Ouvrez une issue si un protocole amont ou propre à un fork nécessite l'envoi d'événements au Channel.
+`sendToChannel()` n'a pas de remplacement public dans l'API intégrée. Ouvrez une Issue si un protocole amont ou propre à un fork nécessite l'envoi d'événements au Channel.
 
 Pour des exemples complets et les détails des événements, consultez le [guide de l'API Streaming](./streaming.md). La racine du dépôt contient également la [référence de migration complète](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md).

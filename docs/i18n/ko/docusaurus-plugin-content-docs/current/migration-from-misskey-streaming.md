@@ -4,7 +4,7 @@ title: misskey_streaming에서 마이그레이션
 
 # misskey_streaming에서 마이그레이션
 
-Streaming이 이제 `misskey_client`에 통합되었습니다. 모든 호출 위치를 이전한 뒤 독립형 `misskey_streaming` 의존성을 제거하고 issue #30을 포함한 첫 번째 `misskey_client` 릴리스를 사용하세요.
+Streaming이 이제 `misskey_client`에 통합되었습니다. 모든 호출 위치를 이전한 뒤 독립형 `misskey_streaming` 의존성을 제거하고 Issue #30을 포함한 첫 번째 `misskey_client` 릴리스를 사용하세요.
 
 ## 통합 클라이언트 생성
 
