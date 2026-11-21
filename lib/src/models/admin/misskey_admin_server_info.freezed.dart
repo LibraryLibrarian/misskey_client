@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyAdminServerInfo {
 
- String get machine; String get os; String get node; String get psql; String get redis; ServerCpuInfo get cpu; ServerMemInfo get mem; ServerFsInfo get fs; AdminServerNetInfo? get net;
+ String get machine; String get os; String get node; String get psql; String? get redis; ServerCpuInfo get cpu; ServerMemInfo get mem; ServerFsInfo get fs; AdminServerNetInfo? get net;
 /// Create a copy of MisskeyAdminServerInfo
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyAdminServerInfoCopyWith<$Res>  {
   factory $MisskeyAdminServerInfoCopyWith(MisskeyAdminServerInfo value, $Res Function(MisskeyAdminServerInfo) _then) = _$MisskeyAdminServerInfoCopyWithImpl;
 @useResult
 $Res call({
- String machine, String os, String node, String psql, String redis, ServerCpuInfo cpu, ServerMemInfo mem, ServerFsInfo fs, AdminServerNetInfo? net
+ String machine, String os, String node, String psql, String? redis, ServerCpuInfo cpu, ServerMemInfo mem, ServerFsInfo fs, AdminServerNetInfo? net
 });
 
 
@@ -63,14 +63,14 @@ class _$MisskeyAdminServerInfoCopyWithImpl<$Res>
 
 /// Create a copy of MisskeyAdminServerInfo
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? machine = null,Object? os = null,Object? node = null,Object? psql = null,Object? redis = null,Object? cpu = null,Object? mem = null,Object? fs = null,Object? net = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? machine = null,Object? os = null,Object? node = null,Object? psql = null,Object? redis = freezed,Object? cpu = null,Object? mem = null,Object? fs = null,Object? net = freezed,}) {
   return _then(MisskeyAdminServerInfo(
 machine: null == machine ? _self.machine : machine // ignore: cast_nullable_to_non_nullable
 as String,os: null == os ? _self.os : os // ignore: cast_nullable_to_non_nullable
 as String,node: null == node ? _self.node : node // ignore: cast_nullable_to_non_nullable
 as String,psql: null == psql ? _self.psql : psql // ignore: cast_nullable_to_non_nullable
-as String,redis: null == redis ? _self.redis : redis // ignore: cast_nullable_to_non_nullable
-as String,cpu: null == cpu ? _self.cpu : cpu // ignore: cast_nullable_to_non_nullable
+as String,redis: freezed == redis ? _self.redis : redis // ignore: cast_nullable_to_non_nullable
+as String?,cpu: null == cpu ? _self.cpu : cpu // ignore: cast_nullable_to_non_nullable
 as ServerCpuInfo,mem: null == mem ? _self.mem : mem // ignore: cast_nullable_to_non_nullable
 as ServerMemInfo,fs: null == fs ? _self.fs : fs // ignore: cast_nullable_to_non_nullable
 as ServerFsInfo,net: freezed == net ? _self.net : net // ignore: cast_nullable_to_non_nullable

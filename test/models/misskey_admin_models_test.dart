@@ -83,6 +83,16 @@ void main() {
       expect(info.fs.total, isPositive);
       expect(info.net?.interface, 'eth0');
     });
+
+    test('allows redis to be absent when the version is unavailable', () {
+      final file = File('test/fixtures/admin_server_info.json');
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>
+        ..remove('redis');
+      final info = MisskeyAdminServerInfo.fromJson(json);
+
+      expect(info.redis, isNull);
+      expect(info.psql, isNotEmpty);
+    });
   });
 
   group('MisskeyAdminUserDetail.fromJson', () {
