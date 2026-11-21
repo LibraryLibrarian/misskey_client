@@ -132,6 +132,12 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
+`revokeTokenById` erwartet die Datensatz-ID des Tokens (zum Beispiel aus `client.account.apps()`), `revokeTokenByToken` die Token-Zeichenfolge. Der Endpunkt wurde in Misskey 12.27.0 eingefuehrt, die Zeichenfolgenvariante in 2023.11.0. Beide Varianten werden ab 2026.5.1 unterstuetzt.
+
+Eine Authentifizierung ist erforderlich. Misskey 2026.5.1 und 2026.7.0 erfordern das primaere API-Token des Benutzers. Seit Misskey 2026.9.0 kann ein Zugriffstoken einer Drittanbieter-App sich selbst widerrufen, indem es seine eigene ID oder Zeichenfolge uebergibt. Es kann kein anderes Zugriffstoken desselben Benutzers widerrufen. Mit einem primaeren API-Token kann jedes Zugriffstoken dieses Benutzers widerrufen werden.
+
+Beide Methoden liefern keinen Antwortinhalt (HTTP 204). Bei einem fehlenden oder fremden Ziel sowie einer leeren Token-Zeichenfolge wird nichts geaendert. Haeufige Fehler ab Misskey 2026.9.0 sind `CREDENTIAL_REQUIRED` (fehlende Anmeldedaten) und `PERMISSION_DENIED` (ein Zugriffstoken versucht, ein anderes Token desselben Benutzers zu widerrufen).
+
 ## Export und Import
 
 Alle Exportvorgaenge werden als asynchrone Jobs in die Warteschlange gestellt. Bei Abschluss wird eine Benachrichtigung gesendet.

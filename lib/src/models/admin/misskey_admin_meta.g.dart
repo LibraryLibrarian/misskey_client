@@ -29,6 +29,7 @@ MisskeyAdminMeta _$MisskeyAdminMetaFromJson(
   cacheRemoteFiles: json['cacheRemoteFiles'] as bool?,
   cacheRemoteSensitiveFiles: json['cacheRemoteSensitiveFiles'] as bool?,
   federation: json['federation'] as String?,
+  ugcVisibilityForVisitor: json['ugcVisibilityForVisitor'] as String?,
   policies: json['policies'] == null
       ? null
       : MisskeyRolePolicies.fromJson(json['policies'] as Map<String, dynamic>),
@@ -94,6 +95,7 @@ Map<String, dynamic> _$MisskeyAdminMetaToJson(MisskeyAdminMeta instance) =>
       'cacheRemoteFiles': instance.cacheRemoteFiles,
       'cacheRemoteSensitiveFiles': instance.cacheRemoteSensitiveFiles,
       'federation': instance.federation,
+      'ugcVisibilityForVisitor': instance.ugcVisibilityForVisitor,
       'policies': instance.policies?.toJson(),
       'federationHosts': instance.federationHosts,
       'blockedHosts': instance.blockedHosts,
