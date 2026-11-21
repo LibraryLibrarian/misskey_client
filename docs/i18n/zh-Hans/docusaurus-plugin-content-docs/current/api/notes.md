@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // 取消你对某条笔记的所有转发
 await client.notes.unrenote(noteId: noteId);
 
-// 列出转发该笔记的用户
+// 列出该笔记的转发
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 
@@ -231,6 +231,16 @@ final results = await client.notes.search(
   query: 'hello',
   userId: someUserId,
   channelId: someChannelId,
+);
+```
+
+使用 `rangeStartAt` / `rangeEndAt`（Unix 毫秒时间戳，包含两端）将结果限制在某个发布时间段内。与作为分页游标的 `sinceDate` / `untilDate` 不同，这两个参数是搜索条件。需要 Misskey 2026.6.0 或更高版本；更早的服务器会忽略这些参数并返回未按时间段过滤的结果。
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
 );
 ```
 
@@ -273,5 +283,9 @@ final translation = await client.notes.translate(
   noteId: noteId,
   targetLang: 'en',
 );
-print(translation.text);
+if (translation != null) {
+  print(translation.text);
+} else {
+  // 笔记正文和 CW 均为空时，没有可翻译的文本。
+}
 ```

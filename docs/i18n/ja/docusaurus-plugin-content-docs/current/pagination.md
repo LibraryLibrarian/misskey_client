@@ -107,9 +107,9 @@ final isLastPage = page.length < limit;
 ## 全ページを取得する
 
 ```dart
-Future<List<MisskeyNote>> fetchAllFavorites() async {
+Future<List<MisskeyNoteFavorite>> fetchAllFavorites() async {
   const limit = 100;
-  final all = <MisskeyNote>[];
+  final all = <MisskeyNoteFavorite>[];
   String? untilId;
 
   while (true) {
@@ -154,6 +154,7 @@ await for (final file in client.drive.files.listAll(pageSize: 100)) {
 - `client.mute.list`
 - `client.clips.list`
 - `client.following.requests.list`
+- `client.following.list`
 - `client.antennas.notes`
 - `client.channels.timeline`
 - `client.users.list`（オフセット方式）

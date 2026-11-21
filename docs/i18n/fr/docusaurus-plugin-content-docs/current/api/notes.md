@@ -5,7 +5,7 @@ title: Notes
 
 # Notes
 
-L'API `client.notes` fournit des opérations pour récupérer, créer et interagir avec les notes (publications).
+L'API `client.notes` permet de récupérer et de créer des notes (publications), ainsi que d'interagir avec elles.
 
 ## Récupération de notes
 
@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // Cancel all your renotes of a note
 await client.notes.unrenote(noteId: noteId);
 
-// List users who renoted
+// List the renotes of a note
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 
@@ -231,6 +231,16 @@ final results = await client.notes.search(
   query: 'hello',
   userId: someUserId,
   channelId: someChannelId,
+);
+```
+
+Limitez les résultats à une période de publication avec `rangeStartAt` / `rangeEndAt` (horodatages Unix en millisecondes, bornes incluses). Contrairement à `sinceDate` / `untilDate`, qui sont des curseurs de pagination, il s'agit de conditions de recherche. Nécessite Misskey 2026.6.0 ou ultérieur ; les serveurs plus anciens les ignorent et renvoient des résultats sans filtre de période.
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
 );
 ```
 
@@ -273,5 +283,9 @@ final translation = await client.notes.translate(
   noteId: noteId,
   targetLang: 'en',
 );
-print(translation.text);
+if (translation != null) {
+  print(translation.text);
+} else {
+  // Si le texte de la note et le CW sont vides, il n’y a rien à traduire.
+}
 ```

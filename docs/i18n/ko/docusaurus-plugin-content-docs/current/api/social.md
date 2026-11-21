@@ -57,6 +57,20 @@ await client.following.updateAll(notify: 'none', withReplies: false);
 await client.following.invalidate(userId: userId);
 ```
 
+### 팔로우 중인 계정 목록
+
+```dart
+final follows = await client.following.list(limit: 20);
+for (final follow in follows) {
+  print(follow.followee?.username);
+}
+
+// 새 노트 알림을 켠 계정만
+final notified = await client.following.list(notification: true);
+```
+
+`sinceId` / `untilId` / `sinceDate` / `untilDate`로 페이지네이션합니다. Misskey 2026.5.2 이상이 필요하며, 이전 서버에서는 `MisskeyNotFoundException`이 발생합니다. 이전 서버도 지원하려면 먼저 `client.meta.isEndpointAvailable(endpoint: 'following/list')`로 확인하세요.
+
 ## 팔로우 요청 (`client.following.requests`)
 
 ### 수신 요청

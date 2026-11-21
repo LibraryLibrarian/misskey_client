@@ -24,6 +24,23 @@ void main() {
       expect(meta.notesPerOneAd, isA<int>());
     });
 
+    for (final visibility in ['all', 'local', 'none']) {
+      test('deserializes visitor visibility $visibility', () {
+        final meta = MisskeyAdminMeta.fromJson({
+          'ugcVisibilityForVisitor': visibility,
+        });
+
+        expect(meta.ugcVisibilityForVisitor, visibility);
+        expect(meta.toJson()['ugcVisibilityForVisitor'], visibility);
+      });
+    }
+
+    test('allows visitor visibility to be absent on older servers', () {
+      final meta = MisskeyAdminMeta.fromJson({});
+
+      expect(meta.ugcVisibilityForVisitor, isNull);
+    });
+
     test('preserves all fields in raw', () {
       final json = load();
       final meta = MisskeyAdminMeta.fromJson(json);

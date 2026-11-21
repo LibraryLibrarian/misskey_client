@@ -157,7 +157,7 @@ if (instance != null) {
 ### Followers and following for a host
 
 ```dart
-// Relationships followed from a remote instance
+// Follow relationships for a remote instance
 final followers = await client.federation.followers(
   host: 'mastodon.social',
   limit: 20,
@@ -210,7 +210,7 @@ final notes = await client.roles.notes(roleId: role.id, limit: 20);
 final members = await client.roles.users(roleId: role.id, limit: 20);
 ```
 
-All list methods accept `sinceId`, `untilId`, `sinceDate`, and `untilDate` for pagination.
+`notes()` and `users()` accept `sinceId`, `untilId`, `sinceDate`, and `untilDate` for pagination.
 
 ## ChartsApi
 

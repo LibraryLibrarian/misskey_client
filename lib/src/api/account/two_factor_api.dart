@@ -18,7 +18,8 @@ class TwoFactorApi {
   /// (`/api/i/2fa/register`).
   ///
   /// Generates a TOTP secret after password verification and returns
-  /// registration information including a QR code.
+  /// registration information including an `otpauth` URL. On Misskey
+  /// 2026.11.0 and later, `qr` is omitted; generate the QR code from `url`.
   /// Requires [token] if 2FA is already enabled.
   ///
   /// [password] is the current account password. [token] is an existing TOTP

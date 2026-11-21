@@ -107,10 +107,10 @@ final authUrl = Uri.parse('$baseUrl/miauth/$session').replace(
 
 ### 2단계: 세션을 토큰으로 교환
 
-사용자가 요청을 승인하면 확인 엔드포인트를 호출합니다. 이는 일반 HTTP GET 요청이며 라이브러리의 인증 경로를 거치지 않습니다:
+사용자가 요청을 승인하면 확인 엔드포인트를 호출합니다. 이는 일반 HTTP POST 요청이며 라이브러리의 인증 경로를 거치지 않습니다:
 
 ```dart
-final response = await http.get(
+final response = await http.post(
   Uri.parse('$baseUrl/api/miauth/$session/check'),
 );
 final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -131,7 +131,7 @@ final client = MisskeyClient(
 );
 
 // 토큰 없이도 동작합니다
-final info = await client.meta.fetch();
+final info = await client.meta.getMeta();
 final notes = await client.notes.timelineLocal(limit: 10);
 ```
 

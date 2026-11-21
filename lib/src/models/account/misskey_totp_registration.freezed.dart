@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyTotpRegistration {
 
- String get qr; String get url; String get secret; String get label; String get issuer;
+ String? get qr; String get url; String get secret; String get label; String get issuer;
 /// Create a copy of MisskeyTotpRegistration
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyTotpRegistrationCopyWith<$Res>  {
   factory $MisskeyTotpRegistrationCopyWith(MisskeyTotpRegistration value, $Res Function(MisskeyTotpRegistration) _then) = _$MisskeyTotpRegistrationCopyWithImpl;
 @useResult
 $Res call({
- String qr, String url, String secret, String label, String issuer
+ String? qr, String url, String secret, String label, String issuer
 });
 
 
@@ -63,10 +63,10 @@ class _$MisskeyTotpRegistrationCopyWithImpl<$Res>
 
 /// Create a copy of MisskeyTotpRegistration
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? qr = null,Object? url = null,Object? secret = null,Object? label = null,Object? issuer = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? qr = freezed,Object? url = null,Object? secret = null,Object? label = null,Object? issuer = null,}) {
   return _then(MisskeyTotpRegistration(
-qr: null == qr ? _self.qr : qr // ignore: cast_nullable_to_non_nullable
-as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+qr: freezed == qr ? _self.qr : qr // ignore: cast_nullable_to_non_nullable
+as String?,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,secret: null == secret ? _self.secret : secret // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,issuer: null == issuer ? _self.issuer : issuer // ignore: cast_nullable_to_non_nullable

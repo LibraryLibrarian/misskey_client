@@ -72,7 +72,12 @@ class AccountApi {
   /// [publicReactions] makes reactions public when true.
   /// [carefulBot] requires approval for follows from bots when true.
   /// [autoAcceptFollowed] automatically accepts follow requests from users
-  /// the account already follows. [noCrawle] refuses search engine indexing.
+  /// the account already follows.
+  /// [followApprovalLocalSeconds] and [followApprovalRemoteSeconds] require
+  /// follow approval for local and remote accounts younger than the specified
+  /// age (Misskey 2026.10.1 or later). Each accepts 0-2592000 seconds (30 days);
+  /// pass `Optional.null_()` to clear and disable the setting.
+  /// [noCrawle] refuses search engine indexing.
   /// [preventAiLearning] refuses AI learning. [isBot] marks the account as
   /// a bot and [isCat] marks it as a cat account.
   /// [injectFeaturedNote] injects featured notes into the timeline.
@@ -109,6 +114,12 @@ class AccountApi {
   /// `{"type": "list", "userListId": "<id>"}`.
   /// [emailNotificationTypes] lists the notification types to receive by
   /// email.
+  ///
+  /// Common errors:
+  /// - `AVATAR_IS_SENSITIVE`: The avatar image is marked as sensitive
+  ///   (Misskey 2026.10.1 or later)
+  /// - `BANNER_IS_SENSITIVE`: The banner image is marked as sensitive
+  ///   (Misskey 2026.10.1 or later)
   Future<MisskeyUser> update({
     Optional<String>? name,
     Optional<String>? description,
@@ -125,6 +136,8 @@ class AccountApi {
     bool? publicReactions,
     bool? carefulBot,
     bool? autoAcceptFollowed,
+    Optional<int>? followApprovalLocalSeconds,
+    Optional<int>? followApprovalRemoteSeconds,
     bool? noCrawle,
     bool? preventAiLearning,
     bool? isBot,
@@ -168,6 +181,12 @@ class AccountApi {
     if (autoAcceptFollowed != null) {
       body['autoAcceptFollowed'] = autoAcceptFollowed;
     }
+    putOptional(body, 'followApprovalLocalSeconds', followApprovalLocalSeconds);
+    putOptional(
+      body,
+      'followApprovalRemoteSeconds',
+      followApprovalRemoteSeconds,
+    );
     if (noCrawle != null) body['noCrawle'] = noCrawle;
     if (preventAiLearning != null) {
       body['preventAiLearning'] = preventAiLearning;
@@ -395,13 +414,49 @@ class AccountApi {
         body: <String, dynamic>{'password': password},
       );
 
-  /// Revokes an authorized token by token ID (`/api/i/revoke-token`).
+  /// Revokes an access token by its record ID (`/api/i/revoke-token`).
+  ///
+  /// Pass the ID returned by [apps], rather than the token string. Only tokens
+  /// owned by the authenticated user can be revoked. Available since Misskey
+  /// 12.27.0; the token-string form was added in Misskey 2023.11.0.
+  ///
+  /// Requires authentication. Misskey 2026.5.1 and 2026.7.0 require the user's
+  /// primary API token (a third-party access token is rejected). Since Misskey
+  /// 2026.9.0, a third-party access token can revoke only itself; a primary API
+  /// token can revoke any access token owned by the user.
+  /// Returns no content (HTTP 204), including when no owned token matches.
+  ///
+  /// Common errors (Misskey 2026.9.0 and later):
+  /// - `CREDENTIAL_REQUIRED`: No authentication credentials were supplied
+  /// - `PERMISSION_DENIED`: An access token attempts to revoke another owned token
+  ///
+  /// Before Misskey 2026.9.0, `ACCESS_DENIED` is returned when the request does
+  /// not use the primary API token.
   Future<void> revokeTokenById(String tokenId) => http.send<Object?>(
     '/i/revoke-token',
     body: <String, dynamic>{'tokenId': tokenId},
   );
 
-  /// Revokes an authorized token by token string (`/api/i/revoke-token`).
+  /// Revokes an access token by its string value (`/api/i/revoke-token`).
+  ///
+  /// Use this form when the token string is known but its record ID is not.
+  /// Available since Misskey 2023.11.0.
+  /// Only tokens owned by the authenticated user can be revoked. An empty
+  /// string or a token that does not match an owned token is a no-op.
+  /// Returns no content (HTTP 204).
+  ///
+  /// Requires authentication. Misskey 2026.5.1 and 2026.7.0 require the user's
+  /// primary API token. Since Misskey 2026.9.0, a third-party access token can
+  /// revoke itself by passing its own string as [token]; it cannot revoke
+  /// another owned token. A primary API token can revoke any owned access token.
+  /// See [revokeTokenById] to revoke a token by its record ID instead.
+  ///
+  /// Common errors (Misskey 2026.9.0 and later):
+  /// - `CREDENTIAL_REQUIRED`: No authentication credentials were supplied
+  /// - `PERMISSION_DENIED`: An access token attempts to revoke another owned token
+  ///
+  /// Before Misskey 2026.9.0, `ACCESS_DENIED` is returned when the request does
+  /// not use the primary API token.
   Future<void> revokeTokenByToken(String token) => http.send<Object?>(
     '/i/revoke-token',
     body: <String, dynamic>{'token': token},

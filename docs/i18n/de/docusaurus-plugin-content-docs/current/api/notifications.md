@@ -39,7 +39,7 @@ final grouped = await client.notifications.listGrouped(limit: 20);
 ### Nach Typ filtern
 
 ```dart
-// Nur Erwaehungen und Reaktionen
+// Nur Erwaehnungen und Reaktionen
 final notifications = await client.notifications.list(
   includeTypes: ['mention', 'reaction'],
 );

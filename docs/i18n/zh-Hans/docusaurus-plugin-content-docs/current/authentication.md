@@ -69,7 +69,7 @@ void onTokenRefreshed(String newToken) {
 |------|----------|
 | `AuthMode.required` | 注入令牌；如未提供则抛出异常（默认） |
 | `AuthMode.optional` | 有令牌时注入；无令牌时请求照常进行 |
-| `AuthMode.none` | 无论提供者如何，从不注入令牌 |
+| `AuthMode.none` | 无论是否提供令牌，都不会注入令牌 |
 
 这是库内部的机制，作为使用者只需提供 `tokenProvider`，库会自动处理注入。
 
@@ -107,10 +107,10 @@ final authUrl = Uri.parse('$baseUrl/miauth/$session').replace(
 
 ### 第二步：用会话换取令牌
 
-用户批准请求后，调用 check 端点。这是一个普通的 HTTP GET 请求，不经过库的认证路径：
+用户批准请求后，调用 check 端点。这是一个普通的 HTTP POST 请求，不经过库的认证路径：
 
 ```dart
-final response = await http.get(
+final response = await http.post(
   Uri.parse('$baseUrl/api/miauth/$session/check'),
 );
 final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -131,7 +131,7 @@ final client = MisskeyClient(
 );
 
 // 无需令牌即可工作
-final info = await client.meta.fetch();
+final info = await client.meta.getMeta();
 final notes = await client.notes.timelineLocal(limit: 10);
 ```
 

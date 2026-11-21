@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import '../client/auth_mode.dart';
 import '../client/misskey_http.dart';
 import '../client/request_options.dart';
+import '../internal/nullable_json_object.dart';
 import '../models/federation/misskey_federation_instance.dart';
 import '../models/federation/misskey_federation_stats.dart';
 import '../models/misskey_following.dart';
@@ -73,17 +74,20 @@ class FederationApi {
   /// (`/api/federation/show-instance`).
   ///
   /// No authentication required. Returns `null` if the instance is unknown.
+  /// Throws a [FormatException] if the server responds with anything other
+  /// than a JSON object or an empty body.
   /// Pass [host] as the host name to look up.
   Future<MisskeyFederationInstance?> showInstance({
     required String host,
   }) async {
-    final res = await http.send<Map<String, dynamic>?>(
+    final res = await http.send<Object?>(
       '/federation/show-instance',
       body: <String, dynamic>{'host': host},
       options: const RequestOptions(authMode: AuthMode.none, idempotent: true),
     );
-    if (res == null) return null;
-    return MisskeyFederationInstance.fromJson(res);
+    final json = nullableJsonObject(res, '/federation/show-instance');
+    if (json == null) return null;
+    return MisskeyFederationInstance.fromJson(json);
   }
 
   /// Retrieves the list of followers from a specified instance

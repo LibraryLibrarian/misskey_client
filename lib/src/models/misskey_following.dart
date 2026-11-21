@@ -5,8 +5,8 @@ import 'misskey_user.dart';
 part 'misskey_following.freezed.dart';
 part 'misskey_following.g.dart';
 
-/// A follow relationship (element of `/api/users/followers` and
-/// `/api/users/following` responses).
+/// A follow relationship (element of `/api/users/followers`,
+/// `/api/users/following`, and `/api/following/list` responses).
 @freezed
 @JsonSerializable()
 class MisskeyFollowing with _$MisskeyFollowing {

@@ -76,7 +76,7 @@ Beide Methoden geben den aktualisierten `MisskeyUser` zurueck.
 ```dart
 final favs = await client.account.favorites(limit: 20);
 for (final fav in favs) {
-  print(fav.note.text);
+  print(fav.note?.text);
 }
 ```
 
@@ -132,6 +132,12 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
+`revokeTokenById` erwartet die Datensatz-ID des Tokens (zum Beispiel aus `client.account.apps()`), `revokeTokenByToken` die Token-Zeichenfolge. Der Endpunkt wurde in Misskey 12.27.0 eingefuehrt, die Zeichenfolgenvariante in 2023.11.0. Beide Varianten werden ab 2026.5.1 unterstuetzt.
+
+Eine Authentifizierung ist erforderlich. Misskey 2026.5.1 und 2026.7.0 erfordern das primaere API-Token des Benutzers. Seit Misskey 2026.9.0 kann ein Zugriffstoken einer Drittanbieter-App sich selbst widerrufen, indem es seine eigene ID oder Zeichenfolge uebergibt. Es kann kein anderes Zugriffstoken desselben Benutzers widerrufen. Mit einem primaeren API-Token kann jedes Zugriffstoken dieses Benutzers widerrufen werden.
+
+Beide Methoden liefern keinen Antwortinhalt (HTTP 204). Bei einem fehlenden oder fremden Ziel sowie einer leeren Token-Zeichenfolge wird nichts geaendert. Haeufige Fehler ab Misskey 2026.9.0 sind `CREDENTIAL_REQUIRED` (fehlende Anmeldedaten) und `PERMISSION_DENIED` (ein Zugriffstoken versucht, ein anderes Token desselben Benutzers zu widerrufen).
+
 ## Export und Import
 
 Alle Exportvorgaenge werden als asynchrone Jobs in die Warteschlange gestellt. Bei Abschluss wird eine Benachrichtigung gesendet.
@@ -179,6 +185,8 @@ for (final entry in history) {
 
 Die Registry speichert beliebige Schluessel-Wert-Daten fuer Client-Anwendungen (entspricht dem Browser-localStorage, aber geraeteuebergreifend synchronisiert).
 
+Wenn Sie mit `registry.set` den Wert `null` speichern, gibt `registry.get` den Wert `null` zurueck. Eine gespeicherte Zeichenfolge wird unveraendert als Zeichenfolge zurueckgegeben.
+
 ```dart
 // Einen Wert lesen
 final value = await client.account.registry.get(
@@ -198,12 +206,15 @@ await client.account.registry.set(
 
 ```dart
 // TOTP-Registrierung beginnen
-final reg = await client.account.twoFactor.registerTotp(password: 'mypassword');
-print(reg.qr); // QR-Code-Daten-URL zur Anzeige in der Benutzereroberflaeche
+final reg = await client.account.twoFactor.register(password: 'mypassword');
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // QR-Code-Daten-URL zur Anzeige in der Benutzeroberflaeche
 
 // TOTP mit dem ersten Code der Authenticator-App bestaetigen und aktivieren
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Ab Misskey 2026.11.0 wird `qr` nicht mehr zurueckgegeben. In diesem Beispiel ist `generateQrDataUrl` eine von Ihrer Anwendung bereitgestellte Funktion, die die `otpauth`-URL in `reg.url` mit einer QR-Code-Bibliothek in eine QR-Bild-Daten-URL umwandelt.
 
 ### Webhooks
 

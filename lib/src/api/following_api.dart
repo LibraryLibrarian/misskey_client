@@ -1,11 +1,14 @@
 import '../client/misskey_http.dart';
+import '../client/request_options.dart';
+import '../models/misskey_following.dart';
 import '../models/misskey_user.dart';
 import 'following_requests_api.dart';
 
 /// Provides following operations (`/api/following/*`).
 ///
 /// Handles following, unfollowing, updating follow settings,
-/// and forcibly removing followers.
+/// forcibly removing followers, and listing the authenticated user's
+/// follows.
 /// Use [requests] for follow request operations.
 class FollowingApi {
   FollowingApi({required MisskeyHttp http})
@@ -115,5 +118,44 @@ class FollowingApi {
       body: <String, dynamic>{'userId': userId},
     );
     return MisskeyUser.fromJson(res);
+  }
+
+  /// Lists the users the authenticated user follows (`/api/following/list`).
+  ///
+  /// Set [notification] to `true` to return only follows whose new-note
+  /// notifications are enabled (`notify: 'normal'` via [update] or
+  /// [updateAll]). Each element includes [MisskeyFollowing.followee], whose
+  /// `notify` field (`normal` / `none`) reflects that setting.
+  ///
+  /// [limit] is 1-100 (default 10).
+  /// Paginate with [sinceId] / [untilId] / [sinceDate] / [untilDate].
+  ///
+  /// Requires Misskey 2026.5.2 or later; older servers respond with a
+  /// `MisskeyNotFoundException`. Use `MetaApi.isEndpointAvailable` to check
+  /// support beforehand.
+  Future<List<MisskeyFollowing>> list({
+    bool? notification,
+    int? limit,
+    String? sinceId,
+    String? untilId,
+    int? sinceDate,
+    int? untilDate,
+  }) async {
+    final res = await _http.send<List<dynamic>>(
+      '/following/list',
+      body: <String, dynamic>{
+        'notification': ?notification,
+        'limit': ?limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        'sinceDate': ?sinceDate,
+        'untilDate': ?untilDate,
+      },
+      options: const RequestOptions(idempotent: true),
+    );
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyFollowing.fromJson)
+        .toList();
   }
 }

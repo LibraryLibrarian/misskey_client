@@ -24,7 +24,7 @@ Ajoutez le package à votre `pubspec.yaml` :
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.9
+  misskey_client: ^1.0.0-beta.10
 ```
 
 Puis exécutez :
@@ -254,7 +254,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### Accès HTTP de bas niveau
 
-L'équivalent de bas niveau de `MisskeyHttpClient.send<T>()` n'est pas public. `misskey_client` couvre 26 domaines d'API ; utilisez donc les méthodes typées. Si un point de terminaison nécessaire manque, veuillez le signaler dans une issue GitHub afin qu'il soit ajouté à l'API typée.
+L'équivalent de bas niveau de `MisskeyHttpClient.send<T>()` n'est pas public. `misskey_client` couvre 26 domaines d'API ; utilisez donc les méthodes typées. Si un point de terminaison nécessaire manque, veuillez le signaler dans une Issue GitHub afin qu'il soit ajouté à l'API typée.
 
 ## Migration depuis misskey_streaming
 

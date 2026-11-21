@@ -153,7 +153,9 @@ final active = await client.announcements.list(limit: 10);
 final all = await client.announcements.list(isActive: false, limit: 20);
 
 // Details for a single announcement
-final ann = await client.announcements.show(announcementId: ann.id);
+final ann = await client.announcements.show(
+  announcementId: active.first.id,
+);
 print(ann.title);
 print(ann.text);
 ```
@@ -246,7 +248,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw` manages Service Worker push notification subscriptions. All endpoints require authentication.
+`client.sw` manages Service Worker push notification subscriptions. Authentication is required except for `unregister`, which does not require an access token on any supported Misskey version.
 
 ### Register
 
@@ -286,5 +288,11 @@ await client.sw.updateRegistration(
 ```dart
 await client.sw.unregister(
   endpoint: 'https://push.example.com/subscribe/abc123',
+  auth: 'auth-secret',
+  publickey: 'vapid-public-key',
 );
 ```
+
+`auth` and `publickey` are required on Misskey 2026.10.0 and later; pass the same values used for `register`. Older servers ignore them. `unregister` does not require an access token on any supported Misskey version. Misskey 2026.10.0 and later limit it to 30 requests per hour (HTTP 429).
+
+On upstream Misskey 2026.11.0, supplying an access token restricts deletion to the authenticated user's registrations. Without a token, registrations for all accounts matching `endpoint`, `auth`, and `publickey` are deleted. To remove all accounts' registrations for the subscription, call `unregister` with a client without an access token.

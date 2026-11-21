@@ -76,7 +76,7 @@ Les deux méthodes retournent le `MisskeyUser` mis à jour.
 ```dart
 final favs = await client.account.favorites(limit: 20);
 for (final fav in favs) {
-  print(fav.note.text);
+  print(fav.note?.text);
 }
 ```
 
@@ -132,6 +132,12 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
+`revokeTokenById` prend l’identifiant de l’enregistrement du jeton (par exemple, obtenu avec `client.account.apps()`), tandis que `revokeTokenByToken` prend la chaîne du jeton. Ce point d’accès a été ajouté dans Misskey 12.27.0, et la forme utilisant une chaîne dans 2023.11.0. Les deux formes sont prises en charge à partir de 2026.5.1.
+
+L’authentification est requise. Misskey 2026.5.1 et 2026.7.0 nécessitent le jeton API principal de l’utilisateur. Depuis Misskey 2026.9.0, un jeton d’accès d’une application tierce peut se révoquer lui-même en passant son propre identifiant ou sa propre chaîne ; il ne peut pas révoquer un autre jeton d’accès du même utilisateur. Un jeton API principal peut révoquer tout jeton d’accès appartenant à cet utilisateur.
+
+Les deux méthodes ne renvoient aucun contenu (HTTP 204). Une cible absente ou appartenant à un autre utilisateur, ainsi qu’une chaîne de jeton vide, ne modifient rien. Depuis Misskey 2026.9.0, les erreurs courantes sont `CREDENTIAL_REQUIRED` (aucun identifiant d’authentification) et `PERMISSION_DENIED` (un jeton d’accès tente de révoquer un autre jeton du même utilisateur).
+
 ## Exportation et importation
 
 Toutes les opérations d'exportation sont mises en file d'attente en tant que tâches asynchrones. Une notification est envoyée à l'achèvement.
@@ -151,7 +157,7 @@ await client.account.exportUserLists();
 
 ### Importation des données
 
-Passez l'identifiant du fichier Drive du fichier préalablement exporté.
+Passez l’identifiant Drive du fichier préalablement exporté.
 
 ```dart
 // Upload the file to Drive first, then pass its ID
@@ -179,6 +185,8 @@ for (final entry in history) {
 
 Le registre stocke des données clé-valeur arbitraires pour les applications clientes (équivalent au localStorage du navigateur, mais synchronisé entre les appareils).
 
+Si vous stockez `null` avec `registry.set`, `registry.get` renvoie `null`. Une chaîne stockée est renvoyée telle quelle, sans guillemets supplémentaires.
+
 ```dart
 // Read a value
 final value = await client.account.registry.get(
@@ -198,12 +206,15 @@ await client.account.registry.set(
 
 ```dart
 // Begin TOTP registration
-final reg = await client.account.twoFactor.registerTotp(password: 'mypassword');
-print(reg.qr); // QR code data URL to show in the UI
+final reg = await client.account.twoFactor.register(password: 'mypassword');
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // QR code data URL to show in the UI
 
 // Confirm and activate TOTP with the first code from the authenticator app
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Depuis Misskey 2026.11.0, `qr` n’est plus renvoyé. Dans cet exemple, `generateQrDataUrl` est une fonction à fournir dans votre application qui utilise une bibliothèque de codes QR pour encoder l’URL `otpauth` de `reg.url` en URL de données d’une image QR.
 
 ### Webhooks
 

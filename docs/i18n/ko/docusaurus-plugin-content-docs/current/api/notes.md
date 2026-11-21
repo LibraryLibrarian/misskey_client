@@ -5,7 +5,7 @@ title: 노트
 
 # 노트
 
-`client.notes` API는 노트(게시물)를 조회, 작성, 상호작용하는 기능을 제공합니다.
+`client.notes` API는 노트(게시물)를 조회하고 작성하거나 노트와 상호작용할 수 있는 기능을 제공합니다.
 
 ## 노트 조회
 
@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // 해당 노트에 대한 자신의 리노트 모두 취소
 await client.notes.unrenote(noteId: noteId);
 
-// 리노트한 사용자 목록
+// 해당 노트의 리노트 목록
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 
@@ -231,6 +231,16 @@ final results = await client.notes.search(
   query: 'hello',
   userId: someUserId,
   channelId: someChannelId,
+);
+```
+
+`rangeStartAt` / `rangeEndAt`(Unix 밀리초, 양 끝 포함)로 게시 기간을 제한할 수 있습니다. 페이지네이션 커서인 `sinceDate` / `untilDate`와 달리 이 값들은 검색 조건입니다. Misskey 2026.6.0 이상이 필요하며, 이전 서버는 이 값을 무시하고 기간으로 걸러지지 않은 결과를 반환합니다.
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
 );
 ```
 
@@ -273,5 +283,9 @@ final translation = await client.notes.translate(
   noteId: noteId,
   targetLang: 'en',
 );
-print(translation.text);
+if (translation != null) {
+  print(translation.text);
+} else {
+  // 노트 본문과 CW가 모두 비어 있으면 번역할 텍스트가 없습니다.
+}
 ```

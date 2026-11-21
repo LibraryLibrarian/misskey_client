@@ -24,7 +24,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.9
+  misskey_client: ^1.0.0-beta.10
 ```
 
 Then run:
@@ -201,7 +201,7 @@ Helper APIs can additionally throw `ArgumentError` for invalid arguments (before
 
 ## Logging
 
-Enable the built-in stdout logger via `MisskeyClientConfig.enableLog`, or supply a custom `Logger` implementation:
+Set `MisskeyClientConfig.enableLog` to `true` to enable logging. To redirect the logs, also supply a custom `Logger` implementation:
 
 ```dart
 class MyLogger implements Logger {
@@ -212,7 +212,10 @@ class MyLogger implements Logger {
 }
 
 final client = MisskeyClient(
-  config: MisskeyClientConfig(baseUrl: Uri.parse('https://misskey.example.com')),
+  config: MisskeyClientConfig(
+    baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
+  ),
   logger: MyLogger(),
 );
 ```
@@ -254,7 +257,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### Low-level HTTP access
 
-The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 26 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub issue so it can be added to the typed API.
+The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 26 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub Issue so it can be added to the typed API.
 
 ## Migrating from misskey_streaming
 

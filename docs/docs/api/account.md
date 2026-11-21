@@ -76,7 +76,7 @@ Both methods return the updated `MisskeyUser`.
 ```dart
 final favs = await client.account.favorites(limit: 20);
 for (final fav in favs) {
-  print(fav.note.text);
+  print(fav.note?.text);
 }
 ```
 
@@ -132,6 +132,12 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
+`revokeTokenById` takes the token's record ID (for example, from `client.account.apps()`); `revokeTokenByToken` takes the token string. The endpoint was added in Misskey 12.27.0, and the string form in 2023.11.0. Both forms are supported in 2026.5.1 and later.
+
+Authentication is required. Misskey 2026.5.1 and 2026.7.0 require the user's primary API token. Since Misskey 2026.9.0, a third-party access token can revoke itself by passing its own ID or string; it cannot revoke another access token owned by the user. A primary API token can revoke any access token owned by that user.
+
+Both methods return no content (HTTP 204). A missing or unowned target is a no-op, as is an empty token string. In Misskey 2026.9.0 and later, common errors are `CREDENTIAL_REQUIRED` (no credentials) and `PERMISSION_DENIED` (an access token attempts to revoke another owned token).
+
 ## Export and import
 
 All export operations are queued as asynchronous jobs. A notification is sent upon completion.
@@ -179,6 +185,8 @@ for (final entry in history) {
 
 The registry stores arbitrary key-value data for client applications (equivalent to browser localStorage, but synced across devices).
 
+If you store `null` with `registry.set`, `registry.get` returns `null`. A stored string is returned as the string itself.
+
 ```dart
 // Read a value
 final value = await client.account.registry.get(
@@ -198,12 +206,15 @@ await client.account.registry.set(
 
 ```dart
 // Begin TOTP registration
-final reg = await client.account.twoFactor.registerTotp(password: 'mypassword');
-print(reg.qr); // QR code data URL to show in the UI
+final reg = await client.account.twoFactor.register(password: 'mypassword');
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // QR code data URL to show in the UI
 
 // Confirm and activate TOTP with the first code from the authenticator app
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Misskey 2026.11.0 and later omit `qr`. In this example, `generateQrDataUrl` is a function provided by your application that encodes the `otpauth` URL in `reg.url` as a QR image data URL using a QR code library.
 
 ### Webhooks
 

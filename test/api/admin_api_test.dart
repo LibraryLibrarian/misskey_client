@@ -30,6 +30,29 @@ void main() {
       });
     });
 
+    test('omits visitor visibility when it is not supplied', () async {
+      final adapter = _RecordingHttpClientAdapter();
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      await client.admin.updateMeta(disableRegistration: true);
+
+      expect(adapter.body, {'disableRegistration': true});
+    });
+
+    for (final visibility in ['all', 'local', 'none']) {
+      test('sends visitor visibility $visibility when supplied', () async {
+        final adapter = _RecordingHttpClientAdapter();
+        final client = _createClient(adapter);
+        addTearDown(client.dispose);
+
+        await client.admin.updateMeta(ugcVisibilityForVisitor: visibility);
+
+        expect(adapter.path, '/api/admin/update-meta');
+        expect(adapter.body, {'ugcVisibilityForVisitor': visibility});
+      });
+    }
+
     test('typed parameters take precedence over extra settings', () async {
       final adapter = _RecordingHttpClientAdapter();
       final client = _createClient(adapter);
@@ -39,15 +62,18 @@ void main() {
         extra: const {
           'description': 'from extra',
           'enableEmail': false,
+          'ugcVisibilityForVisitor': 'all',
           'maintainerEmail': 'extra@example.com',
         },
         description: const Optional('typed description'),
         enableEmail: true,
+        ugcVisibilityForVisitor: 'local',
       );
 
       expect(adapter.body, {
         'description': 'typed description',
         'enableEmail': true,
+        'ugcVisibilityForVisitor': 'local',
         'maintainerEmail': 'extra@example.com',
       });
     });
@@ -103,6 +129,19 @@ void main() {
       );
 
       expect(adapter.requestCount, 0);
+    });
+  });
+
+  group('AdminApi.unsetMfa', () {
+    test('sends the target user ID', () async {
+      final adapter = _RecordingHttpClientAdapter();
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      await client.admin.unsetMfa(userId: 'user1');
+
+      expect(adapter.path, '/api/admin/unset-mfa');
+      expect(adapter.body, {'userId': 'user1'});
     });
   });
 }

@@ -23,7 +23,7 @@ Add the dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.9
+  misskey_client: ^1.0.0-beta.10
 ```
 
 Then fetch it:
@@ -55,7 +55,7 @@ final client = MisskeyClient(
 Fetching server information (no authentication required):
 
 ```dart
-final serverInfo = await client.meta.fetch();
+final serverInfo = await client.meta.getMeta();
 print(serverInfo.name);        // Server name
 print(serverInfo.description); // Server description
 ```
@@ -70,7 +70,7 @@ print(me.username); // Username (without @)
 
 ### API structure
 
-Every API domain is exposed as a property on `MisskeyClient`:
+The main API domains are exposed as properties on `MisskeyClient`. Administrator APIs (`admin*`) and `accountLifecycle` are not listed here:
 
 ```dart
 client.account       // Account and profile management (/api/i/*)
@@ -115,12 +115,13 @@ final client = MisskeyClient(
 );
 ```
 
-To route logs to your own sink, pass a `Logger` implementation to the constructor:
+To route logs to your own sink, also pass a `Logger` implementation to the constructor (logs are delivered only while `enableLog` is `true`):
 
 ```dart
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: FunctionLogger((level, message) {

@@ -41,7 +41,7 @@ await client.clips.delete(clipId: clip.id);
 
 ## Play
 
-Play (connu sous le nom legacy Flash dans l'API) permet aux utilisateurs de créer et d'exécuter de petites mini-applications alimentées par AiScript.
+Play (qui conserve le nom historique Flash dans l'API) permet aux utilisateurs de créer et d'exécuter des mini-applications utilisant AiScript.
 
 ### Créer un Play
 
@@ -147,7 +147,7 @@ final featured = await client.pages.featured();
 
 ### Créer une page
 
-`content` est une liste d'objets blocs ; `variables` est une liste de définitions de variables ; `script` est du AiScript exécuté au chargement de la page.
+`content` est une liste d'objets blocs ; `variables` est une liste de définitions de variables ; `script` est du code AiScript exécuté au chargement de la page.
 
 ```dart
 final page = await client.pages.create(

@@ -190,4 +190,23 @@ class AntennasApi {
         .map(MisskeyNote.fromJson)
         .toList();
   }
+
+  /// Removes a note from an antenna's timeline
+  /// (`/api/antennas/remove-note`).
+  ///
+  /// Pass the antenna's ID as [antennaId] and the note to remove as
+  /// [noteId]. Only the antenna's timeline is affected; the note itself is
+  /// not deleted. The call also succeeds when the note is not in the
+  /// antenna. Requires Misskey 2026.6.0 or later; older servers respond
+  /// with a `MisskeyNotFoundException`.
+  ///
+  /// Common errors:
+  /// - `NO_SUCH_ANTENNA`: The antenna does not exist
+  Future<void> removeNote({
+    required String antennaId,
+    required String noteId,
+  }) => http.send<Object?>(
+    '/antennas/remove-note',
+    body: <String, dynamic>{'antennaId': antennaId, 'noteId': noteId},
+  );
 }

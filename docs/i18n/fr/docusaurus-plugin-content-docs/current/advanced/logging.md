@@ -54,7 +54,7 @@ final client = MisskeyClient(
 );
 ```
 
-`FunctionLogger` a priorité sur l'indicateur `enableLog`. Si vous fournissez un logger personnalisé, il reçoit tous les appels de journalisation quelle que soit la valeur de `enableLog`.
+Un logger personnalisé remplace le `StdoutLogger` par défaut, mais ne contourne pas `enableLog` : il reçoit les appels de journalisation uniquement lorsque `enableLog` vaut `true`.
 
 ## Implémenter un Logger personnalisé
 
@@ -80,6 +80,7 @@ class MyLogger implements Logger {
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: MyLogger(),
@@ -90,7 +91,7 @@ final client = MisskeyClient(
 
 Lorsque `enableLog: true` est défini et qu'aucun `logger` personnalisé n'est fourni, le `StdoutLogger` est utilisé. Il délègue au package `logger` en interne.
 
-En mode debug, tous les niveaux de journalisation (debug et supérieurs) sont émis. En mode release, seuls les avertissements et les erreurs sont produits.
+Les journaux des requêtes HTTP, des réponses et des nouvelles tentatives sont émis uniquement lorsque `enableLog` vaut `true` et que l'application n'est pas en mode release. Le `StdoutLogger` par défaut utilise le filtre de développement du package `logger`, qui supprime toute sortie lorsque les assertions sont désactivées (comme en mode release). Les appels de journalisation Streaming dépendent uniquement de `enableLog` ; un logger personnalisé peut donc les recevoir également en mode release.
 
 Format des journaux :
 

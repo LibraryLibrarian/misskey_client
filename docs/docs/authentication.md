@@ -107,10 +107,10 @@ final authUrl = Uri.parse('$baseUrl/miauth/$session').replace(
 
 ### Step 2: Exchange the session for a token
 
-After the user approves the request, call the check endpoint. This is a plain HTTP GET and does not go through the library's authenticated path:
+After the user approves the request, call the check endpoint. This is a plain HTTP POST and does not go through the library's authenticated path:
 
 ```dart
-final response = await http.get(
+final response = await http.post(
   Uri.parse('$baseUrl/api/miauth/$session/check'),
 );
 final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -131,7 +131,7 @@ final client = MisskeyClient(
 );
 
 // Works without a token
-final info = await client.meta.fetch();
+final info = await client.meta.getMeta();
 final notes = await client.notes.timelineLocal(limit: 10);
 ```
 

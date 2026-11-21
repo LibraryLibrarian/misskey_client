@@ -24,7 +24,7 @@
 
 ```yaml
 dependencies:
-  misskey_client: ^1.0.0-beta.9
+  misskey_client: ^1.0.0-beta.10
 ```
 
 그런 다음 실행합니다:
@@ -254,7 +254,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 저수준 HTTP 접근
 
-`MisskeyHttpClient.send<T>()`에 해당하는 저수준 API는 공개하지 않습니다. `misskey_client`는 26개의 API 도메인을 지원하므로 타입 지정 메서드를 사용하세요. 필요한 엔드포인트가 구현되어 있지 않다면 타입 지정 API에 추가할 수 있도록 GitHub issue로 알려 주세요.
+`MisskeyHttpClient.send<T>()`에 해당하는 저수준 API는 공개하지 않습니다. `misskey_client`는 26개의 API 도메인을 지원하므로 타입 지정 메서드를 사용하세요. 필요한 엔드포인트가 구현되어 있지 않다면 타입 지정 API에 추가할 수 있도록 GitHub Issue로 알려 주세요.
 
 ## misskey_streaming에서 마이그레이션
 

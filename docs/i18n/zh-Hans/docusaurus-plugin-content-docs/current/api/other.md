@@ -152,7 +152,9 @@ final active = await client.announcements.list(limit: 10);
 final all = await client.announcements.list(isActive: false, limit: 20);
 
 // 单条公告的详情
-final ann = await client.announcements.show(announcementId: ann.id);
+final ann = await client.announcements.show(
+  announcementId: active.first.id,
+);
 print(ann.title);
 print(ann.text);
 ```
@@ -244,7 +246,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw` 管理 Service Worker 推送通知订阅。所有端点均需要认证。
+`client.sw` 管理 Service Worker 推送通知订阅。除 `unregister` 外，所有端点都需要认证。`unregister` 在所有受支持的 Misskey 版本中均无需访问令牌即可调用。
 
 ### 注册
 
@@ -284,5 +286,11 @@ await client.sw.updateRegistration(
 ```dart
 await client.sw.unregister(
   endpoint: 'https://push.example.com/subscribe/abc123',
+  auth: 'auth-secret',
+  publickey: 'vapid-public-key',
 );
 ```
+
+Misskey 2026.10.0 及更高版本要求提供 `auth` 和 `publickey`，其值应与 `register` 时相同。旧版本服务器会忽略这两个参数。`unregister` 在所有受支持的 Misskey 版本中均无需访问令牌即可调用。Misskey 2026.10.0 及更高版本每小时最多允许调用 30 次（HTTP 429）。
+
+在上游 Misskey 2026.11.0 中，传入访问令牌时只删除已认证用户自己的注册记录。不传入令牌时，会删除所有账号中与 `endpoint`、`auth` 和 `publickey` 均匹配的订阅关联的注册记录。若要删除该订阅关联的所有账号的注册记录，请使用不带访问令牌的客户端调用 `unregister`。

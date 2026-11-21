@@ -76,7 +76,7 @@ final updated = await client.account.unpin(noteId: noteId);
 ```dart
 final favs = await client.account.favorites(limit: 20);
 for (final fav in favs) {
-  print(fav.note.text);
+  print(fav.note?.text);
 }
 ```
 
@@ -132,6 +132,12 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
+`revokeTokenById`에는 토큰의 레코드 ID(`client.account.apps()` 등으로 조회)를, `revokeTokenByToken`에는 토큰 문자열을 전달합니다. 이 엔드포인트는 Misskey 12.27.0에서, 문자열 지정 방식은 2023.11.0에서 추가되었습니다. 두 방식 모두 2026.5.1 이후 버전에서 지원됩니다.
+
+인증이 필요합니다. Misskey 2026.5.1과 2026.7.0에서는 사용자의 기본 API 토큰이 필요합니다. 2026.9.0부터는 서드파티 액세스 토큰도 자신의 ID 또는 문자열을 전달하여 자기 자신을 폐기할 수 있습니다. 같은 사용자가 소유한 다른 액세스 토큰은 폐기할 수 없습니다. 기본 API 토큰으로는 해당 사용자가 소유한 모든 액세스 토큰을 폐기할 수 있습니다.
+
+두 메서드 모두 응답 본문을 반환하지 않습니다(HTTP 204). 대상이 없거나 본인 소유가 아닌 경우, 토큰 문자열이 비어 있는 경우에는 아무것도 변경하지 않습니다. Misskey 2026.9.0 이후의 주요 오류는 인증 정보가 없을 때의 `CREDENTIAL_REQUIRED`와 액세스 토큰으로 같은 사용자의 다른 토큰을 폐기하려 할 때의 `PERMISSION_DENIED`입니다.
+
 ## 내보내기 및 가져오기
 
 모든 내보내기 작업은 비동기 작업으로 대기열에 추가됩니다. 완료 시 알림이 전송됩니다.
@@ -179,6 +185,8 @@ for (final entry in history) {
 
 레지스트리는 클라이언트 애플리케이션을 위한 임의의 키-값 데이터를 저장합니다 (브라우저의 localStorage와 동일하지만 기기 간에 동기화됩니다).
 
+`registry.set`으로 `null`을 저장하면 `registry.get`은 `null`을 반환합니다. 저장한 문자열은 그대로의 문자열로 반환됩니다.
+
 ```dart
 // 값 읽기
 final value = await client.account.registry.get(
@@ -198,12 +206,15 @@ await client.account.registry.set(
 
 ```dart
 // TOTP 등록 시작
-final reg = await client.account.twoFactor.registerTotp(password: 'mypassword');
-print(reg.qr); // UI에 표시할 QR 코드 데이터 URL
+final reg = await client.account.twoFactor.register(password: 'mypassword');
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // UI에 표시할 QR 코드 데이터 URL
 
 // 인증 앱의 첫 번째 코드로 TOTP 확인 및 활성화
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Misskey 2026.11.0부터는 `qr`이 반환되지 않습니다. 이 예제의 `generateQrDataUrl`은 QR 코드 라이브러리를 사용하여 `reg.url`의 `otpauth` URL을 QR 이미지 데이터 URL로 변환하도록 앱에서 구현하는 함수입니다.
 
 ### 웹훅
 

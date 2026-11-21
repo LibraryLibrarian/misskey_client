@@ -54,7 +54,7 @@ final client = MisskeyClient(
 );
 ```
 
-`FunctionLogger` takes precedence over the `enableLog` flag. If you supply a custom logger, it receives all log calls regardless of `enableLog`.
+A custom logger replaces the default `StdoutLogger`, but it does not bypass `enableLog`: it receives log calls only while `enableLog` is `true`.
 
 ## Implementing a custom Logger
 
@@ -80,6 +80,7 @@ class MyLogger implements Logger {
 final client = MisskeyClient(
   config: MisskeyClientConfig(
     baseUrl: Uri.parse('https://misskey.example.com'),
+    enableLog: true,
   ),
   tokenProvider: () => 'token',
   logger: MyLogger(),
@@ -90,7 +91,7 @@ final client = MisskeyClient(
 
 When `enableLog: true` is set and no custom `logger` is supplied, the `StdoutLogger` is used. It delegates to the `logger` package internally.
 
-In debug builds, all log levels (debug and above) are emitted. In release builds, only warnings and errors are output.
+HTTP request, response, and retry logs are emitted only when `enableLog` is `true` and the app is not a release build. The default `StdoutLogger` uses the `logger` package's development filter, which suppresses all output when assertions are disabled (as in release builds). Streaming log calls depend only on `enableLog`, so a custom logger can receive them in release builds as well.
 
 Log format:
 

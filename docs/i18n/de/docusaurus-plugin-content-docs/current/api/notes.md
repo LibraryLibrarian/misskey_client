@@ -5,7 +5,7 @@ title: Notizen
 
 # Notizen
 
-Die `client.notes`-API bietet Operationen zum Abrufen, Erstellen und Interagieren mit Notizen (Beitraegen).
+Mit der `client.notes`-API koennen Sie Notizen (Beitraege) abrufen und erstellen sowie mit ihnen interagieren.
 
 ## Notizen abrufen
 
@@ -196,7 +196,7 @@ await client.notes.create(renoteId: noteId);
 // Alle eigenen Renotes einer Notiz zuruecknehmen
 await client.notes.unrenote(noteId: noteId);
 
-// Benutzer auflisten, die renotiert haben
+// Renotes einer Notiz auflisten
 final renotes = await client.notes.renotes(noteId: noteId, limit: 20);
 ```
 
@@ -234,6 +234,16 @@ final results = await client.notes.search(
 );
 ```
 
+Mit `rangeStartAt` / `rangeEndAt` (Unix-Zeitstempel in Millisekunden, jeweils inklusive) schraenken Sie die Ergebnisse auf einen Veroeffentlichungszeitraum ein. Anders als `sinceDate` / `untilDate`, die Paginierungs-Cursor sind, handelt es sich um Suchbedingungen. Erfordert Misskey 2026.6.0 oder neuer; aeltere Server ignorieren diese Angaben und liefern Ergebnisse ohne Zeitraumfilter.
+
+```dart
+final results = await client.notes.search(
+  query: 'hello',
+  rangeStartAt: DateTime.utc(2026, 1, 1).millisecondsSinceEpoch,
+  rangeEndAt: DateTime.utc(2026, 2, 1).millisecondsSinceEpoch - 1,
+);
+```
+
 ### Nach Hashtag suchen
 
 ```dart
@@ -249,7 +259,7 @@ final results = await client.notes.searchByTag(
 );
 ```
 
-## Favoriten und Entwerfe
+## Favoriten und Entwuerfe
 
 ```dart
 // Favoriten hinzufuegen / entfernen
@@ -259,7 +269,7 @@ await client.notes.favoritesDelete(noteId: noteId);
 // Eigene Favoriten abrufen
 final favs = await client.account.favorites(limit: 20);
 
-// Entwerfe auflisten
+// Entwuerfe auflisten
 final drafts = await client.notes.draftsList(limit: 20);
 
 // Entwurfanzahl
@@ -273,5 +283,9 @@ final translation = await client.notes.translate(
   noteId: noteId,
   targetLang: 'en',
 );
-print(translation.text);
+if (translation != null) {
+  print(translation.text);
+} else {
+  // Wenn Notiztext und CW leer sind, gibt es keinen Text zum Uebersetzen.
+}
 ```

@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.10] - 2026-11-22
+
+### Added
+
+- Added `MisskeyAdminMeta.ugcVisibilityForVisitor` and the optional `AdminApi.updateMeta(ugcVisibilityForVisitor:)` argument for controlling content visible to visitors who are not signed in (Misskey 2025.5.1 or later)
+- Added `autoArchiveAt` to `AdminAnnouncementsApi.create` / `update` and `MisskeyAdminAnnouncement` for scheduled archiving (Misskey 2026.10.1 or later)
+- Added `followApprovalLocalSeconds` / `followApprovalRemoteSeconds` to `AccountApi.update` and `MisskeyUser` for requiring follow approval based on account age (Misskey 2026.10.1 or later)
+- Added optional `auth` / `publickey` arguments to `SwApi.unregister`, required by Misskey 2026.10.0 or later
+- Added `FollowingApi.list` (`/api/following/list`, Misskey 2026.5.2 or later) for listing the authenticated user's follows, optionally only those with new-note notifications enabled
+- Added the `rangeStartAt` / `rangeEndAt` posting-period conditions to `NotesApi.search` (Misskey 2026.6.0 or later; older servers ignore them)
+- Added `AntennasApi.removeNote` (`/api/antennas/remove-note`, Misskey 2026.6.0 or later) for removing a single note from an antenna's timeline
+- Added `AdminQueueApi.pause` / `resume` (`/api/admin/queue/pause`, `/api/admin/queue/resume`, Misskey 2026.6.0 or later) for pausing and resuming job queues
+- Added `AdminApi.unsetMfa` (`/api/admin/unset-mfa`, Misskey 2026.7.0 or later) for removing a user's passkeys, TOTP, and passwordless login
+
+### Changed
+
+- Corrected the `AdminApi.resetPassword` documentation of common errors and the `AccountApi.revokeTokenById` / `revokeTokenByToken` documentation of authentication, errors, and version support
+- **Breaking:** `NotesApi.translate` now returns `MisskeyNoteTranslation?`, returning `null` when there is no text to translate; update callers to handle `null`
+- **Breaking:** `MisskeyTotpRegistration.qr` is now nullable because Misskey 2026.11.0 no longer returns it; generate the QR code from `url` when it is null
+- `SwApi.unregister` now uses optional authentication so it can be called without an access token, matching the endpoint's existing behavior across server versions
+- Corrected the `AdminQueueApi.jobs` documentation of accepted `state` values: `prioritized` is not accepted, and `paused` is rejected from Misskey 2026.9.0
+- Corrected the `AdminQueueApi` documentation of the required privilege: moderator privileges are sufficient, not only administrator
+- Corrected the documentation comment of the default logger: with assertions disabled, as in release builds, it outputs nothing
+
+### Fixed
+
+- Fixed `RegistryApi.get` returning an empty string instead of `null` for a stored `null` value when Misskey responds with HTTP 204
+- Fixed `RegistryApi.get` returning a stored string wrapped in JSON quotes (`"dark"` instead of `dark`); Misskey sends string results as JSON text without a JSON content type
+- Fixed `SwApi.showRegistration`, `MetaApi.getEndpoint`, and `FederationApi.showInstance` failing with a type error instead of returning `null` when the target does not exist and Misskey responds with an empty body
+
 ## [1.0.0-beta.9] - 2026-09-26
 
 ### Added

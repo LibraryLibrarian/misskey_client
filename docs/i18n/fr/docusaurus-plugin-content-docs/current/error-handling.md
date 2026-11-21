@@ -33,7 +33,7 @@ MisskeyClientException (sealed)
 `MisskeyClientException` couvre les erreurs d’API et de transport. Certaines API d’assistance, comme les [assistants Drive](./advanced/drive-helpers.md), peuvent également lever :
 
 - `ArgumentError` — arguments invalides (par exemple une valeur `concurrency` non positive ou une `pageSize` hors limites). L’exception est levée avant l’envoi de toute requête.
-- `StateError` — préconditions non satisfaites, comme l’appel de `client.drive.uploadFromUrlAndWait()` sans abonnement de streaming `main` connecté.
+- `StateError` — préconditions non satisfaites, comme l’appel de `client.drive.uploadFromUrlAndWait()` sans souscription de streaming `main` connectée.
 - `DriveFolderAmbiguousException` — levée par `resolvePath()` et `getOrCreate()` lorsque plusieurs dossiers frères portent le même nom. Elle ne fait pas partie de la hiérarchie scellée ; `on MisskeyClientException` ne l’intercepte donc pas.
 
 ```dart
@@ -46,7 +46,7 @@ try {
 }
 ```
 
-Une fois que les assistants par lots qui modifient plusieurs éléments (par exemple `createMany()`, `moveBulkAll()`, `dissolveFolder()` et `deleteFolderRecursive()`) ont commencé à effectuer des modifications, les échecs individuels sont consignés dans un `MisskeyBatchResult` (ou un résultat qui en contient un) comme échec avec son erreur, ou comme élément ignoré avec une raison, au lieu d’être levés. Les erreurs survenant avant toute modification, comme l’échec de la vérification de destination, sont toujours levées. Une erreur levée par un callback `onProgress` lors du signalement d’un élément traité est relancée après la fin des opérations en cours, et les modifications déjà effectuées ne sont pas annulées.
+Après le début des modifications, les assistants par lots (`createMany()`, `moveBulkAll()`, `dissolveFolder()` et `deleteFolderRecursive()`) consignent les échecs individuels dans un `MisskeyBatchResult` (ou dans un résultat qui en contient un), sans lever les erreurs correspondantes. Chaque échec est accompagné de son erreur, et chaque opération ignorée d’une raison. Les erreurs survenant avant toute modification, comme l’échec de la vérification de destination, sont toujours levées. Une erreur levée par un callback `onProgress` lors du signalement d’un élément traité est relancée après la fin des opérations en cours, et les modifications déjà effectuées ne sont pas annulées.
 
 ## Modèles de capture de base
 

@@ -151,7 +151,7 @@ if (instance != null) {
 ### 호스트별 팔로워 및 팔로잉
 
 ```dart
-// 원격 인스턴스에서 팔로우된 관계
+// 원격 인스턴스의 팔로우 관계
 final followers = await client.federation.followers(
   host: 'mastodon.social',
   limit: 20,
@@ -204,7 +204,7 @@ final notes = await client.roles.notes(roleId: role.id, limit: 20);
 final members = await client.roles.users(roleId: role.id, limit: 20);
 ```
 
-모든 목록 메서드는 페이지네이션을 위해 `sinceId`, `untilId`, `sinceDate`, `untilDate`를 지원합니다.
+`notes()`와 `users()`는 페이지네이션을 위해 `sinceId`, `untilId`, `sinceDate`, `untilDate`를 지원합니다.
 
 ## ChartsApi
 

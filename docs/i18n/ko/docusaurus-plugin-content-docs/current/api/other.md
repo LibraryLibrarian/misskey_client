@@ -43,10 +43,10 @@ final msg = await client.chat.messages.createToUser(
 // 메시지 삭제
 await client.chat.messages.delete(messageId: msg.id);
 
-// 메시지에 반응
+// 메시지에 리액션 추가
 await client.chat.messages.react(messageId: msg.id, reaction: ':heart:');
 
-// 반응 제거
+// 리액션 제거
 await client.chat.messages.unreact(messageId: msg.id, reaction: ':heart:');
 ```
 
@@ -152,7 +152,9 @@ final active = await client.announcements.list(limit: 10);
 final all = await client.announcements.list(isActive: false, limit: 20);
 
 // 단일 공지사항 상세 정보
-final ann = await client.announcements.show(announcementId: ann.id);
+final ann = await client.announcements.show(
+  announcementId: active.first.id,
+);
 print(ann.title);
 print(ann.text);
 ```
@@ -244,7 +246,7 @@ await client.invite.delete(inviteId: code.id);
 
 ## SwApi
 
-`client.sw`는 서비스 워커 푸시 알림 구독을 관리합니다. 모든 엔드포인트는 인증이 필요합니다.
+`client.sw`는 서비스 워커 푸시 알림 구독을 관리합니다. `unregister`를 제외한 엔드포인트는 인증이 필요합니다. `unregister`는 지원하는 모든 Misskey 버전에서 액세스 토큰 없이 호출할 수 있습니다.
 
 ### 등록
 
@@ -284,5 +286,11 @@ await client.sw.updateRegistration(
 ```dart
 await client.sw.unregister(
   endpoint: 'https://push.example.com/subscribe/abc123',
+  auth: 'auth-secret',
+  publickey: 'vapid-public-key',
 );
 ```
+
+Misskey 2026.10.0부터는 `auth`와 `publickey`가 필수입니다. `register`에 사용한 값과 동일한 값을 전달하세요. 이전 서버에서는 무시됩니다. `unregister`는 지원하는 모든 Misskey 버전에서 액세스 토큰 없이 호출할 수 있습니다. Misskey 2026.10.0부터는 시간당 30회로 제한됩니다(HTTP 429).
+
+공식 Misskey 2026.11.0에서는 액세스 토큰을 전달하면 인증된 사용자 자신의 등록만 삭제됩니다. 토큰을 전달하지 않으면 `endpoint`, `auth`, `publickey`가 일치하는 구독에 연결된 모든 계정의 등록이 삭제됩니다. 해당 구독에 연결된 모든 계정의 등록을 삭제하려면 액세스 토큰이 없는 클라이언트에서 `unregister`를 호출하세요.

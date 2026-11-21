@@ -76,7 +76,7 @@ final updated = await client.account.unpin(noteId: noteId);
 ```dart
 final favs = await client.account.favorites(limit: 20);
 for (final fav in favs) {
-  print(fav.note.text);
+  print(fav.note?.text);
 }
 ```
 
@@ -132,6 +132,12 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
+`revokeTokenById` にはトークンのレコードID（`client.account.apps()` などで取得）、`revokeTokenByToken` にはトークン文字列を渡します。このエンドポイントは Misskey 12.27.0 で、文字列による指定は 2023.11.0 で追加されました。どちらも 2026.5.1 以降で利用できます。
+
+認証が必要です。Misskey 2026.5.1 と 2026.7.0 ではユーザーのプライマリAPIトークンが必要です。2026.9.0 以降は、サードパーティのアクセストークンでも、自身のIDまたは文字列を渡して自分自身を失効できます。同じユーザーが所有する別のアクセストークンは失効できません。プライマリAPIトークンでは、そのユーザーが所有する任意のアクセストークンを失効できます。
+
+どちらのメソッドもレスポンス本文を返しません（HTTP 204）。対象が存在しない場合、自分が所有していない場合、トークン文字列が空の場合は何も変更しません。Misskey 2026.9.0 以降の主なエラーは、認証情報がない場合の `CREDENTIAL_REQUIRED` と、アクセストークンで同じユーザーの別のトークンを失効しようとした場合の `PERMISSION_DENIED` です。
+
 ## エクスポートとインポート
 
 エクスポート操作はすべて非同期ジョブとしてキューに積まれます。完了するとサーバーから通知が届きます。
@@ -179,6 +185,8 @@ for (final entry in history) {
 
 レジストリはクライアントアプリケーション向けの任意のキーバリューストアです（ブラウザのローカルストレージに相当し、デバイス間で同期されます）。
 
+`registry.set` で `null` を保存すると、`registry.get` は `null` を返します。保存した文字列は、そのままの文字列として返ります。
+
 ```dart
 // 値を読み取る
 final value = await client.account.registry.get(
@@ -198,12 +206,15 @@ await client.account.registry.set(
 
 ```dart
 // TOTP の登録を開始する
-final reg = await client.account.twoFactor.registerTotp(password: 'mypassword');
-print(reg.qr); // UIに表示するQRコードのデータURL
+final reg = await client.account.twoFactor.register(password: 'mypassword');
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // UI に表示する QR コードのデータ URL
 
 // 認証アプリの最初のコードで TOTP を確認・有効化する
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Misskey 2026.11.0 以降では `qr` が返されません。この例の `generateQrDataUrl` はアプリ側で用意する関数です。QR コードライブラリを使い、`reg.url` の `otpauth` URL から QR 画像のデータ URL を生成します。
 
 ### Webhook
 

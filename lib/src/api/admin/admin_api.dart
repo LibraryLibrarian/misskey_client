@@ -58,6 +58,15 @@ class AdminApi {
   ///
   /// [federation] accepts `all`, `specified`, or `none`. When it is
   /// `specified`, [federationHosts] lists the hosts allowed to federate.
+  ///
+  /// [ugcVisibilityForVisitor] controls user-generated content visible without
+  /// signing in: `all` allows local and remote content, `local` allows only
+  /// local content, and `none` hides it. Available in Misskey 2025.5.1 and
+  /// later (default `local`). Since Misskey 2026.10.0 the setting also applies
+  /// to timelines, search, and streaming for unauthenticated requests: `none`
+  /// returns no notes, and `local` excludes remote notes from those lists and
+  /// remote users from `users/show`. Remote notes attached to a local note, such
+  /// as a reply or a renote, can still be returned.
   Future<void> updateMeta({
     Map<String, dynamic>? extra,
     Optional<String>? name,
@@ -77,6 +86,7 @@ class AdminApi {
     bool? cacheRemoteFiles,
     bool? cacheRemoteSensitiveFiles,
     String? federation,
+    String? ugcVisibilityForVisitor,
     List<String>? federationHosts,
     List<String>? blockedHosts,
     List<String>? silencedHosts,
@@ -104,6 +114,7 @@ class AdminApi {
       'cacheRemoteFiles': ?cacheRemoteFiles,
       'cacheRemoteSensitiveFiles': ?cacheRemoteSensitiveFiles,
       'federation': ?federation,
+      'ugcVisibilityForVisitor': ?ugcVisibilityForVisitor,
       'federationHosts': ?federationHosts,
       'blockedHosts': ?blockedHosts,
       'silencedHosts': ?silencedHosts,
@@ -214,6 +225,13 @@ class AdminApi {
   ///
   /// Requires moderator privileges. Returns the newly generated password
   /// (8 characters).
+  ///
+  /// Common errors (Misskey 2026.7.0 and later):
+  /// - `NO_SUCH_USER`: The specified user does not exist
+  /// - `ACCESS_DENIED`: The target is another administrator
+  ///
+  /// On Misskey 2026.5.1 a missing user results in `INTERNAL_ERROR`, and only
+  /// the root user is protected from a reset.
   Future<String> resetPassword({required String userId}) async {
     final res = await http.send<Map<String, dynamic>>(
       '/admin/reset-password',
@@ -221,6 +239,22 @@ class AdminApi {
     );
     return res['password'] as String;
   }
+
+  /// Removes every second factor of a user (`/api/admin/unset-mfa`).
+  ///
+  /// Requires moderator privileges. Deletes all of the user's passkeys and
+  /// security keys, disables TOTP two-factor authentication, and turns off
+  /// passwordless login, so the user can sign in with the password alone.
+  /// Pass the target user ID in [userId]. Requires Misskey 2026.7.0 or
+  /// later; older servers respond with a `MisskeyNotFoundException`.
+  ///
+  /// Common errors:
+  /// - `NO_SUCH_USER`: The user does not exist
+  /// - `ACCESS_DENIED`: The target is another administrator
+  Future<void> unsetMfa({required String userId}) => http.send<Object?>(
+    '/admin/unset-mfa',
+    body: <String, dynamic>{'userId': userId},
+  );
 
   /// Updates the moderation note for a user
   /// (`/api/admin/update-user-note`).

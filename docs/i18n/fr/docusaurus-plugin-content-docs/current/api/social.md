@@ -51,11 +51,25 @@ await client.following.updateAll(notify: 'none', withReplies: false);
 
 ### Supprimer un abonné
 
-Supprime de force quelqu'un qui vous suit.
+Met fin à l'abonnement d'un utilisateur à votre compte.
 
 ```dart
 await client.following.invalidate(userId: userId);
 ```
+
+### Lister les comptes suivis
+
+```dart
+final follows = await client.following.list(limit: 20);
+for (final follow in follows) {
+  print(follow.followee?.username);
+}
+
+// Uniquement les comptes dont les notifications de nouvelles notes sont activées
+final notified = await client.following.list(notification: true);
+```
+
+Paginez avec `sinceId` / `untilId` / `sinceDate` / `untilDate`. Nécessite Misskey 2026.5.2 ou ultérieur ; les serveurs plus anciens répondent par `MisskeyNotFoundException`. Pour les prendre en charge, vérifiez d'abord avec `client.meta.isEndpointAvailable(endpoint: 'following/list')`.
 
 ## Demandes d'abonnement (`client.following.requests`)
 
@@ -138,7 +152,7 @@ final expiresAt = DateTime.now()
 await client.mute.create(userId: userId, expiresAt: expiresAt);
 ```
 
-### Rétablir le son
+### Lever la mise en sourdine
 
 ```dart
 await client.mute.delete(userId: userId);

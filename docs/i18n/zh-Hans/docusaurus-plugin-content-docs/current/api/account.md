@@ -76,7 +76,7 @@ final updated = await client.account.unpin(noteId: noteId);
 ```dart
 final favs = await client.account.favorites(limit: 20);
 for (final fav in favs) {
-  print(fav.note.text);
+  print(fav.note?.text);
 }
 ```
 
@@ -132,6 +132,12 @@ await client.account.revokeTokenById(tokenId);
 await client.account.revokeTokenByToken(tokenString);
 ```
 
+`revokeTokenById` 接受令牌的记录 ID（例如通过 `client.account.apps()` 获取），`revokeTokenByToken` 接受令牌字符串。此端点于 Misskey 12.27.0 加入，字符串形式于 2023.11.0 加入。两种形式均支持 2026.5.1 及以后的版本。
+
+此操作需要认证。Misskey 2026.5.1 和 2026.7.0 要求使用用户的主 API 令牌。自 2026.9.0 起，第三方访问令牌也可以传入自身的 ID 或字符串来撤销自身，但不能撤销同一用户拥有的其他访问令牌。主 API 令牌可以撤销该用户拥有的任意访问令牌。
+
+两种方法均不返回响应正文（HTTP 204）。目标不存在、不属于当前用户或令牌字符串为空时，不执行任何更改。Misskey 2026.9.0 及更高版本的常见错误为：未提供凭据时的 `CREDENTIAL_REQUIRED`，以及访问令牌尝试撤销同一用户的其他令牌时的 `PERMISSION_DENIED`。
+
 ## 导出与导入
 
 所有导出操作均以异步任务队列的方式执行。完成时会发送通知。
@@ -179,6 +185,8 @@ for (final entry in history) {
 
 注册表为客户端应用存储任意键值数据（相当于浏览器的 localStorage，但可跨设备同步）。
 
+使用 `registry.set` 存储 `null` 时，`registry.get` 返回 `null`。存储的字符串会原样返回。
+
 ```dart
 // 读取值
 final value = await client.account.registry.get(
@@ -198,12 +206,15 @@ await client.account.registry.set(
 
 ```dart
 // 开始 TOTP 注册
-final reg = await client.account.twoFactor.registerTotp(password: 'mypassword');
-print(reg.qr); // 在 UI 中显示的 QR 码数据 URL
+final reg = await client.account.twoFactor.register(password: 'mypassword');
+final qr = reg.qr ?? generateQrDataUrl(reg.url);
+print(qr); // 在 UI 中显示的 QR 码数据 URL
 
 // 使用认证器应用中的第一个验证码确认并激活 TOTP
 await client.account.twoFactor.done(token: '123456');
 ```
+
+Misskey 2026.11.0 及更高版本不再返回 `qr`。此示例中的 `generateQrDataUrl` 需要由应用实现，使用 QR 码库将 `reg.url` 中的 `otpauth` URL 编码为 QR 码图像的数据 URL。
 
 ### Webhook
 
