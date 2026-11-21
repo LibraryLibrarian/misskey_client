@@ -280,6 +280,26 @@ void main() {
       );
     }
 
+    // JSON と判定する Content-Type は Dio の判定に合わせる
+    for (final contentType in <String>[
+      'application/JSON',
+      'Application/Json; charset=utf-8',
+      'application/activity+JSON',
+    ]) {
+      test('treats $contentType as JSON and does not decode twice', () async {
+        final adapter = _RecordingAdapter(
+          response: '"dark"',
+          headers: {
+            Headers.contentTypeHeader: [contentType],
+          },
+        );
+        final client = _createClient(adapter);
+        addTearDown(client.dispose);
+
+        expect(await client.account.registry.get(key: 'setting'), '"dark"');
+      });
+    }
+
     test('leaves text that is not a quoted JSON string unchanged', () async {
       final adapter = _RecordingAdapter(rawBody: 'plain', headers: plainText);
       final client = _createClient(adapter);

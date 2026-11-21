@@ -140,7 +140,7 @@ class MisskeyHttp {
     final data = response.data;
     if (data is! String || data.length < 2) return data;
     final contentType = response.headers.value(Headers.contentTypeHeader);
-    if (contentType != null && contentType.contains('json')) return data;
+    if (Transformer.isJsonMimeType(contentType)) return data;
     if (!data.startsWith('"') || !data.endsWith('"')) return data;
     try {
       final decoded = jsonDecode(data);
