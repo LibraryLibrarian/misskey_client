@@ -254,7 +254,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### 低级 HTTP 访问
 
-与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 26 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub issue 报告，以便将其加入强类型 API。
+与 `MisskeyHttpClient.send<T>()` 对应的低级 API 不会公开。`misskey_client` 已覆盖 26 个 API 域，请使用强类型方法。如果缺少您需要的端点，请通过 GitHub Issue 报告，以便将其加入强类型 API。
 
 ## 从 misskey_streaming 迁移
 

@@ -257,7 +257,7 @@ import 'package:misskey_api_core/misskey_api_core.dart' as core;
 
 ### Low-level HTTP access
 
-The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 26 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub issue so it can be added to the typed API.
+The low-level equivalent of `MisskeyHttpClient.send<T>()` is not public. `misskey_client` covers 26 API domains, so use its typed methods. If an endpoint you need is missing, please report it in a GitHub Issue so it can be added to the typed API.
 
 ## Migrating from misskey_streaming
 

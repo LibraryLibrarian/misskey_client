@@ -4,7 +4,7 @@ title: 从misskey_streaming迁移
 
 # 从misskey_streaming迁移
 
-Streaming 现已集成到 `misskey_client`。迁移所有调用点后，请移除独立的 `misskey_streaming` 依赖，并使用首个包含 issue #30 的 `misskey_client` 版本。
+Streaming 现已集成到 `misskey_client`。迁移所有调用点后，请移除独立的 `misskey_streaming` 依赖，并使用首个包含 Issue #30 的 `misskey_client` 版本。
 
 ## 创建集成客户端
 
@@ -82,6 +82,6 @@ home.captureNote(noteId);
 
 需要复用连接时使用 `disconnect()`。使用完毕后，调用用于彻底释放资源的 `dispose()`，或释放拥有该连接的 `MisskeyClient`。`MisskeyClient.dispose()` 是幂等的，会关闭已初始化的 Streaming 资源和 HTTP 传输层。
 
-`sendToChannel()` 没有公开的集成替代 API。如果上游或分支协议需要向频道发送事件，请提交 issue。
+`sendToChannel()` 没有公开的集成替代 API。如果上游或分支协议需要向频道发送事件，请提交 Issue。
 
 完整示例和事件详情请参阅 [Streaming API指南](./streaming.md)。仓库根目录也提供了[完整迁移参考](https://github.com/LibraryLibrarian/misskey_client/blob/main/MIGRATION_FROM_MISSKEY_STREAMING.md)。

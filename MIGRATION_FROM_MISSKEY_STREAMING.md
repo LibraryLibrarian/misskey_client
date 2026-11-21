@@ -23,7 +23,7 @@ with:
 import 'package:misskey_client/misskey_client.dart';
 ```
 
-Before that version is published, use a Git dependency pinned to a revision that contains issue #30.
+Before that version is published, use a Git dependency pinned to a revision that contains Issue #30.
 
 ## Client setup
 
@@ -121,7 +121,7 @@ The `events` stream emits `MisskeyNoteEvent`, `MisskeyNotificationEvent`, and ty
 
 Messages on a subscription handle are normalized to their inner event. The global `client.streaming.messages` stream instead preserves the outer wire envelope, so its messages have no `subscriptionId`.
 
-`sendToChannel()` has no integrated public replacement. Open an issue if an upstream or fork protocol requires outbound channel events.
+`sendToChannel()` has no integrated public replacement. Open an Issue if an upstream or fork protocol requires outbound channel events.
 
 ## Capturing note updates
 
