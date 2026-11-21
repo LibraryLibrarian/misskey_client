@@ -265,6 +265,21 @@ void main() {
       });
     }
 
+    // Content-Type が JSON のときは Dio が復号済みなので、保存された値が
+    // 引用符つきの文字列でも二重に復号しない
+    for (final stored in <String>['"dark"', 'line\nbreak', '"a\nb"']) {
+      test(
+        'does not decode twice when the response is typed as JSON',
+        () async {
+          final adapter = _RecordingAdapter(response: stored);
+          final client = _createClient(adapter);
+          addTearDown(client.dispose);
+
+          expect(await client.account.registry.get(key: 'setting'), stored);
+        },
+      );
+    }
+
     test('leaves text that is not a quoted JSON string unchanged', () async {
       final adapter = _RecordingAdapter(rawBody: 'plain', headers: plainText);
       final client = _createClient(adapter);

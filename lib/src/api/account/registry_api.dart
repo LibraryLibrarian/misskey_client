@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:meta/meta.dart';
 
 import '../../client/misskey_http.dart';
@@ -36,9 +34,9 @@ class RegistryApi {
       '/i/registry/get',
       body: <String, dynamic>{'key': key, 'scope': scope, 'domain': ?domain},
       options: const RequestOptions(idempotent: true),
-      nullOnNoContent: true,
+      optionalJsonValue: true,
     );
-    return _unquoteJsonString(res);
+    return res;
   }
 
   /// Retrieves all key-value pairs within a scope
@@ -172,21 +170,5 @@ class RegistryApi {
         .whereType<Map<String, dynamic>>()
         .map(MisskeyRegistryScope.fromJson)
         .toList();
-  }
-}
-
-/// Restores a string that Misskey sent as JSON text.
-///
-/// Misskey serializes a string result with `JSON.stringify` but does not mark
-/// the response as JSON, so the HTTP client hands it over still wrapped in
-/// quotes (`"dark"` instead of `dark`). Other values are returned unchanged.
-Object? _unquoteJsonString(Object? value) {
-  if (value is! String || value.length < 2) return value;
-  if (!value.startsWith('"') || !value.endsWith('"')) return value;
-  try {
-    final decoded = jsonDecode(value);
-    return decoded is String ? decoded : value;
-  } on FormatException {
-    return value;
   }
 }

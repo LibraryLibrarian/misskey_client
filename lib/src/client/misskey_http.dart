@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
@@ -66,9 +67,11 @@ class MisskeyHttp {
   ///
   /// Use [onSendProgress] to receive upload progress callbacks.
   ///
-  /// Internal callers may set [nullOnNoContent] to return `null` for HTTP 204
-  /// while preserving the response data for all other status codes. [T] must
-  /// be nullable in that case.
+  /// Internal callers may set [optionalJsonValue] for endpoints that return an
+  /// arbitrary JSON value: HTTP 204 yields `null`, and a body that is not
+  /// marked as JSON but holds a JSON string (`"text"`) is decoded to the
+  /// string. Misskey sends string results this way. Other data is returned as
+  /// received. [T] must be nullable in that case.
   Future<T> send<T>(
     String path, {
     String method = 'POST',
@@ -76,7 +79,7 @@ class MisskeyHttp {
     ro.RequestOptions options = const ro.RequestOptions(),
     CancelToken? cancelToken,
     void Function(int, int)? onSendProgress,
-    @internal bool nullOnNoContent = false,
+    @internal bool optionalJsonValue = false,
   }) async {
     final r = RetryOptions(
       maxAttempts: options.idempotent ? config.maxRetries : 1,
@@ -114,8 +117,9 @@ class MisskeyHttp {
           }
         },
       );
-      return (nullOnNoContent && result.statusCode == 204 ? null : result.data)
-          as T;
+      if (!optionalJsonValue) return result.data as T;
+      if (result.statusCode == 204) return null as T;
+      return _decodeJsonTextString(result) as T;
     } on DioException catch (e) {
       throw convertDioException(e, path);
     } on Exception catch (e) {
@@ -124,6 +128,25 @@ class MisskeyHttp {
         endpoint: path,
         cause: e,
       );
+    }
+  }
+
+  /// JSON として復号されていない本文が JSON の文字列（`"text"`）なら復号する
+  ///
+  /// Misskey は文字列の結果を JSON.stringify して送るが、JSON の Content-Type を
+  /// 付けないため Dio は復号しない。Content-Type が JSON のときは Dio が復号済み
+  /// なので、二重に復号しない。
+  static Object? _decodeJsonTextString(Response<dynamic> response) {
+    final data = response.data;
+    if (data is! String || data.length < 2) return data;
+    final contentType = response.headers.value(Headers.contentTypeHeader);
+    if (contentType != null && contentType.contains('json')) return data;
+    if (!data.startsWith('"') || !data.endsWith('"')) return data;
+    try {
+      final decoded = jsonDecode(data);
+      return decoded is String ? decoded : data;
+    } on FormatException {
+      return data;
     }
   }
 
