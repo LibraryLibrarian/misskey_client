@@ -578,7 +578,8 @@ class UsersApi {
 
   /// Searches for users by username and host.
   ///
-  /// At least one of [username] or [host] is required.
+  /// At least one of [username] or [host] is required; an [ArgumentError]
+  /// is thrown when both are omitted.
   /// Set [detail] to `false` to return UserLite format (default: `true`).
   /// [limit] is 1-100 (default: 10).
   Future<List<MisskeyUser>> searchByUsernameAndHost({
@@ -587,6 +588,9 @@ class UsersApi {
     int? limit,
     bool? detail,
   }) async {
+    if (username == null && host == null) {
+      throw ArgumentError('Either username or host must be provided.');
+    }
     final body = <String, dynamic>{
       'username': ?username,
       'host': ?host,

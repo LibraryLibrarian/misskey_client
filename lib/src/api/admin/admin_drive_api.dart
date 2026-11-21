@@ -55,17 +55,19 @@ class AdminDriveApi {
   /// Fetches a drive file including moderation details
   /// (`/api/admin/drive/show-file`).
   ///
-  /// Identify the file by [fileId] or [url] (at least one is required).
+  /// Identify the file by [fileId] or [url]. At least one is required; an
+  /// [ArgumentError] is thrown when both are omitted.
   /// The response includes fields not present in the regular drive API,
   /// so it is returned as raw JSON.
   ///
   /// Common errors:
   /// - `NO_SUCH_FILE`: The specified file does not exist
-  Future<Map<String, dynamic>> showFile({String? fileId, String? url}) {
-    assert(
-      fileId != null || url != null,
-      'Either fileId or url must be provided to identify the file.',
-    );
+  Future<Map<String, dynamic>> showFile({String? fileId, String? url}) async {
+    if (fileId == null && url == null) {
+      throw ArgumentError(
+        'Either fileId or url must be provided to identify the file.',
+      );
+    }
     return http.send<Map<String, dynamic>>(
       '/admin/drive/show-file',
       body: <String, dynamic>{'fileId': ?fileId, 'url': ?url},
