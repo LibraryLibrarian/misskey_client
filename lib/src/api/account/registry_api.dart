@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:meta/meta.dart';
 
 import '../../client/misskey_http.dart';
@@ -20,20 +22,24 @@ class RegistryApi {
   /// [key] specifies the registry key name. [scope] is the scope array and
   /// defaults to empty. [domain] defaults to the access token's domain.
   ///
-  /// Returns `null` when the stored value is `null` (HTTP 204).
-  /// A stored empty string is returned unchanged.
+  /// Returns `null` when the stored value is `null` (HTTP 204). A stored
+  /// string is returned as the string itself, without the JSON quotes that
+  /// Misskey wraps around it.
   ///
   /// Throws a `NO_SUCH_KEY` error from the server if the key does not exist.
   Future<dynamic> get({
     required String key,
     List<String> scope = const <String>[],
     String? domain,
-  }) => http.send<dynamic>(
-    '/i/registry/get',
-    body: <String, dynamic>{'key': key, 'scope': scope, 'domain': ?domain},
-    options: const RequestOptions(idempotent: true),
-    nullOnNoContent: true,
-  );
+  }) async {
+    final res = await http.send<Object?>(
+      '/i/registry/get',
+      body: <String, dynamic>{'key': key, 'scope': scope, 'domain': ?domain},
+      options: const RequestOptions(idempotent: true),
+      nullOnNoContent: true,
+    );
+    return _unquoteJsonString(res);
+  }
 
   /// Retrieves all key-value pairs within a scope
   /// (`/api/i/registry/get-all`).
@@ -166,5 +172,21 @@ class RegistryApi {
         .whereType<Map<String, dynamic>>()
         .map(MisskeyRegistryScope.fromJson)
         .toList();
+  }
+}
+
+/// Restores a string that Misskey sent as JSON text.
+///
+/// Misskey serializes a string result with `JSON.stringify` but does not mark
+/// the response as JSON, so the HTTP client hands it over still wrapped in
+/// quotes (`"dark"` instead of `dark`). Other values are returned unchanged.
+Object? _unquoteJsonString(Object? value) {
+  if (value is! String || value.length < 2) return value;
+  if (!value.startsWith('"') || !value.endsWith('"')) return value;
+  try {
+    final decoded = jsonDecode(value);
+    return decoded is String ? decoded : value;
+  } on FormatException {
+    return value;
   }
 }

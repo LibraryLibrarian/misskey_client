@@ -67,7 +67,8 @@ class MisskeyHttp {
   /// Use [onSendProgress] to receive upload progress callbacks.
   ///
   /// Internal callers may set [nullOnNoContent] to return `null` for HTTP 204
-  /// while preserving the response data for all other status codes.
+  /// while preserving the response data for all other status codes. [T] must
+  /// be nullable in that case.
   Future<T> send<T>(
     String path, {
     String method = 'POST',

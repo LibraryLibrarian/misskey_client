@@ -179,7 +179,7 @@ for (final entry in history) {
 
 The registry stores arbitrary key-value data for client applications (equivalent to browser localStorage, but synced across devices).
 
-If you store `null` with `registry.set`, `registry.get` returns `null`. A stored empty string is returned as an empty string.
+If you store `null` with `registry.set`, `registry.get` returns `null`. A stored string is returned as the string itself.
 
 ```dart
 // Read a value

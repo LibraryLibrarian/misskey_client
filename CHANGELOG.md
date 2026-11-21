@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed `RegistryApi.get` returning an empty string instead of `null` for a stored `null` value when Misskey responds with HTTP 204
+- Fixed `RegistryApi.get` returning a stored string wrapped in JSON quotes (`"dark"` instead of `dark`); Misskey sends string results as JSON text without a JSON content type
 - Fixed `SwApi.showRegistration`, `MetaApi.getEndpoint`, and `FederationApi.showInstance` failing with a type error instead of returning `null` when the target does not exist and Misskey responds with an empty body
 
 ## [1.0.0-beta.9] - 2026-09-26

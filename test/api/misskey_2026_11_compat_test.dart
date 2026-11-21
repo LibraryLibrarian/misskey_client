@@ -244,20 +244,34 @@ void main() {
       });
     });
 
-    for (final headers in <Map<String, List<String>>>[
-      const {},
-      const {
-        Headers.contentTypeHeader: ['text/plain'],
-      },
+    // Misskey は文字列を JSON.stringify して text/plain で返す
+    // （ApiCallService.ts: reply.send(typeof x === 'string' ? JSON.stringify(x) : x)）
+    const plainText = {
+      Headers.contentTypeHeader: ['text/plain; charset=utf-8'],
+    };
+    for (final (raw, expected) in <(String, String)>[
+      ('"dark"', 'dark'),
+      ('""', ''),
+      (r'"say \"hi\""', 'say "hi"'),
+      (r'"line\nbreak"', 'line\nbreak'),
+      (r'"\"quoted\""', '"quoted"'),
     ]) {
-      test('preserves an empty string for HTTP 200 with $headers', () async {
-        final adapter = _RecordingAdapter(rawBody: '', headers: headers);
+      test('unquotes the JSON text string $raw sent as text/plain', () async {
+        final adapter = _RecordingAdapter(rawBody: raw, headers: plainText);
         final client = _createClient(adapter);
         addTearDown(client.dispose);
 
-        expect(await client.account.registry.get(key: 'setting'), '');
+        expect(await client.account.registry.get(key: 'setting'), expected);
       });
     }
+
+    test('leaves text that is not a quoted JSON string unchanged', () async {
+      final adapter = _RecordingAdapter(rawBody: 'plain', headers: plainText);
+      final client = _createClient(adapter);
+      addTearDown(client.dispose);
+
+      expect(await client.account.registry.get(key: 'setting'), 'plain');
+    });
 
     for (final value in <Object>[
       '',

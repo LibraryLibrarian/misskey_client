@@ -179,7 +179,7 @@ for (final entry in history) {
 
 Le registre stocke des données clé-valeur arbitraires pour les applications clientes (équivalent au localStorage du navigateur, mais synchronisé entre les appareils).
 
-Si vous stockez `null` avec `registry.set`, `registry.get` renvoie `null`. Une chaîne vide stockée est renvoyée telle quelle.
+Si vous stockez `null` avec `registry.set`, `registry.get` renvoie `null`. Une chaîne stockée est renvoyée telle quelle, sans guillemets supplémentaires.
 
 ```dart
 // Read a value
