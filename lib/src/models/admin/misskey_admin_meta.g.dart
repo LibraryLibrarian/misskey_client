@@ -65,7 +65,7 @@ MisskeyAdminMeta _$MisskeyAdminMetaFromJson(
   enableHcaptcha: json['enableHcaptcha'] as bool?,
   enableRecaptcha: json['enableRecaptcha'] as bool?,
   enableTurnstile: json['enableTurnstile'] as bool?,
-  swPublicKey: json['swPublicKey'] as String?,
+  swPublicKey: json['swPublickey'] as String?,
   raw: MisskeyAdminMeta._readWholeObject(json, 'raw') == null
       ? const RawMetaPayload.empty()
       : MisskeyAdminMeta._rawFromJson(
@@ -111,5 +111,5 @@ Map<String, dynamic> _$MisskeyAdminMetaToJson(MisskeyAdminMeta instance) =>
       'enableHcaptcha': instance.enableHcaptcha,
       'enableRecaptcha': instance.enableRecaptcha,
       'enableTurnstile': instance.enableTurnstile,
-      'swPublicKey': instance.swPublicKey,
+      'swPublickey': instance.swPublicKey,
     };

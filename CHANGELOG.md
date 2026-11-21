@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** `MisskeyAdminServerInfo.redis` is now nullable, and parsing no longer fails when the server cannot read the Redis version and omits the key; handle `null` where the value is used
+
+### Fixed
+
+- Fixed `UsersApi.relation` failing with a type error on Misskey 2024.5.0 and later, which return the relation wrapped in an array even for a single `userId`
+- Fixed `MisskeyAdminMeta.swPublicKey` always being `null`; it now reads the `swPublickey` key that Misskey returns
+
 ## [1.0.0-beta.10] - 2026-11-22
 
 ### Added

@@ -17,7 +17,7 @@ class MisskeyAdminServerInfo with _$MisskeyAdminServerInfo {
     required this.os,
     required this.node,
     required this.psql,
-    required this.redis,
+    this.redis,
     required this.cpu,
     required this.mem,
     required this.fs,
@@ -46,8 +46,11 @@ class MisskeyAdminServerInfo with _$MisskeyAdminServerInfo {
   final String psql;
 
   /// The Redis version.
+  ///
+  /// `null` when the server cannot read `redis_version` from the Redis
+  /// `INFO` output.
   @override
-  final String redis;
+  final String? redis;
 
   /// The CPU information.
   @override

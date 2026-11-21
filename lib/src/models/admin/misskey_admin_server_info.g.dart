@@ -13,7 +13,7 @@ MisskeyAdminServerInfo _$MisskeyAdminServerInfoFromJson(
   os: json['os'] as String,
   node: json['node'] as String,
   psql: json['psql'] as String,
-  redis: json['redis'] as String,
+  redis: json['redis'] as String?,
   cpu: ServerCpuInfo.fromJson(json['cpu'] as Map<String, dynamic>),
   mem: ServerMemInfo.fromJson(json['mem'] as Map<String, dynamic>),
   fs: ServerFsInfo.fromJson(json['fs'] as Map<String, dynamic>),
