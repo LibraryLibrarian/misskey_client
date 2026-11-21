@@ -119,6 +119,31 @@ void main() {
       final api = result as MisskeyApiException;
       expect(api.code, isNull);
       expect(api.errorId, isNull);
+      expect(api.kind, isNull);
+      expect(api.info, isNull);
+    });
+
+    test('extracts kind and info from nested error object', () {
+      final result = convertDioException(
+        _errorWithStatus(
+          429,
+          data: {
+            'error': {
+              'message': 'Rate limit exceeded. Please try again later.',
+              'code': 'RATE_LIMIT_EXCEEDED',
+              'id': 'd5826d14-3982-4d2e-8011-b9e9f02499ef',
+              'kind': 'client',
+              'info': {'resetMs': 1767225600000, 'fullResetMs': 1767225660000},
+            },
+          },
+        ),
+      );
+      final api = result as MisskeyApiException;
+      expect(api.kind, 'client');
+      expect(api.info, {
+        'resetMs': 1767225600000,
+        'fullResetMs': 1767225660000,
+      });
     });
 
     test('falls back to DioException message when data is not a Map', () {

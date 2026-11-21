@@ -26,6 +26,8 @@ MisskeyClientException (sealed)
 
 - `code` — Misskey 错误码字符串（如 `AUTHENTICATION_FAILED`、`NO_SUCH_NOTE`）
 - `errorId` — 标识 Misskey 错误类型的 UUID
+- `kind` — Misskey 报告的错误类别（`client`、`server` 或 `permission`）
+- `info` — 从 JSON 解码的附加信息，如 `INVALID_PARAM` 中无效的参数；没有时为 `null`
 - `endpoint` — 发生错误的 API 路径
 
 ## 层级之外的异常 {#exceptions-outside-the-hierarchy}

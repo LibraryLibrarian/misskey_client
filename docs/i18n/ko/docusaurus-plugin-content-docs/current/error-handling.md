@@ -26,6 +26,8 @@ MisskeyClientException (sealed)
 
 - `code` — Misskey 오류 코드 문자열 (예: `AUTHENTICATION_FAILED`, `NO_SUCH_NOTE`)
 - `errorId` — Misskey 오류 유형을 식별하는 UUID
+- `kind` — Misskey가 알려 주는 오류 분류 (`client`, `server`, `permission`)
+- `info` — JSON에서 디코딩한 추가 정보 (예: `INVALID_PARAM`의 잘못된 매개변수). 없으면 `null`
 - `endpoint` — 오류가 발생한 API 경로
 
 ## 예외 계층 외부의 예외 {#exceptions-outside-the-hierarchy}

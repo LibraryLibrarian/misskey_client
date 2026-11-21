@@ -10,6 +10,8 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
   var message = e.message ?? 'HTTP error';
   String? code;
   String? errorId;
+  String? kind;
+  Object? info;
   final data = e.response?.data;
 
   if (data is Map) {
@@ -18,9 +20,12 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
       final dynamic c = errorObj['code'];
       final dynamic m = errorObj['message'];
       final dynamic id = errorObj['id'];
+      final dynamic k = errorObj['kind'];
       if (c != null) code = c.toString();
       if (m != null) message = m.toString();
       if (id != null) errorId = id.toString();
+      if (k != null) kind = k.toString();
+      info = errorObj['info'];
     } else {
       final dynamic c = data['code'];
       final dynamic m = data['message'];
@@ -37,6 +42,8 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
         message: message,
         code: code,
         errorId: errorId,
+        kind: kind,
+        info: info,
         endpoint: endpoint,
         raw: e,
       ),
@@ -44,6 +51,8 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
         message: message,
         code: code,
         errorId: errorId,
+        kind: kind,
+        info: info,
         endpoint: endpoint,
         raw: e,
       ),
@@ -51,6 +60,8 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
         message: message,
         code: code,
         errorId: errorId,
+        kind: kind,
+        info: info,
         endpoint: endpoint,
         raw: e,
       ),
@@ -58,6 +69,8 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
         message: message,
         code: code,
         errorId: errorId,
+        kind: kind,
+        info: info,
         endpoint: endpoint,
         raw: e,
       ),
@@ -65,6 +78,8 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
         message: message,
         code: code,
         errorId: errorId,
+        kind: kind,
+        info: info,
         endpoint: endpoint,
         raw: e,
         retryAfter: retryAfter,
@@ -74,6 +89,8 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
         message: message,
         code: code,
         errorId: errorId,
+        kind: kind,
+        info: info,
         endpoint: endpoint,
         raw: e,
       ),
@@ -82,6 +99,8 @@ MisskeyClientException convertDioException(DioException e, [String? endpoint]) {
         message: message,
         code: code,
         errorId: errorId,
+        kind: kind,
+        info: info,
         endpoint: endpoint,
         raw: e,
       ),

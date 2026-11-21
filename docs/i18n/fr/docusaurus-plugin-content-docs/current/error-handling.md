@@ -26,6 +26,8 @@ MisskeyClientException (sealed)
 
 - `code` — Chaîne de code d'erreur Misskey (par exemple `AUTHENTICATION_FAILED`, `NO_SUCH_NOTE`)
 - `errorId` — UUID identifiant le type d'erreur Misskey
+- `kind` — Catégorie d'erreur indiquée par Misskey (`client`, `server` ou `permission`)
+- `info` — Informations supplémentaires décodées depuis le JSON, par exemple le paramètre invalide pour `INVALID_PARAM` ; `null` en leur absence
 - `endpoint` — Le chemin de l'API où l'erreur s'est produite
 
 ## Exceptions hors de la hiérarchie {#exceptions-outside-the-hierarchy}
