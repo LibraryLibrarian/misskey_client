@@ -499,12 +499,20 @@ class UsersApi {
   ///
   /// Authentication required.
   Future<MisskeyUserRelation> relation({required String userId}) async {
-    final res = await _http.send<Map<String, dynamic>>(
+    // Misskey 2024.5.0 以降は userId が1件でも配列で返す。それより前は単体のオブジェクト
+    final res = await _http.send<Object>(
       '/users/relation',
       body: <String, dynamic>{'userId': userId},
       options: const RequestOptions(idempotent: true),
     );
-    return MisskeyUserRelation.fromJson(res);
+    final json = switch (res) {
+      [final Map<String, dynamic> first, ...] => first,
+      final Map<String, dynamic> single => single,
+      _ => throw FormatException(
+        'Unexpected /users/relation response: ${res.runtimeType}',
+      ),
+    };
+    return MisskeyUserRelation.fromJson(json);
   }
 
   /// Fetches relationships with multiple users at once.
