@@ -25,9 +25,8 @@ void main() {
     test('parses Pages and preserves pagination parameters', () async {
       adapter.enqueue(
         '/i/pages',
-        ScriptedResponse.json([
-          {..._pageJson(), 'isLiked': true},
-        ]),
+        // i/pages は me なしで pack するため isLiked を返さない
+        ScriptedResponse.json([_pageJson()]),
       );
 
       final List<MisskeyPage> pages = await client.account.pages(
@@ -45,7 +44,7 @@ void main() {
         pages.single.createdAt,
         DateTime.utc(2026, 3, 23, 11, 50, 24, 709),
       );
-      expect(pages.single.isLiked, isTrue);
+      expect(pages.single.isLiked, isNull);
       expect(adapter.requests.single.jsonBody, {
         'limit': 20,
         'sinceId': 'since-id',
@@ -55,12 +54,11 @@ void main() {
       });
     });
 
-    test('accepts an omitted optional isLiked field', () async {
+    test('omits absent arguments', () async {
       adapter.enqueue('/i/pages', ScriptedResponse.json([_pageJson()]));
 
-      final pages = await client.account.pages();
+      await client.account.pages();
 
-      expect(pages.single.isLiked, isNull);
       expect(adapter.requests.single.jsonBody, isEmpty);
     });
   });

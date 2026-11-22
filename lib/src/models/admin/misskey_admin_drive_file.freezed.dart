@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyAdminDriveFile {
 
- String get id; DateTime get createdAt; String get md5; String get name; String get type; int get size; MisskeyDriveFileProperties get properties; bool get isSensitive; bool get isLink; bool get maybeSensitive; bool get maybePorn; String? get userId; String? get userHost; String? get comment; String? get blurhash; bool? get storedInternal; String? get url; String? get thumbnailUrl; String? get webpublicUrl; String? get webpublicType; String? get accessKey; String? get thumbnailAccessKey; String? get webpublicAccessKey; String? get uri; String? get src; String? get folderId; String? get requestIp; Map<String, String>? get requestHeaders;
+ String get id; DateTime get createdAt; String get md5; String get name; String get type; int get size; MisskeyDriveFileProperties get properties; bool get isSensitive; bool get isLink; bool get maybeSensitive; bool get maybePorn; String? get userId; String? get userHost; String? get comment; String? get blurhash; bool? get storedInternal; String? get url; String? get thumbnailUrl; String? get webpublicUrl; String? get webpublicType; String? get accessKey; String? get thumbnailAccessKey; String? get webpublicAccessKey; String? get uri; String? get src; String? get folderId; String? get requestIp; Map<String, dynamic>? get requestHeaders;
 /// Create a copy of MisskeyAdminDriveFile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyAdminDriveFileCopyWith<$Res>  {
   factory $MisskeyAdminDriveFileCopyWith(MisskeyAdminDriveFile value, $Res Function(MisskeyAdminDriveFile) _then) = _$MisskeyAdminDriveFileCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime createdAt, String md5, String name, String type, int size, MisskeyDriveFileProperties properties, bool isSensitive, bool isLink, bool maybeSensitive, bool maybePorn, String? userId, String? userHost, String? comment, String? blurhash, bool? storedInternal, String? url, String? thumbnailUrl, String? webpublicUrl, String? webpublicType, String? accessKey, String? thumbnailAccessKey, String? webpublicAccessKey, String? uri, String? src, String? folderId, String? requestIp, Map<String, String>? requestHeaders
+ String id, DateTime createdAt, String md5, String name, String type, int size, MisskeyDriveFileProperties properties, bool isSensitive, bool isLink, bool maybeSensitive, bool maybePorn, String? userId, String? userHost, String? comment, String? blurhash, bool? storedInternal, String? url, String? thumbnailUrl, String? webpublicUrl, String? webpublicType, String? accessKey, String? thumbnailAccessKey, String? webpublicAccessKey, String? uri, String? src, String? folderId, String? requestIp, Map<String, dynamic>? requestHeaders
 });
 
 
@@ -93,7 +93,7 @@ as String?,src: freezed == src ? _self.src : src // ignore: cast_nullable_to_non
 as String?,folderId: freezed == folderId ? _self.folderId : folderId // ignore: cast_nullable_to_non_nullable
 as String?,requestIp: freezed == requestIp ? _self.requestIp : requestIp // ignore: cast_nullable_to_non_nullable
 as String?,requestHeaders: freezed == requestHeaders ? _self.requestHeaders : requestHeaders // ignore: cast_nullable_to_non_nullable
-as Map<String, String>?,
+as Map<String, dynamic>?,
   ));
 }
 

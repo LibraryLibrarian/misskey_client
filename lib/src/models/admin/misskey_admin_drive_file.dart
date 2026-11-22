@@ -151,11 +151,17 @@ class MisskeyAdminDriveFile with _$MisskeyAdminDriveFile {
   @override
   final String? folderId;
 
-  /// The upload request's IP address, when visible to the moderator.
+  /// The upload request's IP address, or `null` when none was recorded for
+  /// the file.
   @override
   final String? requestIp;
 
-  /// The upload request's headers, hidden when the owner is a moderator.
+  /// The upload request's headers, as recorded by the server.
+  ///
+  /// `null` when no headers were recorded for the file or the file owner is a
+  /// moderator.
+  /// Values are usually strings, but a header sent more than once, such as
+  /// `set-cookie`, is a list of strings.
   @override
-  final Map<String, String>? requestHeaders;
+  final Map<String, dynamic>? requestHeaders;
 }

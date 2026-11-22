@@ -46,7 +46,10 @@ void main() {
           'src': 'https://remote.example.com/file.png',
           'folderId': 'folder-id',
           'requestIp': '192.0.2.1',
-          'requestHeaders': {'user-agent': 'Test uploader'},
+          'requestHeaders': {
+            'user-agent': 'Test uploader',
+            'set-cookie': ['a=1', 'b=2'],
+          },
         }),
       );
 
@@ -84,7 +87,10 @@ void main() {
       expect(file.src, 'https://remote.example.com/file.png');
       expect(file.folderId, 'folder-id');
       expect(file.requestIp, '192.0.2.1');
-      expect(file.requestHeaders, {'user-agent': 'Test uploader'});
+      expect(file.requestHeaders, {
+        'user-agent': 'Test uploader',
+        'set-cookie': ['a=1', 'b=2'],
+      });
       expect(adapter.requests.single.jsonBody, {'fileId': 'file-id'});
     });
 

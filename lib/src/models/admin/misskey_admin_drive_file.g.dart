@@ -38,9 +38,7 @@ MisskeyAdminDriveFile _$MisskeyAdminDriveFileFromJson(
   src: json['src'] as String?,
   folderId: json['folderId'] as String?,
   requestIp: json['requestIp'] as String?,
-  requestHeaders: (json['requestHeaders'] as Map<String, dynamic>?)?.map(
-    (k, e) => MapEntry(k, e as String),
-  ),
+  requestHeaders: json['requestHeaders'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$MisskeyAdminDriveFileToJson(
