@@ -77,7 +77,6 @@ void main() {
           user.hasUnreadNotification,
           user.hasPendingReceivedFollowRequest,
           user.emailVerified,
-          user.isLimited,
         ], everyElement(isFalse));
       }
 

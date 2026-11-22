@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyAnnouncement {
 
- String get id; DateTime get createdAt; DateTime? get updatedAt; String get title; String get text; String? get imageUrl; String get icon; String get display; bool get needConfirmationToRead; bool get silence; bool get forYou; bool? get isRead; bool? get isActive; bool? get forExistingUsers; String? get userId;
+ String get id; DateTime get createdAt; DateTime? get updatedAt; String get title; String get text; String? get imageUrl; String get icon; String get display; bool get needConfirmationToRead; bool get silence; bool get forYou; bool? get isRead;
 /// Create a copy of MisskeyAnnouncement
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $MisskeyAnnouncementCopyWith<MisskeyAnnouncement> get copyWith => _$MisskeyAnnou
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyAnnouncement&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.title, title) || other.title == title)&&(identical(other.text, text) || other.text == text)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.display, display) || other.display == display)&&(identical(other.needConfirmationToRead, needConfirmationToRead) || other.needConfirmationToRead == needConfirmationToRead)&&(identical(other.silence, silence) || other.silence == silence)&&(identical(other.forYou, forYou) || other.forYou == forYou)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.forExistingUsers, forExistingUsers) || other.forExistingUsers == forExistingUsers)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyAnnouncement&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.title, title) || other.title == title)&&(identical(other.text, text) || other.text == text)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.display, display) || other.display == display)&&(identical(other.needConfirmationToRead, needConfirmationToRead) || other.needConfirmationToRead == needConfirmationToRead)&&(identical(other.silence, silence) || other.silence == silence)&&(identical(other.forYou, forYou) || other.forYou == forYou)&&(identical(other.isRead, isRead) || other.isRead == isRead));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createdAt,updatedAt,title,text,imageUrl,icon,display,needConfirmationToRead,silence,forYou,isRead,isActive,forExistingUsers,userId);
+int get hashCode => Object.hash(runtimeType,id,createdAt,updatedAt,title,text,imageUrl,icon,display,needConfirmationToRead,silence,forYou,isRead);
 
 @override
 String toString() {
-  return 'MisskeyAnnouncement(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, text: $text, imageUrl: $imageUrl, icon: $icon, display: $display, needConfirmationToRead: $needConfirmationToRead, silence: $silence, forYou: $forYou, isRead: $isRead, isActive: $isActive, forExistingUsers: $forExistingUsers, userId: $userId)';
+  return 'MisskeyAnnouncement(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, text: $text, imageUrl: $imageUrl, icon: $icon, display: $display, needConfirmationToRead: $needConfirmationToRead, silence: $silence, forYou: $forYou, isRead: $isRead)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyAnnouncementCopyWith<$Res>  {
   factory $MisskeyAnnouncementCopyWith(MisskeyAnnouncement value, $Res Function(MisskeyAnnouncement) _then) = _$MisskeyAnnouncementCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime createdAt, String title, String text, String icon, String display, DateTime? updatedAt, String? imageUrl, bool needConfirmationToRead, bool silence, bool forYou, bool? isRead, bool? isActive, bool? forExistingUsers, String? userId
+ String id, DateTime createdAt, String title, String text, String icon, String display, DateTime? updatedAt, String? imageUrl, bool needConfirmationToRead, bool silence, bool forYou, bool? isRead
 });
 
 
@@ -63,7 +63,7 @@ class _$MisskeyAnnouncementCopyWithImpl<$Res>
 
 /// Create a copy of MisskeyAnnouncement
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createdAt = null,Object? title = null,Object? text = null,Object? icon = null,Object? display = null,Object? updatedAt = freezed,Object? imageUrl = freezed,Object? needConfirmationToRead = null,Object? silence = null,Object? forYou = null,Object? isRead = freezed,Object? isActive = freezed,Object? forExistingUsers = freezed,Object? userId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createdAt = null,Object? title = null,Object? text = null,Object? icon = null,Object? display = null,Object? updatedAt = freezed,Object? imageUrl = freezed,Object? needConfirmationToRead = null,Object? silence = null,Object? forYou = null,Object? isRead = freezed,}) {
   return _then(MisskeyAnnouncement(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -77,10 +77,7 @@ as String?,needConfirmationToRead: null == needConfirmationToRead ? _self.needCo
 as bool,silence: null == silence ? _self.silence : silence // ignore: cast_nullable_to_non_nullable
 as bool,forYou: null == forYou ? _self.forYou : forYou // ignore: cast_nullable_to_non_nullable
 as bool,isRead: freezed == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
-as bool?,isActive: freezed == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool?,forExistingUsers: freezed == forExistingUsers ? _self.forExistingUsers : forExistingUsers // ignore: cast_nullable_to_non_nullable
-as bool?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as String?,
+as bool?,
   ));
 }
 

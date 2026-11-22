@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** Removed model fields that Misskey has never returned and that came from fork responses: `MisskeyFederationInstance.isSensitiveMedia`, `MisskeyDriveFile.isAiGenerated`, `MisskeyUser.isLimited` / `mutualLinkSections`, `MisskeyAnnouncement.isActive` / `forExistingUsers` / `userId` (available on `MisskeyAdminAnnouncement`), and `MisskeyNoteDraft.updatedAt`; remove references to them
 - **Breaking:** Removed the deprecated `MetaApi.supports()`; use `hasMetaKey()` to check whether a metadata key exists, or `isEndpointAvailable()` to check endpoint support
 - **Breaking:** Unknown values no longer masquerade as known ones: `MisskeyNote.visibility` maps a visibility this client does not know to the new `MisskeyNoteVisibility.unknown` instead of `public`, and `MisskeyRelay.status` maps an unknown status to the new `MisskeyRelayStatus.unknown` instead of `requesting`; handle `unknown` in exhaustive `switch` statements
 - **Breaking:** `ApShowResult.fromJson` returns the new `ApShowUnknown` for a type other than `User` or `Note` instead of throwing `FormatException`; handle `ApShowUnknown` in exhaustive `switch` statements

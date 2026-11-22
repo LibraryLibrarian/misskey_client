@@ -5,7 +5,7 @@ import 'package:misskey_client/misskey_client.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('MisskeyFederationInstance.fromJson (v1: isSensitiveMedia)', () {
+  group('MisskeyFederationInstance.fromJson (v1 fixture)', () {
     late List<MisskeyFederationInstance> instances;
 
     setUp(() {
@@ -42,25 +42,32 @@ void main() {
       expect(instances[0].isSilenced, false);
     });
 
-    // v1フィクスチャにはisSensitiveMediaフィールドがあるが、モデルにはこのフィールドがないため無視される
-    test('unknown field isSensitiveMedia is ignored gracefully', () {
-      // isSensitiveMediaはモデルにないのでデシリアライズ自体が成功すれば問題なし
-      expect(instances[0], isNotNull);
+    // フォーク由来の未知のキー(misskey.io の isSensitiveMedia など)は無視される
+    test('ignores an unknown fork-specific key', () {
+      final file = File('test/fixtures/federation_instances.json');
+      final json =
+          (jsonDecode(file.readAsStringSync()) as List<dynamic>).first
+              as Map<String, dynamic>;
+      final instance = MisskeyFederationInstance.fromJson({
+        ...json,
+        'isSensitiveMedia': true,
+      });
+      expect(instance.host, json['host']);
     });
 
     test('firstRetrievedAt is parsed as DateTime', () {
       expect(instances[0].firstRetrievedAt, isA<DateTime>());
     });
 
-    // 閉域環境で新規に検出されたインスタンスはメディア判定が
-    // 未確定のためnullを返しうる(nullable型として正しく扱えることを確認)
-    test('isSensitiveMedia is nullable and does not throw', () {
-      expect(() => instances[0].isSensitiveMedia, returnsNormally);
-    });
-
-    // v1フィクスチャにはisMediaSilencedフィールドがないのでデフォルト値falseになる
     test('isMediaSilenced defaults to false when field is absent', () {
-      expect(instances[0].isMediaSilenced, false);
+      final file = File('test/fixtures/federation_instances.json');
+      final json =
+          (jsonDecode(file.readAsStringSync()) as List<dynamic>).first
+              as Map<String, dynamic>;
+      final instance = MisskeyFederationInstance.fromJson(
+        Map.of(json)..remove('isMediaSilenced'),
+      );
+      expect(instance.isMediaSilenced, false);
     });
 
     test('suspensionState is not null and is "none"', () {
@@ -74,7 +81,7 @@ void main() {
     });
   });
 
-  group('MisskeyFederationInstance.fromJson (v2: isMediaSilenced)', () {
+  group('MisskeyFederationInstance.fromJson (v2 fixture)', () {
     late List<MisskeyFederationInstance> instances;
 
     setUp(() {
@@ -109,11 +116,6 @@ void main() {
     test('isMediaSilenced is not null and is false', () {
       expect(instances[0].isMediaSilenced, isNotNull);
       expect(instances[0].isMediaSilenced, false);
-    });
-
-    // v2フィクスチャにはisSensitiveMediaフィールドがないのでデフォルト値falseになる
-    test('isSensitiveMedia defaults to false when field is absent', () {
-      expect(instances[0].isSensitiveMedia, false);
     });
 
     test('suspensionState is not null and is "none"', () {
