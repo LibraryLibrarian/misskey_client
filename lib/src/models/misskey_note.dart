@@ -10,7 +10,17 @@ part 'misskey_note.g.dart';
 
 /// The visibility scope of a note.
 @JsonEnum()
-enum MisskeyNoteVisibility { public, home, followers, specified }
+enum MisskeyNoteVisibility {
+  public,
+  home,
+  followers,
+  specified,
+
+  /// Fallback for a value not yet known to this client (forward
+  /// compatibility with server-side additions). Do not treat it as
+  /// [public].
+  unknown,
+}
 
 /// The reaction acceptance setting for a note.
 @JsonEnum()
@@ -98,7 +108,7 @@ class MisskeyNote with _$MisskeyNote {
   final String? cw;
 
   /// The visibility scope of this note.
-  @JsonKey(unknownEnumValue: MisskeyNoteVisibility.public)
+  @JsonKey(unknownEnumValue: MisskeyNoteVisibility.unknown)
   @override
   final MisskeyNoteVisibility? visibility;
 

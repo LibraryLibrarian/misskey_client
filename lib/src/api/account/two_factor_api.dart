@@ -9,6 +9,7 @@ import '../../models/account/misskey_totp_registration.dart';
 /// passwordless login toggle. All endpoints require authentication
 /// and secure communication.
 class TwoFactorApi {
+  @internal
   const TwoFactorApi({required this.http});
 
   @internal
@@ -134,11 +135,13 @@ class TwoFactorApi {
   ///
   /// [credentialId] identifies the target key. [name] is the new key name
   /// (1-30 characters).
-  Future<void> updateKey({required String credentialId, String? name}) =>
-      http.send<Object?>(
-        '/i/2fa/update-key',
-        body: <String, dynamic>{'credentialId': credentialId, 'name': ?name},
-      );
+  Future<void> updateKey({
+    required String credentialId,
+    required String name,
+  }) => http.send<Object?>(
+    '/i/2fa/update-key',
+    body: <String, dynamic>{'credentialId': credentialId, 'name': name},
+  );
 
   /// Toggles passwordless login (`/api/i/2fa/password-less`).
   ///

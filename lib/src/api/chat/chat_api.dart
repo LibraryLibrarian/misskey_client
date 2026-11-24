@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../models/chat/misskey_chat_message.dart';
@@ -10,6 +12,7 @@ import 'chat_rooms_api.dart';
 /// and top-level `/api/chat/*` endpoints directly.
 /// All endpoints require authentication.
 class ChatApi {
+  @internal
   ChatApi({required MisskeyHttp http})
     : _http = http,
       messages = ChatMessagesApi(http: http),

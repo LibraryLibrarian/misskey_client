@@ -17,7 +17,7 @@ MisskeyClientException (sealed)
 │   ├── MisskeyNotFoundException     // 404 - Ressource nicht gefunden
 │   ├── MisskeyRateLimitException    // 429 - Anfragelimit erreicht
 │   │   └── retryAfter               //   Vom Server empfohlene Wartezeit
-│   ├── MisskeyValidationException   // 422 - Ungueltiger Anfrage-Body
+│   ├── MisskeyValidationException   // 400 INVALID_PARAM oder 422 - Ungueltige Parameter
 │   └── MisskeyServerException       // 5xx - Serverseitiger Fehler
 └── MisskeyNetworkException          // Timeout, Verbindung abgelehnt usw.
 ```
@@ -26,6 +26,8 @@ MisskeyClientException (sealed)
 
 - `code` — Misskey-Fehlercodezeichenfolge (z. B. `AUTHENTICATION_FAILED`, `NO_SUCH_NOTE`)
 - `errorId` — UUID zur Identifizierung des Misskey-Fehlertyps
+- `kind` — Von Misskey gemeldete Fehlerkategorie (`client`, `server` oder `permission`)
+- `info` — Aus JSON dekodierte Zusatzinformationen, z. B. der ungueltige Parameter bei `INVALID_PARAM`; `null`, wenn keine vorhanden sind
 - `endpoint` — Der API-Pfad, bei dem der Fehler aufgetreten ist
 
 ## Ausnahmen außerhalb der Hierarchie {#exceptions-outside-the-hierarchy}
@@ -64,13 +66,13 @@ try {
 
 ```dart
 try {
-  final note = await client.notes.show(noteId: noteId);
+  final user = await client.users.show(userId: userId);
 } on MisskeyNotFoundException {
-  print('Note not found');
+  print('User not found');
 } on MisskeyUnauthorizedException {
   print('Token is invalid. Please re-authenticate');
 } on MisskeyForbiddenException {
-  print('You do not have permission to view this note');
+  print('You do not have permission to view this user');
 } on MisskeyRateLimitException catch (e) {
   final wait = e.retryAfter ?? const Duration(seconds: 60);
   print('Rate limited. Retry after $wait');
@@ -80,6 +82,8 @@ try {
   print('Check your network connection');
 }
 ```
+
+Nicht jede fehlende Ressource wird mit HTTP 404 gemeldet. `users.show` liefert 404 mit `NO_SUCH_USER`, viele Endpunkte, darunter `notes.show`, liefern jedoch HTTP 400 mit einem Code wie `NO_SUCH_NOTE`. Pruefen Sie in diesen Faellen `code`, wie im naechsten Abschnitt gezeigt.
 
 ### Den Misskey-Fehlercode pruefen
 

@@ -11,6 +11,7 @@ import '../client/request_options.dart';
 /// values are `List<num>` (time-series data).
 class ChartsApi {
   /// Creates a [ChartsApi] instance.
+  @internal
   const ChartsApi({required this.http});
 
   /// The HTTP client.

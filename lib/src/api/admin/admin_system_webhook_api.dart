@@ -12,6 +12,7 @@ import '../../models/admin/misskey_system_webhook.dart';
 ///
 /// All endpoints require administrator privileges.
 class AdminSystemWebhookApi {
+  @internal
   const AdminSystemWebhookApi({required this.http});
 
   @internal

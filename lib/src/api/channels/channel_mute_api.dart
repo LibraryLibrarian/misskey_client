@@ -8,6 +8,7 @@ import '../../models/misskey_channel.dart';
 ///
 /// Offers endpoints under `channels/mute/*`.
 class ChannelMuteApi {
+  @internal
   const ChannelMuteApi({required this.http});
 
   @internal

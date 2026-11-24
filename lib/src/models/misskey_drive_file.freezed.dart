@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MisskeyDriveFile {
 
- String get id; DateTime get createdAt; String get name; String get type; int get size; String get md5; String get url; String? get thumbnailUrl; String? get comment; String? get folderId; MisskeyDriveFolder? get folder; String? get userId; MisskeyUser? get user; bool? get isSensitive; String? get blurhash; MisskeyDriveFileProperties? get properties; bool? get isAiGenerated;
+ String get id; DateTime get createdAt; String get name; String get type; int get size; String get md5; String get url; String? get thumbnailUrl; String? get comment; String? get folderId; MisskeyDriveFolder? get folder; String? get userId; MisskeyUser? get user; bool? get isSensitive; String? get blurhash; MisskeyDriveFileProperties? get properties;
 /// Create a copy of MisskeyDriveFile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $MisskeyDriveFileCopyWith<MisskeyDriveFile> get copyWith => _$MisskeyDriveFileCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyDriveFile&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.size, size) || other.size == size)&&(identical(other.md5, md5) || other.md5 == md5)&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.folderId, folderId) || other.folderId == folderId)&&(identical(other.folder, folder) || other.folder == folder)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.user, user) || other.user == user)&&(identical(other.isSensitive, isSensitive) || other.isSensitive == isSensitive)&&(identical(other.blurhash, blurhash) || other.blurhash == blurhash)&&(identical(other.properties, properties) || other.properties == properties)&&(identical(other.isAiGenerated, isAiGenerated) || other.isAiGenerated == isAiGenerated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MisskeyDriveFile&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.size, size) || other.size == size)&&(identical(other.md5, md5) || other.md5 == md5)&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.folderId, folderId) || other.folderId == folderId)&&(identical(other.folder, folder) || other.folder == folder)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.user, user) || other.user == user)&&(identical(other.isSensitive, isSensitive) || other.isSensitive == isSensitive)&&(identical(other.blurhash, blurhash) || other.blurhash == blurhash)&&(identical(other.properties, properties) || other.properties == properties));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createdAt,name,type,size,md5,url,thumbnailUrl,comment,folderId,folder,userId,user,isSensitive,blurhash,properties,isAiGenerated);
+int get hashCode => Object.hash(runtimeType,id,createdAt,name,type,size,md5,url,thumbnailUrl,comment,folderId,folder,userId,user,isSensitive,blurhash,properties);
 
 @override
 String toString() {
-  return 'MisskeyDriveFile(id: $id, createdAt: $createdAt, name: $name, type: $type, size: $size, md5: $md5, url: $url, thumbnailUrl: $thumbnailUrl, comment: $comment, folderId: $folderId, folder: $folder, userId: $userId, user: $user, isSensitive: $isSensitive, blurhash: $blurhash, properties: $properties, isAiGenerated: $isAiGenerated)';
+  return 'MisskeyDriveFile(id: $id, createdAt: $createdAt, name: $name, type: $type, size: $size, md5: $md5, url: $url, thumbnailUrl: $thumbnailUrl, comment: $comment, folderId: $folderId, folder: $folder, userId: $userId, user: $user, isSensitive: $isSensitive, blurhash: $blurhash, properties: $properties)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $MisskeyDriveFileCopyWith<$Res>  {
   factory $MisskeyDriveFileCopyWith(MisskeyDriveFile value, $Res Function(MisskeyDriveFile) _then) = _$MisskeyDriveFileCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime createdAt, String name, String type, int size, String md5, String url, String? thumbnailUrl, String? comment, String? folderId, MisskeyDriveFolder? folder, String? userId, MisskeyUser? user, bool? isSensitive, String? blurhash, MisskeyDriveFileProperties? properties, bool? isAiGenerated
+ String id, DateTime createdAt, String name, String type, int size, String md5, String url, String? thumbnailUrl, String? comment, String? folderId, MisskeyDriveFolder? folder, String? userId, MisskeyUser? user, bool? isSensitive, String? blurhash, MisskeyDriveFileProperties? properties
 });
 
 
@@ -63,7 +63,7 @@ class _$MisskeyDriveFileCopyWithImpl<$Res>
 
 /// Create a copy of MisskeyDriveFile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createdAt = null,Object? name = null,Object? type = null,Object? size = null,Object? md5 = null,Object? url = null,Object? thumbnailUrl = freezed,Object? comment = freezed,Object? folderId = freezed,Object? folder = freezed,Object? userId = freezed,Object? user = freezed,Object? isSensitive = freezed,Object? blurhash = freezed,Object? properties = freezed,Object? isAiGenerated = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createdAt = null,Object? name = null,Object? type = null,Object? size = null,Object? md5 = null,Object? url = null,Object? thumbnailUrl = freezed,Object? comment = freezed,Object? folderId = freezed,Object? folder = freezed,Object? userId = freezed,Object? user = freezed,Object? isSensitive = freezed,Object? blurhash = freezed,Object? properties = freezed,}) {
   return _then(MisskeyDriveFile(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -81,8 +81,7 @@ as String?,user: freezed == user ? _self.user : user // ignore: cast_nullable_to
 as MisskeyUser?,isSensitive: freezed == isSensitive ? _self.isSensitive : isSensitive // ignore: cast_nullable_to_non_nullable
 as bool?,blurhash: freezed == blurhash ? _self.blurhash : blurhash // ignore: cast_nullable_to_non_nullable
 as String?,properties: freezed == properties ? _self.properties : properties // ignore: cast_nullable_to_non_nullable
-as MisskeyDriveFileProperties?,isAiGenerated: freezed == isAiGenerated ? _self.isAiGenerated : isAiGenerated // ignore: cast_nullable_to_non_nullable
-as bool?,
+as MisskeyDriveFileProperties?,
   ));
 }
 

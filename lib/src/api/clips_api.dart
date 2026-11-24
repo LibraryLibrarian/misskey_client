@@ -13,6 +13,7 @@ import '../models/misskey_note.dart';
 /// adding/removing notes, and managing favorites.
 /// All endpoints require authentication.
 class ClipsApi {
+  @internal
   const ClipsApi({required this.http});
 
   @internal

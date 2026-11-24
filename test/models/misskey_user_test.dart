@@ -82,9 +82,6 @@ void main() {
             'silence': false,
             'forYou': true,
             'isRead': false,
-            'isActive': true,
-            'forExistingUsers': true,
-            'userId': null,
           },
         ],
         'securityKeysList': <Map<String, dynamic>>[
@@ -493,16 +490,6 @@ void main() {
 
     test('instance has themeColor', () {
       expect(user.instance!.themeColor, isNotEmpty);
-    });
-
-    // isLimited/mutualLinkSections は閉域環境のリモートユーザーでは
-    // null で返る(未確定/未設定の意味。nullable型として安全に扱える)
-    test('isLimited is nullable and does not throw', () {
-      expect(() => user.isLimited, returnsNormally);
-    });
-
-    test('mutualLinkSections is nullable and does not throw', () {
-      expect(() => user.mutualLinkSections, returnsNormally);
     });
   });
 

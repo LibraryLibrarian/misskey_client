@@ -14,6 +14,7 @@ import '../models/misskey_user.dart';
 /// Handles retrieval of federated instance lists, details, follow
 /// relationships, and statistics.
 class FederationApi {
+  @internal
   const FederationApi({required this.http});
 
   @internal

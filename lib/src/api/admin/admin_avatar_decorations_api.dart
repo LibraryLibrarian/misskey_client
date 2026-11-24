@@ -11,6 +11,7 @@ import '../../models/admin/misskey_admin_avatar_decoration.dart';
 ///
 /// All endpoints require administrator privileges.
 class AdminAvatarDecorationsApi {
+  @internal
   const AdminAvatarDecorationsApi({required this.http});
 
   @internal

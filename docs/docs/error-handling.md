@@ -17,7 +17,7 @@ MisskeyClientException (sealed)
 │   ├── MisskeyNotFoundException     // 404 - Resource not found
 │   ├── MisskeyRateLimitException    // 429 - Rate limited
 │   │   └── retryAfter               //   Server-suggested wait duration
-│   ├── MisskeyValidationException   // 422 - Invalid request body
+│   ├── MisskeyValidationException   // 400 INVALID_PARAM or 422 - Invalid parameters
 │   └── MisskeyServerException       // 5xx - Server-side error
 └── MisskeyNetworkException          // Timeout, connection refused, etc.
 ```
@@ -26,6 +26,8 @@ MisskeyClientException (sealed)
 
 - `code` — Misskey error code string (e.g. `AUTHENTICATION_FAILED`, `NO_SUCH_NOTE`)
 - `errorId` — UUID identifying the Misskey error type
+- `kind` — Error category reported by Misskey (`client`, `server`, or `permission`)
+- `info` — Additional details decoded from JSON, such as the invalid parameter for `INVALID_PARAM`; `null` when absent
 - `endpoint` — The API path where the error occurred
 
 ## Exceptions outside the hierarchy
@@ -64,13 +66,13 @@ try {
 
 ```dart
 try {
-  final note = await client.notes.show(noteId: noteId);
+  final user = await client.users.show(userId: userId);
 } on MisskeyNotFoundException {
-  print('Note not found');
+  print('User not found');
 } on MisskeyUnauthorizedException {
   print('Token is invalid. Please re-authenticate');
 } on MisskeyForbiddenException {
-  print('You do not have permission to view this note');
+  print('You do not have permission to view this user');
 } on MisskeyRateLimitException catch (e) {
   final wait = e.retryAfter ?? const Duration(seconds: 60);
   print('Rate limited. Retry after $wait');
@@ -80,6 +82,8 @@ try {
   print('Check your network connection');
 }
 ```
+
+Not every missing resource is reported as HTTP 404. `users.show` returns 404 with `NO_SUCH_USER`, but many endpoints, including `notes.show`, return HTTP 400 with a code such as `NO_SUCH_NOTE`. Check `code` for these, as shown in the next section.
 
 ### Inspecting the Misskey error code
 

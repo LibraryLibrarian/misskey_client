@@ -11,6 +11,7 @@ import '../../models/server/emoji_detailed.dart';
 ///
 /// All endpoints require moderator privileges unless noted otherwise.
 class AdminEmojiApi {
+  @internal
   const AdminEmojiApi({required this.http});
 
   @internal
@@ -53,7 +54,8 @@ class AdminEmojiApi {
 
   /// Updates a custom emoji (`/api/admin/emoji/update`).
   ///
-  /// Identify the target by [id] or [name] (at least one is required).
+  /// Identify the target by [id] or [name]. At least one is required; an
+  /// [ArgumentError] is thrown when both are omitted.
   /// Only the parameters that are provided are sent. [category] and
   /// [license] use the [Optional] type: pass `Optional('value')` to set
   /// and `Optional.null_()` to clear.
@@ -72,10 +74,11 @@ class AdminEmojiApi {
     bool? localOnly,
     List<String>? roleIdsThatCanBeUsedThisEmojiAsReaction,
   }) async {
-    assert(
-      id != null || name != null,
-      'Either id or name must be provided to identify the emoji.',
-    );
+    if (id == null && name == null) {
+      throw ArgumentError(
+        'Either id or name must be provided to identify the emoji.',
+      );
+    }
     final body = <String, dynamic>{
       'id': ?id,
       'name': ?name,

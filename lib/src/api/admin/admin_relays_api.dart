@@ -8,6 +8,7 @@ import '../../models/admin/misskey_relay.dart';
 ///
 /// All endpoints require administrator privileges.
 class AdminRelaysApi {
+  @internal
   const AdminRelaysApi({required this.http});
 
   @internal

@@ -2,12 +2,14 @@ import 'package:meta/meta.dart';
 
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
+import '../../models/admin/misskey_admin_drive_file.dart';
 import '../../models/misskey_drive_file.dart';
 
 /// Provides drive management admin APIs (`/api/admin/drive/*`).
 ///
 /// All endpoints require moderator privileges.
 class AdminDriveApi {
+  @internal
   const AdminDriveApi({required this.http});
 
   @internal
@@ -55,22 +57,25 @@ class AdminDriveApi {
   /// Fetches a drive file including moderation details
   /// (`/api/admin/drive/show-file`).
   ///
-  /// Identify the file by [fileId] or [url] (at least one is required).
-  /// The response includes fields not present in the regular drive API,
-  /// so it is returned as raw JSON.
+  /// Identify the file by [fileId] or [url]. At least one is required; an
+  /// [ArgumentError] is thrown when both are omitted.
+  /// Returns file metadata and moderation details, including storage keys
+  /// and upload request information when visible to the moderator.
   ///
   /// Common errors:
   /// - `NO_SUCH_FILE`: The specified file does not exist
-  Future<Map<String, dynamic>> showFile({String? fileId, String? url}) {
-    assert(
-      fileId != null || url != null,
-      'Either fileId or url must be provided to identify the file.',
-    );
-    return http.send<Map<String, dynamic>>(
+  Future<MisskeyAdminDriveFile> showFile({String? fileId, String? url}) async {
+    if (fileId == null && url == null) {
+      throw ArgumentError(
+        'Either fileId or url must be provided to identify the file.',
+      );
+    }
+    final res = await http.send<Map<String, dynamic>>(
       '/admin/drive/show-file',
       body: <String, dynamic>{'fileId': ?fileId, 'url': ?url},
       options: const RequestOptions(idempotent: true),
     );
+    return MisskeyAdminDriveFile.fromJson(res);
   }
 
   /// Deletes cached remote files (`/api/admin/drive/clean-remote-files`).

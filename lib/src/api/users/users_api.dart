@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../../client/auth_mode.dart';
 import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
@@ -20,6 +22,7 @@ import 'user_lists_api.dart';
 /// Covers `users/*` endpoints.
 /// Use [lists] for list operations.
 class UsersApi {
+  @internal
   UsersApi({required MisskeyHttp http})
     : _http = http,
       lists = UserListsApi(http: http);
@@ -578,7 +581,8 @@ class UsersApi {
 
   /// Searches for users by username and host.
   ///
-  /// At least one of [username] or [host] is required.
+  /// At least one of [username] or [host] is required; an [ArgumentError]
+  /// is thrown when both are omitted.
   /// Set [detail] to `false` to return UserLite format (default: `true`).
   /// [limit] is 1-100 (default: 10).
   Future<List<MisskeyUser>> searchByUsernameAndHost({
@@ -587,6 +591,9 @@ class UsersApi {
     int? limit,
     bool? detail,
   }) async {
+    if (username == null && host == null) {
+      throw ArgumentError('Either username or host must be provided.');
+    }
     final body = <String, dynamic>{
       'username': ?username,
       'host': ?host,

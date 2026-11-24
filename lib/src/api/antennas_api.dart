@@ -12,6 +12,7 @@ import '../models/misskey_note.dart';
 /// Offers creation, updating, deletion, listing, and note retrieval for
 /// custom timeline filters (antennas). All endpoints require authentication.
 class AntennasApi {
+  @internal
   const AntennasApi({required this.http});
 
   @internal

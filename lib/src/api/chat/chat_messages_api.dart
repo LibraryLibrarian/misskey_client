@@ -10,6 +10,7 @@ import '../../models/chat/misskey_chat_message.dart';
 /// both direct (1-on-1) and room messages.
 /// All endpoints require authentication.
 class ChatMessagesApi {
+  @internal
   const ChatMessagesApi({required this.http});
 
   @internal

@@ -7,9 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `kind` and `info` to `MisskeyApiException` and its subclasses, exposing the error category and the additional details that Misskey returns, such as the invalid parameter of an `INVALID_PARAM` error
+
 ### Changed
 
+- **Breaking:** Removed model fields that Misskey has never returned and that came from fork responses: `MisskeyFederationInstance.isSensitiveMedia`, `MisskeyDriveFile.isAiGenerated`, `MisskeyUser.isLimited` / `mutualLinkSections`, `MisskeyAnnouncement.isActive` / `forExistingUsers` / `userId` (available on `MisskeyAdminAnnouncement`), and `MisskeyNoteDraft.updatedAt`; remove references to them
+- **Breaking:** Removed the deprecated `MetaApi.supports()`; use `hasMetaKey()` to check whether a metadata key exists, or `isEndpointAvailable()` to check endpoint support
+- **Breaking:** Unknown values no longer masquerade as known ones: `MisskeyNote.visibility` maps a visibility this client does not know to the new `MisskeyNoteVisibility.unknown` instead of `public`, and `MisskeyRelay.status` maps an unknown status to the new `MisskeyRelayStatus.unknown` instead of `requesting`; handle `unknown` in exhaustive `switch` statements
+- **Breaking:** `ApShowResult.fromJson` returns the new `ApShowUnknown` for a type other than `User` or `Note` instead of throwing `FormatException`; handle `ApShowUnknown` in exhaustive `switch` statements
+- **Breaking:** `TwoFactorApi.updateKey` now requires `name`, as Misskey does; pass the new key name
+- **Breaking:** `AccountApi.pages`, `pageLikes`, `apps`, and `authorizedApps` now return lists of `MisskeyPage`, `MisskeyPageLike`, `MisskeyAccessToken`, and `MisskeyAuthorizedApp`, and `AdminDriveApi.showFile` returns `MisskeyAdminDriveFile`; replace map key lookups with the corresponding model properties
 - **Breaking:** `MisskeyAdminServerInfo.redis` is now nullable, and parsing no longer fails when the server cannot read the Redis version and omits the key; handle `null` where the value is used
+- **Breaking:** `NotesApi.searchByTag`, `UsersApi.searchByUsernameAndHost`, `AdminDriveApi.showFile`, and `AdminEmojiApi.update` now throw `ArgumentError` before sending the request when both arguments of their required pair are omitted. Previously only a debug-mode assertion checked this, or nothing did for `searchByUsernameAndHost`, and release builds received a `MisskeyApiException` with `INVALID_PARAM` from the server; `ArgumentError` is an `Error`, not a `MisskeyClientException`, so pass one of the pair instead of catching it
+- Marked the constructors of the API classes, such as `NotesApi` and `DriveApi`, as `@internal`; they take the internal HTTP client and are meant to be reached through `MisskeyClient`, such as `client.notes`
+- Documented that `MisskeyClient(httpClientAdapter:)` takes a `HttpClientAdapter` from `package:dio` 5.x, so a move to a new major version of dio is a breaking change of this package
+- `MisskeyValidationException` is now also thrown for Misskey's input validation error, `INVALID_PARAM` (HTTP 400), in addition to HTTP 422; its `statusCode` holds the actual status. Previously `INVALID_PARAM` surfaced as a plain `MisskeyApiException`
+- Corrected the error handling documentation and example: `notes.show` reports a missing note as HTTP 400 with `NO_SUCH_NOTE`, not as `MisskeyNotFoundException`
 
 ### Fixed
 

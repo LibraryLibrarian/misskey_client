@@ -9,6 +9,7 @@ import '../models/misskey_user.dart';
 ///
 /// Offers blocking, unblocking, and listing blocked users.
 class BlockingApi {
+  @internal
   const BlockingApi({required this.http});
 
   @internal

@@ -11,6 +11,7 @@ import '../models/misskey_user.dart';
 ///
 /// Supports searching, listing, and retrieving trending hashtags.
 class HashtagsApi {
+  @internal
   const HashtagsApi({required this.http});
 
   @internal

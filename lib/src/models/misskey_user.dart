@@ -121,8 +121,6 @@ class MisskeyUser with _$MisskeyUser {
     this.email,
     this.emailVerified,
     this.moderationNote,
-    this.isLimited,
-    this.mutualLinkSections,
     this.pinnedPage,
   });
 
@@ -610,15 +608,6 @@ class MisskeyUser with _$MisskeyUser {
   /// The moderation note attached to this user (visible to moderators only).
   @override
   final String? moderationNote;
-
-  /// Whether this remote user is rate-limited.
-  @override
-  @JsonKey(defaultValue: false)
-  final bool? isLimited;
-
-  /// The mutual link sections defined on this user's profile.
-  @override
-  final List<Map<String, dynamic>>? mutualLinkSections;
 
   /// The pinned page object embedded in the user profile.
   @override

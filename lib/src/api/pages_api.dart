@@ -13,6 +13,7 @@ import '../models/users/misskey_page.dart';
 /// For own pages, use `AccountApi.pages`;
 /// for other users' pages, use `UsersApi.pages`.
 class PagesApi {
+  @internal
   const PagesApi({required this.http});
 
   @internal

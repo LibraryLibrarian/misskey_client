@@ -10,6 +10,7 @@ import '../models/misskey_user.dart';
 /// Handles accepting, rejecting received follow requests,
 /// and viewing or cancelling sent requests.
 class FollowingRequestsApi {
+  @internal
   const FollowingRequestsApi({required this.http});
 
   @internal

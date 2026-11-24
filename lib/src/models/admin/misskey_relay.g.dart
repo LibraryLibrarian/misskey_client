@@ -12,7 +12,7 @@ MisskeyRelay _$MisskeyRelayFromJson(Map<String, dynamic> json) => MisskeyRelay(
   status: $enumDecode(
     _$MisskeyRelayStatusEnumMap,
     json['status'],
-    unknownValue: MisskeyRelayStatus.requesting,
+    unknownValue: MisskeyRelayStatus.unknown,
   ),
 );
 
@@ -27,4 +27,5 @@ const _$MisskeyRelayStatusEnumMap = {
   MisskeyRelayStatus.requesting: 'requesting',
   MisskeyRelayStatus.accepted: 'accepted',
   MisskeyRelayStatus.rejected: 'rejected',
+  MisskeyRelayStatus.unknown: 'unknown',
 };

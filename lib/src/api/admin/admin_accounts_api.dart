@@ -6,6 +6,7 @@ import '../../models/misskey_user.dart';
 
 /// Provides account management admin APIs (`/api/admin/accounts/*`).
 class AdminAccountsApi {
+  @internal
   const AdminAccountsApi({required this.http});
 
   @internal

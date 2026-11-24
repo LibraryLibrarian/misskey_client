@@ -15,6 +15,7 @@ import '../../models/misskey_user.dart';
 /// All endpoints require a token belonging to an administrator
 /// (or a moderator, where noted).
 class AdminApi {
+  @internal
   const AdminApi({required this.http});
 
   @internal

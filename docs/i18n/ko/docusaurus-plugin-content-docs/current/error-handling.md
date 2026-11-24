@@ -17,7 +17,7 @@ MisskeyClientException (sealed)
 │   ├── MisskeyNotFoundException     // 404 - 리소스를 찾을 수 없음
 │   ├── MisskeyRateLimitException    // 429 - 요청 한도 초과
 │   │   └── retryAfter               //   서버 제안 대기 시간
-│   ├── MisskeyValidationException   // 422 - 잘못된 요청 본문
+│   ├── MisskeyValidationException   // 400 INVALID_PARAM 또는 422 - 잘못된 매개변수
 │   └── MisskeyServerException       // 5xx - 서버 측 오류
 └── MisskeyNetworkException          // 타임아웃, 연결 거부 등
 ```
@@ -26,6 +26,8 @@ MisskeyClientException (sealed)
 
 - `code` — Misskey 오류 코드 문자열 (예: `AUTHENTICATION_FAILED`, `NO_SUCH_NOTE`)
 - `errorId` — Misskey 오류 유형을 식별하는 UUID
+- `kind` — Misskey가 알려 주는 오류 분류 (`client`, `server`, `permission`)
+- `info` — JSON에서 디코딩한 추가 정보 (예: `INVALID_PARAM`의 잘못된 매개변수). 없으면 `null`
 - `endpoint` — 오류가 발생한 API 경로
 
 ## 예외 계층 외부의 예외 {#exceptions-outside-the-hierarchy}
@@ -64,13 +66,13 @@ try {
 
 ```dart
 try {
-  final note = await client.notes.show(noteId: noteId);
+  final user = await client.users.show(userId: userId);
 } on MisskeyNotFoundException {
-  print('노트를 찾을 수 없습니다');
+  print('사용자를 찾을 수 없습니다');
 } on MisskeyUnauthorizedException {
   print('토큰이 유효하지 않습니다. 다시 인증해 주세요');
 } on MisskeyForbiddenException {
-  print('이 노트를 볼 권한이 없습니다');
+  print('이 사용자를 볼 권한이 없습니다');
 } on MisskeyRateLimitException catch (e) {
   final wait = e.retryAfter ?? const Duration(seconds: 60);
   print('요청 한도 초과. $wait 후 재시도하세요');
@@ -80,6 +82,8 @@ try {
   print('네트워크 연결을 확인하세요');
 }
 ```
+
+리소스가 없을 때 항상 HTTP 404가 반환되는 것은 아닙니다. `users.show`는 `NO_SUCH_USER`와 함께 404를 반환하지만, `notes.show`를 비롯한 많은 엔드포인트는 `NO_SUCH_NOTE` 같은 코드와 함께 HTTP 400을 반환합니다. 이런 경우에는 다음 절처럼 `code`를 확인하세요.
 
 ### Misskey 오류 코드 확인
 

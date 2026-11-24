@@ -8,6 +8,7 @@ import '../../models/admin/misskey_ad.dart';
 ///
 /// All endpoints require administrator privileges.
 class AdminAdApi {
+  @internal
   const AdminAdApi({required this.http});
 
   @internal

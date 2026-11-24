@@ -17,7 +17,7 @@ MisskeyClientException (sealed)
 │   ├── MisskeyNotFoundException     // 404 - Ressource introuvable
 │   ├── MisskeyRateLimitException    // 429 - Limite de débit atteinte
 │   │   └── retryAfter               //   Durée d'attente suggérée par le serveur
-│   ├── MisskeyValidationException   // 422 - Corps de requête invalide
+│   ├── MisskeyValidationException   // 400 INVALID_PARAM ou 422 - Paramètres invalides
 │   └── MisskeyServerException       // 5xx - Erreur côté serveur
 └── MisskeyNetworkException          // Délai dépassé, connexion refusée, etc.
 ```
@@ -26,6 +26,8 @@ MisskeyClientException (sealed)
 
 - `code` — Chaîne de code d'erreur Misskey (par exemple `AUTHENTICATION_FAILED`, `NO_SUCH_NOTE`)
 - `errorId` — UUID identifiant le type d'erreur Misskey
+- `kind` — Catégorie d'erreur indiquée par Misskey (`client`, `server` ou `permission`)
+- `info` — Informations supplémentaires décodées depuis le JSON, par exemple le paramètre invalide pour `INVALID_PARAM` ; `null` en leur absence
 - `endpoint` — Le chemin de l'API où l'erreur s'est produite
 
 ## Exceptions hors de la hiérarchie {#exceptions-outside-the-hierarchy}
@@ -64,13 +66,13 @@ try {
 
 ```dart
 try {
-  final note = await client.notes.show(noteId: noteId);
+  final user = await client.users.show(userId: userId);
 } on MisskeyNotFoundException {
-  print('Note not found');
+  print('User not found');
 } on MisskeyUnauthorizedException {
   print('Token is invalid. Please re-authenticate');
 } on MisskeyForbiddenException {
-  print('You do not have permission to view this note');
+  print('You do not have permission to view this user');
 } on MisskeyRateLimitException catch (e) {
   final wait = e.retryAfter ?? const Duration(seconds: 60);
   print('Rate limited. Retry after $wait');
@@ -80,6 +82,8 @@ try {
   print('Check your network connection');
 }
 ```
+
+Une ressource introuvable n'est pas toujours signalée par un HTTP 404. `users.show` renvoie 404 avec `NO_SUCH_USER`, mais de nombreux endpoints, dont `notes.show`, renvoient HTTP 400 avec un code comme `NO_SUCH_NOTE`. Dans ce cas, vérifiez `code` comme dans la section suivante.
 
 ### Inspection du code d'erreur Misskey
 

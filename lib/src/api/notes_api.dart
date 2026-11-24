@@ -16,6 +16,7 @@ import '../models/misskey_note_translation.dart';
 
 /// Provides note-related API endpoints.
 class NotesApi {
+  @internal
   const NotesApi({required this.http});
 
   @internal
@@ -685,7 +686,8 @@ class NotesApi {
 
   /// Searches notes by hashtag (`/api/notes/search-by-tag`).
   ///
-  /// Specify either [tag] or [queryTags].
+  /// Specify either [tag] or [queryTags]; an [ArgumentError] is thrown when
+  /// both are omitted.
   /// [queryTags] is a nested array where the outer level is OR-joined
   /// and the inner level is AND-joined.
   /// Authentication optional.
@@ -706,7 +708,9 @@ class NotesApi {
     int? sinceDate,
     int? untilDate,
   }) async {
-    assert(tag != null || queryTags != null, 'tag か queryTags のいずれかを指定してください');
+    if (tag == null && queryTags == null) {
+      throw ArgumentError('Either tag or queryTags must be provided.');
+    }
     final body = <String, dynamic>{
       'tag': ?tag,
       'query': ?queryTags,

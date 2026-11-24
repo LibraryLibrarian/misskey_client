@@ -11,6 +11,7 @@ import '../../models/misskey_role_user.dart';
 ///
 /// All endpoints require administrator privileges unless noted otherwise.
 class AdminRolesApi {
+  @internal
   const AdminRolesApi({required this.http});
 
   @internal

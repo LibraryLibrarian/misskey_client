@@ -12,6 +12,7 @@ import '../models/sw/misskey_sw_subscription.dart';
 /// Delegates `/api/sw/*` endpoint calls to [MisskeyHttp].
 class SwApi {
   /// Creates an instance.
+  @internal
   const SwApi({required this.http});
 
   /// HTTP client.

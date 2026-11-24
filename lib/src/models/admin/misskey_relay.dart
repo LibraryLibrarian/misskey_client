@@ -5,7 +5,15 @@ part 'misskey_relay.g.dart';
 
 /// The subscription status of a relay.
 @JsonEnum()
-enum MisskeyRelayStatus { requesting, accepted, rejected }
+enum MisskeyRelayStatus {
+  requesting,
+  accepted,
+  rejected,
+
+  /// Fallback for a value not yet known to this client (forward
+  /// compatibility with server-side additions).
+  unknown,
+}
 
 /// A relay (`/api/admin/relays/*` responses).
 @freezed
@@ -31,7 +39,7 @@ class MisskeyRelay with _$MisskeyRelay {
   final String inbox;
 
   /// The subscription status.
-  @JsonKey(unknownEnumValue: MisskeyRelayStatus.requesting)
+  @JsonKey(unknownEnumValue: MisskeyRelayStatus.unknown)
   @override
   final MisskeyRelayStatus status;
 }

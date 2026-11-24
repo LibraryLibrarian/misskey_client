@@ -10,9 +10,6 @@ MisskeyNoteDraft _$MisskeyNoteDraftFromJson(Map<String, dynamic> json) =>
     MisskeyNoteDraft(
       id: json['id'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: const SafeDateTimeConverter().fromJson(
-        json['updatedAt'] as String?,
-      ),
       userId: json['userId'] as String,
       user: json['user'] == null
           ? null
@@ -61,7 +58,6 @@ Map<String, dynamic> _$MisskeyNoteDraftToJson(MisskeyNoteDraft instance) =>
     <String, dynamic>{
       'id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': const SafeDateTimeConverter().toJson(instance.updatedAt),
       'userId': instance.userId,
       'user': instance.user?.toJson(),
       'visibility': instance.visibility,

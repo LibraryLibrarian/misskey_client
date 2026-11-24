@@ -20,7 +20,6 @@ class MisskeyFederationInstance with _$MisskeyFederationInstance {
     this.suspensionState,
     this.isBlocked,
     this.isSilenced,
-    this.isSensitiveMedia,
     this.isMediaSilenced,
     this.softwareName,
     this.softwareVersion,
@@ -90,14 +89,7 @@ class MisskeyFederationInstance with _$MisskeyFederationInstance {
   @override
   final bool? isSilenced;
 
-  /// Whether the instance is marked as serving sensitive media
-  /// (older API versions).
-  @JsonKey(defaultValue: false)
-  @override
-  final bool? isSensitiveMedia;
-
-  /// Whether the instance's media is silenced (newer API versions,
-  /// replaces [isSensitiveMedia]).
+  /// Whether the instance's media is silenced.
   @JsonKey(defaultValue: false)
   @override
   final bool? isMediaSilenced;

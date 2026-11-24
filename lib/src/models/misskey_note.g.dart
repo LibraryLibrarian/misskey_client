@@ -16,7 +16,7 @@ MisskeyNote _$MisskeyNoteFromJson(Map<String, dynamic> json) => MisskeyNote(
   visibility: $enumDecodeNullable(
     _$MisskeyNoteVisibilityEnumMap,
     json['visibility'],
-    unknownValue: MisskeyNoteVisibility.public,
+    unknownValue: MisskeyNoteVisibility.unknown,
   ),
   localOnly: json['localOnly'] as bool? ?? false,
   reactionAcceptance: $enumDecodeNullable(
@@ -131,6 +131,7 @@ const _$MisskeyNoteVisibilityEnumMap = {
   MisskeyNoteVisibility.home: 'home',
   MisskeyNoteVisibility.followers: 'followers',
   MisskeyNoteVisibility.specified: 'specified',
+  MisskeyNoteVisibility.unknown: 'unknown',
 };
 
 const _$MisskeyReactionAcceptanceEnumMap = {

@@ -6,6 +6,7 @@ import '../../client/misskey_http.dart';
 ///
 /// All endpoints require moderator privileges.
 class AdminFederationApi {
+  @internal
   const AdminFederationApi({required this.http});
 
   @internal

@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'json_converters.dart';
 import 'misskey_drive_file.dart';
 import 'misskey_note.dart';
 import 'misskey_note_draft_channel.dart';
@@ -17,7 +16,6 @@ class MisskeyNoteDraft with _$MisskeyNoteDraft {
   const MisskeyNoteDraft({
     required this.id,
     required this.createdAt,
-    required this.updatedAt,
     required this.userId,
     this.user,
     this.visibility,
@@ -52,11 +50,6 @@ class MisskeyNoteDraft with _$MisskeyNoteDraft {
   /// The date and time when this draft was created.
   @override
   final DateTime createdAt;
-
-  /// The date and time when this draft was last updated.
-  @SafeDateTimeConverter()
-  @override
-  final DateTime? updatedAt;
 
   /// The ID of the user who owns this draft.
   @override

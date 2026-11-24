@@ -4,6 +4,8 @@ import '../../client/misskey_http.dart';
 import '../../client/request_options.dart';
 import '../../internal/optional.dart';
 import '../../internal/request_body.dart';
+import '../../models/account/misskey_access_token.dart';
+import '../../models/account/misskey_authorized_app.dart';
 import '../../models/account/misskey_signin_history.dart';
 import '../../models/gallery/misskey_gallery_like.dart';
 import '../../models/gallery/misskey_gallery_post.dart';
@@ -11,12 +13,15 @@ import '../../models/json_converters.dart';
 import '../../models/misskey_note_favorite.dart';
 import '../../models/misskey_user.dart';
 import '../../models/muted_word.dart';
+import '../../models/users/misskey_page.dart';
+import '../../models/users/misskey_page_like.dart';
 import 'registry_api.dart';
 import 'two_factor_api.dart';
 import 'webhooks_api.dart';
 
 /// Provides APIs for the currently authenticated user (`/api/i/*`).
 class AccountApi {
+  @internal
   AccountApi({required this.http})
     : registry = RegistryApi(http: http),
       twoFactor = TwoFactorApi(http: http),
@@ -315,7 +320,7 @@ class AccountApi {
   /// [limit] controls how many items are returned (1–100, default 10).
   /// Use [sinceId] and [untilId] to paginate by ID, or [sinceDate] and
   /// [untilDate] to paginate by Unix timestamp (ms).
-  Future<List<Map<String, dynamic>>> pages({
+  Future<List<MisskeyPage>> pages({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -334,16 +339,21 @@ class AccountApi {
       body: body,
       options: const RequestOptions(idempotent: true),
     );
-    return res.whereType<Map<String, dynamic>>().toList();
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyPage.fromJson)
+        .toList();
   }
 
   /// Retrieves the list of Pages liked by the current user
   /// (`/api/i/page-likes`).
   ///
+  /// Each entry includes the like ID and the liked Page.
+  ///
   /// [limit] controls how many items are returned (1–100, default 10).
   /// Use [sinceId] and [untilId] to paginate by ID, or [sinceDate] and
   /// [untilDate] to paginate by Unix timestamp (ms).
-  Future<List<Map<String, dynamic>>> pageLikes({
+  Future<List<MisskeyPageLike>> pageLikes({
     int? limit,
     String? sinceId,
     String? untilId,
@@ -362,7 +372,10 @@ class AccountApi {
       body: body,
       options: const RequestOptions(idempotent: true),
     );
-    return res.whereType<Map<String, dynamic>>().toList();
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyPageLike.fromJson)
+        .toList();
   }
 
   /// Changes the account password (`/api/i/change-password`).
@@ -475,24 +488,31 @@ class AccountApi {
   /// Retrieves the list of access tokens created by the current user
   /// (`/api/i/apps`).
   ///
+  /// Returns token record IDs and metadata; token secrets are not included.
+  ///
   /// [sort] controls the ordering and accepts `+createdAt`, `-createdAt`,
   /// `+lastUsedAt`, or `-lastUsedAt`.
-  Future<List<Map<String, dynamic>>> apps({String? sort}) async {
+  Future<List<MisskeyAccessToken>> apps({String? sort}) async {
     final body = <String, dynamic>{'sort': ?sort};
     final res = await http.send<List<dynamic>>(
       '/i/apps',
       body: body,
       options: const RequestOptions(idempotent: true),
     );
-    return res.whereType<Map<String, dynamic>>().toList();
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyAccessToken.fromJson)
+        .toList();
   }
 
   /// Retrieves the list of authorized applications (`/api/i/authorized-apps`).
   ///
+  /// Returns application IDs, permissions, and authorization details.
+  ///
   /// [limit] controls how many items are returned (1–100, default 10).
   /// [offset] sets the starting position (default 0). [sort] controls the
   /// ordering and accepts `desc` or `asc` (default `desc`).
-  Future<List<Map<String, dynamic>>> authorizedApps({
+  Future<List<MisskeyAuthorizedApp>> authorizedApps({
     int? limit,
     int? offset,
     String? sort,
@@ -507,7 +527,10 @@ class AccountApi {
       body: body,
       options: const RequestOptions(idempotent: true),
     );
-    return res.whereType<Map<String, dynamic>>().toList();
+    return res
+        .whereType<Map<String, dynamic>>()
+        .map(MisskeyAuthorizedApp.fromJson)
+        .toList();
   }
 
   /// Retrieves the sign-in history (`/api/i/signin-history`).

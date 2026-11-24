@@ -18,6 +18,8 @@ class MisskeyApiException extends MisskeyClientException {
     required String message,
     this.code,
     this.errorId,
+    this.kind,
+    this.info,
     this.endpoint,
     this.raw,
   }) : super(message);
@@ -29,6 +31,17 @@ class MisskeyApiException extends MisskeyClientException {
 
   /// UUID identifying the Misskey error type.
   final String? errorId;
+
+  /// The error category reported by Misskey: `client`, `server`, or
+  /// `permission`.
+  final String? kind;
+
+  /// Additional details reported by Misskey, decoded from JSON.
+  ///
+  /// For example, `INVALID_PARAM` errors carry a map with `param` and
+  /// `reason`, and `RATE_LIMIT_EXCEEDED` errors carry the rate limit state.
+  /// `null` when the server sends no details.
+  final Object? info;
 
   /// The API endpoint where the error occurred.
   final String? endpoint;
@@ -51,6 +64,8 @@ class MisskeyUnauthorizedException extends MisskeyApiException {
     super.message = 'Unauthorized',
     super.code,
     super.errorId,
+    super.kind,
+    super.info,
     super.endpoint,
     super.raw,
   }) : super(statusCode: 401);
@@ -64,6 +79,8 @@ class MisskeyForbiddenException extends MisskeyApiException {
     super.message = 'Forbidden',
     super.code,
     super.errorId,
+    super.kind,
+    super.info,
     super.endpoint,
     super.raw,
   }) : super(statusCode: 403);
@@ -75,6 +92,8 @@ class MisskeyNotFoundException extends MisskeyApiException {
     super.message = 'Not found',
     super.code,
     super.errorId,
+    super.kind,
+    super.info,
     super.endpoint,
     super.raw,
   }) : super(statusCode: 404);
@@ -88,6 +107,8 @@ class MisskeyRateLimitException extends MisskeyApiException {
     super.message = 'Rate limited',
     super.code,
     super.errorId,
+    super.kind,
+    super.info,
     super.endpoint,
     super.raw,
     this.retryAfter,
@@ -97,17 +118,22 @@ class MisskeyRateLimitException extends MisskeyApiException {
   final Duration? retryAfter;
 }
 
-/// Validation error (HTTP 422).
+/// Validation error.
 ///
-/// Thrown when the request body is invalid.
+/// Thrown when Misskey rejects the request parameters with `INVALID_PARAM`
+/// (HTTP 400), or when it responds with HTTP 422. For `INVALID_PARAM`,
+/// [info] names the invalid parameter and the reason.
 class MisskeyValidationException extends MisskeyApiException {
   const MisskeyValidationException({
-    super.message = 'Unprocessable entity',
+    super.statusCode = 422,
+    super.message = 'Invalid request',
     super.code,
     super.errorId,
+    super.kind,
+    super.info,
     super.endpoint,
     super.raw,
-  }) : super(statusCode: 422);
+  });
 }
 
 /// Server error (HTTP 5xx).
@@ -117,6 +143,8 @@ class MisskeyServerException extends MisskeyApiException {
     super.message = 'Server error',
     super.code,
     super.errorId,
+    super.kind,
+    super.info,
     super.endpoint,
     super.raw,
   });
